@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For IT Partners | DONG-IN ENSIS</title>
+<meta name="description" content="Leave PLC integration and field work to us. OT partnership for smart factory, MES and AI companies.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="alternate" hreflang="ko" href="../partner.html">
+<style>body{word-break:normal;overflow-wrap:break-word}.hero h1{font-size:clamp(34px,4.8vw,62px)}</style>
+</head>
+<body>
+<header class="hd" id="hd">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="DONG-IN ENSIS home">
+      <img class="w" src="../img/logo_white.png" alt="DONG-IN ENSIS">
+      <img class="c" src="../img/logo_color.png" alt="DONG-IN ENSIS">
+    </a>
+    <nav class="gnb" aria-label="Main menu" style="gap:28px">
+      <a href="company.html">Company</a>
+      <a href="index.html#product">Control Panel</a>
+      <a href="manufacturing.html">For Manufacturers</a>
+      <a href="partner.html">For IT Partners</a>
+      <a href="index.html#sites">Applications</a>
+      <a href="index.html#media">Resources</a>
+    </nav>
+    <div class="hd-r">
+      <a href="../partner.html" class="lang" hreflang="ko">KOR</a>
+      <a href="index.html#contact" class="btn btn-blue">Contact</a>
+      <button class="mbtn" id="mbtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav" aria-label="Mobile menu">
+    <a href="company.html">Company</a>
+    <a href="index.html#product">Control Panel</a>
+    <a href="manufacturing.html">For Manufacturers</a>
+    <a href="partner.html">For IT Partners</a>
+    <a href="index.html#sites">Applications</a>
+    <a href="index.html#media">Resources</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="sub-hero">
+  <div class="wrap">
+    <div class="kicker">For IT Partners</div>
+    <h1>Leave PLC integration and field work to us.<br><span class="rl">Focus on your platform.</span></h1>
+    <p>DONG-IN ENSIS takes care of the OT scope in smart factory, MES and AI projects, from control panel design and build to PLC integration and a standard data API.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:34px">
+      <a href="#inquiry" class="btn btn-white">Propose a partnership →</a>
+      <a href="#model" class="btn btn-ghost">Partnership models</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec prob">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Pain Points</div>
+      <h2 class="h2">If your projects keep<br>stalling <span class="b">in the field</span></h2>
+    </div>
+    <div class="check-grid rv">
+      <div class="check-item">Every site has different PLC brands and protocols</div>
+      <div class="check-item">Installing and maintaining data gateways is a burden</div>
+      <div class="check-item">You cannot take electrical safety responsibility for panel modifications</div>
+      <div class="check-item">Collected data comes in different formats for each machine</div>
+      <div class="check-item">You lack staff for on-site installation and commissioning</div>
+      <div class="check-item">Your platform is ready, but you need plant sites to deploy it</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="model">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Partnership Model</div>
+      <h2 class="h2">Three ways<br><span class="b">to work together</span></h2>
+    </div>
+    <div class="model3">
+      <div class="rv"><small>MODEL 01</small><h4>OT scope delivery</h4><p>We handle control panels, PLCs and site installation in your projects.</p><ul><li>Panel design · build · installation</li><li>PLC · drive · sensor integration</li><li>Commissioning · maintenance</li></ul></div>
+      <div class="rv"><small>MODEL 02</small><h4>Data integration</h4><p>Equipment data collected by our panels is delivered to your platform through a standard API.</p><ul><li>Standard data structure</li><li>REST API · WebSocket</li><li>MES · AI · digital twin</li></ul></div>
+      <div class="rv"><small>MODEL 03</small><h4>Joint proposals</h4><p>We find manufacturing customers and funding programs together and propose jointly.</p><ul><li>Joint customer development</li><li>Joint government program bids</li><li>Joint sales with demo equipment</li></ul></div>
+    </div>
+    <div class="role rv" style="margin-top:28px;border:1px solid var(--line)">
+      <div class="me">
+        <h4>DONG-IN ENSIS</h4>
+        <h3>Field data · OT</h3>
+        <ul><li>Panel design · build · installation · commissioning</li><li>PLC · drive · sensor integration</li><li>Encrypted cloud transfer · DataHub</li><li><b>Standard data model + API</b></li></ul>
+      </div>
+      <div>
+        <h4>IT PARTNER</h4>
+        <h3>Platform · services</h3>
+        <ul><li>MES · ERP · EAM integration</li><li>AI analytics · predictive models</li><li>Digital twins · dashboards</li><li>Customer-facing platform operation</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec arch">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Data</div>
+      <h2 class="h2">Different machines,<br><span class="b">one data structure</span></h2>
+      <p class="lead">Data is delivered as equipment → sensor → value → status, so adding machines does not mean rewriting your integration.</p>
+    </div>
+<div class="api-box rv"><span class="c">// Example payload (for illustration)</span>
+{
+  <span class="k">"equipment_id"</span>: <span class="s">"PUMP-01"</span>,
+  <span class="k">"sensor_id"</span>: <span class="s">"bearing_temp_1"</span>,
+  <span class="k">"value"</span>: 48.2,
+  <span class="k">"unit"</span>: <span class="s">"°C"</span>,
+  <span class="k">"status"</span>: <span class="s">"normal"</span>,
+  <span class="k">"timestamp"</span>: <span class="s">"2026-10-07T09:30:00+09:00"</span>
+}</div>
+  </div>
+</section>
+
+<section class="sec proc">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Process</div>
+      <h2 class="h2">How a partnership starts</h2>
+    </div>
+    <div class="proc-grid rv">
+      <div class="proc-item"><div class="w">STEP 1</div><h4>Inquiry</h4><p>Share your solution and target project</p></div>
+      <div class="proc-item"><div class="w">STEP 2</div><h4>Technical meeting</h4><p>Integration scope and roles (NDA if needed)</p></div>
+      <div class="proc-item"><div class="w">STEP 3</div><h4>Demo · test</h4><p>Verify integration with demo equipment and test data</p></div>
+      <div class="proc-item"><div class="w">STEP 4</div><h4>Joint project</h4><p>Customer deployment, joint proposal and delivery</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">FAQ</div>
+      <h2 class="h2">Frequently asked questions</h2>
+    </div>
+    <div class="faq rv">
+      <details><summary>Which PLCs do you support?</summary><p>The Intelligent Control Panel is currently built on Schneider Electric PLCs. Integration with other PLC brands at customer sites is reviewed project by project.</p></details>
+      <details><summary>How is the data delivered?</summary><p>Through REST API and WebSocket. Data points and update intervals are agreed in the technical meeting.</p></details>
+      <details><summary>Can we test before committing?</summary><p>Yes. We can verify the integration with your platform using demo equipment and test data first.</p></details>
+      <details><summary>How are data ownership and contracts handled?</summary><p>Roles and data use between the customer, your company and DONG-IN ENSIS are defined in each project contract.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec form-sec" id="inquiry">
+  <div class="wrap form-wrap">
+    <div class="form-side rv">
+      <div class="kicker">Partnership Inquiry</div>
+      <h2 class="h2">Propose a <span class="b">partnership</span></h2>
+      <p class="lead">Tell us about your solution and how you would like to work together.</p>
+      <ul>
+        <li><b>Response</b>Within 1–2 business days (KST)</li>
+        <li><b>Next step</b>Technical meeting, partnership deck on request</li>
+        <li><b>E-mail</b>dongin@donginmne.com</li>
+      </ul>
+    </div>
+    <div class="rv">
+      <form class="iq" novalidate>
+        <input type="hidden" name="form_type" value="IT기업 협업"><input type="hidden" name="lang" value="EN">
+        <input type="hidden" name="utm_source"><input type="hidden" name="utm_medium"><input type="hidden" name="utm_campaign"><input type="hidden" name="referrer">
+        <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="row">
+          <div class="fld"><label class="t" for="company">Company<i>*</i></label><input type="text" id="company" name="company" required autocomplete="organization"></div>
+          <div class="fld"><label class="t" for="name">Name<i>*</i></label><input type="text" id="name" name="name" required autocomplete="name"></div>
+        </div>
+        <div class="row">
+          <div class="fld"><label class="t" for="position">Department / Title</label><input type="text" id="position" name="position"></div>
+          <div class="fld"><label class="t" for="phone">Phone<i>*</i></label><input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="+82-10-0000-0000"></div>
+        </div>
+        <div class="fld"><label class="t" for="email">E-mail<i>*</i></label><input type="email" id="email" name="email" required autocomplete="email"></div>
+        <div class="fld"><label class="t">Your field (select all that apply)</label><div class="opts"><label><input type="checkbox" name="biz_area" value="MES / ERP"> MES / ERP</label><label><input type="checkbox" name="biz_area" value="AI / analytics"> AI / analytics</label><label><input type="checkbox" name="biz_area" value="Digital twin"> Digital twin</label><label><input type="checkbox" name="biz_area" value="Smart factory supplier"> Smart factory supplier</label><label><input type="checkbox" name="biz_area" value="System integrator"> System integrator</label><label><input type="checkbox" name="biz_area" value="Other"> Other</label></div></div>
+        <div class="fld"><label class="t">Partnership model (select all that apply)</label><div class="opts"><label><input type="checkbox" name="collab_type" value="OT scope delivery"> OT scope delivery</label><label><input type="checkbox" name="collab_type" value="Data integration"> Data integration</label><label><input type="checkbox" name="collab_type" value="Joint proposals"> Joint proposals</label><label><input type="checkbox" name="collab_type" value="Demo request"> Demo request</label></div></div>
+        <div class="fld"><label class="t" for="timeline">Project timing</label><select id="timeline" name="timeline"><option value="">Select</option><option>Ongoing project</option><option>Within 3 months</option><option>Within 6 months</option><option>Exploring</option></select></div>
+        <div class="fld"><label class="t" for="message">Message</label><textarea id="message" name="message" placeholder="Introduce your solution and the projects or sites you have in mind."></textarea></div>
+        <div class="agree">
+          <b>Consent to collection and use of personal information</b><br>
+          Items: company, name, position, phone, e-mail, message · Purpose: to review and respond to your inquiry · Retention: 1 year after the inquiry is resolved (or as required by law)<br>
+          You may decline, but we will not be able to receive your inquiry. See our <a href="privacy.html" target="_blank">Privacy Policy</a> for details.
+          <label><input type="checkbox" name="agree" value="동의" required> I agree to the collection and use of my personal information. (Required)</label>
+        </div>
+        <button type="submit" class="btn btn-blue" data-label="Send proposal">Send proposal</button>
+      </form>
+      <div class="iq-msg ok" style="display:none"><b>Thank you. We have received your proposal.</b>We will contact you within 1–2 business days.</div>
+    </div>
+  </div>
+</section>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-top">
+      <div>
+        <img src="../img/logo_white.png" alt="DONG-IN ENSIS">
+        <p class="tag-line">From control to data, from data to intelligence.</p>
+        <ul>
+          <li>Head Office: 47, Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea</li>
+          <li>R&amp;D Center: 8F NS Tower, 47, Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea</li>
+          <li>Factories: 103-5 &amp; 107, Gongwon-ro, Sangbuk-myeon, Yangsan-si, Gyeongsangnam-do, Korea</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li>TEL: +82-51-862-3668</li>
+          <li>FAX: +82-51-862-3325</li>
+          <li>E-mail: dongin@donginmne.com</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div><a href="company.html">Company</a><a href="privacy.html"><b>Privacy Policy</b></a></div>
+      <div>Copyright © DONG-IN ENSIS CO., LTD. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+<script src="../js/site.js"></script>
+</body>
+</html>
