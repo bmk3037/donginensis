@@ -42,17 +42,24 @@ function doPost(e) {
         sheet.getRange(1, headers.length).setValue(k);
       }
     });
-    sheet.appendRow(headers.map(function (h) { return p[h] || ''; }));
+    // 모든 칸을 텍스트로 저장 (전화번호 앞자리 0이 사라지지 않도록)
+    var row = sheet.getLastRow() + 1;
+    sheet.getRange(row, 1, 1, headers.length).setNumberFormat('@')
+      .setValues([headers.map(function (h) { return p[h] || ''; })]);
 
     if (NOTIFY_EMAIL) {
       var body = headers.filter(function (h) { return p[h]; })
         .map(function (h) { return h + ': ' + p[h]; }).join('\n');
-      MailApp.sendEmail({
-        to: NOTIFY_EMAIL,
-        replyTo: p.email || '',
-        subject: '[홈페이지 문의] ' + (p.form_type || '') + ' - ' + (p.company || '') + ' ' + (p.name || ''),
-        body: body + '\n\n문의 목록: ' + SpreadsheetApp.getActiveSpreadsheet().getUrl()
-      });
+      try {
+        MailApp.sendEmail({
+          to: NOTIFY_EMAIL,
+          replyTo: p.email || '',
+          subject: '[홈페이지 문의] ' + (p.form_type || '') + ' - ' + (p.company || '') + ' ' + (p.name || ''),
+          body: body + '\n\n문의 목록: ' + SpreadsheetApp.getActiveSpreadsheet().getUrl()
+        });
+      } catch (err) {
+        console.error('알림 메일 발송 실패: ' + err); // 문의는 시트에 이미 저장됨
+      }
     }
     return ok_();
   } finally {
