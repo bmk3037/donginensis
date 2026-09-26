@@ -85,3 +85,39 @@ var TXT = IS_EN ? {
     });
   });
 })();
+
+/* 회사소개서 팝업 (메인 페이지에서만, '오늘 하루 보지 않기' 지원) */
+(function(){
+  if(!document.querySelector('a.doc[href*="Company-Profile"]')) return;
+  var KEY='dinProfilePopupHide', today=new Date().toISOString().slice(0,10);
+  try{ if(localStorage.getItem(KEY)===today || sessionStorage.getItem(KEY)) return; }catch(e){}
+  var base=IS_EN?'../':'', L=IS_EN?{
+    k:'Company Profile 2026', h:'Download the <span class="b">DONG-IN ENSIS</span><br>Company Profile',
+    p:'Intelligent Control Panel · company overview · references · certifications',
+    kr:'Korean PDF', en:'English PDF', today:"Don't show again today", close:'Close', cover:'profile-cover-en.jpg'
+  }:{
+    k:'Company Profile 2026', h:'<span class="b">동인엔시스</span> 회사소개서를<br>내려받으세요',
+    p:'지능형제어반 · 회사 개요 · 적용 분야 · 인증을 한눈에 볼 수 있습니다.',
+    kr:'국문 PDF', en:'영문 PDF', today:'오늘 하루 보지 않기', close:'닫기', cover:'profile-cover-kr.jpg'
+  };
+  var f=base+'files/DONG-IN-ENSIS_Company-Profile_';
+  var el=document.createElement('div'); el.className='pp'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-label',L.k);
+  el.innerHTML='<div class="pp-box"><button class="pp-x" type="button" aria-label="'+L.close+'">×</button>'+
+    '<img class="pp-cover" src="'+base+'img/'+L.cover+'" alt="'+L.k+'">'+
+    '<div class="pp-body"><div class="kicker">'+L.k+'</div><h3>'+L.h+'</h3><p>'+L.p+'</p>'+
+    '<div class="pp-btns"><a class="btn '+(IS_EN?'btn-line':'btn-blue')+'" href="'+f+'KR.pdf" target="_blank" rel="noopener" download>'+L.kr+' ↓</a>'+
+    '<a class="btn '+(IS_EN?'btn-blue':'btn-line')+'" href="'+f+'EN.pdf" target="_blank" rel="noopener" download>'+L.en+' ↓</a></div></div>'+
+    '<div class="pp-foot"><button type="button" data-today>'+L.today+'</button><button type="button" data-close>'+L.close+'</button></div></div>';
+  function close(hideToday){
+    try{ if(hideToday) localStorage.setItem(KEY,today); sessionStorage.setItem(KEY,'1'); }catch(e){}
+    el.classList.remove('show'); setTimeout(function(){ el.remove(); },250);
+    document.removeEventListener('keydown',esc);
+  }
+  function esc(e){ if(e.key==='Escape') close(false); }
+  el.addEventListener('click',function(e){ if(e.target===el) close(false); });
+  el.querySelector('.pp-x').onclick=el.querySelector('[data-close]').onclick=function(){ close(false); };
+  el.querySelector('[data-today]').onclick=function(){ close(true); };
+  el.querySelectorAll('.pp-btns a').forEach(function(a){ a.addEventListener('click',function(){ setTimeout(function(){ close(false); },300); }); });
+  setTimeout(function(){ document.body.appendChild(el); document.addEventListener('keydown',esc);
+    requestAnimationFrame(function(){ el.classList.add('show'); }); },1500);
+})();
