@@ -3,7 +3,7 @@
 /* ▼▼ 문의 데이터 수신 주소 (Google Apps Script 웹 앱 URL) ▼▼
    구글 시트 설정 후 발급받은 주소를 따옴표 안에 붙여넣으세요.
    예: 'https://script.google.com/macros/s/XXXXXXXX/exec' */
-var FORM_ENDPOINT = '';
+var FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz-5gQyEVbzcIJVwoBRAjziHYlpssIkicfuV1W4HFxTtcgdehbxJ-Z6VAyll9OWDAw/exec';
 /* ▲▲ 여기만 바꾸면 됩니다 ▲▲ */
 
 var CONTACT_EMAIL = 'dongin@donginmne.com';
