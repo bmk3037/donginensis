@@ -4,8 +4,6 @@
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./",
-    "not_found_handling": "404-page",
-    // 주소를 company.html 형태로 유지 (검색엔진 대표 주소와 일치)
-    "html_handling": "none"
+    "not_found_handling": "404-page"
   }
 }
