@@ -98,9 +98,10 @@
 }
 
 /* 대표 인사 · 회사 개요 (회사소개서와 동일 구성) */
-.ceo3{display:grid;grid-template-columns:1fr 1.1fr;gap:52px;align-items:center}
-.ceo-photo{margin:0}
-.ceo-photo video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--blue-dd)}
+.ceo3{display:grid;grid-template-columns:1fr 1.1fr;gap:52px;align-items:stretch}
+.ceo-photo{margin:0;display:flex;flex-direction:column}
+.ceo-photo video{display:block;width:100%;aspect-ratio:16/9;flex:1 1 auto;min-height:0;object-fit:cover;background:var(--blue-dd)}
+.sec-line{border:0;border-top:1px solid var(--line);margin:0 0 88px}
 .ceo-photo figcaption{padding:14px 18px;background:var(--blue);color:#fff;font-size:15px;line-height:1.5}
 .ceo-txt .h2{margin-top:14px}
 .ceo-txt .h2 .rl{position:relative;display:inline-block;color:var(--blue)}
@@ -152,6 +153,7 @@
   .ceo3,.ov3{grid-template-columns:1fr}
   .path{grid-template-columns:1fr}
   .path .arrow{display:none}
+  .sec-line{margin-bottom:56px}
   .path > div:not(.arrow){margin-bottom:16px}
 }
 @media (max-width:560px){.sites2 li{grid-template-columns:1fr;gap:2px}}
@@ -242,6 +244,7 @@
 <!-- 성장 과정 -->
 <section class="sec" id="journey" style="padding-top:0">
   <div class="wrap">
+    <hr class="sec-line">
     <div class="rv">
       <div class="kicker">Our Journey</div>
       <h2 class="h2">부품에서 시스템으로,<br>시스템에서 <span class="b">데이터로</span></h2>
