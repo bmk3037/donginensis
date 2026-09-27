@@ -1,0 +1,173 @@
+{
+  "defaults": {
+    "handle": "@donginensis",
+    "website": "donginensis.com",
+    "hashtags": ["#동인엔시스", "#지능형제어반", "#제어반", "#스마트팩토리", "#제조DX", "#AX", "#OT", "#PLC", "#부산기업"]
+  },
+  "posts": [
+    {
+      "id": "01_company",
+      "caption": "35년간 제어반을 만든 회사가, 제어반을 데이터 인프라로 바꿉니다.\n\n동인엔시스는 1991년부터 산업·선박 현장의 제어반을 설계하고 직접 제작해 왔습니다. 그 경험 위에서, 이제 설비를 제어하는 제어반이 설비의 데이터를 수집하고 연결하는 지능형제어반을 만듭니다.\n\n📌 1991 제어기기 공급 → 2006 제어시스템 설계·제작 → 2020 친환경 선박·수소 R&D → 2026 지능형제어반\n\n회사소개서(국문·영문 PDF)는 프로필 링크에서 받아보실 수 있습니다.",
+      "hashtags": ["#회사소개", "#제조업", "#산업자동화"],
+      "slides": [
+        {"type": "cover", "bg": "../video/hero_poster.jpg", "kicker": "About DONG-IN ENSIS",
+         "title": "35년간 제어반을 만든 회사가,\n제어반을 *데이터 인프라*로\n바꿉니다.",
+         "sub": "제어에서 데이터로, 데이터에서 지능으로."},
+        {"type": "timeline", "kicker": "Our Journey", "title": "부품에서 시스템으로,\n시스템에서 *데이터*로",
+         "items": [
+           ["1991 ~", "제어기기 공급", "동인기전 설립. 글로벌 전력·제어 브랜드 공급"],
+           ["2006 ~", "제어시스템 설계·제작", "산업용·해상용 전기제어시스템 사업 개시"],
+           ["2020 ~", "친환경 선박·수소 R&D", "친환경기술연구소 설립, 액화수소충전소 제어시스템"],
+           ["2026 ~", "지능형제어반", "현장 설비 데이터를 클라우드·AI와 연결"]
+         ]},
+        {"type": "stats", "kicker": "Why DONG-IN ENSIS", "title": "숫자로 보는 동인엔시스",
+         "items": [["35+", "Years", "1991년 설립"], ["750+", "Projects", "프로젝트 수행"], ["15+", "Industries", "적용 산업"], ["40+", "CE·UL", "Certified Solutions"]]},
+        {"type": "cta", "title": "제조업의 DX·AX는\n*현장 데이터*에서 시작됩니다.", "sub": "회사소개서 · 홍보영상은 홈페이지에서"}
+      ]
+    },
+    {
+      "id": "02_intelligent_panel",
+      "caption": "제어반이 데이터 인프라가 됩니다.\n\n동인엔시스 지능형제어반은 PLC로 설비를 제어하면서 운전 데이터를 함께 수집하고, 별도 수집장비 없이 클라우드까지 안전하게 연결합니다.\n\n01 PLC 실시간 제어 · 데이터 수집\n02 MQTT / TLS 클라우드 전송\n03 DataHub 표준 데이터 · 시계열 저장\n04 REST API 연동\n\n수집 항목: 모터 권선온도(U·V·W), 베어링 온도, 회전속도, 전압·전류·전력량, 진동, 대기 온습도, 운전 상태신호",
+      "hashtags": ["#MQTT", "#IIoT", "#산업용IoT", "#데이터수집"],
+      "slides": [
+        {"type": "cover", "bg": "../video/panel_poster.jpg", "kicker": "Intelligent Control Panel",
+         "title": "설비 제어부터\n클라우드 연결까지,\n*제어반 하나로.*",
+         "sub": "동인엔시스 지능형제어반"},
+        {"type": "list", "kicker": "How It Works", "title": "제어반이\n*데이터 인프라*가 됩니다",
+         "items": [
+           ["01", "PLC 실시간 제어 · 데이터 수집", "제어 로직과 인터록은 현장 PLC가 그대로 책임집니다."],
+           ["02", "MQTT / TLS 클라우드 전송", "PLC에서 MQTT로 운전 데이터를 전송하고, TLS로 통신 구간을 보호합니다."],
+           ["03", "DataHub 표준 데이터 · 시계열 저장", "설비별 데이터를 공통 구조로 정리하고 시간 흐름에 따라 저장합니다."],
+           ["04", "REST API 연동", "고객사의 MES · 관제 · 분석 시스템이 연동할 수 있는 REST API를 제공합니다."]
+         ]},
+        {"type": "chips", "kicker": "Data Points", "title": "이런 데이터를\n*24시간* 기록합니다",
+         "items": ["모터 권선온도 U·V·W", "베어링 온도", "회전속도", "전압·전류·전력량", "진동", "대기 온습도", "운전 상태신호"],
+         "note": "기준치를 벗어나면 알람으로 즉시 통보합니다."},
+        {"type": "cta", "title": "우리 설비에도\n적용할 수 있을까?", "sub": "현장 진단부터 상담해 드립니다"}
+      ]
+    },
+    {
+      "id": "03_manufacturing_issues",
+      "caption": "고장 나고 출동하는 보전, 이제 바꿀 때입니다.\n\n대부분의 설비는 이미 PLC와 인버터로 제어되고 있지만, 그 데이터는 제어반 안에서 사라집니다.\n\nISSUE 01 새벽에 멈춘 설비, 원인은 아무도 모릅니다\nISSUE 02 숙련자가 떠나면 설비 노하우도 사라집니다\nISSUE 03 과열·과부하 징후가 기록되지 않습니다\n\n지능형제어반이 설비를 제어하면서 데이터를 남기고, 이상 징후를 먼저 알립니다.\n\n적용 가능성 진단 신청은 프로필 링크에서.",
+      "hashtags": ["#예지보전", "#설비관리", "#공장자동화", "#설비보전"],
+      "slides": [
+        {"type": "cover", "bg": "../img/field-panel.jpg", "kicker": "For Manufacturing",
+         "title": "설비 고장,\n감이 아니라\n*데이터*로 대비하세요.",
+         "sub": "고장 나고 출동하는 보전, 이제 바꿀 때입니다"},
+        {"type": "issue", "no": "ISSUE 01", "title": "새벽에 멈춘 설비,\n원인은 아무도 모릅니다", "body": "고장이 난 뒤에야 출동하고,\n정지 시간만큼 생산 손실이 쌓입니다."},
+        {"type": "issue", "no": "ISSUE 02", "title": "숙련자가 떠나면\n설비 노하우도 사라집니다", "body": "소리와 감으로 판단하던 경험은\n기록으로 남지 않습니다."},
+        {"type": "issue", "no": "ISSUE 03", "title": "과열·과부하 징후가\n기록되지 않습니다", "body": "온도·전류·진동의 변화를 추적할\n이력이 없어 예방이 어렵습니다."},
+        {"type": "list", "kicker": "Solution", "title": "지능형제어반이\n이상 징후를 *먼저* 알립니다",
+         "items": [
+           ["✓", "모터·펌프의 온도·전류·진동을 24시간 기록", ""],
+           ["✓", "기준치를 벗어나면 알람으로 즉시 통보", ""],
+           ["✓", "현장에는 지능형제어반 1면만 설치", ""]
+         ]},
+        {"type": "cta", "title": "우리 공장\n적용 가능성 확인", "sub": "적용 가능성 진단 신청 · 051-862-3668"}
+      ]
+    },
+    {
+      "id": "04_no_extra_device",
+      "caption": "데이터를 얻기 위해 수집장비를 하나 더 설치할 필요가 없습니다.\n\n일반적인 구성: 설비·센서 → 제어 PLC → 별도 게이트웨이 / 산업용 PC → 클라우드\n동인엔시스: 설비·센서 → 지능형제어반 → (MQTT/TLS) → 클라우드 · DataHub\n\n제어 기능은 현장에 유지하고, 운전 데이터는 제어반에서 클라우드로 연결합니다.\n\n※ 네트워크 및 보안 구성은 현장 환경에 따라 달라질 수 있습니다.",
+      "hashtags": ["#MQTT", "#TLS", "#엣지컴퓨팅", "#IIoT"],
+      "slides": [
+        {"type": "cover", "bg": "../video/mqtt_poster.jpg", "kicker": "Why No Extra Device",
+         "title": "데이터를 얻기 위해\n수집장비를\n*하나 더* 둘 필요가 없습니다",
+         "sub": "PLC → Cloud, 별도 수집장비 없이"},
+        {"type": "flow", "kicker": "일반적인 데이터 수집 구성", "title": "장비가 늘수록\n관리 지점도 늘어납니다",
+         "items": ["설비 · 센서", "제어 PLC", "별도 게이트웨이 / 산업용 PC", "클라우드"], "mark": 2, "mark_note": "추가 장비 · 설치 · 관리 지점"},
+        {"type": "flow", "kicker": "동인엔시스 지능형제어반", "title": "제어반 하나로\n*클라우드까지*",
+         "items": ["설비 · 센서", "지능형제어반 · 설비 제어 + 운전 데이터 수집", "MQTT / TLS", "클라우드 · DataHub"], "mark": 1, "mark_note": "별도 수집장비 없음", "good": true},
+        {"type": "list", "kicker": "Principles", "title": "제어 권한은\n*현장에*",
+         "items": [
+           ["01", "제어 권한은 현장에", "서버는 설비를 직접 제어하지 않고, 인터록과 최종 제어는 PLC가 보유합니다."],
+           ["02", "보안 연결", "TLS 암호화 기반 MQTT로 현장과 클라우드를 연결합니다."],
+           ["03", "확장 가능한 데이터 구조", "설비·센서가 늘어나도 동일한 표준 구조로 AI와 디지털트윈이 같은 데이터를 사용합니다."]
+         ]},
+        {"type": "cta", "title": "제어반에서 클라우드까지,\n현장 데이터를 잇다", "sub": "※ 네트워크·보안 구성은 현장 환경에 따라 달라질 수 있습니다"}
+      ]
+    },
+    {
+      "id": "05_it_partners",
+      "caption": "스마트팩토리 프로젝트가 늘 현장 연동에서 늦어졌다면.\n\nPLC 연동과 현장 시공은 동인엔시스에 맡기고, 플랫폼에만 집중하세요.\n\n✔ 제어반 설계·제작·설치까지 OT 구간 전담\n✔ 설비 데이터를 표준 구조 + REST API로 제공\n✔ MES · AI · 디지털트윈에 바로 연결\n\n저희는 PLC와 클라우드를 가장 쉽고 안전하게 연결하는 일에 집중합니다. SCADA · MES · AI · 스마트팩토리 플랫폼은 파트너의 솔루션을 그대로 활용하시면 됩니다.\n\nOT 파트너 협업 문의는 프로필 링크에서.",
+      "hashtags": ["#MES", "#디지털트윈", "#AI", "#OT파트너", "#SI"],
+      "slides": [
+        {"type": "cover", "bg": "../img/control-panel.jpg", "kicker": "For IT Partners",
+         "title": "프로젝트가 늘\n*현장 연동*에서\n늦어졌다면",
+         "sub": "PLC 연동과 현장 시공은 맡기고, 플랫폼에만 집중하세요."},
+        {"type": "split", "kicker": "역할 분담", "title": "OT는 동인엔시스,\nIT는 파트너",
+         "left": ["DONG-IN ENSIS", "현장 데이터 · OT", ["제어반 설계·제작·설치·시운전", "PLC · 인버터 · 센서 연동", "MQTT/TLS 클라우드 전송 · DataHub", "표준 데이터 모델 + REST API · WebSocket"]],
+         "right": ["IT PARTNER", "플랫폼 · 서비스", ["MES · ERP · EAM 연동", "AI 분석 · 예지보전 모델", "디지털트윈 · 대시보드", "고객 대상 플랫폼 운영"]]},
+        {"type": "list", "kicker": "What We Do", "title": "스마트팩토리의\n*OT 구간*을 책임집니다",
+         "items": [
+           ["✓", "제어반 설계·제작·설치까지 OT 구간 전담", ""],
+           ["✓", "설비 데이터를 표준 구조 + REST API로 제공", ""],
+           ["✓", "MES · AI · 디지털트윈에 바로 연결", ""]
+         ]},
+        {"type": "cta", "title": "현장 데이터가 필요한 프로젝트,\n*OT 파트너*로 함께하겠습니다.", "sub": "협업 제안 요청 · dongin@donginmne.com"}
+      ]
+    },
+    {
+      "id": "06_applications",
+      "caption": "육상부터 해상까지, 모터가 도는 모든 현장.\n\n현장에는 지능형제어반 1면만 설치하면 됩니다. 수소·선박·플랜트에서 쌓아온 제어 경험을 그대로 적용합니다.\n\nLAND 상수도 가압펌프장 160kW × 3\nLAND 제철소 송풍기 250kW\nLAND 공기압축기실 90kW × 2\nLAND 액화수소충전소 30kW\nSEA LNG선 기관실 75kW × 2\nSEA 선박평형수처리장치 55kW\nSEA 해상풍력 설치선 크레인 200kW\nPORT 항만 컨테이너 크레인 300kW\n\n※ 적용 시나리오 예시이며, 이미지는 이해를 돕기 위한 연출 이미지입니다.",
+      "hashtags": ["#조선", "#해양", "#수소", "#플랜트", "#항만"],
+      "slides": [
+        {"type": "cover", "bg": "../img/sites/port-crane.jpg", "kicker": "Applications",
+         "title": "육상부터 해상까지,\n모터가 도는\n*모든 현장*",
+         "sub": "현장에는 지능형제어반 1면만 설치하면 됩니다"},
+        {"type": "photo", "bg": "../img/sites/water-pump.jpg", "tag": "LAND", "title": "상수도 가압펌프장", "spec": "160kW × 3"},
+        {"type": "photo", "bg": "../img/sites/steel-blower.jpg", "tag": "LAND", "title": "제철소 송풍기", "spec": "250kW"},
+        {"type": "photo", "bg": "../img/sites/air-compressor.jpg", "tag": "LAND", "title": "공기압축기실", "spec": "90kW × 2"},
+        {"type": "photo", "bg": "../img/sites/lh2-station.jpg", "tag": "LAND", "title": "액화수소충전소", "spec": "30kW"},
+        {"type": "photo", "bg": "../img/sites/lng-engine.jpg", "tag": "SEA", "title": "LNG선 기관실", "spec": "75kW × 2"},
+        {"type": "photo", "bg": "../img/sites/bwts.jpg", "tag": "SEA", "title": "선박평형수처리장치", "spec": "55kW"},
+        {"type": "photo", "bg": "../img/sites/wind-crane.jpg", "tag": "SEA", "title": "해상풍력 설치선 크레인", "spec": "200kW"},
+        {"type": "photo", "bg": "../img/sites/port-crane.jpg", "tag": "PORT", "title": "항만 컨테이너 크레인", "spec": "300kW"},
+        {"type": "cta", "title": "수소·선박·플랜트의\n제어 경험을 *그대로*", "sub": "※ 적용 시나리오 예시 · 연출 이미지"}
+      ]
+    },
+    {
+      "id": "07_process",
+      "caption": "현장 분석부터 AI 학습까지, 한 회사가 끝까지.\n\nSTEP 1 · 1주 — 현장 분석\nSTEP 2 · 5주 — 제어반 제작 (설계·제작·배선, PLC 프로그램, 공장검사)\nSTEP 3 · 2주 — 클라우드 구성 (MQTT/TLS 연결, DataHub·대시보드 설정)\nSTEP 4 · 2~4주 — 시운전 · AI 학습\n\n표준 구축 기간 9 ~ 15주 · 현장 조건에 따라 달라질 수 있습니다.",
+      "hashtags": ["#도입절차", "#구축사례", "#제어반제작"],
+      "slides": [
+        {"type": "cover", "bg": "../img/field-panel.jpg", "kicker": "Process",
+         "title": "현장 분석부터\nAI 학습까지,\n*한 회사가 끝까지*",
+         "sub": "표준 구축 기간 9 ~ 15주"},
+        {"type": "timeline", "kicker": "Process", "title": "표준 구축 기간\n*9 ~ 15주*",
+         "items": [
+           ["STEP 1 · 1주", "현장 분석", "대상 설비·기존 제어반·수집 포인트 확인"],
+           ["STEP 2 · 5주", "제어반 제작", "설계·제작·배선, PLC 프로그램, 공장검사"],
+           ["STEP 3 · 2주", "클라우드 구성", "MQTT/TLS 연결, DataHub·대시보드 설정"],
+           ["STEP 4 · 2~4주", "시운전 · AI 학습", "현장 시운전, 정상 운전 데이터 학습"]
+         ], "note": "현장 조건에 따라 달라질 수 있습니다."},
+        {"type": "timeline", "kicker": "Roadmap", "title": "데이터 인프라에서\n*스마트팩토리*로",
+         "items": [
+           ["2026 · 현재", "데이터 인프라 구축", "PLC → 클라우드 → DataHub → 대시보드 연결, AI 이상탐지 PoC"],
+           ["2027", "예지보전 고도화", "실데이터 기반 이상감지·예지보전, 디지털트윈 연계"],
+           ["NEXT", "스마트팩토리 확장", "협동로봇 등 현장 설비 통합 제어로 확장"]
+         ]},
+        {"type": "cta", "title": "우리 설비에 적용할 수 있을까?", "sub": "현장 진단부터 상담해 드립니다"}
+      ]
+    },
+    {
+      "id": "08_capabilities",
+      "caption": "지능형제어반을 만들 수 있는 세 가지 기반.\n\n데이터 인프라는 소프트웨어만으로 완성되지 않습니다. 현장 설비를 직접 제어해 본 경험이 출발점입니다.\n\n01 MANUFACTURING — 직접 설계하고, 직접 제작합니다\n02 FIELD EXPERIENCE — 까다로운 현장을 제어해 왔습니다\n03 R&D — 데이터와 예측제어를 연구합니다\n\nSchneider Electric 공식 SI 파트너 · ABB · Fuji Electric · Eaton · Danfoss 공급 파트너\nISO 9001 · ISO 14001 · ISO 45001",
+      "hashtags": ["#액화수소", "#수소충전소", "#친환경선박", "#R&D", "#제조기업"],
+      "slides": [
+        {"type": "cover", "bg": "../img/control-panel.jpg", "kicker": "Why We Can",
+         "title": "지능형제어반을\n만들 수 있는\n*세 가지 기반*",
+         "sub": "현장 설비를 직접 제어해 본 경험이 출발점입니다"},
+        {"type": "issue", "no": "01 · MANUFACTURING", "title": "직접 설계하고,\n직접 제작합니다", "body": "제어반 설계부터 제작·배선·PLC 프로그램·\n공장검사·현장 시운전까지 자체 수행합니다.",
+         "chips": ["양산 1·2공장 · 기장공장", "FAT 전용 테스트 라인", "CE·UL 기준 설계·제작"]},
+        {"type": "issue", "no": "02 · FIELD EXPERIENCE", "title": "까다로운 현장을\n제어해 왔습니다", "body": "안전 기준이 높은 수소·선박·플랜트 현장에서\n제어시스템을 구축하고 검증해 왔습니다.",
+         "chips": ["전국 액화수소충전소 제어시스템", "대형 조선소 FGSS 시험설비 제어", "친환경 선박 전기복합추진 자동제어"]},
+        {"type": "issue", "no": "03 · R&D", "title": "데이터와 예측제어를\n연구합니다", "body": "친환경기술연구소를 중심으로 국가·지역 R&D와\n산학협력을 수행하고 있습니다.",
+         "chips": ["액화수소충전소 제어시스템 특허 5건", "해양수산부 수소추진선박 과제", "한국해양대학교 공동연구"]},
+        {"type": "chips", "kicker": "Partners & Certification", "title": "글로벌 브랜드와\n*함께합니다*",
+         "items": ["Schneider Electric 공식 SI 파트너", "ABB", "Fuji Electric", "Eaton", "Danfoss", "ISO 9001", "ISO 14001", "ISO 45001"]},
+        {"type": "cta", "title": "35년간 현장에서 쌓아 온 제어 기술 위에,\n*데이터와 지능*을 더합니다.", "sub": "donginensis.com"}
+      ]
+    }
+  ]
+}
