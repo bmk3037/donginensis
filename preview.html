@@ -71,7 +71,7 @@
   <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="video/hero_e_poster.jpg"
     data-src-pc="video/hero_e.mp4" data-src-m="video/hero_e_m.mp4"></video>
   <audio id="heroBgm" src="video/hero_bgm.mp3" loop preload="none"></audio>
-  <button type="button" class="snd-btn" id="sndBtn" aria-pressed="false" aria-label="배경음 켜기"><svg class="snd-ic" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="x" d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="snd-tx">소리 켜기</span></button>
+  <button type="button" class="snd-btn" id="sndBtn" aria-pressed="false" aria-label="배경음 켜기" data-on="소리 켜기" data-off="소리 끄기" data-label-on="배경음 켜기" data-label-off="배경음 끄기"><svg class="snd-ic" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="x" d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="snd-tx">소리 켜기</span></button>
   <div class="wrap">
     <span class="tag"><i class="dot"></i>지능형제어반 · 제조·해양 DX/AX</span>
     <h1>설비 제어부터 클라우드 연결까지,<br><span class="rl">제어반 하나로.</span></h1>
@@ -458,23 +458,5 @@
 @media (max-width:767px){.snd-btn{right:16px;bottom:18px;padding:8px 13px 8px 10px}}
 </style>
 <div class="preview-badge">미리보기 · 실제 홈페이지 미적용</div>
-<script>
-(function(){
-  var b=document.getElementById('sndBtn'), a=document.getElementById('heroBgm'), v=document.getElementById('heroVideo');
-  if(!b||!a) return;
-  var fadeT=null;
-  function fade(to,done){clearInterval(fadeT);fadeT=setInterval(function(){var d=to-a.volume;if(Math.abs(d)<0.05){a.volume=to;clearInterval(fadeT);if(done)done();}else{a.volume=Math.max(0,Math.min(1,a.volume+d*0.25));}},40);}
-  function sync(){if(v&&!a.paused&&v.duration){var t=v.currentTime%a.duration;if(Math.abs(a.currentTime-t)>0.25)a.currentTime=t;}}
-  b.addEventListener('click',function(){
-    var on=b.getAttribute('aria-pressed')==='true';
-    if(!on){a.volume=0;try{if(v&&v.currentTime)a.currentTime=v.currentTime;}catch(e){}
-      var p=a.play();if(p&&p.catch)p.catch(function(){});fade(0.8);
-      b.setAttribute('aria-pressed','true');b.setAttribute('aria-label','배경음 끄기');b.querySelector('.snd-tx').textContent='소리 끄기';}
-    else{fade(0,function(){a.pause();});
-      b.setAttribute('aria-pressed','false');b.setAttribute('aria-label','배경음 켜기');b.querySelector('.snd-tx').textContent='소리 켜기';}
-  });
-  if(v) v.addEventListener('timeupdate',sync);
-})();
-</script>
 </body>
 </html>

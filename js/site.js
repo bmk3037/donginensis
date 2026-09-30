@@ -39,6 +39,22 @@ var TXT = IS_EN ? {
   var v=document.getElementById('heroVideo');
   if(v&&v.dataset.srcPc){v.src=window.innerWidth<768?v.dataset.srcM:v.dataset.srcPc;var p=v.play();if(p&&p.catch)p.catch(function(){});}
 
+  // 히어로 배경음 (소리 켜기 버튼, 기본 무음)
+  var sb=document.getElementById('sndBtn'), bgm=document.getElementById('heroBgm');
+  if(sb&&bgm){
+    var fadeT=null;
+    var fade=function(to,done){clearInterval(fadeT);fadeT=setInterval(function(){var d=to-bgm.volume;if(Math.abs(d)<0.05){bgm.volume=to;clearInterval(fadeT);if(done)done();}else{bgm.volume=Math.max(0,Math.min(1,bgm.volume+d*0.25));}},40);};
+    sb.addEventListener('click',function(){
+      var on=sb.getAttribute('aria-pressed')==='true', tx=sb.querySelector('.snd-tx');
+      if(!on){bgm.volume=0;try{if(v&&v.currentTime)bgm.currentTime=v.currentTime;}catch(e){}
+        var bp=bgm.play();if(bp&&bp.catch)bp.catch(function(){});fade(0.8);
+        sb.setAttribute('aria-pressed','true');sb.setAttribute('aria-label',sb.dataset.labelOff);tx.textContent=sb.dataset.off;}
+      else{fade(0,function(){bgm.pause();});
+        sb.setAttribute('aria-pressed','false');sb.setAttribute('aria-label',sb.dataset.labelOn);tx.textContent=sb.dataset.on;}
+    });
+    if(v)v.addEventListener('timeupdate',function(){if(!bgm.paused&&bgm.duration){var t=v.currentTime%bgm.duration;if(Math.abs(bgm.currentTime-t)>0.25)bgm.currentTime=t;}});
+  }
+
   // 문의 폼
   document.querySelectorAll('form.iq').forEach(function(f){
     var params=new URLSearchParams(location.search);
