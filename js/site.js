@@ -158,9 +158,9 @@ var TXT = IS_EN ? {
   pick(tabs[0].dataset.cat);
 })();
 
-// 보도자료 목록: 최신 5건만 보이고 나머지는 '더 보기'로 펼침
+// 보도자료 목록: 최신 5건만 보이고 나머지는 '더 보기'로 펼침 (보도자료 전체 페이지처럼 data-all이 있으면 모두 표시)
 (function(){
-  var list=document.querySelector('.press-list');
+  var list=document.querySelector('.press-list:not([data-all])');
   if(!list) return;
   var items=[].slice.call(list.children), LIMIT=5;
   if(items.length<=LIMIT) return;
