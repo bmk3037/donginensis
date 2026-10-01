@@ -629,3 +629,5 @@ p,.lead{text-wrap:pretty}
 .deploy li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
 .deploy-note{grid-column:1/-1;font-size:13.5px;color:var(--sub);margin-top:-4px}
 @media (max-width:720px){.deploy{grid-template-columns:1fr}.deploy .dp{padding:22px 20px}}
+.faq details[hidden]{display:none}
+.faq-more{margin-top:26px}
