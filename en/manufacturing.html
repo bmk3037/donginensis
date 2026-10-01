@@ -127,7 +127,7 @@
     <div class="proc-grid rv">
       <div class="proc-item"><div class="w">STEP 1 · 1 wk</div><h4>Site survey</h4><p>Target equipment, existing panels, data points</p></div>
       <div class="proc-item"><div class="w">STEP 2 · 5 wks</div><h4>Intelligent Control Panel build</h4><p>Design, build, wiring, PLC program, factory test</p></div>
-      <div class="proc-item"><div class="w">STEP 3 · 2 wks</div><h4>Cloud setup</h4><p>Encrypted link, data storage and dashboard</p></div>
+      <div class="proc-item"><div class="w">STEP 3 · 2 wks</div><h4>Server setup</h4><p>Encrypted link, data storage and dashboard</p></div>
       <div class="proc-item"><div class="w">STEP 4 · 2–4 wks</div><h4>Commissioning</h4><p>On-site commissioning, alarm limits, operator training</p></div>
     </div>
     <p class="proc-sum rv">Typical lead time <b>9–15 weeks</b>, depending on site conditions.</p>
@@ -143,7 +143,7 @@
     </div>
     <div class="benefit-grid plan-grid">
       <div class="benefit rv"><div class="n">01 · BUILD</div><h4>Intelligent Control Panel</h4><p>We design, build and install a panel that controls your machines and collects their data.</p><ul><li>New installation or panel replacement</li><li>PLC programming · factory test · commissioning</li><li>Start with one or two machines, then expand</li></ul></div>
-      <div class="benefit rv"><div class="n">02 · DATA</div><h4>Data Services</h4><p>Operating data is stored in the cloud and delivered as dashboards and alarms.</p><ul><li>Encrypted cloud connection · data storage</li><li>Dashboard · early-warning alarms</li><li>MES and analytics integration (API)</li></ul></div>
+      <div class="benefit rv"><div class="n">02 · DATA</div><h4>Data Services</h4><p>Operating data is stored in the cloud or on your own server and delivered as dashboards and alarms.</p><ul><li>Encrypted connection · data storage</li><li>Dashboard · early-warning alarms</li><li>MES and analytics integration (API)</li></ul></div>
       <div class="benefit rv"><div class="n">03 · OPERATE</div><h4>Maintenance</h4><p>After installation, we keep managing machine status and alarm settings with you.</p><ul><li>Remote status checks · regular inspection</li><li>Alarm threshold tuning · operator training</li><li>On-site support · parts replacement</li></ul></div>
     </div>
     <div class="deploy rv">
@@ -180,7 +180,7 @@
     </div>
     <ul class="api-points sec-points rv">
       <li><i>01</i><b>Control stays on site</b><span>Interlocks and final control remain with the on-site PLC; the server never controls machines directly.</span></li>
-      <li><i>02</i><b>Encrypted transfer</b><span>MQTT traffic between site and cloud is encrypted with TLS.</span></li>
+      <li><i>02</i><b>Encrypted transfer</b><span>MQTT traffic between site and cloud (or your own server) is encrypted with TLS.</span></li>
       <li><i>03</i><b>No external network required</b><span>The on-premise option runs on your own server with no external internet connection; the cloud option can use LTE, separate from your plant network.</span></li>
       <li><i>04</i><b>Access and data use</b><span>User accounts, permissions, data use and retention are defined in the project contract.</span></li>
     </ul>
@@ -198,14 +198,14 @@
       <details><summary>Which equipment can it be applied to?</summary><p>Most motor-driven equipment: pumps, blowers and fans, compressors, conveyors, cranes and hoists, and marine equipment, across shipbuilding and offshore, hydrogen and energy, manufacturing and data centers. <a href="applications.html">See applications →</a></p></details>
       <details><summary>Do we need to replace our motors or pumps?</summary><p>No. The equipment stays as it is; the control panel is replaced with an Intelligent Control Panel or newly installed. We propose the best approach based on the existing panel during the site survey.</p></details>
       <details><summary>Can we start with only part of our equipment?</summary><p>Yes. Start with one or two machines, see how the data and alarms are used, then expand to other machines in the same structure. Because the data structure stays the same, no new monitoring screens need to be built.</p></details>
-      <details><summary>How long does it take, and how long will machines stop?</summary><p>A standard project takes 9 to 15 weeks: site survey 1 week, panel build 5 weeks, cloud setup 2 weeks, commissioning 2 to 4 weeks. Panels are built and tested in our factory before installation, and the changeover is scheduled around your production plan. Timelines vary with site conditions.</p></details>
+      <details><summary>How long does it take, and how long will machines stop?</summary><p>A standard project takes 9 to 15 weeks: site survey 1 week, panel build 5 weeks, server setup (cloud or on-premise) 2 weeks, commissioning 2 to 4 weeks. Panels are built and tested in our factory before installation, and the changeover is scheduled around your production plan. Timelines vary with site conditions.</p></details>
       <details><summary>What data can we see?</summary><p>Motor winding temperature (U·V·W), bearing temperature, speed, voltage, current and energy, vibration, ambient temperature and humidity, and run-status signals, recorded 24/7. Current status and history for each machine are shown on the dashboard.</p></details>
       <details><summary>How are we alerted to anomalies?</summary><p>When a value goes beyond its threshold, the dashboard (web and mobile) shows a warning or alarm, so you can schedule maintenance before it becomes a failure.</p></details>
       <details><summary>Who sets the alarm thresholds?</summary><p>During commissioning we set thresholds together with you based on each machine's characteristics and operating data, and train your operators. Thresholds can be adjusted later as part of maintenance.</p></details>
       <details><summary>Does it offer AI predictive maintenance?</summary><p>Threshold-based alarms work from day one. AI anomaly detection that learns from normal operating data is being advanced at the PoC stage, with plans to expand into predictive maintenance on real data. It can also be applied together with AI analytics partners.</p></details>
       <details><summary>Can it be installed where there is no internet?</summary><p>Yes, with an LTE communication module. We check the site's communication environment during the site survey.</p></details>
       <details><summary>Our plant cannot use an external cloud. Can we still adopt it?</summary><p>Yes. With the on-premise option, DataHub and the dashboard are installed on your server or inside your network and run with no external internet connection. We can use your existing server or supply one. Maintenance is agreed to fit your security policy. <a href="#plans">See deployment options →</a></p></details>
-      <details><summary>How are data security and equipment safety handled?</summary><p>The site and the cloud are connected through TLS encryption. Interlocks and final control remain with the on-site PLC; the server never controls equipment directly. Accounts, permissions and data retention are defined in the contract. <a href="#security">See security overview →</a></p></details>
+      <details><summary>How are data security and equipment safety handled?</summary><p>The site and the cloud or your server are connected through TLS encryption. Interlocks and final control remain with the on-site PLC; the server never controls equipment directly. Accounts, permissions and data retention are defined in the contract. <a href="#security">See security overview →</a></p></details>
       <details><summary>What maintenance is provided after installation?</summary><p>Remote status checks, regular inspection, alarm threshold tuning, operator training, and on-site support and parts replacement. The company that designed and built the panel also takes care of after-sales service. <a href="#plans">See options →</a></p></details>
       <details><summary>Can we use government support programs?</summary><p>DONG-IN ENSIS is a registered smart-factory supplier in Korea. We review available support programs with you and help prepare the technical documents. Funding ratios and limits follow each program's announcement. <a href="#plans">See how it works →</a></p></details>
       <details><summary>What does it cost?</summary><p>It depends on the number of machines and motor ratings, the data points, the network environment and whether an existing panel is replaced. We provide a configuration proposal with a quote after the site survey. <a href="#plans">See options and costs →</a></p></details>
