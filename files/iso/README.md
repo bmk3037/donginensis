@@ -3,6 +3,6 @@
 이 폴더의 PDF는 자료실(`resources.html`)의 "ISO 매뉴얼 · 서류" 탭에 표시됩니다.
 직원용 바로가기: https://donginensis.com/resources.html#iso
 
-- 현재: 통합경영 매뉴얼(DI-IMS-M-01), 통합 기록양식집(DI-IMS-F-01) Rev.02 — PDF(보기용)와 원본(docx/xlsx)
+- 현재: 통합경영 매뉴얼(DI-IMS-M-01), 통합 기록양식집(DI-IMS-F-01) Rev.00 — PDF(보기용)와 원본(docx/xlsx)
 - 파일 추가 후 `resources.html`, `en/resources.html`의 `#docList`에 `data-cat="iso"` 카드 한 줄을 추가합니다.
 - 공개 폴더입니다(누구나 열람 가능). 개인정보·단가 등이 들어간 문서는 올리지 않습니다.
