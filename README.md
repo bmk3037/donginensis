@@ -10,3 +10,4 @@
 - dongin_h2_promo_LED_5x3.mp4 : 수소추진선박 홍보영상 2 (51초)
 - dongin_icp_mfg_LED_5x3.mp4 / dongin_icp_mfg_1080p.mp4 : 지능형제어반 제조 현장편 (42초)
 - dongin_icp_it_LED_5x3.mp4 / dongin_icp_it_1080p.mp4 : 지능형제어반 데이터 연결(IT)편 (42초)
+- dongin_icp_dc_LED_5x3.mp4 / dongin_icp_dc_1080p.mp4 : 지능형제어반 데이터센터편 (47초)
