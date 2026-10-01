@@ -268,3 +268,24 @@ var TXT = IS_EN ? {
     try{ if(location.hash&&faq.querySelector(location.hash+'[hidden]')) btn.click(); }catch(e){}
   });
 })();
+
+// 회사소개서 미니 팝업: 메인 페이지에서 잠시 뒤 오른쪽 아래에 작게 띄움 (닫으면 이번 방문 동안 다시 안 뜸)
+(function(){
+  var sec=document.getElementById('profile'); if(!sec) return;
+  var en=document.documentElement.lang==='en', key='profPopClosed';
+  try{ if(sessionStorage.getItem(key)) return; }catch(e){}
+  var links=sec.querySelectorAll('.prof-btns a'), th=sec.querySelector('.prof-stack .s1');
+  if(links.length<2||!th) return;
+  var p=document.createElement('aside');
+  p.className='prof-pop'; p.setAttribute('aria-label',en?'Company profile':'회사소개서');
+  p.innerHTML='<button type="button" class="pp-x" aria-label="'+(en?'Close':'닫기')+'">×</button>'+
+    '<a class="pp-th" href="#profile"><img src="'+th.getAttribute('src')+'" alt=""></a>'+
+    '<div class="pp-tx"><small>COMPANY PROFILE 2026</small><b>'+(en?'Company profile':'회사소개서')+'</b><span>'+(en?'16 pages · PDF':'16장 · PDF')+'</span>'+
+    '<div class="pp-btns"><a href="'+links[0].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'English':'국문')+'</a>'+
+    '<a href="'+links[1].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Korean':'영문')+'</a></div></div>';
+  document.body.appendChild(p);
+  function close(){ p.classList.remove('on'); try{ sessionStorage.setItem(key,'1'); }catch(e){} setTimeout(function(){ p.remove(); },400); }
+  p.querySelector('.pp-x').addEventListener('click',close);
+  p.querySelector('.pp-th').addEventListener('click',function(){ close(); });
+  setTimeout(function(){ p.classList.add('on'); },1800);
+})();
