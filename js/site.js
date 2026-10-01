@@ -176,3 +176,29 @@ var TXT = IS_EN ? {
   });
   list.parentNode.insertBefore(btn,list.nextSibling);
 })();
+
+// 자료실: 분류 탭 + 검색
+(function(){
+  var list=document.getElementById('docList');
+  if(!list) return;
+  var cards=[].slice.call(list.querySelectorAll('.doc'));
+  var tabs=[].slice.call(document.querySelectorAll('.dtabs button'));
+  var q=document.getElementById('dq'), cnt=document.getElementById('dcount'), empty=document.getElementById('dempty');
+  var en=document.documentElement.lang==='en', cat='all';
+  function apply(){
+    var kw=(q.value||'').trim().toLowerCase(), n=0;
+    cards.forEach(function(c){
+      var ok=(cat==='all'||c.dataset.cat===cat) && (!kw||c.textContent.toLowerCase().indexOf(kw)>-1);
+      c.hidden=!ok; if(ok) n++;
+    });
+    cnt.textContent=en?(n+' document'+(n===1?'':'s')):('총 '+n+'건');
+    empty.hidden=n>0;
+  }
+  tabs.forEach(function(t){ t.addEventListener('click',function(){
+    cat=t.dataset.cat;
+    tabs.forEach(function(x){ var on=x===t; x.classList.toggle('on',on); x.setAttribute('aria-selected',on); });
+    apply();
+  }); });
+  q.addEventListener('input',apply);
+  apply();
+})();
