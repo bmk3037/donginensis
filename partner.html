@@ -28,7 +28,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261001d">
+<link rel="stylesheet" href="css/style.css?v=20261001e">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
 <script>
@@ -136,13 +136,38 @@
     </div>
 <div class="api-box rv"><span class="c">// 데이터 예시 (구조 설명용)</span>
 {
+  <span class="k">"site_id"</span>: <span class="s">"PLANT-01"</span>,
   <span class="k">"equipment_id"</span>: <span class="s">"PUMP-01"</span>,
-  <span class="k">"sensor_id"</span>: <span class="s">"bearing_temp_1"</span>,
-  <span class="k">"value"</span>: 48.2,
-  <span class="k">"unit"</span>: <span class="s">"°C"</span>,
-  <span class="k">"status"</span>: <span class="s">"normal"</span>,
-  <span class="k">"timestamp"</span>: <span class="s">"2026-10-07T09:30:00+09:00"</span>
+  <span class="k">"equipment_type"</span>: <span class="s">"pump"</span>,
+  <span class="k">"timestamp"</span>: <span class="s">"2026-10-07T09:30:00+09:00"</span>,
+  <span class="k">"status"</span>: <span class="s">"warning"</span>,
+  <span class="k">"sensors"</span>: [
+    {
+      <span class="k">"sensor_id"</span>: <span class="s">"bearing_temp_1"</span>,
+      <span class="k">"type"</span>: <span class="s">"temperature"</span>,
+      <span class="k">"value"</span>: 48.2,
+      <span class="k">"unit"</span>: <span class="s">"°C"</span>,
+      <span class="k">"status"</span>: <span class="s">"normal"</span>,
+      <span class="k">"threshold"</span>: { <span class="k">"warning"</span>: 70, <span class="k">"alarm"</span>: 85 }
+    },
+    {
+      <span class="k">"sensor_id"</span>: <span class="s">"motor_current_u"</span>,
+      <span class="k">"type"</span>: <span class="s">"current"</span>,
+      <span class="k">"value"</span>: 31.6,
+      <span class="k">"unit"</span>: <span class="s">"A"</span>,
+      <span class="k">"status"</span>: <span class="s">"normal"</span>
+    },
+    {
+      <span class="k">"sensor_id"</span>: <span class="s">"vibration_de"</span>,
+      <span class="k">"type"</span>: <span class="s">"vibration"</span>,
+      <span class="k">"value"</span>: 4.8,
+      <span class="k">"unit"</span>: <span class="s">"mm/s"</span>,
+      <span class="k">"status"</span>: <span class="s">"warning"</span>,
+      <span class="k">"threshold"</span>: { <span class="k">"warning"</span>: 4.5, <span class="k">"alarm"</span>: 7.1 }
+    }
+  ]
 }</div>
+<p class="api-note rv">설비 하나에 센서가 여러 개여도 같은 구조로 묶여 전달됩니다. 센서마다 기준값(경고·알람)에 따라 상태가 정해지고, 하나라도 경고면 설비 상태도 경고로 표시됩니다. 실제 항목과 갱신 주기는 기술 미팅에서 협의합니다.</p>
   </div>
 </section>
 
@@ -248,6 +273,6 @@
     </div>
   </div>
 </footer>
-<script src="js/site.js?v=20261001d"></script>
+<script src="js/site.js?v=20261001e"></script>
 </body>
 </html>

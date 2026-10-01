@@ -299,6 +299,7 @@ img,video{display:block;max-width:100%}
 .model3 ul{list-style:none;margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
 .model3 li{font-size:14px;color:#324055;padding:3px 0}
 .api-box{margin-top:40px;background:var(--ink);color:#DCE6F2;border-radius:8px;padding:28px 30px;font-family:ui-monospace,Consolas,monospace;font-size:14px;line-height:1.75;overflow-x:auto;white-space:pre}
+.api-note{margin-top:14px;font-size:14.5px;color:var(--sub);line-height:1.7;max-width:860px}
 .api-box .k{color:#8FC1FF}.api-box .s{color:#FFD28A}.api-box .c{color:#7C8AA0}
 
 /* ===== 문의 폼 ===== */
