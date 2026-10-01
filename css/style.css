@@ -556,3 +556,5 @@ p,.lead{text-wrap:pretty}
 .dnote-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .dnote .btn{color:#fff}
 .dnote .dnote-tel{background:#fff;color:var(--blue);border:1px solid var(--line)}
+.doc[href$=".docx"] .ic{background:#2B579A}
+.doc[href$=".xlsx"] .ic{background:#217346}
