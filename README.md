@@ -9,3 +9,8 @@
 - DNS: `donginensis.com` A 레코드 185.199.108~111.153, `www` CNAME → `bmk3037.github.io`
 - 모든 페이지의 `og:url`·`og:image`는 `https://donginensis.com/...` 기준입니다.
 - 네이버 서치어드바이저 소유확인 파일(`naver*.html`)은 삭제하지 마세요.
+
+## 인쇄물 QR 안내 (전시회 배너)
+- 2026년 전시회 배너 3종의 QR은 임시 주소(`https://fancy-mud-ff3d.bmk3037.workers.dev/`)로 인쇄되어 있습니다.
+- 접속하면 `https://donginensis.com/?utm_source=banner&utm_medium=qr&utm_campaign=flyasia2026`으로 자동 이동합니다 (각 페이지 `<head>`의 스크립트).
+- **Cloudflare Workers 배포(`fancy-mud-ff3d`)와 이 저장소 연결은 삭제하지 마세요.** 삭제하면 인쇄된 배너 QR이 동작하지 않습니다.
