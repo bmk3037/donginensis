@@ -619,3 +619,13 @@ p,.lead{text-wrap:pretty}
 @media (max-width:900px){.cost-box{grid-template-columns:1fr}.cost-box>div+div{border-left:0;border-top:1px solid var(--line)}.secnet{grid-template-columns:1fr}.secnet .link{padding:2px 0}.secnet .link b{display:inline-block}.sec-points{grid-template-columns:1fr}}
 @media (max-width:560px){.cost-list{grid-template-columns:1fr}.cost-box>div{padding:24px 20px}.secnet .nodes{flex-direction:column}.secnet .ar{transform:rotate(90deg)}}
 .faq p a{color:var(--blue);font-weight:700;white-space:nowrap}
+.deploy{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px}
+.deploy .dp{border:1px solid var(--line);border-radius:8px;padding:26px 28px;background:#fff}
+.deploy .tag{display:inline-block;font-size:12.5px;font-weight:800;color:var(--blue);background:var(--blue-l);border-radius:4px;padding:4px 10px}
+.deploy .tag.on{color:#fff;background:var(--blue-dd)}
+.deploy h4{font-size:18px;margin:12px 0 10px}
+.deploy ul{list-style:none;margin:0;padding:0}
+.deploy li{font-size:14.5px;color:var(--ink);padding:4px 0 4px 16px;position:relative}
+.deploy li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.deploy-note{grid-column:1/-1;font-size:13.5px;color:var(--sub);margin-top:-4px}
+@media (max-width:720px){.deploy{grid-template-columns:1fr}.deploy .dp{padding:22px 20px}}
