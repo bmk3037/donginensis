@@ -99,6 +99,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://donginensis.com/news.html</loc>
+    <lastmod>2026-10-01</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://donginensis.com/news-flyasia-2026.html</loc>
     <lastmod>2026-10-01</lastmod>
     <priority>0.6</priority>
