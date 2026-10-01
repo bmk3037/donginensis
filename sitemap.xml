@@ -98,4 +98,9 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/resources.html"/>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://donginensis.com/news-smartfactory-ot-partner.html</loc>
+    <lastmod>2026-10-02</lastmod>
+    <priority>0.7</priority>
+  </url>
 </urlset>
