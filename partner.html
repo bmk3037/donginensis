@@ -28,7 +28,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261001e">
+<link rel="stylesheet" href="css/style.css?v=20261001f">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
 <script>
@@ -134,40 +134,24 @@
       <h2 class="h2">설비가 달라도<br><span class="b">데이터 구조는 같습니다</span></h2>
       <p class="lead">설비 → 센서 → 실시간값 → 상태의 표준 구조로 제공해, 설비가 늘어나도 연동 코드를 다시 만들 필요가 없습니다.</p>
     </div>
-<div class="api-box rv"><span class="c">// 데이터 예시 (구조 설명용)</span>
+<div class="api-wrap rv">
+  <ul class="api-points"><li><i>01</i><b>설비 단위로 묶어서 전달</b><span><code>site_id</code>·<code>equipment_id</code>로 어느 현장의 어떤 설비인지 구분합니다.</span></li><li><i>02</i><b>센서는 모두 같은 형식</b><span>온도·전류·진동 등 센서가 달라도 값·단위·상태의 형식은 같습니다.</span></li><li><i>03</i><b>상태는 기준값으로 판정</b><span>센서별 경고·알람 기준으로 상태를 정하고, 하나라도 경고면 설비 상태도 경고가 됩니다.</span></li></ul>
+  <div class="api-code">
+<div class="api-box"><span class="c">// 데이터 예시 (구조 설명용)</span>
 {
   <span class="k">"site_id"</span>: <span class="s">"PLANT-01"</span>,
   <span class="k">"equipment_id"</span>: <span class="s">"PUMP-01"</span>,
-  <span class="k">"equipment_type"</span>: <span class="s">"pump"</span>,
   <span class="k">"timestamp"</span>: <span class="s">"2026-10-07T09:30:00+09:00"</span>,
-  <span class="k">"status"</span>: <span class="s">"warning"</span>,
+  <span class="k">"status"</span>: <span class="w">"warning"</span>,
   <span class="k">"sensors"</span>: [
-    {
-      <span class="k">"sensor_id"</span>: <span class="s">"bearing_temp_1"</span>,
-      <span class="k">"type"</span>: <span class="s">"temperature"</span>,
-      <span class="k">"value"</span>: 48.2,
-      <span class="k">"unit"</span>: <span class="s">"°C"</span>,
-      <span class="k">"status"</span>: <span class="s">"normal"</span>,
-      <span class="k">"threshold"</span>: { <span class="k">"warning"</span>: 70, <span class="k">"alarm"</span>: 85 }
-    },
-    {
-      <span class="k">"sensor_id"</span>: <span class="s">"motor_current_u"</span>,
-      <span class="k">"type"</span>: <span class="s">"current"</span>,
-      <span class="k">"value"</span>: 31.6,
-      <span class="k">"unit"</span>: <span class="s">"A"</span>,
-      <span class="k">"status"</span>: <span class="s">"normal"</span>
-    },
-    {
-      <span class="k">"sensor_id"</span>: <span class="s">"vibration_de"</span>,
-      <span class="k">"type"</span>: <span class="s">"vibration"</span>,
-      <span class="k">"value"</span>: 4.8,
-      <span class="k">"unit"</span>: <span class="s">"mm/s"</span>,
-      <span class="k">"status"</span>: <span class="s">"warning"</span>,
-      <span class="k">"threshold"</span>: { <span class="k">"warning"</span>: 4.5, <span class="k">"alarm"</span>: 7.1 }
-    }
+    { <span class="k">"id"</span>: <span class="s">"bearing_temp"</span>, <span class="k">"value"</span>: <span class="n">48.2</span>, <span class="k">"unit"</span>: <span class="s">"°C"</span>, <span class="k">"status"</span>: <span class="s">"normal"</span> },
+    { <span class="k">"id"</span>: <span class="s">"motor_current"</span>, <span class="k">"value"</span>: <span class="n">31.6</span>, <span class="k">"unit"</span>: <span class="s">"A"</span>, <span class="k">"status"</span>: <span class="s">"normal"</span> },
+    { <span class="k">"id"</span>: <span class="s">"vibration"</span>, <span class="k">"value"</span>: <span class="n">4.8</span>, <span class="k">"unit"</span>: <span class="s">"mm/s"</span>, <span class="k">"status"</span>: <span class="w">"warning"</span> }
   ]
 }</div>
-<p class="api-note rv">설비 하나에 센서가 여러 개여도 같은 구조로 묶여 전달됩니다. 센서마다 기준값(경고·알람)에 따라 상태가 정해지고, 하나라도 경고면 설비 상태도 경고로 표시됩니다. 실제 항목과 갱신 주기는 기술 미팅에서 협의합니다.</p>
+    <p class="api-note">실제 항목과 갱신 주기는 기술 미팅에서 협의합니다.</p>
+  </div>
+</div>
   </div>
 </section>
 
@@ -273,6 +257,6 @@
     </div>
   </div>
 </footer>
-<script src="js/site.js?v=20261001e"></script>
+<script src="js/site.js?v=20261001f"></script>
 </body>
 </html>

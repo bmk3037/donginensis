@@ -298,9 +298,17 @@ img,video{display:block;max-width:100%}
 .model3 p{font-size:15px;color:var(--sub)}
 .model3 ul{list-style:none;margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
 .model3 li{font-size:14px;color:#324055;padding:3px 0}
-.api-box{margin-top:40px;background:var(--ink);color:#DCE6F2;border-radius:8px;padding:28px 30px;font-family:ui-monospace,Consolas,monospace;font-size:14px;line-height:1.75;overflow-x:auto;white-space:pre}
-.api-note{margin-top:14px;font-size:14.5px;color:var(--sub);line-height:1.7;max-width:860px}
-.api-box .k{color:#8FC1FF}.api-box .s{color:#FFD28A}.api-box .c{color:#7C8AA0}
+.api-wrap{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:44px;margin-top:44px;align-items:center}
+.api-points{list-style:none;margin:0;padding:0;display:grid;gap:26px}
+.api-points li{position:relative;padding-left:52px}
+.api-points i{position:absolute;left:0;top:1px;font-style:normal;font-size:12.5px;font-weight:800;color:#9CC0EE;border:1px solid rgba(156,192,238,.45);border-radius:4px;padding:3px 7px;letter-spacing:.04em}
+.api-points b{display:block;font-size:18px;font-weight:700;color:#fff;margin-bottom:6px}
+.api-points span{display:block;font-size:15px;line-height:1.7;color:rgba(255,255,255,.72)}
+.api-points code{font-family:ui-monospace,Consolas,monospace;font-size:13.5px;color:#CFE0F7;background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px}
+.api-box{background:rgba(4,16,36,.55);border:1px solid rgba(156,192,238,.22);color:#C9D7EA;border-radius:8px;padding:26px 28px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px;line-height:1.8;overflow-x:auto;white-space:pre}
+.api-box .k{color:#9CC0EE}.api-box .s{color:#E6EEF8}.api-box .n{color:#7FB2F0}.api-box .w{color:#FF8A7E;font-weight:700}.api-box .c{color:#7C93B5}
+.api-note{margin-top:12px;font-size:13.5px;color:rgba(255,255,255,.6)}
+@media (max-width:900px){.api-wrap{grid-template-columns:minmax(0,1fr);gap:32px}.api-box{font-size:12.5px;padding:20px}}
 
 /* ===== 문의 폼 ===== */
 .form-sec{background:var(--bg2)}
