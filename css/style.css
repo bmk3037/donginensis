@@ -504,3 +504,7 @@ p,.lead{text-wrap:pretty}
 .lb button{position:absolute;background:none;border:0;color:#fff;font-size:42px;cursor:pointer;padding:8px 16px;line-height:1;opacity:.85}
 .lb button:hover{opacity:1}
 .lb .x{top:8px;right:8px}.lb .pv{left:4px;top:50%;transform:translateY(-50%)}.lb .nx{right:4px;top:50%;transform:translateY(-50%)}
+.sub-hero.compact{padding:150px 0 64px}
+.app-land{padding:44px 0 80px;background:var(--bg2)}
+.app-land .cat-grid{margin-top:0}
+@media (max-width:720px){.sub-hero.compact{padding:120px 0 48px}.app-land{padding:28px 0 56px}}
