@@ -269,11 +269,10 @@ var TXT = IS_EN ? {
   });
 })();
 
-// 회사소개서 미니 팝업: 메인 페이지에서 잠시 뒤 오른쪽 아래에 작게 띄움 (닫으면 이번 방문 동안 다시 안 뜸)
+// 회사소개서 미니 팝업: 메인 페이지를 열 때마다 잠시 뒤 오른쪽 아래에 작게 띄움
 (function(){
   var sec=document.getElementById('profile'); if(!sec) return;
-  var en=document.documentElement.lang==='en', key='profPopClosed';
-  try{ if(sessionStorage.getItem(key)) return; }catch(e){}
+  var en=document.documentElement.lang==='en';
   var links=sec.querySelectorAll('.prof-btns a'), th=sec.querySelector('.prof-stack .s1');
   if(links.length<2||!th) return;
   var p=document.createElement('aside');
@@ -284,7 +283,7 @@ var TXT = IS_EN ? {
     '<div class="pp-btns"><a href="'+links[0].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'English':'국문')+'</a>'+
     '<a href="'+links[1].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Korean':'영문')+'</a></div></div>';
   document.body.appendChild(p);
-  function close(){ p.classList.remove('on'); try{ sessionStorage.setItem(key,'1'); }catch(e){} setTimeout(function(){ p.remove(); },400); }
+  function close(){ p.classList.remove('on'); setTimeout(function(){ p.remove(); },400); }
   p.querySelector('.pp-x').addEventListener('click',close);
   p.querySelector('.pp-th').addEventListener('click',function(){ close(); });
   setTimeout(function(){ p.classList.add('on'); },1800);
