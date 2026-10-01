@@ -517,3 +517,16 @@ p,.lead{text-wrap:pretty}
 .vtabs+.media-grid{margin-top:24px}
 .vcard[hidden]{display:none}
 @media (max-width:560px){.vtabs{gap:6px}.vtabs button{font-size:14px;padding:9px 14px}}
+
+/* 보도자료 목록 */
+.press{margin-top:56px}
+.press-h{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
+.press-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.press-list li{border-bottom:1px solid var(--line)}
+.press-list a{display:grid;grid-template-columns:96px 1fr auto;gap:20px;align-items:center;padding:18px 6px;color:var(--ink);text-decoration:none}
+.press-list a:hover .pt{color:var(--blue)}
+.press-list .pd{font-size:14px;color:var(--sub);font-variant-numeric:tabular-nums}
+.press-list .pt{font-size:17px;font-weight:700;line-height:1.4;transition:color .15s}
+.press-list .pt em{display:block;font-style:normal;font-size:14.5px;font-weight:400;color:var(--sub);margin-top:2px}
+.press-list .pm{font-size:13.5px;font-weight:700;color:var(--blue);white-space:nowrap}
+@media (max-width:720px){.press-list a{grid-template-columns:1fr;gap:4px}.press-list .pm{margin-top:4px}}
