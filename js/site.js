@@ -177,7 +177,7 @@ var TXT = IS_EN ? {
   list.parentNode.insertBefore(btn,list.nextSibling);
 })();
 
-// 자료실: 분류 탭 + 검색
+// 자료실: 분류별 접기·펼치기 + 분류 탭 + 검색
 (function(){
   var list=document.getElementById('docList');
   if(!list) return;
@@ -185,27 +185,68 @@ var TXT = IS_EN ? {
   var tabs=[].slice.call(document.querySelectorAll('.dtabs button'));
   var q=document.getElementById('dq'), cnt=document.getElementById('dcount'), empty=document.getElementById('dempty');
   var en=document.documentElement.lang==='en', cat='all';
-  function apply(){
-    var kw=(q.value||'').trim().toLowerCase(), n=0;
-    cards.forEach(function(c){
-      var ok=(cat==='all'||c.dataset.cat===cat) && (!kw||c.textContent.toLowerCase().indexOf(kw)>-1);
-      c.hidden=!ok; if(ok) n++;
+  // 분류 탭 순서대로 그룹(제목 + 접히는 목록)을 만들고 자료를 옮겨 담음
+  var groups=[];
+  tabs.forEach(function(t){
+    var c=t.dataset.cat; if(c==='all') return;
+    var items=cards.filter(function(d){ return d.dataset.cat===c; });
+    if(!items.length){ t.hidden=true; return; }
+    var g=document.createElement('section'); g.className='dgrp'; g.dataset.cat=c;
+    var h=document.createElement('button'); h.type='button'; h.className='dgrp-h'; h.setAttribute('aria-expanded','false');
+    h.innerHTML='<b></b><span class="dgrp-n"></span><i aria-hidden="true"></i>';
+    h.querySelector('b').textContent=t.textContent.trim();
+    var body=document.createElement('div'); body.className='docs dgrp-b'; body.hidden=true;
+    items.forEach(function(d){ body.appendChild(d); });
+    g.appendChild(h); g.appendChild(body); list.appendChild(g);
+    h.addEventListener('click',function(){ setOpen(g,body.hidden); });
+    groups.push({el:g,head:h,body:body,items:items,tab:t});
+  });
+  list.classList.add('grouped');
+  function setOpen(g,open){ var o=groups.filter(function(x){return x.el===g;})[0]; o.body.hidden=!open; o.head.setAttribute('aria-expanded',open); g.classList.toggle('open',open); }
+  function apply(keepOpen){
+    var kw=(q.value||'').trim().toLowerCase(), total=0;
+    groups.forEach(function(o){
+      var n=0;
+      o.items.forEach(function(d){ var ok=!kw||d.textContent.toLowerCase().indexOf(kw)>-1; d.hidden=!ok; if(ok) n++; });
+      var show=(cat==='all'||o.el.dataset.cat===cat)&&n>0;
+      o.el.hidden=!show; o.head.querySelector('.dgrp-n').textContent=n;
+      if(show){ total+=n; if(!keepOpen) setOpen(o.el, cat!=='all'||!!kw); }
     });
-    cnt.textContent=en?(n+' document'+(n===1?'':'s')):('총 '+n+'건');
-    empty.hidden=n>0;
+    cnt.textContent=en?(total+' document'+(total===1?'':'s')):('총 '+total+'건');
+    empty.hidden=total>0;
   }
   function pick(t){
     cat=t.dataset.cat;
     tabs.forEach(function(x){ var on=x===t; x.classList.toggle('on',on); x.setAttribute('aria-selected',on); });
     apply();
   }
-  // 자료가 하나도 없는 분류 탭은 숨김 (파일을 올리면 자동으로 나타남)
-  tabs.forEach(function(t){
-    if(t.dataset.cat!=='all' && !list.querySelector('.doc[data-cat="'+t.dataset.cat+'"]')) t.hidden=true;
-    t.addEventListener('click',function(){ pick(t); });
-  });
-  q.addEventListener('input',apply);
+  tabs.forEach(function(t){ t.addEventListener('click',function(){ pick(t); }); });
+  q.addEventListener('input',function(){ apply(); });
   // resources.html#iso 처럼 주소 끝의 분류로 바로 열기 (직원용 바로가기)
-  var h=(location.hash||'').slice(1), start=tabs.filter(function(t){ return t.dataset.cat===h && !t.hidden; })[0];
+  var hs=(location.hash||'').slice(1), start=tabs.filter(function(t){ return t.dataset.cat===hs && !t.hidden; })[0];
   if(start) pick(start); else apply();
+})();
+
+// 회사소개 연혁: 2021년 이후만 먼저 보이고, 이전 연혁은 버튼으로 펼침
+(function(){
+  var hist=document.querySelector('.hist');
+  if(!hist) return;
+  var CUT=2021, en=document.documentElement.lang==='en';
+  var old=[].slice.call(hist.querySelectorAll('.hist-row')).filter(function(r){
+    var y=parseInt((r.querySelector('.y')||{}).textContent,10); return y && y<CUT;
+  });
+  if(!old.length) return;
+  old.forEach(function(r){ r.hidden=true; });
+  var first=old[old.length-1].querySelector('.y').textContent.trim().slice(0,4), last=old[0].querySelector('.y').textContent.trim().slice(0,4);
+  var btn=document.createElement('button');
+  btn.type='button'; btn.className='hist-more'; btn.setAttribute('aria-expanded','false');
+  function label(open){ btn.innerHTML=(open?(en?'Hide earlier history':'이전 연혁 접기'):(en?'Show earlier history':'이전 연혁 보기')+' <span>'+last+' ~ '+first+'</span>')+'<i aria-hidden="true"></i>'; }
+  label(false);
+  btn.addEventListener('click',function(){
+    var open=btn.getAttribute('aria-expanded')!=='true';
+    old.forEach(function(r){ r.hidden=!open; if(open) r.classList.add('in'); });
+    btn.setAttribute('aria-expanded',open); btn.classList.toggle('open',open); label(open);
+    if(!open) hist.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  hist.parentNode.insertBefore(btn,hist.nextSibling);
 })();
