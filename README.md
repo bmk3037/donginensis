@@ -19,6 +19,6 @@
 - CSS·JS는 브라우저가 최대 10분 캐시합니다. `css/style.css`나 `js/site.js`를 바꾸면 모든 페이지의 `?v=` 값을 새 값으로 올려 주세요.
 
 ## 보도자료 뉴스 페이지
-- 보도자료 전문은 루트에 `news-*.html`로 올립니다 (예: `news-smartfactory-ot-partner.html`). 사진은 `img/news/`.
+- 보도자료 전문은 루트에 `news-*.html`로 올립니다 (예: `news-flyasia-2026.html`). 사진은 `img/news/`.
 - 새 글을 올리면 `index.html` 미디어 > 보도자료 목록 맨 위, `sitemap.xml`, `rss.xml`에 함께 추가하고, 네이버 서치어드바이저에서 웹 페이지 수집을 요청하세요.
 - `press/` 폴더는 배포용 원고(Word·PDF·사진) 보관용이라 검색에서 제외했습니다 (`robots.txt`, `.assetsignore`).
