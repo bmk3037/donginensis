@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>(주)동인엔시스</title>
+  <link>https://donginensis.com/</link>
+  <description>지능형제어반 · 제어반 설계·제작 전문기업 (주)동인엔시스. 조선·해양, 수소·에너지, 제조·스마트팩토리, 데이터센터.</description>
+  <language>ko</language>
+  <lastBuildDate>Thu, 01 Oct 2026 12:00:00 +0900</lastBuildDate>
+  <item>
+    <title>(주)동인엔시스 | 지능형 제어반 · 제조·해양 DX/AX 솔루션</title>
+    <link>https://donginensis.com/</link>
+    <guid isPermaLink="true">https://donginensis.com/</guid>
+    <description>35년 제어반 전문기업 동인엔시스의 지능형 제어반. PLC 제어반이 모터·펌프의 온도·전류·진동 데이터를 수집해 별도 수집장비 없이 클라우드로 연결합니다. 양산·기장 공장에서 직접 설계·제작합니다.</description>
+    <pubDate>Thu, 01 Oct 2026 12:00:00 +0900</pubDate>
+  </item>
+  <item>
+    <title>회사소개 | (주)동인엔시스 (구 동인기전) - 35년 제어반 제조</title>
+    <link>https://donginensis.com/company.html</link>
+    <guid isPermaLink="true">https://donginensis.com/company.html</guid>
+    <description>1991년 설립(구 동인기전)한 동인엔시스는 산업·선박용 제어반과 자동제어시스템을 직접 설계·제작합니다. 액화수소충전소·친환경 선박 제어시스템 수행, 양산·기장 공장과 친환경기술연구소 운영.</description>
+    <pubDate>Thu, 01 Oct 2026 12:00:00 +0900</pubDate>
+  </item>
+  <item>
+    <title>적용 분야 - 조선·해양, 수소·에너지, 제조·스마트팩토리, 데이터센터 | (주)동인엔시스</title>
+    <link>https://donginensis.com/applications.html</link>
+    <guid isPermaLink="true">https://donginensis.com/applications.html</guid>
+    <description>지능형 제어반 적용 분야: 조선·해양, 수소·에너지, 제조·스마트팩토리, 데이터센터. 분야별 적용 사례를 확인하세요.</description>
+    <pubDate>Thu, 01 Oct 2026 12:00:00 +0900</pubDate>
+  </item>
+  <item>
+    <title>설비 모니터링·예지보전 지능형 제어반 도입 안내 | (주)동인엔시스</title>
+    <link>https://donginensis.com/manufacturing.html</link>
+    <guid isPermaLink="true">https://donginensis.com/manufacturing.html</guid>
+    <description>모터·펌프·송풍기·압축기 고장을 데이터로 대비하세요. 지능형 제어반이 설비 상태를 24시간 기록하고 이상 징후를 알람으로 알립니다. 노후 제어반 교체와 스마트공장 지원사업 상담.</description>
+    <pubDate>Thu, 01 Oct 2026 12:00:00 +0900</pubDate>
+  </item>
+  <item>
+    <title>스마트팩토리·MES·AI 기업 OT 파트너 협업 | (주)동인엔시스</title>
+    <link>https://donginensis.com/partner.html</link>
+    <guid isPermaLink="true">https://donginensis.com/partner.html</guid>
+    <description>PLC 연동·제어반 제작·현장 시공은 동인엔시스가 맡고, 귀사는 플랫폼에 집중하세요. 스마트팩토리·MES·AI·디지털트윈 기업을 위한 OT 파트너십과 REST API 설비 데이터 제공.</description>
+    <pubDate>Thu, 01 Oct 2026 12:00:00 +0900</pubDate>
+  </item>
+</channel>
+</rss>
