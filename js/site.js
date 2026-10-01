@@ -157,3 +157,22 @@ var TXT = IS_EN ? {
   tabs.forEach(function(t){ t.addEventListener('click',function(){ pick(t.dataset.cat); }); });
   pick(tabs[0].dataset.cat);
 })();
+
+// 보도자료 목록: 최신 5건만 보이고 나머지는 '더 보기'로 펼침
+(function(){
+  var list=document.querySelector('.press-list');
+  if(!list) return;
+  var items=[].slice.call(list.children), LIMIT=5;
+  if(items.length<=LIMIT) return;
+  var en=document.documentElement.lang==='en';
+  items.slice(LIMIT).forEach(function(li){ li.hidden=true; });
+  var btn=document.createElement('button');
+  btn.type='button'; btn.className='press-more';
+  btn.textContent=(en?'Show more':'더 보기')+' ('+(items.length-LIMIT)+')';
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click',function(){
+    items.forEach(function(li){ li.hidden=false; });
+    btn.remove();
+  });
+  list.parentNode.insertBefore(btn,list.nextSibling);
+})();
