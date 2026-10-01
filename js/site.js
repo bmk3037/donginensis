@@ -194,11 +194,18 @@ var TXT = IS_EN ? {
     cnt.textContent=en?(n+' document'+(n===1?'':'s')):('총 '+n+'건');
     empty.hidden=n>0;
   }
-  tabs.forEach(function(t){ t.addEventListener('click',function(){
+  function pick(t){
     cat=t.dataset.cat;
     tabs.forEach(function(x){ var on=x===t; x.classList.toggle('on',on); x.setAttribute('aria-selected',on); });
     apply();
-  }); });
+  }
+  // 자료가 하나도 없는 분류 탭은 숨김 (파일을 올리면 자동으로 나타남)
+  tabs.forEach(function(t){
+    if(t.dataset.cat!=='all' && !list.querySelector('.doc[data-cat="'+t.dataset.cat+'"]')) t.hidden=true;
+    t.addEventListener('click',function(){ pick(t); });
+  });
   q.addEventListener('input',apply);
-  apply();
+  // resources.html#iso 처럼 주소 끝의 분류로 바로 열기 (직원용 바로가기)
+  var h=(location.hash||'').slice(1), start=tabs.filter(function(t){ return t.dataset.cat===h && !t.hidden; })[0];
+  if(start) pick(start); else apply();
 })();
