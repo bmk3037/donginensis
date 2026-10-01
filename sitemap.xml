@@ -25,6 +25,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://donginensis.com/applications.html</loc>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/applications.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/applications.html"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://donginensis.com/privacy.html</loc>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/privacy.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/privacy.html"/>
@@ -52,6 +58,12 @@
     <loc>https://donginensis.com/en/partner.html</loc>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/partner.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/partner.html"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/applications.html</loc>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/applications.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/applications.html"/>
     <priority>0.8</priority>
   </url>
   <url>

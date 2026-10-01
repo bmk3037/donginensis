@@ -86,3 +86,21 @@ var TXT = IS_EN ? {
   });
 })();
 
+// 적용 분야 갤러리 확대 보기
+(function(){
+  var items=[].slice.call(document.querySelectorAll('.gal button'));
+  if(!items.length) return;
+  var lb=document.createElement('div'); lb.className='lb'; lb.setAttribute('role','dialog'); lb.setAttribute('aria-modal','true');
+  lb.innerHTML='<button class="x" aria-label="close">&times;</button><button class="pv" aria-label="previous">&#8249;</button><figure><img alt=""><figcaption></figcaption></figure><button class="nx" aria-label="next">&#8250;</button>';
+  document.body.appendChild(lb);
+  var img=lb.querySelector('img'), cap=lb.querySelector('figcaption'), cur=0;
+  function show(i){ cur=(i+items.length)%items.length; var b=items[cur], f=b.closest('figure');
+    img.src=b.querySelector('img').src; img.alt=b.querySelector('img').alt; var fc=f&&f.querySelector('figcaption'); cap.textContent=fc?[].map.call(fc.children,function(x){return x.textContent.trim();}).filter(Boolean).join(' · '):''; }
+  function close(){ lb.classList.remove('open'); document.body.style.overflow=''; }
+  items.forEach(function(b,i){ b.addEventListener('click',function(){ show(i); lb.classList.add('open'); document.body.style.overflow='hidden'; }); });
+  lb.querySelector('.x').addEventListener('click',close);
+  lb.querySelector('.pv').addEventListener('click',function(e){e.stopPropagation();show(cur-1);});
+  lb.querySelector('.nx').addEventListener('click',function(e){e.stopPropagation();show(cur+1);});
+  lb.addEventListener('click',function(e){ if(e.target===lb) close(); });
+  document.addEventListener('keydown',function(e){ if(!lb.classList.contains('open')) return; if(e.key==='Escape') close(); if(e.key==='ArrowLeft') show(cur-1); if(e.key==='ArrowRight') show(cur+1); });
+})();
