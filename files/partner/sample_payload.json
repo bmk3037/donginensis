@@ -1,0 +1,43 @@
+{
+  "_note": "샘플 데이터 (구조 설명용) · Sample payload for illustration only",
+  "site_id": "PLANT-01",
+  "equipment_id": "PUMP-01",
+  "equipment_type": "pump",
+  "timestamp": "2026-10-07T09:30:00+09:00",
+  "status": "warning",
+  "sensors": [
+    {
+      "id": "bearing_temp",
+      "type": "temperature",
+      "value": 48.2,
+      "unit": "°C",
+      "status": "normal",
+      "threshold": {
+        "warning": 70,
+        "alarm": 85
+      }
+    },
+    {
+      "id": "motor_current",
+      "type": "current",
+      "value": 31.6,
+      "unit": "A",
+      "status": "normal",
+      "threshold": {
+        "warning": 42,
+        "alarm": 48
+      }
+    },
+    {
+      "id": "vibration",
+      "type": "vibration",
+      "value": 4.8,
+      "unit": "mm/s",
+      "status": "warning",
+      "threshold": {
+        "warning": 4.5,
+        "alarm": 7.1
+      }
+    }
+  ]
+}
