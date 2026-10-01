@@ -631,3 +631,18 @@ p,.lead{text-wrap:pretty}
 @media (max-width:720px){.deploy{grid-template-columns:1fr}.deploy .dp{padding:22px 20px}}
 .faq details[hidden]{display:none}
 .faq-more{margin-top:26px}
+
+/* 회사소개서 미니 팝업 */
+.prof-pop{position:fixed;right:20px;bottom:20px;z-index:60;display:flex;gap:14px;align-items:center;width:330px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 36px rgba(6,20,44,.18);padding:12px 14px 12px 12px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s,transform .35s}
+.prof-pop.on{opacity:1;transform:none;pointer-events:auto}
+.prof-pop .pp-th{flex:none;width:112px;border-radius:8px;overflow:hidden;border:1px solid var(--line);line-height:0}
+.prof-pop .pp-th img{width:100%;height:auto;display:block}
+.prof-pop .pp-tx{min-width:0}
+.prof-pop small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--blue)}
+.prof-pop b{display:block;font-size:16px;font-weight:800;margin-top:2px;color:var(--ink)}
+.prof-pop span{display:block;font-size:12.5px;color:var(--sub);margin-top:1px}
+.prof-pop .pp-btns{display:flex;gap:6px;margin-top:8px}
+.prof-pop .pp-btns a{font-size:12.5px;font-weight:700;border-radius:6px;padding:5px 10px;background:var(--blue);color:#fff}
+.prof-pop .pp-btns a+a{background:var(--blue-l);color:var(--blue)}
+.prof-pop .pp-x{position:absolute;top:4px;right:6px;width:26px;height:26px;border:0;background:none;font-size:20px;line-height:1;color:var(--sub);cursor:pointer}
+@media (max-width:600px){.prof-pop{left:12px;right:12px;bottom:12px;width:auto}.prof-pop .pp-th{width:92px}}
