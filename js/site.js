@@ -250,3 +250,21 @@ var TXT = IS_EN ? {
   });
   hist.parentNode.insertBefore(btn,hist.nextSibling);
 })();
+
+// 자주 묻는 질문: 5개까지 보이고 나머지는 '더 보기'로 펼침
+(function(){
+  var LIMIT=5, en=document.documentElement.lang==='en';
+  [].forEach.call(document.querySelectorAll('.faq'),function(faq){
+    var items=[].slice.call(faq.querySelectorAll(':scope > details'));
+    if(items.length<=LIMIT) return;
+    items.slice(LIMIT).forEach(function(d){ d.hidden=true; });
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='press-more faq-more';
+    btn.textContent=(en?'Show more questions':'질문 더 보기')+' ('+(items.length-LIMIT)+')';
+    btn.setAttribute('aria-expanded','false');
+    btn.addEventListener('click',function(){ items.forEach(function(d){ d.hidden=false; }); btn.remove(); });
+    faq.parentNode.insertBefore(btn,faq.nextSibling);
+    // 다른 곳에서 숨겨진 질문으로 이동해 오면 펼침
+    try{ if(location.hash&&faq.querySelector(location.hash+'[hidden]')) btn.click(); }catch(e){}
+  });
+})();
