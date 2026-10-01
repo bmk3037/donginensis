@@ -144,3 +144,16 @@ var TXT = IS_EN ? {
   lb.addEventListener('click',function(e){ if(e.target===lb) close(); });
   document.addEventListener('keydown',function(e){ if(!lb.classList.contains('open')) return; if(e.key==='Escape') close(); if(e.key==='ArrowLeft') show(cur-1); if(e.key==='ArrowRight') show(cur+1); });
 })();
+
+// 홍보영상 분류 탭
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.vtabs button'));
+  if(!tabs.length) return;
+  var cards=[].slice.call(document.querySelectorAll('.media-grid .vcard[data-cat]'));
+  function pick(cat){
+    tabs.forEach(function(t){ var on=t.dataset.cat===cat; t.classList.toggle('on',on); t.setAttribute('aria-selected',on); });
+    cards.forEach(function(c){ var show=c.dataset.cat===cat; if(!show){ var v=c.querySelector('video'); if(v&&!v.paused) v.pause(); } c.hidden=!show; if(show) c.classList.add('in'); });
+  }
+  tabs.forEach(function(t){ t.addEventListener('click',function(){ pick(t.dataset.cat); }); });
+  pick(tabs[0].dataset.cat);
+})();

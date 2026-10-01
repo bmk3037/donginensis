@@ -338,38 +338,48 @@
       <h2 class="h2">Promotional <span class="b">videos</span></h2>
       <p class="lead">See how the Intelligent Control Panel works in the field. The videos are produced in Korean.</p>
     </div>
-    <div class="media-grid">
-      <div class="vcard rv">
+        <div class="vtabs" role="tablist" aria-label="Video categories">
+      <button type="button" role="tab" data-cat="mfg">For Manufacturers</button>
+      <button type="button" role="tab" data-cat="it">For IT Partners</button>
+      <button type="button" role="tab" data-cat="h2">Hydrogen Vessel</button>
+      <button type="button" role="tab" data-cat="dc">Data Center <em>NEW</em></button>
+    </div>
+<div class="media-grid">
+      <div class="vcard rv" data-cat="mfg">
         <video controls preload="none" playsinline poster="../video/promo_manufacturing.jpg" aria-label="Intelligent Control Panel video for manufacturers"><source src="../video/promo_manufacturing.mp4" type="video/mp4"></video>
         <div class="cap"><small>FOR MANUFACTURING</small><h4>Video for manufacturers</h4><p>From equipment stopping at dawn to early anomaly alerts: how the panel changes the plant floor.</p></div>
       </div>
-      <div class="vcard rv">
+      <div class="vcard rv" data-cat="it">
         <video controls preload="none" playsinline poster="../video/promo_it.jpg" aria-label="Intelligent Control Panel video for IT partners"><source src="../video/promo_it.mp4" type="video/mp4"></video>
         <div class="cap"><small>FOR IT PARTNERS</small><h4>Video for IT partners</h4><p>How the panel bridges the wall between IT and the field (OT) with data.</p></div>
       </div>
-      <div class="vcard rv">
+      <div class="vcard rv" data-cat="mfg">
         <video controls preload="none" playsinline poster="../video/promo_manufacturing2.jpg" aria-label="Intelligent Control Panel video for manufacturers, part 2"><source src="../video/promo_manufacturing2.mp4" type="video/mp4"></video>
         <div class="cap"><small>FOR MANUFACTURING</small><h4>Video for manufacturers 2</h4><p>Catching the signals equipment sends weeks in advance, turning a 3 a.m. breakdown into planned daytime maintenance.</p></div>
       </div>
-      <div class="vcard rv">
+      <div class="vcard rv" data-cat="it">
         <video controls preload="none" playsinline poster="../video/promo_it2.jpg" aria-label="Intelligent Control Panel video for IT partners, part 2"><source src="../video/promo_it2.mp4" type="video/mp4"></video>
         <div class="cap"><small>FOR IT PARTNERS</small><h4>Video for IT partners 2</h4><p>Field PLCs publish directly over MQTT, so IT only needs to subscribe to the data.</p></div>
       </div>
-      <div class="vcard rv">
+      <div class="vcard rv" data-cat="mfg">
         <video controls preload="none" playsinline poster="../video/promo_icp_mfg.jpg" aria-label="Intelligent Control Panel video for manufacturers, part 3"><source src="../video/promo_icp_mfg.mp4" type="video/mp4"></video>
         <div class="cap"><small>FOR MANUFACTURING</small><h4>Video for manufacturers 3</h4><p>For plants that never stop: control and data collection handled by a single Intelligent Control Panel.</p></div>
       </div>
-      <div class="vcard rv">
+      <div class="vcard rv" data-cat="it">
         <video controls preload="none" playsinline poster="../video/promo_icp_it.jpg" aria-label="Intelligent Control Panel video for IT partners, part 3"><source src="../video/promo_icp_it.mp4" type="video/mp4"></video>
         <div class="cap"><small>FOR IT PARTNERS</small><h4>Video for IT partners 3</h4><p>Field equipment data delivered straight to IT systems, with no separate data-collection hardware.</p></div>
       </div>
-      <div class="vcard rv">
+      <div class="vcard rv" data-cat="h2">
         <video controls preload="none" playsinline poster="../video/promo_h2_1.jpg" aria-label="Intelligent Control Panel for hydrogen-powered vessels, video 1"><source src="../video/promo_h2_1.mp4" type="video/mp4"></video>
         <div class="cap"><small>HYDROGEN VESSEL</small><h4>Hydrogen-powered vessel video 1</h4><p>The Intelligent Control Panel controls the vessel's equipment and links its operating data to shore in real time.</p></div>
       </div>
-      <div class="vcard rv">
+      <div class="vcard rv" data-cat="h2">
         <video controls preload="none" playsinline poster="../video/promo_h2_2.jpg" aria-label="Intelligent Control Panel for hydrogen-powered vessels, video 2"><source src="../video/promo_h2_2.mp4" type="video/mp4"></video>
         <div class="cap"><small>HYDROGEN VESSEL</small><h4>Hydrogen-powered vessel video 2</h4><p>Smoke-free voyages: DONG-IN ENSIS control technology applied to hydrogen and marine sites.</p></div>
+      </div>
+      <div class="vcard rv" data-cat="dc">
+        <video controls preload="none" playsinline poster="../video/promo_icp_dc.jpg" aria-label="Intelligent Control Panel video for data centers"><source src="../video/promo_icp_dc.mp4" type="video/mp4"></video>
+        <div class="cap"><small>DATA CENTER</small><h4>Video for data centers</h4><p>Cooling that never stops: chillers, pumps, cooling tower fans and liquid-cooling CDUs controlled and monitored by one panel.</p></div>
       </div>
     </div>
   </div>
