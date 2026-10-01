@@ -14,3 +14,6 @@
 - 2026년 전시회 배너 3종의 QR은 임시 주소(`https://fancy-mud-ff3d.bmk3037.workers.dev/`)로 인쇄되어 있습니다.
 - 접속하면 `https://donginensis.com/?utm_source=banner&utm_medium=qr&utm_campaign=flyasia2026`으로 자동 이동합니다 (각 페이지 `<head>`의 스크립트).
 - **Cloudflare Workers 배포(`fancy-mud-ff3d`)와 이 저장소 연결은 삭제하지 마세요.** 삭제하면 인쇄된 배너 QR이 동작하지 않습니다.
+
+## 업데이트가 바로 안 보일 때
+- CSS·JS는 브라우저가 최대 10분 캐시합니다. `css/style.css`나 `js/site.js`를 바꾸면 모든 페이지의 `?v=` 값을 새 값으로 올려 주세요.
