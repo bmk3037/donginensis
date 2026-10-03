@@ -4,7 +4,7 @@
 
 | 결과물 | 원본 | 생성 명령 |
 |---|---|---|
-| `files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf` (수소 분야 회사소개서, 20장) | `build_hydrogen.py` | `python3 build_hydrogen.py` → `out/h2_profile.pdf` |
+| `files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf` (수소전문기업 사업분야, 20장) | `build_hydrogen.py` | `python3 build_hydrogen.py` → `out/h2_profile.pdf` |
 | 회사소개서 12~14쪽 Major Reference (국문·영문) | `build_reference.py` | `python3 build_reference.py` → `out/ref_KR.pdf`, `out/ref_EN.pdf` |
 
 - 필요한 것: Python 3, Playwright(Chromium).

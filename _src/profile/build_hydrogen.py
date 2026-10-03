@@ -5,7 +5,7 @@ ROOT=os.path.dirname(os.path.abspath(__file__))
 C=ROOT+'/crops'; SITE=os.path.abspath(os.path.join(ROOT,'..','..'))
 LOGO=f'{SITE}/img/logo_color.png'; LOGOW=f'{SITE}/img/logo_white.png'
 I=lambda n:f'{C}/{n}'; A=lambda n:f'{SITE}/img/apps/{n}'
-FOOT='DONG-IN ENSIS · 수소 분야 회사소개서'
+FOOT='DONG-IN ENSIS · 수소전문기업 사업분야'
 
 CSS=f"""
 @font-face{{font-family:P;src:url({ROOT}/fonts/Pretendard-Regular.otf);font-weight:400}}
@@ -80,7 +80,7 @@ P.append(f'''<div class="page" style="background:#0A2A55;color:#fff;padding:0">
 <div style="position:absolute;left:82px;top:250px;width:760px">
 <div style="font-size:14px;font-weight:700;letter-spacing:4px;color:#8FC1FF">HYDROGEN BUSINESS PROFILE 2026</div>
 <div style="font-size:54px;font-weight:800;line-height:1.2;margin-top:18px">수소추진선박 · 액화수소충전소<br><span style="color:#8FC1FF">지능형 제어반 · 전력 시스템</span></div>
-<div style="font-size:18px;color:#D6E4F5;margin-top:24px;line-height:1.6">㈜동인엔시스 수소 분야 회사소개서<br>수소전문기업 확인 신청 · 수소사업 설명자료</div></div>
+<div style="font-size:18px;color:#D6E4F5;margin-top:24px;line-height:1.6">㈜동인엔시스 수소전문기업 사업분야<br>수소전문기업 확인 신청 · 수소사업 설명자료</div></div>
 <div style="position:absolute;left:82px;right:82px;top:745px;display:flex;justify-content:space-between;font-size:12px;color:#BFD3EC"><span>㈜동인엔시스 · 대표이사 백민기 · 2026. 10</span><span>donginensis.com</span></div></div>''')
 
 # 2 summary
