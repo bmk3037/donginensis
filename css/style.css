@@ -641,7 +641,7 @@ p,.lead{text-wrap:pretty}
 .prof-pop small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--blue)}
 .prof-pop b{display:block;font-size:16px;font-weight:800;margin-top:2px;color:var(--ink)}
 .prof-pop span{display:block;font-size:12.5px;color:var(--sub);margin-top:1px}
-.prof-pop .pp-btns{display:flex;gap:6px;margin-top:8px}
+.prof-pop .pp-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .prof-pop .pp-btns a{font-size:12.5px;font-weight:700;border-radius:6px;padding:5px 10px;background:var(--blue);color:#fff}
 .prof-pop .pp-btns a+a{background:var(--blue-l);color:var(--blue)}
 .prof-pop .pp-x{position:absolute;top:4px;right:6px;width:26px;height:26px;border:0;background:none;font-size:20px;line-height:1;color:var(--sub);cursor:pointer}

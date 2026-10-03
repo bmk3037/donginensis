@@ -281,7 +281,8 @@ var TXT = IS_EN ? {
     '<a class="pp-th" href="#profile"><img src="'+th.getAttribute('src')+'" alt=""></a>'+
     '<div class="pp-tx"><small>COMPANY PROFILE 2026</small><b>'+(en?'Company profile':'회사소개서')+'</b><span>'+(en?'19 pages · PDF':'19장 · PDF')+'</span>'+
     '<div class="pp-btns"><a href="'+links[0].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'English':'국문')+'</a>'+
-    '<a href="'+links[1].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Korean':'영문')+'</a></div></div>';
+    '<a href="'+links[1].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Korean':'영문')+'</a>'+
+    (links[2]?'<a href="'+links[2].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Hydrogen':'수소')+'</a>':'')+'</div></div>';
   document.body.appendChild(p);
   function close(){ p.classList.remove('on'); setTimeout(function(){ p.remove(); },400); }
   p.querySelector('.pp-x').addEventListener('click',close);
