@@ -56,6 +56,16 @@ PHOTOS = [  # (원본, 파일명, 가로중심)
     ("img/sites/steel-blower.jpg", "07_적용_제철송풍기.jpg", 0.45),
     ("img/apps/mfg-panel-line.jpg", "08_적용_생산라인.jpg", 0.5),
     ("img/apps/h2-vessel.jpg", "09_적용_수소추진선박.jpg", 0.5),
+    ("img/apps/marine-lng-panel.jpg", "10_적용_선박기관실_점검.jpg", 0.5),
+    ("img/apps/marine-deck.jpg", "11_적용_해상플랜트_갑판.jpg", 0.4),
+    ("img/sites/port-crane.jpg", "12_적용_항만크레인.jpg", 0.3),
+    ("img/apps/h2-vessel-system.jpg", "13_적용_수소추진선박_제어실.jpg", 0.5),
+    ("img/apps/mfg-auto.jpg", "14_적용_자동차생산라인.jpg", 0.5),
+    ("img/apps/mfg-food.jpg", "15_적용_식품공장.jpg", 0.5),
+    ("img/apps/mfg-vibration.jpg", "16_예지보전_진동점검.jpg", 0.5),
+    ("img/apps/dc-chiller.jpg", "17_적용_데이터센터_냉동기.jpg", 0.5),
+    ("img/apps/dc-cooling-tower.jpg", "18_적용_데이터센터_냉각탑.jpg", 0.5),
+    ("img/apps/dc-noc.jpg", "19_데이터_관제모니터링.jpg", 0.5),
 ]
 for src, name, cx in PHOTOS:
     crop(src, 4 / 3, (1200, 900), cx).save(OUT / name, quality=92)
