@@ -646,4 +646,9 @@ p,.lead{text-wrap:pretty}
 .prof-pop .pp-btns a+a{background:var(--blue-l);color:var(--blue)}
 .prof-pop .pp-x{position:absolute;top:4px;right:6px;width:26px;height:26px;border:0;background:none;font-size:20px;line-height:1;color:var(--sub);cursor:pointer}
 @media (max-width:600px){.prof-pop{left:12px;right:12px;bottom:12px;width:auto}.prof-pop .pp-th{width:92px}}
-.app-doc{margin-top:22px;max-width:520px}
+.app-doc{margin-top:16px;max-width:400px;padding:10px 14px;gap:12px;border-radius:6px}
+.app-doc .ic{width:28px;height:34px;font-size:9.5px;border-radius:3px}
+.app-doc .ic::after{border-width:0 8px 8px 0}
+.app-doc b{font-size:14px}
+.app-doc span{font-size:12px}
+.app-doc em{font-size:13px}
