@@ -53,7 +53,7 @@
 .path .py sup{font-size:.5em;color:var(--red)}
 .path b{display:block;font-size:12.5px;margin-top:5px;line-height:1.3}
 .path .pd{font-size:12.5px;color:var(--sub)}
-.ov3{display:grid;grid-template-columns:1.25fr 1fr;gap:24px;align-items:stretch;margin-top:40px}
+.ov3{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;margin-top:40px}
 .facts{display:grid;grid-template-columns:1fr 1fr;background:#fff;border:1px solid var(--line)}
 .fact{grid-column:span 2;padding:18px 22px;border-bottom:1px solid var(--line)}
 .fact.half{grid-column:span 1}
@@ -71,20 +71,22 @@
 .chips2{display:flex;flex-wrap:wrap;gap:6px}
 .chips2 i{font-style:normal;font-size:14px;font-weight:700;padding:6px 11px;border:1px solid #CDD4DE;color:var(--ink)}
 .chips2 i.main{background:var(--blue);border-color:var(--blue);color:#fff}
-.ov-right{display:flex;flex-direction:column;gap:20px}
+.ov-left,.ov-right{display:flex;flex-direction:column;gap:20px}
+.ov-photo.hq{flex:1}
+.ov-photo.hq img{aspect-ratio:4/5;height:100%}
 .ov-photo{margin:0;position:relative}
 .ov-photo img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
 .ov-photo.hq img{aspect-ratio:1/1}
 .ov-photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(rgba(10,42,85,0),rgba(10,42,85,.6));pointer-events:none}
 .ov-photo figcaption{z-index:1;position:absolute;left:12px;bottom:12px;font-size:14px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.85),0 1px 10px rgba(0,0,0,.6);padding:6px 10px}
-.vm3{display:grid;grid-template-columns:1fr;grid-auto-rows:1fr;gap:20px;flex:1}
+.vm3{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:20px;flex:1}
 .vm3 > div{background:#fff;border:1px solid var(--line);border-top:4px solid var(--blue);padding:26px 28px;display:flex;flex-direction:column;justify-content:center}
 .vm3 > div:last-child{border-top-color:var(--red)}
 .vm3 .lbl{font-size:14.5px;font-weight:800;letter-spacing:.14em;color:var(--blue)}
-.vm3 p{margin:12px 0 0;font-size:20px;font-weight:800;line-height:1.45;letter-spacing:-.03em;color:var(--ink)}
+.vm3 p{margin:12px 0 0;font-size:19px;font-weight:800;line-height:1.45;letter-spacing:-.03em;color:var(--ink)}
 .vm3 p em{font-style:normal;color:var(--blue)}
 @media (max-width:900px){
-  .ceo3,.ov3{grid-template-columns:1fr}
+  .ceo3,.ov3,.vm3{grid-template-columns:1fr}
   .path{grid-template-columns:1fr}
   .path .arrow{display:none}
   .path b{font-size:15px}
@@ -315,6 +317,7 @@
       <h2 class="h2">Company overview</h2>
     </div>
     <div class="ov3 rv">
+      <div class="ov-left">
       <div class="facts">
         <div class="fact"><span>Company</span><b>DONG-IN ENSIS CO., LTD.<small>㈜동인엔시스</small></b></div>
         <div class="fact half"><span>CEO</span><b>Min-gi Baek</b></div>
@@ -331,13 +334,14 @@
         <div class="fact"><span>Management systems</span><div class="chips2"><i>ISO 9001</i><i>ISO 14001</i><i>ISO 45001</i></div></div>
         <div class="fact"><span>Partners</span><div class="chips2"><i class="main">Schneider Electric official SI partner</i><i>ABB</i><i>Fuji Electric</i><i>Eaton</i><i>Danfoss</i></div></div>
       </div>
-      <div class="ov-right">
-        <figure class="ov-photo hq"><img src="../img/sites/hq-ns-tower.jpg" alt="NS Tower in Yangjeong-dong, Busan, home of the DONG-IN ENSIS Eco-Technology Research Center" loading="lazy"><figcaption><b>NS Tower</b> · Eco-Technology Research Center</figcaption></figure>
-        <figure class="ov-photo"><img src="../img/sites/lh2-panel-overview.jpg" alt="Intelligent Control Panel with a liquid hydrogen refueling station in the background" loading="lazy"><figcaption><b>Hydrogen Specialized Company</b> · Liquid hydrogen station control system</figcaption></figure>
         <div class="vm3">
           <div><span class="lbl">VISION</span><p>Accelerating DX and AX in manufacturing and maritime industries with <em>field equipment data</em>.</p></div>
           <div><span class="lbl">MISSION</span><p>Creating and connecting <em>reliable data</em> from the control panels that run the equipment.</p></div>
         </div>
+      </div>
+      <div class="ov-right">
+        <figure class="ov-photo hq"><img src="../img/sites/hq-ns-tower.jpg" alt="NS Tower in Yangjeong-dong, Busan, home of the DONG-IN ENSIS Eco-Technology Research Center" loading="lazy"><figcaption><b>NS Tower</b> · Eco-Technology Research Center</figcaption></figure>
+        <figure class="ov-photo"><img src="../img/sites/lh2-panel-overview.jpg" alt="Intelligent Control Panel with a liquid hydrogen refueling station in the background" loading="lazy"><figcaption><b>Hydrogen Specialized Company</b> · Liquid hydrogen station control system</figcaption></figure>
       </div>
     </div>
   </div>
