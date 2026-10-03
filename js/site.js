@@ -279,7 +279,7 @@ var TXT = IS_EN ? {
   p.className='prof-pop'; p.setAttribute('aria-label',en?'Company profile':'회사소개서');
   p.innerHTML='<button type="button" class="pp-x" aria-label="'+(en?'Close':'닫기')+'">×</button>'+
     '<a class="pp-th" href="#profile"><img src="'+th.getAttribute('src')+'" alt=""></a>'+
-    '<div class="pp-tx"><small>COMPANY PROFILE 2026</small><b>'+(en?'Company profile':'회사소개서')+'</b><span>'+(en?'16 pages · PDF':'16장 · PDF')+'</span>'+
+    '<div class="pp-tx"><small>COMPANY PROFILE 2026</small><b>'+(en?'Company profile':'회사소개서')+'</b><span>'+(en?'19 pages · PDF':'19장 · PDF')+'</span>'+
     '<div class="pp-btns"><a href="'+links[0].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'English':'국문')+'</a>'+
     '<a href="'+links[1].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Korean':'영문')+'</a></div></div>';
   document.body.appendChild(p);
