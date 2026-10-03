@@ -62,7 +62,8 @@
 .fact > span{display:block;font-size:13.5px;font-weight:700;color:var(--blue);margin-bottom:6px}
 .fact b{display:block;font-size:19px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
 .fact b small{display:block;font-size:14.5px;font-weight:500;color:var(--sub);letter-spacing:0;margin-top:2px}
-.fact.slogan b{color:var(--blue)}
+.fact.slogan b{color:var(--blue);line-height:1.4}
+@media (max-width:600px){.fact.half.cname,.fact.half.slogan{grid-column:span 2}.fact.half.slogan{border-left:0!important}}
 .fact.half.nl{border-left:0!important}
 .fact b.sm{font-size:15.5px;font-weight:600;line-height:1.6;letter-spacing:0}
 .sites2{list-style:none;margin:0;padding:0}
@@ -321,8 +322,8 @@
     <div class="ov3 rv">
       <div class="ov-left">
       <div class="facts">
-        <div class="fact half"><span>Company</span><b>DONG-IN ENSIS CO., LTD.<small>㈜동인엔시스</small></b></div>
-        <div class="fact half slogan"><span>Slogan</span><b>Where control becomes data.<small>제어반이 데이터가 되다</small></b></div>
+        <div class="fact half cname"><span>Company</span><b>DONG-IN ENSIS CO., LTD.<small>㈜동인엔시스</small></b></div>
+        <div class="fact half slogan"><span>Slogan</span><b>Where control begins,<br>data begins.<small>제어하는 곳에서, 데이터가 시작됩니다</small></b></div>
         <div class="fact half nl"><span>CEO</span><b>Min-gi Baek</b></div>
         <div class="fact half"><span>Founded</span><b>October 1991<small>Incorporated July 1997</small></b></div>
         <div class="fact"><span>Business</span><b class="sm">Intelligent Control Panels · industrial and marine control system engineering and manufacturing · system integration · supply of global power and control products</b></div>
@@ -447,7 +448,7 @@
     <div class="ft-top">
       <div>
         <img src="../img/logo_white.png" alt="DONG-IN ENSIS">
-        <p class="tag-line">Where control becomes data.</p>
+        <p class="tag-line">Where control begins, data begins.</p>
         <ul>
           <li>Head Office: 47, Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea</li>
           <li>R&amp;D Center: 8F NS Tower, 39, Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea</li>
