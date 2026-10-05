@@ -86,7 +86,7 @@
   </url>
   <url>
     <loc>https://donginensis.com/resources.html</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/resources.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/resources.html"/>
     <priority>0.6</priority>
@@ -100,8 +100,13 @@
   </url>
   <url>
     <loc>https://donginensis.com/news.html</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/news-smart-factory-supplier.html</loc>
+    <lastmod>2026-10-05</lastmod>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-it-partner-ot.html</loc>
