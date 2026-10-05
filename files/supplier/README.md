@@ -4,7 +4,7 @@
 
 | 파일 | 탭 | 내용 |
 |---|---|---|
-| `DI-SF-01_Rev00.pdf` | 스마트공장 공급기업 | 스마트공장 공급기업 솔루션 설명서 (D-Core Smart Manufacturing Data Solution) |
+| `DI-SF-01_Rev00.pdf` | 스마트공장 공급기업 | 스마트공장 공급기업 솔루션 설명서 (Smart Manufacturing Data Solution) |
 | `DI-DS-01_Rev00.pdf` | 데이터바우처 공급기업 | 산업설비 OT 데이터 활용서비스 설명서 |
 
 - 원본은 `_src/supplier/`의 생성기로 만듭니다(`_src/supplier/README.md`).

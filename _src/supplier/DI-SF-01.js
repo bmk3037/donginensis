@@ -1,4 +1,4 @@
-// 스마트공장 공급기업 솔루션 설명서 (D-Core Smart Manufacturing Data Solution)
+// 스마트공장 공급기업 솔루션 설명서 (Smart Manufacturing Data Solution)
 require('./common')({ DOC_NO: 'DI-SF-01', REV: 'Rev.00', TITLE: '스마트공장 공급기업 솔루션 설명서' }, H => {
   const {
     Paragraph, TextRun, Table, TableRow, TableCell, ImageRun, AlignmentType, WidthType, ShadingType, BorderStyle, PageBreak,
@@ -15,14 +15,14 @@ require('./common')({ DOC_NO: 'DI-SF-01', REV: 'Rev.00', TITLE: '스마트공장
     gap(1300),
     new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: [new ImageRun({ type: 'png', data: LOGO, transformation: { width: 300, height: 58 } })] }),
     para([run('스마트공장 공급기업 솔루션 설명서', { size: 26, bold: true, color: GRAY })], { align: AlignmentType.CENTER, after: 80 }),
-    para([run('D-Core Smart Manufacturing Data Solution', { size: 36, bold: true, color: '111B2E' })], { align: AlignmentType.CENTER, after: 120 }),
+    para([run('Smart Manufacturing Data Solution', { size: 36, bold: true, color: '111B2E' })], { align: AlignmentType.CENTER, after: 120 }),
     para([run('산업설비 OT 데이터 수집·표준화·모니터링 및 AI 연계 솔루션', { size: 22, color: INK })], { align: AlignmentType.CENTER, after: 120 }),
     new Paragraph({ alignment: AlignmentType.CENTER, indent: { left: 3000, right: 3000 }, spacing: { after: 160 },
       border: { bottom: { style: BorderStyle.SINGLE, size: 18, color: RED, space: 1 } }, children: [] }),
     para([run('Control → Data → Intelligence', { size: 22, bold: true, color: BLUE })], { align: AlignmentType.CENTER, after: 500 }),
     table([2400, W - 2400], ['항목', '내용'], [
       ['문서번호', `${DOC_NO} ${REV}`],
-      ['솔루션명', 'D-Core Smart Manufacturing Data Solution'],
+      ['솔루션명', 'Smart Manufacturing Data Solution'],
       ['부제', '산업설비 OT 데이터 수집·표준화·모니터링 및 AI 연계 솔루션'],
       ['공급기업', '㈜동인엔시스 (DONG-IN ENSIS)'],
       ['작성 / 시행일', '2026.10.05 작성 / 시행: 대표 승인일'],
@@ -33,13 +33,13 @@ require('./common')({ DOC_NO: 'DI-SF-01', REV: 'Rev.00', TITLE: '스마트공장
   const body = [
     h1('1. 솔루션명'),
     kv([
-      ['솔루션명', 'D-Core Smart Manufacturing Data Solution'],
+      ['솔루션명', 'Smart Manufacturing Data Solution'],
       ['부제', '산업설비 OT 데이터 수집·표준화·모니터링 및 AI 연계 솔루션'],
       ['공급기업', 'DONG-IN ENSIS (㈜동인엔시스)'],
     ]),
   
     h1('2. 솔루션 개요'),
-    p('D-Core Smart Manufacturing Data Solution은 제조현장의 PLC, VFD, EOCR, 센서, 계측기 등 산업설비에서 발생하는 운전 데이터를 실시간으로 수집하고, 이를 정제·표준화·저장하여 생산설비 모니터링, 설비상태 분석, AI 이상감지, 디지털 트윈 및 MES/ERP 연계에 활용할 수 있도록 구축하는 스마트제조 솔루션이다.'),
+    p('Smart Manufacturing Data Solution은 제조현장의 PLC, VFD, EOCR, 센서, 계측기 등 산업설비에서 발생하는 운전 데이터를 실시간으로 수집하고, 이를 정제·표준화·저장하여 생산설비 모니터링, 설비상태 분석, AI 이상감지, 디지털 트윈 및 MES/ERP 연계에 활용할 수 있도록 구축하는 스마트제조 솔루션이다.'),
     p('DONG-IN ENSIS는 산업제어 엔지니어링과 OT 데이터 기술을 기반으로 현장 설비와 IT·AI 시스템 사이의 데이터 연결구간을 구축한다.'),
     p('단순 모니터링 시스템 구축이 아니라, Control → Data → Intelligence 구조를 기반으로 제조설비의 데이터를 표준화된 제조데이터 자산으로 전환하는 것을 목표로 한다.'),
     table([3212, 3213, 3213], ['Control', 'Data', 'Intelligence'], [
@@ -122,7 +122,7 @@ require('./common')({ DOC_NO: 'DI-SF-01', REV: 'Rev.00', TITLE: '스마트공장
         arrowRow(),
         flowBox('제어·계측', 'PLC / VFD / EOCR / Sensor'),
         arrowRow('Modbus TCP / MQTT / OPC UA'),
-        flowBox('D-Core / OT Connectivity', null, true),
+        flowBox('OT Connectivity', null, true),
         arrowRow(),
         flowBox('Energient Industrial DataHub', '수집 → 정제 → 표준화 → 저장 → 데이터 품질관리', true),
         arrowRow('REST API'),
