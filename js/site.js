@@ -223,7 +223,8 @@ var TXT = IS_EN ? {
   tabs.forEach(function(t){ t.addEventListener('click',function(){ pick(t); }); });
   q.addEventListener('input',function(){ apply(); });
   // resources.html#iso 처럼 주소 끝의 분류로 바로 열기 (직원용 바로가기)
-  var hs=(location.hash||'').slice(1), start=tabs.filter(function(t){ return t.dataset.cat===hs && !t.hidden; })[0];
+  var hs=(location.hash||'').slice(1); if(hs==='smartfactory'||hs==='datavoucher') hs='supplier';
+  var start=tabs.filter(function(t){ return t.dataset.cat===hs && !t.hidden; })[0];
   if(start) pick(start); else apply();
 })();
 
