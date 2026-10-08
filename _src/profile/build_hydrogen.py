@@ -86,7 +86,7 @@ P.append(f'''<div class="page" style="background:#0A2A55;color:#fff;padding:0">
 # 2 summary
 P.append(page('At a Glance','35년 제어반 전문기업이,<br><b>수소 설비의 제어·전력 기술을 국산화합니다</b>',
  '<p class="lead">해상의 수소추진선박과 육상의 액화수소충전소. 두 현장의 전력·제어 경험을 지능형 제어반 → DataHub → 원격 모니터링으로 제품화하고 있습니다.</p>'
- '<div class="row">'+stat('2<sup>+3</sup>','특허 등록 2건 · 출원 3건','수소충전 · 수소추진선박 제어·전력·안전 기술')+stat('2<sup>건</sup>','해양수산부 국가 R&amp;D','전기복합 추진어선 · 안전기반 소형 수소추진선박')+stat('SK E&amp;S','액화수소충전소 공급','VFD · 배전(PDP) · PLC · UPS 제어시스템 (2024)')+stat('7.5<sup>억원</sup>','2025년 수소사업 투자','3개년 평균매출액 대비 12.88% · 연구인력 6명',True)+'</div>'
+ '<div class="row">'+stat('2<sup>+3</sup>','특허 등록 2건 · 출원 3건','수소충전 · 수소추진선박 제어·전력·안전 기술')+stat('2<sup>건</sup>','해양수산부 국가 R&amp;D','전기복합 추진어선 · 안전기반 소형 수소추진선박')+stat('SK E&amp;S','액화수소충전소 공급','VFD · PLC · PDP · UPS 제어시스템 (2024)')+stat('7.5<sup>억원</sup>','2025년 수소사업 투자','3개년 평균매출액 대비 12.88% · 연구인력 6명',True)+'</div>'
  '<div style="margin-top:26px">'+''.join(f'<span class="pill">{x}</span>' for x in ['1991년 설립 · 35년','750+ 제어시스템 프로젝트','친환경기술연구소','예비 수소전문기업 (2025)','혁신프리미어 1000 (2026)','ISO 9001 · 14001 · 45001'])+'</div>'
  f'<div class="row" style="margin-top:22px"><img class="ph" src="{I("p45_06_photo.jpg")}" style="flex:1;height:190px"><img class="ph" src="{I("p20_06_photo.jpg")}" style="flex:1;height:190px"><img class="ph" src="{I("p39_05_photo.jpg")}" style="flex:1;height:190px"></div>',2,'수소연료전지 전기추진 선박(과제 선형) · SK E&S 액화수소충전소 · 충남병원선 기관실 제어반'))
 
@@ -149,7 +149,7 @@ P.append(page('Major Reference · LNG Fuel Gas Supply System','LNG 연료공급�
  ('SB선보','LNG 운반선용 BOG 압축기','BOG 압축기 제어시스템 설계 · 공급 · 시운전')],[24,42,34])+'</div>',9,'※ LNG 연료 선박의 가스 공급·안전 제어 경험이 수소 설비 제어의 기반입니다.'))
 
 # 10 ref-plant
-feats=[(I('p20_06_photo.jpg'),I('p20_04_logo.jpg'),'SK E&amp;S 액화수소충전소','VFD · 배전 · PLC 제어시스템 공급 · 상용 충전소 운영 실증'),
+feats=[(I('p20_06_photo.jpg'),I('p20_04_logo.jpg'),'SK E&amp;S 액화수소충전소','VFD · PLC · PDP 제어시스템 공급 · 상용 충전소 운영 실증'),
  (I('photo_bobst_421.jpg'),I('logo_bobst.jpg'),'밥스트코리아(BOBST) 포장기계','특수 기계 제어시스템 엔지니어링·공급 (서보·모션 제어)'),
  (I('p21_04_photo.jpg'),I('p21_06_logo.jpg'),'한국남부발전 연료전지 발전소 CCUS BOP 제어','탄소 포집·활용·저장(CCUS) 설비 BOP 제어시스템 · SK에코플랜트')]
 fh=''.join(f'<div class="card" style="flex:none;width:300px"><img class="ph" src="{a}" style="height:160px;border-radius:0"><div class="b" style="padding:14px 18px 16px"><img src="{b}" style="height:26px;display:block;margin-bottom:8px"><h3 style="font-size:16.5px;margin:0 0 6px">{c}</h3><p style="font-size:12px;color:#5A6577;line-height:1.5">{d}</p></div></div>' for a,b,c,d in feats)
