@@ -101,7 +101,16 @@
   <url>
     <loc>https://donginensis.com/news.html</loc>
     <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news.html"/>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news.html"/>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-smart-factory-supplier.html</loc>
@@ -120,61 +129,169 @@
   <url>
     <loc>https://donginensis.com/news-it-partner-ot.html</loc>
     <lastmod>2026-10-02</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-it-partner-ot.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-it-partner-ot.html"/>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-it-partner-ot.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-it-partner-ot.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-it-partner-ot.html"/>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-flyasia-2026.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-flyasia-2026.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-flyasia-2026.html"/>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-flyasia-2026.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-flyasia-2026.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-flyasia-2026.html"/>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-innovation-premier-1000.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-innovation-premier-1000.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-innovation-premier-1000.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-innovation-premier-1000.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-innovation-premier-1000.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-innovation-premier-1000.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-industrial-ai-energy-saving.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-industrial-ai-energy-saving.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-industrial-ai-energy-saving.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-industrial-ai-energy-saving.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-industrial-ai-energy-saving.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-industrial-ai-energy-saving.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-edge-ai-autonomous-control.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-edge-ai-autonomous-control.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-edge-ai-autonomous-control.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-edge-ai-autonomous-control.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-edge-ai-autonomous-control.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-edge-ai-autonomous-control.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-hybrid-fishing-vessel.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-hybrid-fishing-vessel.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-hybrid-fishing-vessel.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-hybrid-fishing-vessel.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-hybrid-fishing-vessel.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-hybrid-fishing-vessel.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-hydrogen-patents-5.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-hydrogen-patents-5.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-hydrogen-patents-5.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-hydrogen-patents-5.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-hydrogen-patents-5.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-hydrogen-patents-5.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-pre-hydrogen-company.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-pre-hydrogen-company.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-pre-hydrogen-company.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-pre-hydrogen-company.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-pre-hydrogen-company.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-pre-hydrogen-company.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-lh2-station-control.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-lh2-station-control.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-lh2-station-control.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-lh2-station-control.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-lh2-station-control.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-lh2-station-control.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-strong-small-business-2024.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-strong-small-business-2024.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-strong-small-business-2024.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-strong-small-business-2024.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-strong-small-business-2024.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-strong-small-business-2024.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-chungnam-hospital-ship.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-chungnam-hospital-ship.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-chungnam-hospital-ship.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-chungnam-hospital-ship.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-chungnam-hospital-ship.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-chungnam-hospital-ship.html"/>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://donginensis.com/news-hidden-champion-2023.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-hidden-champion-2023.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-hidden-champion-2023.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-hidden-champion-2023.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-hidden-champion-2023.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-hidden-champion-2023.html"/>
     <priority>0.5</priority>
   </url>
 </urlset>
