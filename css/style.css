@@ -652,3 +652,31 @@ p,.lead{text-wrap:pretty}
 /* 하위 메뉴(subnav)가 있는 페이지: 앵커 이동 시 제목이 고정 메뉴에 가리지 않게 */
 body:has(.subnav) section[id]{scroll-margin-top:136px}
 @media (max-width:720px){body:has(.subnav) section[id]{scroll-margin-top:118px}}
+
+/* 랜딩 자료실 바로가기 (회사소개서 섹션 아래) */
+.prof-hub{margin-top:40px}
+.prof-hub-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.prof-hub-hd h3{font-size:24px;font-weight:800;margin-top:8px;letter-spacing:-.02em;color:var(--ink)}
+.prof-hub-hd .more{font-weight:700;color:var(--blue);font-size:15px}
+.prof-hub .docs{grid-template-columns:repeat(3,1fr);margin-top:18px}
+.prof-hub .doc{padding:18px 20px;gap:14px}
+.prof-hub .doc b{font-size:16px}
+.doc.lock .ic{background:var(--blue-dd)}
+@media (min-width:1081px) and (max-width:1260px){.gnb{gap:22px}}
+@media (max-width:1080px){.prof-hub .docs{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){.prof-hub .docs{grid-template-columns:1fr}}
+
+/* 회사소개 주요 납품 실적 표 */
+.ref-wrap{margin-top:28px;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+.ref-tbl{width:100%;border-collapse:collapse;min-width:760px}
+.ref-tbl th,.ref-tbl td{padding:13px 16px;font-size:14.5px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);display:table-cell}
+.ref-tbl thead th{background:var(--blue);color:#fff;font-weight:700;font-size:14px}
+.ref-tbl tbody tr:last-child td{border-bottom:0}
+.ref-tbl tbody tr:not(.grp) td.cat{border-top:0}
+.ref-tbl tbody tr.grp td{border-top:2px solid #CFE0F5}
+.ref-tbl tbody tr:first-child td{border-top:0}
+.ref-tbl td.cat{font-weight:700;color:var(--blue);white-space:nowrap;background:var(--blue-l);width:150px;border-bottom-color:var(--blue-l)}
+.ref-tbl td b{font-weight:700;color:var(--ink)}
+.ref-tbl td small{display:block;color:var(--sub);font-size:13px;margin-top:2px}
+.ref-more{margin-top:16px;font-size:14.5px;color:var(--sub);line-height:1.7}
+.ref-more b{color:var(--ink)}
