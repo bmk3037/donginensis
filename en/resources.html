@@ -28,7 +28,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../css/style.css?v=20261009a">
+<link rel="stylesheet" href="../css/style.css?v=20261009b">
 <style>body{word-break:normal;overflow-wrap:break-word}.hero h1{font-size:clamp(34px,4.8vw,62px)}</style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
@@ -83,59 +83,84 @@
 </section>
 <section class="sec" style="padding-top:50px;background:var(--bg2)">
   <div class="wrap">
-    <div class="docs-tools">
-      <div class="dtabs" role="tablist" aria-label="Document categories">
-        <button type="button" role="tab" class="on" data-cat="all">All</button>
-        <button type="button" role="tab" data-cat="cert">Certificates</button>
-        <button type="button" role="tab" data-cat="iso">ISO manuals &amp; documents</button>
-        <button type="button" role="tab" data-cat="ip">Patents &amp; trademarks</button>
-        <button type="button" role="tab" data-cat="innov">Innovative product</button>
-        <button type="button" role="tab" data-cat="profile">Company profile</button>
-        <button type="button" role="tab" data-cat="supplier">Supplier documents</button>
-        <button type="button" role="tab" data-cat="brand">CI · Brand</button>
-      </div>
-      <input type="search" id="dq" class="dq" placeholder="Search documents (e.g. ISO, venture)" aria-label="Search documents">
+    <div class="rtools">
+      <input type="search" id="dq" class="dq" placeholder="Search documents (e.g. ISO, patent)" aria-label="Search documents (e.g. ISO, patent)">
+      <p class="dcount" id="dcount" aria-live="polite">37 documents</p>
     </div>
-    <p class="dcount" id="dcount" aria-live="polite"></p>
-    <div class="docs" id="docList" style="margin-top:12px">
-        <a class="doc" data-cat="cert" href="../files/certs/ISO9001.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>ISO 9001:2015 Quality Management System</b><span>NTREE · Valid 2024.04.24 – 2027.04.23</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/ISO14001.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>ISO 14001:2015 Environmental Management System</b><span>NTREE · Valid 2024.04.24 – 2027.04.23</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/ISO45001.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>ISO 45001:2018 Occupational Health &amp; Safety Management System</b><span>NTREE · Valid 2026.01.27 – 2029.01.26</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/MainBiz.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Main-Biz (Management Innovation SME) Certificate</b><span>Ministry of SMEs and Startups · Valid 2025.11.26 – 2028.11.25 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/InnoBiz.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Inno-Biz (Technology Innovation SME) Certificate</b><span>Ministry of SMEs and Startups · Grade A · Valid 2025.10.29 – 2028.10.28 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/Venture.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Venture Business Certificate (Innovation Growth type)</b><span>Venture business verification body · Valid 2025.12.31 – 2028.12.30 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/StrategicLeader.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Busan Strategic Industry Leading Company Certificate (Future Mobility)</b><span>Busan Metropolitan City · 2024.01.01 – 2026.12.31 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/Legend50.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Regional Specialization Project “Legend 50+” Participating Company</b><span>Busan Metropolitan City · 2024.03.06 – 2026.12.31 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/ServiceSmallGiant.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Busan Service Small Giant Certificate</b><span>Busan Metropolitan City · 2023.06.15 – 2028.06.14 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/RnDCenter.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Corporate R&amp;D Center Recognition (Eco-Technology Research Center)</b><span>Ministry of Science and ICT · KOITA · Recognized since 2020.09.08 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/InnovativeCompany1000.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>“Innovative Company National Representative 1000” Selection</b><span>Ministry of Oceans and Fisheries · Selected 2022.10.20 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/StrongSmallBiz_2024.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Strong Small Business Certificate</b><span>Ministry of Employment and Labor · 2024.05.01 – 2025.04.30 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/HiddenChampion_2023.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Busan Hidden Champion Certificate</b><span>Busan Metropolitan City · 2023.06.01 – 2025.12.31 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="cert" href="../files/certs/NICE_T4_2022.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Technology Assessment Excellent Company (T-4)</b><span>NICE Information Service · 2022.09.06 – 2023.09.06 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="iso" href="../files/iso/DI-IMS-M-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Integrated Management Manual (DI-IMS-M-01)</b><span>Quality · Environment · OH&amp;S · Rev.00 · 2026.10.01 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="iso" href="../files/iso/DI-IMS-F-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Integrated Record Forms (DI-IMS-F-01)</b><span>Rev.00 · 2026.10.01 · Korean</span></div><em>View →</em></a>
-        <a class="doc" data-cat="iso" href="../files/iso/DI-IMS-M-01_Rev00.docx" target="_blank" rel="noopener"><div class="ic">DOC</div><div><b>Integrated Management Manual – source (Word)</b><span>Editable source · Rev.00 · Korean</span></div><em>Download →</em></a>
-        <a class="doc" data-cat="iso" href="../files/iso/DI-IMS-F-01_Rev00.xlsx" target="_blank" rel="noopener"><div class="ic">XLS</div><div><b>Integrated Record Forms – source (Excel)</b><span>Blank forms · Rev.00 · Korean</span></div><em>Download →</em></a>
-        <a class="doc" data-cat="ip" href="../files/ip/Patent_10-2964558.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Patent No. 10-2964558</b><span>Load-profile-based automatic control method for hydrogen fuel cell hybrid propulsion vessels · Registered 2026.05.08</span></div><em>View →</em></a>
-        <a class="doc" data-cat="ip" href="../files/ip/Patent_10-2964564.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Patent No. 10-2964564</b><span>Modular draw-out VFD panel for hydrogen refueling · Registered 2026.05.08</span></div><em>View →</em></a>
-        <a class="doc" data-cat="ip" href="../files/ip/Trademark_40-2214640.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Trademark No. 40-2214640 “(주)동인엔시스”</b><span>Class 42 · Registered 2024.06.28</span></div><em>View →</em></a>
-        <a class="doc" data-cat="ip" href="../files/ip/Trademark_40-2178388.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Trademark No. 40-2178388 “ENERGIENT SOLUTION”</b><span>Class 42 · Registered 2024.04.04</span></div><em>View →</em></a>
-        <a class="doc" data-cat="profile" href="../files/DONG-IN-ENSIS_Company-Profile_EN.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Company profile (English)</b><span>PDF · 19 pages · about 5.5MB</span></div><em>View →</em></a>
-        <a class="doc" data-cat="profile" href="../files/DONG-IN-ENSIS_Company-Profile_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Company profile (Korean)</b><span>PDF · 19 pages · about 5.9MB</span></div><em>View →</em></a>
-        <a class="doc" data-cat="profile" href="../files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Hydrogen Specialized Company (Korean)</b><span>Hydrogen vessels · liquid hydrogen stations · PDF · 20 pages</span></div><em>View →</em></a>
-        <a class="doc" data-cat="profile" href="../files/DONG-IN-ENSIS_Intelligent-Control-Panel_Leaflet_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Intelligent Control Panel leaflet (Korean)</b><span>Exhibition leaflet · PDF · 4 pages · about 0.6MB</span></div><em>View →</em></a>
-        <a class="doc" data-cat="profile" href="../files/DONG-IN-ENSIS_Envelope_330x245_print.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Envelope print file (330×245mm)</b><span>Print-ready · CMYK · 3mm bleed · PDF</span></div><em>View →</em></a>
-        <a class="doc" data-cat="innov" href="../files/innov/DI-IN-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Intelligent Control Panel — Innovative Product Brief (DI-IN-01)</b><span>PPS innovative product designation in progress · 1-page brochure (Korean) · Rev.00 · 2026.10</span></div><em>View →</em></a>
-        <a class="doc" data-cat="innov" href="../files/DONG-IN-ENSIS_Intelligent-Control-Panel_Leaflet_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Intelligent Control Panel leaflet (Korean)</b><span>Exhibition leaflet · PDF · 4 pages · about 0.6MB</span></div><em>View →</em></a>
-        <a class="doc" data-cat="supplier" href="../files/supplier/DI-SF-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Smart factory solution description (Korean)</b><span>Smart Manufacturing Data Solution · DI-SF-01 Rev.00 · 9 pages</span></div><em>View →</em></a>
-        <a class="doc" data-cat="supplier" href="../files/supplier/DI-DS-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Data voucher service description (Korean)</b><span>Industrial OT Data Engineering Service · DI-DS-01 Rev.00 · 6 pages</span></div><em>View →</em></a>
-        <a class="doc" data-cat="supplier" href="../files/supplier/DI-AV-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>AI solution description (Korean)</b><span>Industrial AI Anomaly Detection &amp; Predictive Maintenance (AI anomaly detection currently at PoC stage) · DI-AV-01 Rev.00 · 6 pages</span></div><em>View →</em></a>
-        <a class="doc" data-cat="brand" href="../files/brand/DONG-IN-ENSIS_CI-Guide.html" target="_blank" rel="noopener"><div class="ic">WEB</div><div><b>CI guide (Korean)</b><span>Philosophy · tone · logo · color · type · graphics · applications · v1.1</span></div><em>View →</em></a>
-        <a class="doc" data-cat="brand" href="../files/brand/DONG-IN-ENSIS_Logo_Pack.zip" target="_blank" rel="noopener"><div class="ic">ZIP</div><div><b>Logo pack (ZIP)</b><span>Color · white · black · SVG · PDF · PNG</span></div><em>Download ↓</em></a>
-        <a class="doc" data-cat="brand" href="../files/brand/logo/DONG-IN-ENSIS_logo_color.png" target="_blank" rel="noopener"><div class="ic">PNG</div><div><b>Logo, color (PNG)</b><span>3000px · transparent</span></div><em>View →</em></a>
-        <a class="doc" data-cat="brand" href="../files/brand/logo/DONG-IN-ENSIS_logo_white.png" target="_blank" rel="noopener"><div class="ic">PNG</div><div><b>Logo, white (PNG)</b><span>3000px · for dark backgrounds</span></div><em>View →</em></a>
-        <a class="doc" data-cat="brand" href="../files/brand/logo/DONG-IN-ENSIS_logo_color.svg" target="_blank" rel="noopener"><div class="ic">SVG</div><div><b>Logo, vector (SVG)</b><span>Scalable · print & signage</span></div><em>View →</em></a>
-        <a class="doc" data-cat="brand" href="../files/brand/logo/DONG-IN-ENSIS_logo_color.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>Logo, vector (PDF)</b><span>For print shops</span></div><em>View →</em></a>
+    <div class="rboard" id="docBoard">
+        <section class="rpanel" id="cat-cert" data-cat="cert">
+          <button type="button" class="rp-h" aria-expanded="false"><i>CERT</i><div><b>Certificates</b><small>ISO systems, company certifications and selections</small></div><span class="rp-n">14</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="../files/certs/ISO9001.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>ISO 9001:2015 Quality Management System</b><small>NTREE · Valid 2024.04.24 – 2027.04.23</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/ISO14001.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>ISO 14001:2015 Environmental Management System</b><small>NTREE · Valid 2024.04.24 – 2027.04.23</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/ISO45001.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>ISO 45001:2018 Occupational Health &amp; Safety Management System</b><small>NTREE · Valid 2026.01.27 – 2029.01.26</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/MainBiz.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Main-Biz (Management Innovation SME) Certificate</b><small>Ministry of SMEs and Startups · Valid 2025.11.26 – 2028.11.25 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/InnoBiz.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Inno-Biz (Technology Innovation SME) Certificate</b><small>Ministry of SMEs and Startups · Grade A · Valid 2025.10.29 – 2028.10.28 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/Venture.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Venture Business Certificate (Innovation Growth type)</b><small>Venture business verification body · Valid 2025.12.31 – 2028.12.30 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/StrategicLeader.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Busan Strategic Industry Leading Company Certificate (Future Mobility)</b><small>Busan Metropolitan City · 2024.01.01 – 2026.12.31 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/Legend50.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Regional Specialization Project “Legend 50+” Participating Company</b><small>Busan Metropolitan City · 2024.03.06 – 2026.12.31 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/ServiceSmallGiant.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Busan Service Small Giant Certificate</b><small>Busan Metropolitan City · 2023.06.15 – 2028.06.14 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/RnDCenter.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Corporate R&amp;D Center Recognition (Eco-Technology Research Center)</b><small>Ministry of Science and ICT · KOITA · Recognized since 2020.09.08 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/InnovativeCompany1000.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>“Innovative Company National Representative 1000” Selection</b><small>Ministry of Oceans and Fisheries · Selected 2022.10.20 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/StrongSmallBiz_2024.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Strong Small Business Certificate</b><small>Ministry of Employment and Labor · 2024.05.01 – 2025.04.30 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/HiddenChampion_2023.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Busan Hidden Champion Certificate</b><small>Busan Metropolitan City · 2023.06.01 – 2025.12.31 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/certs/NICE_T4_2022.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Technology Assessment Excellent Company (T-4)</b><small>NICE Information Service · 2022.09.06 – 2023.09.06 · Korean</small></span><span class="go">View →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-profile" data-cat="profile">
+          <button type="button" class="rp-h" aria-expanded="false"><i>DOC</i><div><b>Company profiles</b><small>Company profile, hydrogen profile, leaflet</small></div><span class="rp-n">4</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="../files/DONG-IN-ENSIS_Company-Profile_EN.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Company profile (English)</b><small>PDF · 19 pages · about 5.5MB</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/DONG-IN-ENSIS_Company-Profile_KR.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Company profile (Korean)</b><small>PDF · 19 pages · about 5.9MB</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Hydrogen Specialized Company (Korean)</b><small>Hydrogen vessels · liquid hydrogen stations · PDF · 20 pages</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/DONG-IN-ENSIS_Intelligent-Control-Panel_Leaflet_KR.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Intelligent Control Panel leaflet (Korean)</b><small>Exhibition leaflet · PDF · 4 pages · about 0.6MB</small></span><span class="go">View →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-supplier" data-cat="supplier">
+          <button type="button" class="rp-h" aria-expanded="false"><i>SUP</i><div><b>Supplier documents</b><small>Smart factory · data voucher · AI voucher</small></div><span class="rp-n">3</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="../files/supplier/DI-SF-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Smart factory solution description (Korean)</b><small>Smart Manufacturing Data Solution · DI-SF-01 Rev.00 · 9 pages</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/supplier/DI-DS-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Data voucher service description (Korean)</b><small>Industrial OT Data Engineering Service · DI-DS-01 Rev.00 · 6 pages</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/supplier/DI-AV-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>AI solution description (Korean)</b><small>Industrial AI Anomaly Detection &amp; Predictive Maintenance (AI anomaly detection currently at PoC stage) · DI-AV-01 Rev.00 · 6 pages</small></span><span class="go">View →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-innov" data-cat="innov">
+          <button type="button" class="rp-h" aria-expanded="false"><i>NEW</i><div><b>Innovative product</b><small>Intelligent control panel designation in progress</small></div><span class="rp-n">1</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="../files/innov/DI-IN-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Intelligent Control Panel — Innovative Product Brief (DI-IN-01)</b><small>PPS innovative product designation in progress · 1-page brochure (Korean) · Rev.00 · 2026.10</small></span><span class="go">View →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-ip" data-cat="ip">
+          <button type="button" class="rp-h" aria-expanded="false"><i>IP</i><div><b>Patents · trademarks</b><small>Registered patents and trademarks</small></div><span class="rp-n">4</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="../files/ip/Patent_10-2964558.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Patent No. 10-2964558</b><small>Load-profile-based automatic control method for hydrogen fuel cell hybrid propulsion vessels · Registered 2026.05.08</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/ip/Patent_10-2964564.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Patent No. 10-2964564</b><small>Modular draw-out VFD panel for hydrogen refueling · Registered 2026.05.08</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/ip/Trademark_40-2214640.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Trademark No. 40-2214640 “(주)동인엔시스”</b><small>Class 42 · Registered 2024.06.28</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/ip/Trademark_40-2178388.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Trademark No. 40-2178388 “ENERGIENT SOLUTION”</b><small>Class 42 · Registered 2024.04.04</small></span><span class="go">View →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-iso" data-cat="iso">
+          <button type="button" class="rp-h" aria-expanded="false"><i>ISO</i><div><b>ISO manual · forms</b><small>Integrated management manual and forms</small></div><span class="rp-n">4</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="../files/iso/DI-IMS-M-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Integrated Management Manual (DI-IMS-M-01)</b><small>Quality · Environment · OH&amp;S · Rev.00 · 2026.10.01 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/iso/DI-IMS-F-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Integrated Record Forms (DI-IMS-F-01)</b><small>Rev.00 · 2026.10.01 · Korean</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/iso/DI-IMS-M-01_Rev00.docx" target="_blank" rel="noopener"><span class="ty">DOC</span><span class="tx"><b>Integrated Management Manual – source (Word)</b><small>Editable source · Rev.00 · Korean</small></span><span class="go">Download →</span></a>
+            <a class="rrow" href="../files/iso/DI-IMS-F-01_Rev00.xlsx" target="_blank" rel="noopener"><span class="ty">XLS</span><span class="tx"><b>Integrated Record Forms – source (Excel)</b><small>Blank forms · Rev.00 · Korean</small></span><span class="go">Download →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-brand" data-cat="brand">
+          <button type="button" class="rp-h" aria-expanded="false"><i>CI</i><div><b>CI · brand</b><small>CI guide, logos and print files</small></div><span class="rp-n">7</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="../files/DONG-IN-ENSIS_Envelope_330x245_print.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Envelope print file (330×245mm)</b><small>Print-ready · CMYK · 3mm bleed · PDF</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/brand/DONG-IN-ENSIS_CI-Guide.html" target="_blank" rel="noopener"><span class="ty">WEB</span><span class="tx"><b>CI guide (Korean)</b><small>Philosophy · tone · logo · color · type · graphics · applications · v1.1</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/brand/DONG-IN-ENSIS_Logo_Pack.zip" target="_blank" rel="noopener"><span class="ty">ZIP</span><span class="tx"><b>Logo pack (ZIP)</b><small>Color · white · black · SVG · PDF · PNG</small></span><span class="go">Download ↓</span></a>
+            <a class="rrow" href="../files/brand/logo/DONG-IN-ENSIS_logo_color.png" target="_blank" rel="noopener"><span class="ty">PNG</span><span class="tx"><b>Logo, color (PNG)</b><small>3000px · transparent</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/brand/logo/DONG-IN-ENSIS_logo_white.png" target="_blank" rel="noopener"><span class="ty">PNG</span><span class="tx"><b>Logo, white (PNG)</b><small>3000px · for dark backgrounds</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/brand/logo/DONG-IN-ENSIS_logo_color.svg" target="_blank" rel="noopener"><span class="ty">SVG</span><span class="tx"><b>Logo, vector (SVG)</b><small>Scalable · print & signage</small></span><span class="go">View →</span></a>
+            <a class="rrow" href="../files/brand/logo/DONG-IN-ENSIS_logo_color.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>Logo, vector (PDF)</b><small>For print shops</small></span><span class="go">View →</span></a>
+          </div>
+        </section>
+        <a class="rpanel rlock" href="../members.html"><span class="rp-h"><i>NDA</i><div><b>Partner documents</b><small>For partners and customers under NDA (password required)</small></div><span class="lk" aria-hidden="true">🔒</span><span class="chev" aria-hidden="true"></span></span></a>
     </div>
     <p class="dempty" id="dempty" hidden>No documents found. Try a different keyword.</p>
     <div class="dnote"><b class="dnote-h">Can't find what you need?</b>For documents not listed here, such as test reports or drawings, please send us a request and we will get back to you.<div class="dnote-btns"><a class="btn btn-blue" href="mailto:dongin@donginmne.com?subject=%5BDocument%20request%5D&amp;body=Company%3A%0AName%20%2F%20contact%3A%0ADocuments%20needed%3A%0APurpose%3A%0A">Request documents (email)</a><a class="btn dnote-tel" href="tel:+82518623668">Call +82-51-862-3668</a></div></div>
@@ -171,6 +196,6 @@
     </div>
   </div>
 </footer>
-<script src="../js/site.js?v=20261009a"></script>
+<script src="../js/site.js?v=20261009b"></script>
 </body>
 </html>
