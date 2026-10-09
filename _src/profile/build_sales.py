@@ -23,13 +23,13 @@ LG = lambda n: f'{ROOT}/logos/{n}'  # 고객사 로고 (벡터)
 FOOT = 'DONG-IN ENSIS · 회사소개서 · 전기제어시스템 설계·제작'
 
 VARIANTS = {
-    'base':    dict(img=f'{SITE}/img/control-panel.jpg', pos='right center', sub='선박 · 플랜트 · 산업설비 제어반 — 설계부터 제작 · 시운전까지',
+    'base':    dict(img='cover_base.jpg', sub='선박 · 플랜트 · 산업설비 제어반 — 설계부터 제작 · 시운전까지',
                     order=['green', 'fgss', 'energy', 'plant', 'servo'], hl=['hmg', 'ske', 'fgss', 'hyb', 'kos', 'bog']),
-    'marine':  dict(img=f'{SITE}/img/apps/marine-ship-room.jpg', sub='선박용 전기제어시스템 — LNG 연료공급(FGSS) · 하이브리드 추진 통합제어·감시',
+    'marine':  dict(img='cover_marine.jpg', sub='선박용 전기제어시스템 — LNG 연료공급(FGSS) · 하이브리드 추진 통합제어·감시',
                     order=['green', 'fgss', 'plant', 'energy', 'servo'], hl=['fgss', 'hyb', 'bog', 'mastc', 'ske', 'hmg']),
-    'plant':   dict(img=f'{SITE}/img/apps/h2-lh2-station.jpg', sub='플랜트 · 에너지 설비 제어시스템 — VFD · PLC · UPS 전원설비',
+    'plant':   dict(img='cover_plant.jpg', sub='플랜트 · 에너지 설비 제어시스템 — VFD · PLC · UPS 전원설비',
                     order=['energy', 'plant', 'fgss', 'green', 'servo'], hl=['ske', 'hmg', 'ccus', 'kos', 'bog', 'fgss']),
-    'machine': dict(img=f'{SITE}/img/apps/mfg-auto.jpg', sub='산업기계 · 특수기계 제어반 — PLC · 서보 · 모션 제어',
+    'machine': dict(img='cover_machine.jpg', sub='산업기계 · 특수기계 제어반 — PLC · 서보 · 모션 제어',
                     order=['servo', 'plant', 'energy', 'fgss', 'green'], hl=['servo', 'smr', 'hmg', 'kos', 'bog', 'ske']),
 }
 
@@ -76,7 +76,8 @@ table.sm{{font-size:12.6px}} table.sm td{{padding:6px 12px}} table.sm th{{paddin
 .st{{border:1px solid #E2E7EE;border-radius:12px;overflow:hidden;background:#fff;position:relative}}
 .st img{{width:100%;height:200px;object-fit:cover;display:block}} .st .b{{padding:14px 16px 16px}}
 .st .no{{font-size:12px;font-weight:800;color:#E83E30;letter-spacing:1px}} .st h3{{font-size:18px;margin:3px 0 6px}} .st p{{font-size:14px;line-height:1.5;color:#4A5568}}
-.grid2{{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+.grid2{{display:grid;grid-template-columns:1fr 1fr;gap:12px}} .grid3{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}} .grid3 .gc{{padding:12px 14px}} .grid3 .gc h3{{font-size:14px}} .grid3 .gc p{{font-size:11.5px}}
+.tl2 .r{{padding:7px 0}} .tl2 .y{{font-size:16px;line-height:1.2}} .tl2 .t{{font-size:13.2px;line-height:1.45}}
 .gc{{border:1px solid #E2E7EE;border-radius:10px;padding:15px 18px;background:#fff}} .gc.dark{{background:#0F3F7E;border-color:#0F3F7E;color:#fff}}
 .gc h3{{font-size:15.5px;margin:0 0 3px}} .gc p{{font-size:12.5px;color:#5A6577;line-height:1.4}} .gc.dark p{{color:#BFD3EC}}
 .logos{{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:26px}}
@@ -175,9 +176,9 @@ def service():
 
 def factory():
     return page('Manufacturing · Quality', '직접 제작하고,<br><b>검사한 뒤 출하합니다</b>', '<div class="row top"><div style="width:620px"><div style="display:flex;gap:14px">'
-        f'<img class="ph" src="{X("fac_yangsan2.jpg")}" style="flex:1;height:225px"><img class="ph" src="{X("fac_yangsan1.jpg")}" style="flex:1;height:225px"></div>'
-        f'<div style="display:flex;gap:14px;margin-top:14px"><img class="ph" src="{X("svc_mfg1.jpg")}" style="flex:1;height:225px"><img class="ph" src="{X("svc_test.jpg")}" style="flex:1;height:225px"></div>'
-        '<div class="cap">생산공장 · 판넬 제작 · 추진시스템 시험</div></div>'
+        f'<img class="ph" src="{X("svc_mfg2.jpg")}" style="flex:1;height:225px"><img class="ph" src="{X("svc_mfg1.jpg")}" style="flex:1;height:225px"></div>'
+        f'<div style="display:flex;gap:14px;margin-top:14px"><img class="ph" src="{X("ship_fat.jpg")}" style="flex:1;height:225px"><img class="ph" src="{X("svc_test.jpg")}" style="flex:1;height:225px"></div>'
+        '<div class="cap">판넬 배선 · 판넬 제작 · 공장검사(FAT) · 추진시스템 시험</div></div>'
         '<div class="col" style="flex:1;gap:20px">'
         + blk('생산 거점', ['양산 1공장 · 양산 2공장 (2023년 준공) · 기장공장', '본사 · 친환경기술연구소 — 부산 양정동 (엔에스타워)'])
         + blk('품질 체계', ['FAT 전용 테스트 라인 — 출하 전 공장검사 후 현장 설치', 'CE · UL 기준 설계·제작 체계 · 40+ CE·UL 솔루션', 'ISO 9001 품질 · ISO 14001 환경 · ISO 45001 안전보건'])
@@ -327,17 +328,25 @@ def icp2():
 
 
 def history():
-    J = [('1991', '회사 설립 · Danfoss 등 글로벌 전력·제어 제품 공급'), ('1997', '법인 전환 · Siemens Agency'), ('2001', 'Fuji Electric Agency'),
-         ('2006', '산업용 · 해상용 전기제어시스템 설계·제작 사업 개시'), ('2008~09', '생산공장 건립'), ('2014', '국립한국해양대학교 MOU'),
-         ('2018', '엔에스타워 · ISO 9001 · 14001'), ('2020', '친환경기술연구소 설립 · 기업부설연구소'), ('2021~22', '해양수산부 국가 R&amp;D 착수 (전기복합 추진어선 · 소형 수소추진선박)'),
-         ('2023', '충남병원선 · 경남청정호 통합제어 공급 · 양산 2공장 준공'), ('2024', 'SK E&amp;S 액화수소충전소 VFD · PLC · UPS 제어시스템 공급'),
-         ('2026', '혁신프리미어 1000 선정 · 수소 특허 5건 등록 · 수소전문기업')]
-    Cs = [('혁신프리미어 1000', '산업통상자원부 · 2026', 1), ('수소전문기업', '산업통상자원부', 1), ('지역특화 레전드50+', '중소벤처기업부 · 2024', 1), ('ISO 9001 · 14001 · 45001', '품질 · 환경 · 안전보건', 0),
-          ('벤처 · 이노비즈 · 메인비즈', '중소벤처기업부', 0), ('기업부설연구소', '친환경기술연구소 · 2020', 0), ('국가대표 혁신기업', '해양수산부 · 2022', 0), ('히든챔피언 · 서비스 강소기업', '부산광역시 · 2023', 0),
-          ('우수기술기업 T-4', '기술신용평가(TCB) · 2022', 0), ('스마트공장 공급기업', '스마트공장 지원사업 연계', 0)]
-    tl = '<div class="tl">' + ''.join(f'<div class="r"><div class="y">{y}</div><div class="t">{t}</div></div>' for y, t in J) + '</div>'
-    g = '<div class="grid2">' + ''.join(f'<div class="gc{" dark" if d else ""}"><h3>{a}</h3><p>{b}</p></div>' for a, b, d in Cs) + '</div>'
-    return page('History · Certification', '연혁 · 인증', f'<div class="row top" style="margin-top:22px"><div style="flex:1">{tl}</div><div style="width:520px">{g}</div></div>')
+    # 연혁: 2020년 이후를 자세히, 그 이전은 한 줄로 (홈페이지 회사소개 연혁 기준)
+    J = [('2026', ['지능형 제어반 출시 · 산업설비 데이터 인프라 사업 진출', '산업통상자원부 혁신프리미어 1000 선정 · 수소전문기업 등록', '중소벤처기업부 스마트공장 공급기업 등록', '액화수소충전소 제어시스템 관련 특허 5건 등록']),
+         ('2025', ['ISO 45001 안전보건경영시스템 인증', '벤처기업 · 메인비즈 · 이노비즈 인증 · 예비수소전문기업 선정']),
+         ('2024', ['SK E&amp;S 액화수소충전소 VFD · PLC · UPS 제어시스템 공급', '부산시 전략산업선도기업 · 지역특화 레전드50+ 선정', '국립한국해양대학교 산학협력 가족회사 협약']),
+         ('2023', ['충남병원선 · 경남청정호 하이브리드 추진 통합제어 공급 · 양산 제2공장 준공', '해양수산부 「안전기반 소형 수소추진 기술개발 및 실증」 참여', '부산시 히든챔피언 · 서비스 강소기업 선정']),
+         ('2022', ['해양수산부 국가대표 혁신기업 선정 · 부산시 수소동맹 참여기업', '우수기술기업(TCB) T-4 인증']),
+         ('2021', ['해양수산부 「전기복합 추진어선 핵심 기자재 기술개발」 참여']),
+         ('2020', ['친환경기술연구소 설립 (기업부설연구소)', 'Danfoss Drive · Soft Starter, ABB 저압 배전 Agency']),
+         ('1991<br>~2018', ['1991 회사 설립 · 1997 법인 전환 (Siemens Agency) · 2001 Fuji Electric Agency', '2006 산업용·해상용 전기제어시스템 사업 개시 · 2008~09 제1·2공장 건립', '2014 국립한국해양대학교 MOU · 2018 ISO 9001 · 14001 인증 · 엔에스타워 건립'])]
+    # 인증·선정: 홈페이지 인증 항목 + 자료실 인증서 전부
+    Cs = [('혁신프리미어 1000', '산업통상자원부 · 2026', 1), ('수소전문기업', '산업통상자원부 · 2026', 1), ('스마트공장 공급기업', '중소벤처기업부 · 2026', 1),
+          ('ISO 9001 · 14001 · 45001', '품질 · 환경 · 안전보건 경영시스템', 0), ('기업부설연구소', '친환경기술연구소 · 2020', 0), ('벤처 · 이노비즈 · 메인비즈', '중소벤처기업부 · 2025', 0),
+          ('국가대표 혁신기업', '해양수산부 · 2022', 0), ('지역특화 레전드50+', '부산광역시 · 2024', 0), ('전략산업선도기업', '부산광역시 · 미래모빌리티 · 2024', 0),
+          ('히든챔피언', '부산광역시 · 2023', 0), ('서비스 강소기업', '부산광역시 · 2023', 0), ('강소기업', '고용노동부 · 2024', 0),
+          ('우수기술기업 T-4', '기술신용평가(TCB) · 2022', 0), ('특허 등록 5건', '특허청 · 액화수소충전소 제어시스템', 0), ('수소동맹 참여기업', '부산광역시 · 2022', 0)]
+    tl = '<div class="tl tl2">' + ''.join(f'<div class="r"><div class="y">{y}</div><div class="t">{"<br>".join(t)}</div></div>' for y, t in J) + '</div>'
+    g = '<div class="grid3">' + ''.join(f'<div class="gc{" dark" if d else ""}"><h3>{a}</h3><p>{b}</p></div>' for a, b, d in Cs) + '</div>'
+    return page('History · Certification', '연혁 · 인증', f'<div class="row top" style="margin-top:20px"><div style="flex:1">{tl}</div><div style="width:600px">{g}</div></div>',
+        '※ 연혁 · 인증은 홈페이지 회사소개(donginensis.com/company.html) 기준이며, 인증서 원본은 자료실에서 확인할 수 있습니다.')
 
 
 def contact(person):
