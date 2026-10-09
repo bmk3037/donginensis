@@ -23,13 +23,13 @@ LG = lambda n: f'{ROOT}/logos/{n}'  # 고객사 로고 (벡터)
 FOOT = 'DONG-IN ENSIS · 회사소개서 · 전기제어시스템 설계·제작'
 
 VARIANTS = {
-    'base':    dict(img='ref_ske_panel.jpg', sub='선박 · 플랜트 · 산업설비 제어반 — 설계부터 제작 · 시운전까지',
+    'base':    dict(img=f'{SITE}/img/control-panel.jpg', pos='right center', sub='선박 · 플랜트 · 산업설비 제어반 — 설계부터 제작 · 시운전까지',
                     order=['green', 'fgss', 'energy', 'plant', 'servo'], hl=['hmg', 'ske', 'fgss', 'hyb', 'kos', 'bog']),
-    'marine':  dict(img='ship_fat.jpg', sub='선박용 전기제어시스템 — LNG 연료공급(FGSS) · 하이브리드 추진 통합제어·감시',
+    'marine':  dict(img=f'{SITE}/img/apps/marine-ship-room.jpg', sub='선박용 전기제어시스템 — LNG 연료공급(FGSS) · 하이브리드 추진 통합제어·감시',
                     order=['green', 'fgss', 'plant', 'energy', 'servo'], hl=['fgss', 'hyb', 'bog', 'mastc', 'ske', 'hmg']),
-    'plant':   dict(img='ref_ske_station.jpg', sub='플랜트 · 에너지 설비 제어시스템 — VFD · PLC · UPS 전원설비',
+    'plant':   dict(img=f'{SITE}/img/apps/h2-lh2-station.jpg', sub='플랜트 · 에너지 설비 제어시스템 — VFD · PLC · UPS 전원설비',
                     order=['energy', 'plant', 'fgss', 'green', 'servo'], hl=['ske', 'hmg', 'ccus', 'kos', 'bog', 'fgss']),
-    'machine': dict(img='ref_bobst2.jpg', sub='산업기계 · 특수기계 제어반 — PLC · 서보 · 모션 제어',
+    'machine': dict(img=f'{SITE}/img/apps/mfg-auto.jpg', sub='산업기계 · 특수기계 제어반 — PLC · 서보 · 모션 제어',
                     order=['servo', 'plant', 'energy', 'fgss', 'green'], hl=['servo', 'smr', 'hmg', 'kos', 'bog', 'ske']),
 }
 
@@ -115,7 +115,7 @@ def card(img, title, items, h=200, tag=None, own=None, spec=None, pos='center', 
 def cover(v, to):
     t = f'<div style="position:absolute;left:82px;top:600px;font-size:20px;font-weight:700;color:#fff;border-left:3px solid #E83E30;padding-left:14px">{to}</div>' if to else ''
     return f'''<div class="page" style="background:#0A2A55;color:#fff;padding:0">
-<img src="{X(v['img'])}" style="position:absolute;left:0;top:0;width:1440px;height:810px;object-fit:cover;object-position:{v.get('pos','center')}">
+<img src="{v['img'] if v['img'].startswith('/') else X(v['img'])}" style="position:absolute;left:0;top:0;width:1440px;height:810px;object-fit:cover;object-position:{v.get('pos','center')}">
 <div class="ovl" style="background:linear-gradient(90deg,#0A2A55 0%,rgba(10,42,85,.97) 34%,rgba(10,42,85,.86) 52%,rgba(10,42,85,.30) 100%)"></div>
 <img src="{LOGOW}" style="position:absolute;left:82px;top:72px;height:32px">
 <div style="position:absolute;left:82px;top:228px;width:800px">
