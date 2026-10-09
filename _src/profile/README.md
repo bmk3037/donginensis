@@ -8,6 +8,7 @@
 | 회사소개서 12~14쪽 Major Reference (국문·영문) | `build_reference.py` | `python3 build_reference.py` → `out/ref_KR.pdf`, `out/ref_EN.pdf` |
 | `files/DONG-IN-ENSIS_Company-Profile_KR.pdf` (회사소개서 국문, 23장) | `build_profile_refs.py` | `python3 build_profile_refs.py` → `base/profile_base_KR.pdf`(원본 없는 16장) 사이에 실적 7장을 끼워 `files/`에 저장 |
 | `files/DONG-IN-ENSIS_Sales-Profile_KR.pdf` (영업용 회사소개서 · 전기제어시스템 설계·제작, 18장) | `build_sales.py` | `python3 build_sales.py [base\|marine\|plant\|machine] [--to "OOO 귀중"] [--contact "담당자 줄"]` → `out/sales_<변형>.pdf`. 자료실에는 `base`를 복사해 올림. 제출처별 변형(marine · plant · machine)은 홈페이지에 올리지 않고 직접 보냄 |
+| `files/DONG-IN-ENSIS_Sales-Profile_Briefing-Script_KR.pdf` (영업용 브리핑 대본, 6쪽) | `briefing/briefing_script.md` | `python3 briefing/make_script_pdf.py` (markdown 패키지 필요) |
 
 - 필요한 것: Python 3, Playwright(Chromium).
 - 서체는 `fonts/`(Pretendard, OFL 라이선스)를 씁니다.
