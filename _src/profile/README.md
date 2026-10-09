@@ -6,10 +6,12 @@
 |---|---|---|
 | `files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf` (수소전문기업 사업분야, 20장) | `build_hydrogen.py` | `python3 build_hydrogen.py` → `out/h2_profile.pdf` |
 | 회사소개서 12~14쪽 Major Reference (국문·영문) | `build_reference.py` | `python3 build_reference.py` → `out/ref_KR.pdf`, `out/ref_EN.pdf` |
+| `files/DONG-IN-ENSIS_Company-Profile_KR.pdf` (회사소개서 국문, 23장) | `build_profile_refs.py` | `python3 build_profile_refs.py` → `base/profile_base_KR.pdf`(원본 없는 16장) 사이에 실적 7장을 끼워 `files/`에 저장 |
+| 영업용 회사소개서 (전기제어시스템 설계·제작, 18장 · 홈페이지 미게시) | `build_sales.py` | `python3 build_sales.py [base\|marine\|plant\|machine] [--to "OOO 귀중"] [--contact "담당자 줄"]` → `out/sales_<변형>.pdf` |
 
 - 필요한 것: Python 3, Playwright(Chromium).
 - 서체는 `fonts/`(Pretendard, OFL 라이선스)를 씁니다.
-- 사진·로고는 `crops/`(기존 회사소개서에서 추출), 홈페이지 이미지는 `img/`를 씁니다.
-- 회사소개서 본문(1~11쪽, 15~19쪽)은 별도 원본 없이 PDF로만 관리합니다.
-- Major Reference 3장은 기존 16장 PDF의 11쪽 뒤에 끼워 넣고, 그 뒤 쪽번호를 +3 한 것입니다.
+- 사진·로고는 `crops/`(기존 회사소개서에서 추출), 홈페이지 이미지는 `img/`를 씁니다. 영업용 소개서 사진·고객 로고는 `sales/`(원본 49쪽 회사소개서에서 추출)를 씁니다.
+- 회사소개서 본문(1~11쪽, 19~23쪽)은 별도 원본 없이 `base/profile_base_KR.pdf`(국문) · `base/profile_base_EN.pdf`(영문)로만 관리합니다. 실적 7장(12~18쪽)은 `build_sales.py`의 실적 페이지를 재사용합니다.
+- 영문 회사소개서(19장)는 `build_reference.py`의 Major Reference 3장을 `base/profile_base_EN.pdf` 11쪽 뒤에 끼운 것입니다. 국문 통합본의 실적 4장(에너지 · 플랜트·OEM · 서보 · 실적표)은 아직 영문이 없습니다.
 - 이 폴더(`_src`)는 홈페이지에 공개되지 않습니다.
