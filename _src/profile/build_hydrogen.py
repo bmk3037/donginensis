@@ -86,13 +86,13 @@ P.append(f'''<div class="page" style="background:#0A2A55;color:#fff;padding:0">
 # 2 summary
 P.append(page('At a Glance','35년 제어반 전문기업이,<br><b>수소 설비의 제어·전력 기술을 국산화합니다</b>',
  '<p class="lead">해상의 수소추진선박과 육상의 액화수소충전소. 두 현장의 전력·제어 경험을 지능형 제어반 → DataHub → 원격 모니터링으로 제품화하고 있습니다.</p>'
- '<div class="row">'+stat('2<sup>+3</sup>','특허 등록 2건 · 출원 3건','수소충전 · 수소추진선박 제어·전력·안전 기술')+stat('2<sup>건</sup>','해양수산부 국가 R&amp;D','전기복합 추진어선 · 안전기반 소형 수소추진선박')+stat('SK E&amp;S','액화수소충전소 공급','VFD · PLC · PDP · UPS 제어시스템 (2024)')+stat('7.5<sup>억원</sup>','2025년 수소사업 투자','3개년 평균매출액 대비 12.88% · 연구인력 6명',True)+'</div>'
+ '<div class="row">'+stat('2<sup>+3</sup>','특허 등록 2건 · 출원 3건','수소충전 · 수소추진선박 제어·전력·안전 기술')+stat('2<sup>건</sup>','해양수산부 국가 R&amp;D','전기복합 추진어선 · 안전기반 소형 수소추진선박')+stat('SK E&amp;S','액화수소충전소 공급','VFD · PLC · UPS 제어시스템 (2024)')+stat('7.5<sup>억원</sup>','2025년 수소사업 투자','3개년 평균매출액 대비 12.88% · 연구인력 6명',True)+'</div>'
  '<div style="margin-top:26px">'+''.join(f'<span class="pill">{x}</span>' for x in ['1991년 설립 · 35년','750+ 제어시스템 프로젝트','친환경기술연구소','예비 수소전문기업 (2025)','혁신프리미어 1000 (2026)','ISO 9001 · 14001 · 45001'])+'</div>'
  f'<div class="row" style="margin-top:22px"><img class="ph" src="{I("p45_06_photo.jpg")}" style="flex:1;height:190px"><img class="ph" src="{I("p20_06_photo.jpg")}" style="flex:1;height:190px"><img class="ph" src="{I("p39_05_photo.jpg")}" style="flex:1;height:190px"></div>',2,'수소연료전지 전기추진 선박(과제 선형) · SK E&S 액화수소충전소 · 충남병원선 기관실 제어반'))
 
 # 3 company
 rows=[('회사명','㈜동인엔시스 DONG-IN ENSIS CO., LTD.'),('대표이사','백민기'),('설립','1991년 10월 · 1997년 7월 법인 전환 · 2023년 사명 변경'),
- ('주요 사업','지능형 제어반 · 산업용/선박용 제어시스템 설계·제작 · 수소 설비 전기제어·전원설비(PDP·PLC·UPS·VFD) · 시스템 통합'),
+ ('주요 사업','지능형 제어반 · 산업용/선박용 제어시스템 설계·제작 · 수소 설비 전기제어·전원설비(VFD·PLC·UPS) · 시스템 통합'),
  ('사업장','본사 부산광역시 부산진구 진연로9번길 47 (양정동) · 친환경기술연구소 엔에스타워 8층 (2020년 설립) · 양산 1·2공장 · 기장공장'),
  ('인력','임직원 21명 · 연구인력 6명 (2025년 기준)'),('경영시스템','ISO 9001 · ISO 14001 · ISO 45001'),
  ('인증·선정','예비 수소전문기업 (2025) · 혁신프리미어 1000 (2026) · 벤처 · 이노비즈 · 메인비즈 · 기업부설연구소'),('파트너','Schneider Electric 공식 SI 파트너 · ABB · Fuji Electric · Eaton · Danfoss')]
@@ -105,7 +105,7 @@ P.append(page('Company Overview','회사 개요','<div class="row top"><div styl
 J=[('2020','친환경기술연구소 설립 · 기업부설연구소 인정'),('2021','해양수산부·KIMST 「전기복합 추진어선 핵심 기자재 기술개발」 착수 (2021.04 ~ 2025.12) · 추진모터 드라이브 · 통합 자동제어 담당'),
  ('2022','해양수산부·KIMST 「안전기반 소형 수소추진선박 기술개발 및 실증」 착수 (2022.04 ~ 2026.12) · 부산 수소동맹 참여기업 · 해양수산부 국가대표 혁신기업'),
  ('2023','충남병원선 · 경남청정호 하이브리드 추진 통합제어·감시시스템 공급'),
- ('2024','SK E&amp;S 액화수소충전소 — PDP · PLC · UPS · VFD 전기제어·전원설비 공급 (니키소코리아 협업)'),
+ ('2024','SK E&amp;S 액화수소충전소 — VFD · PLC · UPS 제어시스템 공급 (니키소코리아 협업)'),
  ('2025','예비 수소전문기업 선정 · 지원사업으로 테스트베드 · D-Hub 클라우드 · 웹 앱 개발 · 수소 제어 핵심기술 특허 5건 출원 (12월) · MASTC 시제품 연동 시험'),
  ('2026','특허 2건 등록 (5월) · 혁신프리미어 1000 선정 · 하이브리드 시범어선 통합제어 적용 · 수소전문기업 확인 신청')]
 P.append(page('Hydrogen Journey','수소 사업 추진 경과','<div class="row top"><div class="tl" style="flex:1">'+''.join(f'<div class="r"><div class="y">{y}</div><div class="t">{t}</div></div>' for y,t in J)+'</div>'
@@ -114,13 +114,13 @@ P.append(page('Hydrogen Journey','수소 사업 추진 경과','<div class="row 
 # 5 business
 P.append(page('Hydrogen Business','해상과 육상, 수소 사업의 두 축을<br><b>지능형 제어반으로 연결합니다</b>',
  '<div class="row">'+photocard(I('p45_06_photo.jpg'),'해상 · HYDROGEN VESSEL','수소추진선박 전력·통합제어',['연료전지·배터리·전기추진 계통의 전력 연동과 통합제어','선박 전력·제어 패키지 · 시스템 통합 · 시운전·유지관리','안전기반 소형 수소추진선박 실증 과제 기반'],180)
- +photocard(I('p20_06_photo.jpg'),'육상 · LIQUID HYDROGEN STATION','액화수소충전소 전기제어·전원설비',['PDP · PLC · UPS · VFD 공급과 전력계통 엔지니어링','충전설비 전원 공급·운전 제어 · 설비 상태 파악','지능형 제어반 · 전원 통합관리 · 원격 모니터링'],180)
+ +photocard(I('p20_06_photo.jpg'),'육상 · LIQUID HYDROGEN STATION','액화수소충전소 전기제어·전원설비',['VFD · PLC · UPS 제어시스템 공급과 전력계통 엔지니어링','충전설비 전원 공급·운전 제어 · 설비 상태 파악','지능형 제어반 · 전원 통합관리 · 원격 모니터링'],180)
  +'<div class="card box navy" style="padding:24px 26px"><div class="tag">COMMON PLATFORM</div><h3>지능형 제어반 → DataHub<br>→ 원격 모니터링·진단</h3>'+lis(['PLC 현장 제어·인터록 + 운전 데이터 수집','MQTT/TLS 전송 · 시계열 저장 · REST 연동','이상감지 → 예지보전 → 에너지 최적운전으로 고도화','현장 제어·보호 기능은 유지하고 데이터 기능을 단계적으로 추가'])+'</div></div>',5,'※ 해상·육상 사진은 과제 선형과 현장 사진입니다.'))
 
 # 6 lh2
 P.append(page('01 · Liquid Hydrogen Station','액화수소충전소,<br><b>전기제어·전원설비에서 디지털전환까지</b>',
  f'<div class="row top"><div style="width:560px" class="col"><img class="ph" src="{I("p20_06_photo.jpg")}" style="width:560px;height:240px"><img class="ph" src="{I("p20_05_photo.jpg")}" style="width:560px;height:170px"><div class="cap"><img src="{I("p20_04_logo.jpg")}">SK E&amp;S 액화수소충전소 · 충전소 전경과 제어반실 (현장 사진)</div></div>'
- '<div class="col" style="flex:1;gap:18px">'+blk('전기제어·전원설비 공급 — 액화수소충전소 프로젝트',['PDP(전력배전반) · PLC 제어반 · UPS · VFD 공급, 전력계통 설계·엔지니어링 (니키소코리아 협업)','전원 공급·분배 · 설비 운전 제어 · 정전 대비 제어·감시 전원 유지','저장탱크 · 기화기 · 펌프 · 열매체유 순환 장비 · 배관 주변 설비의 제어·상태감시'])
+ '<div class="col" style="flex:1;gap:18px">'+blk('전기제어·전원설비 공급 — 액화수소충전소 프로젝트',['VFD · PLC · UPS 제어시스템 공급, 전력계통 설계·엔지니어링 (니키소코리아 협업)','전원 공급·분배 · 설비 운전 제어 · 정전 대비 제어·감시 전원 유지','저장탱크 · 기화기 · 펌프 · 열매체유 순환 장비 · 배관 주변 설비의 제어·상태감시'])
  +blk('충전소 디지털전환 — 예비 수소전문기업 지원사업',['인버터 국산화용 부품 · 외함 확보, 테스트베드 구축','D-Hub 클라우드 · PWA 웹 앱 개발 — 운전 데이터 수집·모니터링','테스트베드 데이터로 이상감지 기능 검증 후 실제 현장 적용 준비'])
  +blk('권리',['특허 제10-2964564호 「수소충전용 모듈러 인출식 VFD 판넬」 (등록)','출원 「수소충전용 지능형 EOCR 기반 예측보호시스템」 · 「데이터 허브형 UPS 및 PDP 통합 전원관리 시스템」'])+'</div></div>',6))
 
@@ -149,7 +149,7 @@ P.append(page('Major Reference · LNG Fuel Gas Supply System','LNG 연료공급�
  ('SB선보','LNG 운반선용 BOG 압축기','BOG 압축기 제어시스템 설계 · 공급 · 시운전')],[24,42,34])+'</div>',9,'※ LNG 연료 선박의 가스 공급·안전 제어 경험이 수소 설비 제어의 기반입니다.'))
 
 # 10 ref-plant
-feats=[(I('p20_06_photo.jpg'),I('p20_04_logo.jpg'),'SK E&amp;S 액화수소충전소','VFD · PLC · PDP 제어시스템 공급 · 상용 충전소 운영 실증'),
+feats=[(I('p20_06_photo.jpg'),I('p20_04_logo.jpg'),'SK E&amp;S 액화수소충전소','VFD · PLC · UPS 제어시스템 공급 · 상용 충전소 운영 실증'),
  (I('photo_bobst_421.jpg'),I('logo_bobst.jpg'),'밥스트코리아(BOBST) 포장기계','특수 기계 제어시스템 엔지니어링·공급 (서보·모션 제어)'),
  (I('p21_04_photo.jpg'),I('p21_06_logo.jpg'),'한국남부발전 연료전지 발전소 CCUS BOP 제어','탄소 포집·활용·저장(CCUS) 설비 BOP 제어시스템 · SK에코플랜트')]
 fh=''.join(f'<div class="card" style="flex:none;width:300px"><img class="ph" src="{a}" style="height:160px;border-radius:0"><div class="b" style="padding:14px 18px 16px"><img src="{b}" style="height:26px;display:block;margin-bottom:8px"><h3 style="font-size:16.5px;margin:0 0 6px">{c}</h3><p style="font-size:12px;color:#5A6577;line-height:1.5">{d}</p></div></div>' for a,b,c,d in feats)
