@@ -86,12 +86,16 @@ var TXT = IS_EN ? {
       var el=f.querySelector('[name='+k+']'); if(el&&params.get(k)) el.value=params.get(k);
     });
     var ref=f.querySelector('[name=referrer]'); if(ref) ref.value=document.referrer||'';
+    var openedAt=Date.now(); // 스팸 차단: 폼이 열린 시각
 
     f.addEventListener('submit',function(ev){
       ev.preventDefault();
       var err=f.querySelector('.iq-msg.err'); if(err) err.remove();
       if(f.querySelector('[name=website]').value){ return; } // 스팸 차단(자동 입력 봇)
       if(!f.checkValidity()){ f.reportValidity(); return; }
+      // 스팸 차단: 너무 빠른 제출(자동 입력)과 짧은 시간 반복 제출은 보내지 않음
+      var elapsed=Date.now()-openedAt, last=0; try{ last=+localStorage.getItem('iqLastSent')||0; }catch(e){}
+      if(elapsed<3000||Date.now()-last<60000){ f.style.display='none'; var ok0=f.parentNode.querySelector('.iq-msg.ok'); if(ok0) ok0.style.display='block'; return; }
 
       var fd=new FormData(f), data=new URLSearchParams();
       var multi={};
@@ -99,6 +103,7 @@ var TXT = IS_EN ? {
       Object.keys(multi).forEach(function(k){data.append(k,multi[k]);});
       data.append('page',location.pathname);
       data.append('submitted_at',new Date().toISOString());
+      data.append('elapsed_ms',String(elapsed));
 
       var btn=f.querySelector('button[type=submit]'); btn.disabled=true; btn.textContent=TXT.sending;
 
@@ -121,7 +126,7 @@ var TXT = IS_EN ? {
         btn.disabled=false; btn.textContent=btn.dataset.label||'';
         return;
       }
-      fetch(FORM_ENDPOINT,{method:'POST',mode:'no-cors',body:data}).then(done).catch(fail);
+      fetch(FORM_ENDPOINT,{method:'POST',mode:'no-cors',body:data}).then(function(){ try{ localStorage.setItem('iqLastSent',String(Date.now())); }catch(e){} done(); }).catch(fail);
     });
   });
 })();
