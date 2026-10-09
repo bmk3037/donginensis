@@ -28,7 +28,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261009a">
+<link rel="stylesheet" href="css/style.css?v=20261009b">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
 <script>
@@ -83,60 +83,85 @@
 </section>
 <section class="sec" style="padding-top:50px;background:var(--bg2)">
   <div class="wrap">
-    <div class="docs-tools">
-      <div class="dtabs" role="tablist" aria-label="자료 분류">
-        <button type="button" role="tab" class="on" data-cat="all">전체</button>
-        <button type="button" role="tab" data-cat="cert">인증서 · 확인서</button>
-        <button type="button" role="tab" data-cat="iso">ISO 매뉴얼 · 서류</button>
-        <button type="button" role="tab" data-cat="ip">특허 · 상표</button>
-        <button type="button" role="tab" data-cat="innov">혁신제품</button>
-        <button type="button" role="tab" data-cat="profile">회사소개서</button>
-        <button type="button" role="tab" data-cat="supplier">공급기업</button>
-        <button type="button" role="tab" data-cat="brand">CI · 브랜드</button>
-      </div>
-      <input type="search" id="dq" class="dq" placeholder="자료 검색 (예: ISO, 벤처)" aria-label="자료 검색">
+    <div class="rtools">
+      <input type="search" id="dq" class="dq" placeholder="자료 검색 (예: ISO, 벤처, 특허)" aria-label="자료 검색 (예: ISO, 벤처, 특허)">
+      <p class="dcount" id="dcount" aria-live="polite">총 38건</p>
     </div>
-    <p class="dcount" id="dcount" aria-live="polite"></p>
-    <div class="docs" id="docList" style="margin-top:12px">
-        <a class="doc" data-cat="cert" href="files/certs/InnovationPremier1000_2026.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>「혁신 프리미어 1000」 선정기업 확인서</b><span>산업통상부 · 제26-080호 · 선정 2026.07.21 · 유효 ~ 2027.12.31</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/ISO9001.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>ISO 9001:2015 품질경영시스템 인증서</b><span>NTREE · 유효 2024.04.24 ~ 2027.04.23</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/ISO14001.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>ISO 14001:2015 환경경영시스템 인증서</b><span>NTREE · 유효 2024.04.24 ~ 2027.04.23</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/ISO45001.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>ISO 45001:2018 안전보건경영시스템 인증서</b><span>NTREE · 유효 2026.01.27 ~ 2029.01.26</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/MainBiz.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>경영혁신형 중소기업(MAIN-BIZ) 확인서</b><span>중소벤처기업부 · 유효 2025.11.26 ~ 2028.11.25</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/InnoBiz.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>기술혁신형 중소기업(INNO-BIZ) 확인서</b><span>중소벤처기업부 · 등급 A · 유효 2025.10.29 ~ 2028.10.28</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/Venture.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>벤처기업확인서 (혁신성장유형)</b><span>벤처기업확인기관 · 유효 2025.12.31 ~ 2028.12.30</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/StrategicLeader.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>부산광역시 전략산업 선도기업 인증서 (미래모빌리티산업)</b><span>부산광역시 · 인증 2024.01.01 ~ 2026.12.31</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/Legend50.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>지역특화 프로젝트 「레전드 50+」 참여기업 선정확인서</b><span>부산광역시 · 선정 2024.03.06 ~ 2026.12.31</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/ServiceSmallGiant.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>부산 서비스 강소기업 인증서</b><span>부산광역시 · 인증 2023.06.15 ~ 2028.06.14</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/RnDCenter.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>기업부설연구소 인정서 (친환경기술연구소)</b><span>과학기술정보통신부 · 한국산업기술진흥협회 · 최초 인정 2020.09.08</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/InnovativeCompany1000.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>「혁신기업 국가대표 1000」 선정 인증서</b><span>해양수산부 · 선정 2022.10.20</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/StrongSmallBiz_2024.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>고용노동부 강소기업 확인서</b><span>고용노동부 · 2024.05.01 ~ 2025.04.30</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/HiddenChampion_2023.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>부산형 히든챔피언기업 인증서</b><span>부산광역시 · 2023.06.01 ~ 2025.12.31</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="cert" href="files/certs/NICE_T4_2022.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>기술평가 우수기업 인증서 (T-4)</b><span>NICE평가정보 · 2022.09.06 ~ 2023.09.06</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="iso" href="files/iso/DI-IMS-M-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>통합경영 매뉴얼 (DI-IMS-M-01)</b><span>품질·환경·안전보건 · Rev.00 · 2026.10.01 · 17쪽 · 목차·결재란 포함 · 법정 안전보건 의무 포함</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="iso" href="files/iso/DI-IMS-F-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>통합 기록양식집 (DI-IMS-F-01)</b><span>PF·QF·SF·EF·MF 양식 33종 + 별지 2종 · Rev.00 · 2026.10.01 · 53쪽 · 인쇄용</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="iso" href="files/iso/DI-IMS-M-01_Rev00.docx" target="_blank" rel="noopener"><div class="ic">DOC</div><div><b>통합경영 매뉴얼 원본 (Word)</b><span>편집용 원본 · Rev.00</span></div><em>받기 →</em></a>
-        <a class="doc" data-cat="iso" href="files/iso/DI-IMS-F-01_Rev00.xlsx" target="_blank" rel="noopener"><div class="ic">XLS</div><div><b>통합 기록양식집 원본 (Excel)</b><span>작성용 빈 양식 · 선택 목록·자동 판정 포함 · Rev.00</span></div><em>받기 →</em></a>
-        <a class="doc" data-cat="ip" href="files/ip/Patent_10-2964558.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>특허 제10-2964558호</b><span>수소연료전지 하이브리드 추진선박의 부하 프로파일 기반 자동제어방법 · 등록 2026.05.08</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="ip" href="files/ip/Patent_10-2964564.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>특허 제10-2964564호</b><span>수소충전용 모듈러 인출식 VFD 판넬 · 등록 2026.05.08</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="ip" href="files/ip/Trademark_40-2214640.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>상표등록 제40-2214640호 「(주)동인엔시스」</b><span>제42류 · 등록 2024.06.28</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="ip" href="files/ip/Trademark_40-2178388.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>상표등록 제40-2178388호 「ENERGIENT SOLUTION」</b><span>제42류 · 등록 2024.04.04</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="profile" href="files/DONG-IN-ENSIS_Company-Profile_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>회사소개서 (국문)</b><span>PDF · 19장 · 약 5.9MB</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="profile" href="files/DONG-IN-ENSIS_Company-Profile_EN.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>회사소개서 (영문)</b><span>PDF · 19장 · 약 5.5MB</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="profile" href="files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>수소전문기업 (국문)</b><span>수소추진선박 · 액화수소충전소 지능형 제어반 · PDF · 20장 · 약 8.2MB</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="profile" href="files/DONG-IN-ENSIS_Intelligent-Control-Panel_Leaflet_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>지능형 제어반 리플렛 (국문)</b><span>전시회 배포용 · PDF · 4쪽 · 약 0.6MB</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="profile" href="files/DONG-IN-ENSIS_Envelope_330x245_print.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>대봉투 인쇄 파일 (330×245)</b><span>인쇄소 전달용 · CMYK · 재단여백 3mm · PDF · 약 0.1MB</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="innov" href="files/innov/DI-IN-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>지능형 제어반 혁신제품 안내 (DI-IN-01)</b><span>조달청 혁신제품 지정 추진 · 홍보용 1쪽 안내문 · Rev.00 · 2026.10 · 1쪽</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="innov" href="files/DONG-IN-ENSIS_Intelligent-Control-Panel_Leaflet_KR.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>지능형 제어반 리플렛 (국문)</b><span>전시회 배포용 · PDF · 4쪽 · 약 0.6MB</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="supplier" href="files/supplier/DI-SF-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>스마트공장 공급기업 솔루션 설명서 (DI-SF-01)</b><span>Smart Manufacturing Data Solution · OT 데이터 수집·표준화·모니터링·AI 연계 · Rev.00 · 2026.10 · 9쪽</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="supplier" href="files/supplier/DI-DS-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>데이터바우처 공급기업 서비스 설명서 (DI-DS-01)</b><span>산업설비 OT 데이터 수집·가공·표준화·분석 서비스 · Rev.00 · 2026.10 · 6쪽</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="supplier" href="files/supplier/DI-AV-01_Rev00.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>AI바우처 공급기업 솔루션 설명서 (DI-AV-01)</b><span>산업설비 AI 이상감지·예지보전 솔루션 (AI 이상탐지는 현재 PoC 단계) · Rev.00 · 2026.10 · 6쪽</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="brand" href="files/brand/DONG-IN-ENSIS_CI-Guide.html" target="_blank" rel="noopener"><div class="ic">WEB</div><div><b>CI 가이드</b><span>기업 이념 · 톤앤매너 · 로고 · 컬러 · 글꼴 · 그래픽 · 응용 · v1.1 · 2026.10</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="brand" href="files/brand/DONG-IN-ENSIS_Logo_Pack.zip" target="_blank" rel="noopener"><div class="ic">ZIP</div><div><b>로고 파일 모음 (ZIP)</b><span>컬러 · 화이트 · 흑백 · SVG · PDF · PNG 전체 · 약 0.4MB</span></div><em>내려받기 ↓</em></a>
-        <a class="doc" data-cat="brand" href="files/brand/logo/DONG-IN-ENSIS_logo_color.png" target="_blank" rel="noopener"><div class="ic">PNG</div><div><b>로고 컬러 (PNG)</b><span>3000px · 투명 배경 · 문서·웹용</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="brand" href="files/brand/logo/DONG-IN-ENSIS_logo_white.png" target="_blank" rel="noopener"><div class="ic">PNG</div><div><b>로고 화이트 (PNG)</b><span>3000px · 투명 배경 · 어두운 배경용</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="brand" href="files/brand/logo/DONG-IN-ENSIS_logo_color.svg" target="_blank" rel="noopener"><div class="ic">SVG</div><div><b>로고 벡터 (SVG)</b><span>크기 제한 없음 · 인쇄·간판용</span></div><em>보기 →</em></a>
-        <a class="doc" data-cat="brand" href="files/brand/logo/DONG-IN-ENSIS_logo_color.pdf" target="_blank" rel="noopener"><div class="ic">PDF</div><div><b>로고 벡터 (PDF)</b><span>인쇄소 전달용 · 벡터</span></div><em>보기 →</em></a>
+    <div class="rboard" id="docBoard">
+        <section class="rpanel" id="cat-cert" data-cat="cert">
+          <button type="button" class="rp-h" aria-expanded="false"><i>인증</i><div><b>인증서 · 확인서</b><small>ISO 경영시스템, 기업 인증, 정부·지자체 선정</small></div><span class="rp-n">15</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="files/certs/InnovationPremier1000_2026.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>「혁신 프리미어 1000」 선정기업 확인서</b><small>산업통상부 · 제26-080호 · 선정 2026.07.21 · 유효 ~ 2027.12.31</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/ISO9001.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>ISO 9001:2015 품질경영시스템 인증서</b><small>NTREE · 유효 2024.04.24 ~ 2027.04.23</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/ISO14001.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>ISO 14001:2015 환경경영시스템 인증서</b><small>NTREE · 유효 2024.04.24 ~ 2027.04.23</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/ISO45001.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>ISO 45001:2018 안전보건경영시스템 인증서</b><small>NTREE · 유효 2026.01.27 ~ 2029.01.26</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/MainBiz.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>경영혁신형 중소기업(MAIN-BIZ) 확인서</b><small>중소벤처기업부 · 유효 2025.11.26 ~ 2028.11.25</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/InnoBiz.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>기술혁신형 중소기업(INNO-BIZ) 확인서</b><small>중소벤처기업부 · 등급 A · 유효 2025.10.29 ~ 2028.10.28</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/Venture.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>벤처기업확인서 (혁신성장유형)</b><small>벤처기업확인기관 · 유효 2025.12.31 ~ 2028.12.30</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/RnDCenter.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>기업부설연구소 인정서 (친환경기술연구소)</b><small>과학기술정보통신부 · 한국산업기술진흥협회 · 최초 인정 2020.09.08</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/InnovativeCompany1000.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>「혁신기업 국가대표 1000」 선정 인증서</b><small>해양수산부 · 선정 2022.10.20</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/StrategicLeader.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>부산광역시 전략산업 선도기업 인증서 (미래모빌리티산업)</b><small>부산광역시 · 인증 2024.01.01 ~ 2026.12.31</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/Legend50.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>지역특화 프로젝트 「레전드 50+」 참여기업 선정확인서</b><small>부산광역시 · 선정 2024.03.06 ~ 2026.12.31</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/certs/ServiceSmallGiant.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>부산 서비스 강소기업 인증서</b><small>부산광역시 · 인증 2023.06.15 ~ 2028.06.14</small></span><span class="go">보기 →</span></a>
+            <a class="rrow exp" href="files/certs/StrongSmallBiz_2024.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>고용노동부 강소기업 확인서</b><small>고용노동부 · 2024.05.01 ~ 2025.04.30 <em class="xp">기간 만료</em></small></span><span class="go">보기 →</span></a>
+            <a class="rrow exp" href="files/certs/HiddenChampion_2023.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>부산형 히든챔피언기업 인증서</b><small>부산광역시 · 2023.06.01 ~ 2025.12.31 <em class="xp">기간 만료</em></small></span><span class="go">보기 →</span></a>
+            <a class="rrow exp" href="files/certs/NICE_T4_2022.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>기술평가 우수기업 인증서 (T-4)</b><small>NICE평가정보 · 2022.09.06 ~ 2023.09.06 <em class="xp">기간 만료</em></small></span><span class="go">보기 →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-profile" data-cat="profile">
+          <button type="button" class="rp-h" aria-expanded="false"><i>소개</i><div><b>회사소개서 · 홍보물</b><small>회사소개서, 수소전문기업 소개, 리플렛</small></div><span class="rp-n">4</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="files/DONG-IN-ENSIS_Company-Profile_KR.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>회사소개서 (국문)</b><small>PDF · 19장 · 약 5.9MB</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/DONG-IN-ENSIS_Company-Profile_EN.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>회사소개서 (영문)</b><small>PDF · 19장 · 약 5.5MB</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>수소전문기업 (국문)</b><small>수소추진선박 · 액화수소충전소 지능형 제어반 · PDF · 20장 · 약 8.2MB</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/DONG-IN-ENSIS_Intelligent-Control-Panel_Leaflet_KR.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>지능형 제어반 리플렛 (국문)</b><small>전시회 배포용 · PDF · 4쪽 · 약 0.6MB</small></span><span class="go">보기 →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-supplier" data-cat="supplier">
+          <button type="button" class="rp-h" aria-expanded="false"><i>공급</i><div><b>공급기업 설명서</b><small>스마트공장 · 데이터바우처 · AI바우처</small></div><span class="rp-n">3</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="files/supplier/DI-SF-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>스마트공장 공급기업 솔루션 설명서 (DI-SF-01)</b><small>Smart Manufacturing Data Solution · OT 데이터 수집·표준화·모니터링·AI 연계 · Rev.00 · 2026.10 · 9쪽</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/supplier/DI-DS-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>데이터바우처 공급기업 서비스 설명서 (DI-DS-01)</b><small>산업설비 OT 데이터 수집·가공·표준화·분석 서비스 · Rev.00 · 2026.10 · 6쪽</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/supplier/DI-AV-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>AI바우처 공급기업 솔루션 설명서 (DI-AV-01)</b><small>산업설비 AI 이상감지·예지보전 솔루션 (AI 이상탐지는 현재 PoC 단계) · Rev.00 · 2026.10 · 6쪽</small></span><span class="go">보기 →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-innov" data-cat="innov">
+          <button type="button" class="rp-h" aria-expanded="false"><i>혁신</i><div><b>혁신제품</b><small>지능형 제어반 혁신제품 지정 추진</small></div><span class="rp-n">1</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="files/innov/DI-IN-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>지능형 제어반 혁신제품 안내 (DI-IN-01)</b><small>조달청 혁신제품 지정 추진 · 홍보용 1쪽 안내문 · Rev.00 · 2026.10 · 1쪽</small></span><span class="go">보기 →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-ip" data-cat="ip">
+          <button type="button" class="rp-h" aria-expanded="false"><i>특허</i><div><b>특허 · 상표</b><small>등록 특허와 상표</small></div><span class="rp-n">4</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="files/ip/Patent_10-2964558.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>특허 제10-2964558호</b><small>수소연료전지 하이브리드 추진선박의 부하 프로파일 기반 자동제어방법 · 등록 2026.05.08</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/ip/Patent_10-2964564.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>특허 제10-2964564호</b><small>수소충전용 모듈러 인출식 VFD 판넬 · 등록 2026.05.08</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/ip/Trademark_40-2214640.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>상표등록 제40-2214640호 「(주)동인엔시스」</b><small>제42류 · 등록 2024.06.28</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/ip/Trademark_40-2178388.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>상표등록 제40-2178388호 「ENERGIENT SOLUTION」</b><small>제42류 · 등록 2024.04.04</small></span><span class="go">보기 →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-iso" data-cat="iso">
+          <button type="button" class="rp-h" aria-expanded="false"><i>ISO</i><div><b>ISO 매뉴얼 · 서류</b><small>통합경영 매뉴얼과 기록양식</small></div><span class="rp-n">4</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="files/iso/DI-IMS-M-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>통합경영 매뉴얼 (DI-IMS-M-01)</b><small>품질·환경·안전보건 · Rev.00 · 2026.10.01 · 17쪽 · 목차·결재란 포함 · 법정 안전보건 의무 포함</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/iso/DI-IMS-F-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>통합 기록양식집 (DI-IMS-F-01)</b><small>PF·QF·SF·EF·MF 양식 33종 + 별지 2종 · Rev.00 · 2026.10.01 · 53쪽 · 인쇄용</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/iso/DI-IMS-M-01_Rev00.docx" target="_blank" rel="noopener"><span class="ty">DOC</span><span class="tx"><b>통합경영 매뉴얼 원본 (Word)</b><small>편집용 원본 · Rev.00</small></span><span class="go">받기 →</span></a>
+            <a class="rrow" href="files/iso/DI-IMS-F-01_Rev00.xlsx" target="_blank" rel="noopener"><span class="ty">XLS</span><span class="tx"><b>통합 기록양식집 원본 (Excel)</b><small>작성용 빈 양식 · 선택 목록·자동 판정 포함 · Rev.00</small></span><span class="go">받기 →</span></a>
+          </div>
+        </section>
+        <section class="rpanel" id="cat-brand" data-cat="brand">
+          <button type="button" class="rp-h" aria-expanded="false"><i>CI</i><div><b>CI · 브랜드</b><small>CI 가이드, 로고, 인쇄 파일</small></div><span class="rp-n">7</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="rp-b" hidden>
+            <a class="rrow" href="files/DONG-IN-ENSIS_Envelope_330x245_print.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>대봉투 인쇄 파일 (330×245)</b><small>인쇄소 전달용 · CMYK · 재단여백 3mm · PDF · 약 0.1MB</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/brand/DONG-IN-ENSIS_CI-Guide.html" target="_blank" rel="noopener"><span class="ty">WEB</span><span class="tx"><b>CI 가이드</b><small>기업 이념 · 톤앤매너 · 로고 · 컬러 · 글꼴 · 그래픽 · 응용 · v1.1 · 2026.10</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/brand/DONG-IN-ENSIS_Logo_Pack.zip" target="_blank" rel="noopener"><span class="ty">ZIP</span><span class="tx"><b>로고 파일 모음 (ZIP)</b><small>컬러 · 화이트 · 흑백 · SVG · PDF · PNG 전체 · 약 0.4MB</small></span><span class="go">내려받기 ↓</span></a>
+            <a class="rrow" href="files/brand/logo/DONG-IN-ENSIS_logo_color.png" target="_blank" rel="noopener"><span class="ty">PNG</span><span class="tx"><b>로고 컬러 (PNG)</b><small>3000px · 투명 배경 · 문서·웹용</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/brand/logo/DONG-IN-ENSIS_logo_white.png" target="_blank" rel="noopener"><span class="ty">PNG</span><span class="tx"><b>로고 화이트 (PNG)</b><small>3000px · 투명 배경 · 어두운 배경용</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/brand/logo/DONG-IN-ENSIS_logo_color.svg" target="_blank" rel="noopener"><span class="ty">SVG</span><span class="tx"><b>로고 벡터 (SVG)</b><small>크기 제한 없음 · 인쇄·간판용</small></span><span class="go">보기 →</span></a>
+            <a class="rrow" href="files/brand/logo/DONG-IN-ENSIS_logo_color.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>로고 벡터 (PDF)</b><small>인쇄소 전달용 · 벡터</small></span><span class="go">보기 →</span></a>
+          </div>
+        </section>
+        <a class="rpanel rlock" href="members.html"><span class="rp-h"><i>NDA</i><div><b>파트너 자료실</b><small>NDA 체결 파트너·고객사 전용 (비밀번호 필요)</small></div><span class="lk" aria-hidden="true">🔒</span><span class="chev" aria-hidden="true"></span></span></a>
     </div>
     <p class="dempty" id="dempty" hidden>검색 결과가 없습니다. 다른 검색어를 입력해 보세요.</p>
     <div class="dnote"><b class="dnote-h">찾으시는 자료가 없나요?</b>시험성적서, 도면 등 목록에 없는 자료가 필요하시면 요청해 주세요. 확인 후 보내 드립니다.<div class="dnote-btns"><a class="btn btn-blue" href="mailto:dongin@donginmne.com?subject=%5B%EC%9E%90%EB%A3%8C%20%EC%9A%94%EC%B2%AD%5D&amp;body=%ED%9A%8C%EC%82%AC%EB%AA%85%3A%0A%EB%8B%B4%EB%8B%B9%EC%9E%90%20%EC%84%B1%ED%95%A8%2F%EC%97%B0%EB%9D%BD%EC%B2%98%3A%0A%ED%95%84%EC%9A%94%ED%95%9C%20%EC%9E%90%EB%A3%8C%3A%0A%EC%9A%A9%EB%8F%84%3A%0A">자료 요청하기 (메일)</a><a class="btn dnote-tel" href="tel:0518623668">전화 051-862-3668</a><a class="btn dnote-tel" href="members.html">파트너 자료실 (비밀번호)</a></div></div>
@@ -172,6 +197,6 @@
     </div>
   </div>
 </footer>
-<script src="js/site.js?v=20261009a"></script>
+<script src="js/site.js?v=20261009b"></script>
 </body>
 </html>
