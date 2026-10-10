@@ -13,3 +13,8 @@
 - 회사소개서: 국문 `_src/profile/build_profile_refs.py` ↔ 영문 `build_profile_refs_en.py`(실적 7장), 본문은 `base/profile_base_KR.pdf` · `base/profile_base_EN.pdf`를 함께 고친다. 장수가 바뀌면 메인(`index.html`, `en/index.html`) 숫자 칸과 자료실 표기도 고친다.
 - 보도자료: 국문 `news-*.html`을 올리면 같은 이름의 `en/` 영문판, 국문·영문 보도자료 목록과 메인 미디어 목록(같은 순서), `sitemap.xml`의 hreflang 짝까지 함께 올린다.
 - 커밋 전 확인: `python3 _src/check_ko_en.py` — 페이지 짝, 자료실 파일·건수, 보도자료 순서, 연혁, 회사소개서 장수가 모두 맞아야 한다.
+
+## 저장소 용량
+- 공개 저장소는 1GB 이하를 목표로 한다(GitHub 권장). 파일을 바꾸면 이전 판도 기록에 계속 남으므로 큰 파일은 신중히 올린다.
+- 홈페이지에서 쓰지 않는 인쇄 원본(배너·리플렛·봉투)·영상 원본·작업용 시안은 저장소에 올리지 않고 구글 드라이브에 둔다. 저장소에는 페이지에 실제로 링크된 파일만 둔다.
+- 비공개 자료를 추가·교체할 때는 `_src/private/encrypt.js`가 바뀐 자료만 새로 암호화한다. `PRIVATE_FULL=1`(전체 재암호화)은 비밀번호 유출 등 필요할 때만 쓴다.
