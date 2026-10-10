@@ -10,7 +10,7 @@
 | `files/DONG-IN-ENSIS_Sales-Profile_KR.pdf` (영업용 회사소개서 · 전기제어시스템 설계·제작, 18장) | `build_sales.py` | `python3 build_sales.py [base\|marine\|plant\|machine] [--to "OOO 귀중"] [--contact "담당자 줄"]` → `out/sales_<변형>.pdf`. 자료실에는 `base`를 복사해 올림. 제출처별 변형(marine · plant · machine)은 홈페이지에 올리지 않고 직접 보냄 |
 | `files/DONG-IN-ENSIS_IT-Partner-Proposal_KR.pdf` (IT 파트너 제안서 · MES·AI·디지털트윈 솔루션 기업용, 8장) | `build_partner.py` | `python3 build_partner.py` → `out/partner_KR.pdf`. 디자인은 `build_sales.py`의 CSS·헬퍼를 그대로 씀 |
 | `files/partner/DONG-IN-ENSIS_Data-Integration-Overview_KR.pdf` (데이터 연동 개요, A4 2쪽) | `build_overview.py` | `python3 build_overview.py` → `out/overview_KR.pdf` |
-| `files/DONG-IN-ENSIS_Sales-Profile_Briefing-Script_KR.pdf` (영업용 브리핑 대본, 6쪽) | `briefing/briefing_script.md` | `python3 briefing/make_script_pdf.py` (markdown 패키지 필요) |
+| 영업용 브리핑 대본 (6쪽, 파트너 자료실 `members.html` 잠금 자료) | 저장소 밖 (내부 영업 자료 — 원본 `briefing_script.md`와 생성 스크립트는 비공개 원본 폴더에 보관) | `_src/private/README.md` 절차로 암호화해 `files/private/`에 올림 |
 
 - 필요한 것: Python 3, Playwright(Chromium).
 - 서체는 `fonts/`(Pretendard, OFL 라이선스)를 씁니다.
