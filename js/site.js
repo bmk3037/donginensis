@@ -260,11 +260,13 @@ var TXT = IS_EN ? {
   var en=document.documentElement.lang==='en';
   var links=sec.querySelectorAll('.prof-btns a'), th=sec.querySelector('.prof-stack .s1');
   if(links.length<2||!th) return;
+  // 페이지 수는 같은 영역의 숫자 칸(.prof-meta 첫 칸)을 그대로 읽음 → PDF 장수가 바뀌면 index.html 숫자만 고치면 됨
+  var pm=sec.querySelector('.prof-meta b'), pn=(pm&&/^\d+$/.test(pm.textContent.trim()))?pm.textContent.trim():'';
   var p=document.createElement('aside');
   p.className='prof-pop'; p.setAttribute('aria-label',en?'Company profile':'회사소개서');
   p.innerHTML='<button type="button" class="pp-x" aria-label="'+(en?'Close':'닫기')+'">×</button>'+
     '<a class="pp-th" href="#profile"><img src="'+th.getAttribute('src')+'" alt=""></a>'+
-    '<div class="pp-tx"><small>COMPANY PROFILE 2026</small><b>'+(en?'Company profile':'회사소개서')+'</b><span>'+(en?'19 pages · PDF':'19장 · PDF')+'</span>'+
+    '<div class="pp-tx"><small>COMPANY PROFILE 2026</small><b>'+(en?'Company profile':'회사소개서')+'</b><span>'+(pn?(en?pn+' pages · PDF':pn+'장 · PDF'):'PDF')+'</span>'+
     '<div class="pp-btns"><a href="'+links[0].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'English':'국문')+'</a>'+
     '<a href="'+links[1].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Korean':'영문')+'</a>'+
     (links[2]?'<a href="'+links[2].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Hydrogen':'수소전문기업')+'</a>':'')+'</div></div>';
