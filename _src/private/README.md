@@ -17,6 +17,14 @@
 2. `PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` — `files/private/`를 새로 만듭니다(전체 다시 암호화).
 3. `files/private/`를 커밋·푸시합니다.
 
+## 자료실 '혁신제품' 폴더의 잠금 자료 (`files/innov/private/`)
+
+`resources.html`(국문·영문) 자료실의 **혁신제품** 폴더에도 같은 방식의 잠금 행이 있습니다(🔒 지능형 제어반 혁신제품 지정 추진 전략 DI-IN-02). 파트너 자료실과는 **비밀번호가 다릅니다**(임직원·추진 파트너용).
+
+- 원본(DI-IN-02 PDF, docs.json, 생성 스크립트)은 저장소 밖에 둡니다. 핵심특허 내용·내부 일정이 들어 있어 공개 폴더(`files/innov/`)에는 올리지 않습니다.
+- 교체·비밀번호 변경: `PRIVATE_OUT=files/innov/private PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` → `files/innov/private/`를 새로 만들어 커밋·푸시합니다.
+- 복호화 스크립트는 `resources.html`·`en/resources.html` 끝에 있습니다(`files/innov/private/index.bin`을 읽음).
+
 ## 주의
 
 - 비밀번호 하나를 함께 쓰는 방식이라 사용자별 기록이나 개별 차단은 없습니다. 퇴사·계약 종료 시에는 비밀번호를 바꿔 다시 암호화합니다.
