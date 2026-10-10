@@ -78,6 +78,7 @@ table.sm{{font-size:12.6px}} table.sm td{{padding:6px 12px}} table.sm th{{paddin
 .st .no{{font-size:12px;font-weight:800;color:#E83E30;letter-spacing:1px}} .st h3{{font-size:18px;margin:3px 0 6px}} .st p{{font-size:14px;line-height:1.5;color:#4A5568}}
 .grid2{{display:grid;grid-template-columns:1fr 1fr;gap:12px}} .grid3{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}} .grid3 .gc{{padding:12px 14px}} .grid3 .gc h3{{font-size:14px}} .grid3 .gc p{{font-size:11.5px}}
 .tl2 .r{{padding:7px 0}} .tl2 .y{{font-size:16px;line-height:1.2}} .tl2 .t{{font-size:13.2px;line-height:1.45}}
+.tl2 .hl{{display:inline-block;margin:0 0 4px -12px;padding:4px 12px 4px 9px;border-left:3px solid #1857A5;border-radius:0 6px 6px 0;background:#E8F1FC;color:#0F3F7E;font-size:14.4px;font-weight:600}} .tl2 .hl b{{font-weight:800;color:#1857A5}}  /* 연혁 강조 줄: 2026 지능형 제어반 출시 */
 .gc{{border:1px solid #E2E7EE;border-radius:10px;padding:15px 18px;background:#fff}} .gc.dark{{background:#0F3F7E;border-color:#0F3F7E;color:#fff}}
 .gc h3{{font-size:15.5px;margin:0 0 3px}} .gc p{{font-size:12.5px;color:#5A6577;line-height:1.4}} .gc.dark p{{color:#BFD3EC}}
 .logos{{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:26px}}
@@ -331,7 +332,7 @@ def icp2():
 
 def history():
     # 연혁: 2020년 이후를 자세히, 그 이전은 한 줄로 (홈페이지 회사소개 연혁 기준)
-    J = [('2026', ['지능형 제어반 출시 · 산업설비 데이터 인프라 사업 진출', '산업통상자원부 혁신프리미어 1000 선정 · 수소전문기업 등록', '중소벤처기업부 스마트공장 공급기업 등록', '액화수소충전소 제어시스템 관련 특허 5건 등록']),
+    J = [('2026', ['<span class="hl"><b>지능형 제어반 출시</b> · 산업설비 데이터 인프라 사업 진출</span>', '산업통상자원부 혁신프리미어 1000 선정 · 수소전문기업 등록', '중소벤처기업부 스마트공장 공급기업 등록', '액화수소충전소 제어시스템 관련 특허 5건 등록']),
          ('2025', ['ISO 45001 안전보건경영시스템 인증', '벤처기업 · 메인비즈 · 이노비즈 인증 · 예비수소전문기업 선정']),
          ('2024', ['SK E&amp;S 액화수소충전소 VFD · PLC · UPS 제어시스템 공급', '부산시 전략산업선도기업 · 지역특화 레전드50+ 선정', '국립한국해양대학교 산학협력 가족회사 협약']),
          ('2023', ['충남병원선 · 경남청정호 하이브리드 추진 통합제어 공급 · 양산 제2공장 준공', '해양수산부 「안전기반 소형 수소추진 기술개발 및 실증」 참여', '부산시 히든챔피언 · 서비스 강소기업 선정']),
