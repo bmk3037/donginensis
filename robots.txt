@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /press/
 Disallow: /files/private/
+Disallow: /files/internal/
+Disallow: /internal.html
 
 Sitemap: https://donginensis.com/sitemap.xml

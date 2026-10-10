@@ -27,6 +27,17 @@
 - 교체·비밀번호 변경: `PRIVATE_OUT=files/innov/private PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` → `files/innov/private/`를 새로 만들어 커밋·푸시합니다.
 - 복호화 스크립트는 `resources.html`·`en/resources.html` 끝에 있습니다(`files/innov/private/index.bin`을 읽음).
 
+## 내부 자료실 (`internal.html` · `files/internal/`) — 대표 전용
+
+사업자등록증·공장등록증·수출실적·중소기업확인서·사업계획서처럼 지원사업·거래처 등록 때 자주 내는 내부 서류를 두는 곳입니다. 파트너 자료실과 **다른 비밀번호**(`INTERNAL_PASS`)를 쓰고, 메뉴·사이트맵·검색에 노출하지 않습니다(`robots.txt` 차단, `noindex`). 주소(`/internal.html`)는 대표만 압니다.
+
+- 추가·교체: 저장소 밖 폴더에 원본과 `docs.json`을 두고
+  `PRIVATE_OUT=files/internal PRIVATE_PASS="$INTERNAL_PASS" node _src/private/encrypt.js <원본 폴더>` → `files/internal/`를 커밋·푸시합니다.
+- `docs.json`의 `group`은 예: "제출서류", "지원사업 · 사업계획서", "결과보고서", "회사 기본정보".
+- 법인등기부등본·재무제표도 여기에 둘 수 있습니다(대표만 여는 곳). 다만 등기부등본은 보통 3개월 이내 발급본을 요구하므로 발급일을 `desc`에 적어 둡니다.
+- 비밀번호는 12자 이상, 파트너 자료실과 다르게. 바꿀 때는 `files/internal/`만 다시 암호화하면 됩니다(파트너용 폴더와 독립).
+- 확인: `PRIVATE_PASS='…' INTERNAL_PASS='…' node _src/private/check.js` (INTERNAL_PASS가 없으면 내부 자료실은 SKIP).
+
 ## 주의
 
 - 비밀번호 하나를 함께 쓰는 방식이라 사용자별 기록이나 개별 차단은 없습니다. 퇴사·계약 종료 시에는 비밀번호를 바꿔 다시 암호화합니다.
