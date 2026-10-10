@@ -29,7 +29,7 @@
 
 ## 내부 자료실 (`internal.html` · `files/internal/`) — 대표 전용
 
-사업자등록증·공장등록증·수출실적·중소기업확인서·사업계획서처럼 지원사업·거래처 등록 때 자주 내는 내부 서류를 두는 곳입니다. 파트너 자료실과 **다른 비밀번호**(`INTERNAL_PASS`)를 쓰고, 메뉴·사이트맵·검색에 노출하지 않습니다(`robots.txt` 차단, `noindex`). 주소(`/internal.html`)는 대표만 압니다.
+사업자등록증·공장등록증·수출실적·중소기업확인서·사업계획서처럼 지원사업·거래처 등록 때 자주 내는 내부 서류를 두는 곳입니다. 파트너 자료실과 **다른 비밀번호**(`INTERNAL_PASS`)를 쓰고, 국문 자료실(`resources.html`)의 파트너 자료실 아래 🔒 **내부 자료실** 칸으로 들어갑니다(영문판·메인 메뉴에는 없음). 사이트맵·검색에는 노출하지 않습니다(`robots.txt` 차단, `noindex`, 링크 `rel="nofollow"`). 칸이 보여도 비밀번호 없이는 목록조차 열리지 않습니다.
 
 - 추가·교체: 저장소 밖 폴더에 원본과 `docs.json`을 두고
   `PRIVATE_OUT=files/internal PRIVATE_PASS="$INTERNAL_PASS" node _src/private/encrypt.js <원본 폴더>` → `files/internal/`를 커밋·푸시합니다.
