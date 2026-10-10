@@ -140,17 +140,19 @@ def glance():
 
 
 def overview():
-    rows = [('회사명', '㈜동인엔시스 DONG-IN ENSIS CO., LTD.'), ('대표이사', '백민기'), ('설립', '1991년 10월 · 1997년 7월 법인 전환'),
+    rows = [('회사명', '㈜동인엔시스 DONG-IN ENSIS CO., LTD.'), ('슬로건', '<b>설비를 제어하고, 데이터를 연결하다.</b> <span style="color:#5A6577;font-size:13px">Controlling equipment, connecting data.</span>'),
+            ('대표이사', '백민기'), ('설립', '1991년 10월 · 1997년 7월 법인 전환'),
             ('주요 사업', '선박용 · 산업용 전기제어시스템 설계·제작 · 전원설비(VFD · UPS · PDP) · PLC 프로그램 · 시스템 통합 · 지능형 제어반'),
             ('사업장', '본사 부산광역시 부산진구 진연로9번길 47 (양정동)<br>친환경기술연구소 진연로9번길 39, 엔에스타워 8층<br>양산 1·2공장 경상남도 양산시 상북면 공원로 107 · 103-5<br>기장공장 부산광역시 기장군 정관읍 달음산길 20'),
             ('경영시스템', 'ISO 9001 · ISO 14001 · ISO 45001'),
-            ('인증·선정', '혁신프리미어 1000 (2026) · 수소전문기업 · 벤처 · 이노비즈 · 메인비즈 · 기업부설연구소 · 스마트공장 공급기업'),
+            ('인증·선정', '혁신프리미어 1000 (2026) · 수소전문기업 · 혁신기업 국가대표 1000 · 스마트공장 공급기업<br><span style="color:#5A6577;font-size:13.5px">부산광역시 전략산업 선도기업 · 레전드 50+ 참여기업 · 부산 서비스 강소기업 · 벤처 · 이노비즈 · 메인비즈 · 기업부설연구소</span>'),
             ('파트너', 'Schneider Electric 공식 SI 파트너 · ABB · Fuji Electric · Eaton · Danfoss')]
     tb = '<table style="font-size:15px">' + ''.join(f'<tr><td class="k" style="width:118px;color:#5A6577;padding:12px 14px">{k}</td><td style="padding:12px 14px">{v}</td></tr>' for k, v in rows) + '</table>'
     return page('Company Overview', '회사 개요', '<div class="row top"><div style="width:780px">' + tb + '</div><div class="col" style="flex:1">'
-        f'<img class="ph" src="{X("fac_yangsan1.jpg")}" style="width:100%;height:280px"><div class="cap" style="margin-top:-6px">양산 생산공장</div>'
-        '<div class="box navy"><div class="tag">WHAT WE DO</div><p style="font-size:17px;font-weight:700;line-height:1.5;margin-top:6px">고객 설비에 맞는 제어반을 설계하고,<br>직접 제작해 현장 시운전까지 책임집니다.</p>'
-        '<p style="font-size:13px;color:#BFD3EC;margin-top:10px;line-height:1.5">설비를 제어하고, 데이터를 연결하다.</p></div></div></div>')
+        # 연구소(엔에스타워) 세로 사진을 표 높이(≈551px)에 맞춰 건물 전체가 잘리지 않게(contain) 보이고, WHAT WE DO 박스는 옅은 반투명 음영으로 겹쳐 건물이 비치게 함
+        f'<div style="position:relative;height:551px;border-radius:12px;overflow:hidden;background:#0A2A55"><img src="{SITE}/img/sites/hq-ns-tower.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain">'
+        '<div style="position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(10,42,85,.28) 0%,rgba(10,42,85,.62) 100%);color:#fff;padding:22px 22px 18px;text-shadow:0 1px 3px rgba(0,0,0,.45)"><div class="tag" style="color:#BFD3EC">WHAT WE DO</div><p style="font-size:16.5px;font-weight:700;line-height:1.5;margin-top:6px">고객 설비에 맞는 제어반을 설계하고,<br>직접 제작해 현장 시운전까지 책임집니다.</p>'
+        '<p style="font-size:12.5px;color:#E3EDF9;margin-top:8px;line-height:1.5">설비를 제어하고, 데이터를 연결하다. · 친환경기술연구소 엔에스타워 (부산 양정동)</p></div></div></div></div>')
 
 
 def scope():
@@ -281,7 +283,7 @@ def ref_list():
 
 
 def customers():
-    L = [LG(x) for x in ['atlas.svg', 'bobst.svg', 'hhitm.svg', 'sunbo.svg', 'oriental.svg', 'hiair.svg', 'nikkiso.svg', 'skens.svg', 'kiswire.svg', 'kos.svg', 'kte.svg', 'wilo.svg']]
+    L = [LG(x) for x in ['atlas.svg', 'bobst.svg', 'hhitm.svg', 'sunbo.png', 'oriental.svg', 'hiair.svg', 'nikkiso.svg', 'skens.svg', 'kiswire.svg', 'kos.svg', 'kte.svg', 'wilo.svg']]
     return page('Customers', '국내외 고객과 함께<br><b>현장을 만들어 왔습니다</b>', '<div class="logos">' + ''.join(f'<div><img src="{x}"></div>' for x in L) + '</div>'
         '<div class="row six" style="margin-top:20px">' + STATS6 + '</div>')
 
