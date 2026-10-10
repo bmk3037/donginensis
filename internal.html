@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>/* 인쇄물(전시회 배너) QR이 임시 주소로 연결되어 있어, 접속 시 정식 주소로 이동 */if(/\.workers\.dev$/.test(location.hostname)){location.replace('https://donginensis.com'+location.pathname+(location.search||'?utm_source=banner&utm_medium=qr&utm_campaign=flyasia2026')+location.hash);}</script>
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>내부 자료실 | (주)동인엔시스</title>
+<meta name="description" content="동인엔시스 내부 자료실 (대표 전용).">
+<link rel="canonical" href="https://donginensis.com/internal.html">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/style.css?v=20261009c">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V7LTK4943Q');
+</script>
+<link rel="alternate" type="application/rss+xml" title="(주)동인엔시스" href="https://donginensis.com/rss.xml">
+<style>
+.lock-box{max-width:460px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:30px 28px}
+.lock-box h2{font-size:21px;margin-bottom:6px}.lock-box p{font-size:14.5px;color:var(--sub);margin-bottom:18px;line-height:1.7}
+.lock-box form{display:flex;gap:8px}.lock-box input{flex:1;min-width:0;height:48px;border:1px solid var(--line);border-radius:6px;padding:0 14px;font:inherit;font-size:15px}
+.lock-box .btn{height:48px;white-space:nowrap}.lock-msg{min-height:22px;margin-top:10px;font-size:14px;color:var(--red)}
+.mem-grp{margin-top:28px}.mem-grp h3{font-size:17px;margin-bottom:12px}
+.doc[aria-busy="true"] em{opacity:.5}
+</style>
+</head>
+<body>
+<header class="hd" id="hd">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="(주)동인엔시스 홈">
+      <img class="w" src="img/logo_white.png" alt="(주)동인엔시스">
+      <img class="c" src="img/logo_color.png" alt="(주)동인엔시스">
+    </a>
+    <nav class="gnb" aria-label="주메뉴">
+      <a href="company.html">회사소개</a>
+      <a href="index.html#product">지능형 제어반</a>
+      <a href="manufacturing.html">제조기업 도입</a>
+      <a href="partner.html">IT기업 협업</a>
+      <a href="applications.html">적용 분야</a>
+      <a href="index.html#media">미디어</a>
+      <a href="resources.html">자료실</a>
+    </nav>
+    <div class="hd-r">
+      <a href="en/resources.html" class="lang" hreflang="en">ENG</a>
+      <a href="index.html#contact" class="btn btn-blue">문의하기</a>
+      <button class="mbtn" id="mbtn" aria-label="메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav" aria-label="모바일 메뉴">
+    <a href="company.html">회사소개</a>
+    <a href="index.html#product">지능형 제어반</a>
+    <a href="manufacturing.html">제조기업 도입</a>
+    <a href="partner.html">IT기업 협업</a>
+    <a href="applications.html">적용 분야</a>
+    <a href="index.html#media">미디어</a>
+    <a href="resources.html">자료실</a>
+    <a href="index.html#contact">문의하기</a>
+  </nav>
+</header>
+
+<section class="sub-hero" style="padding:160px 0 70px">
+  <div class="wrap">
+    <div class="kicker">Internal Documents</div>
+    <h1 style="font-size:clamp(28px,3.6vw,42px)">내부 자료실</h1>
+    <p>지원사업·거래처 등록 때 자주 내는 내부 서류를 한곳에 둔 대표 전용 자료실입니다. 파트너 자료실과 다른 비밀번호를 씁니다.</p>
+  </div>
+</section>
+<section class="sec" style="padding-top:50px;background:var(--bg2)">
+  <div class="wrap">
+    <div class="lock-box" id="lock">
+      <h2>비밀번호 입력</h2>
+      <p>자료는 암호화되어 있으며, 비밀번호를 입력하면 이 브라우저 안에서만 풀립니다.</p>
+      <form id="lockForm" autocomplete="off">
+        <input type="password" id="pw" placeholder="비밀번호" aria-label="비밀번호" autocomplete="current-password" required>
+        <button type="submit" class="btn btn-blue" id="pwBtn">열기</button>
+      </form>
+      <div class="lock-msg" id="lockMsg" role="alert" aria-live="polite"></div>
+    </div>
+    <div id="memList" hidden></div>
+    <p style="margin-top:26px;font-size:13.5px;color:var(--sub)">※ 이 페이지는 사이트 메뉴·검색에 노출되지 않습니다. 주소를 외부에 공유하지 마세요. 자료 추가·교체는 <code>_src/private/README.md</code>의 내부 자료실 절차를 따릅니다.</p>
+  </div>
+</section>
+<script>
+(function(){
+  var MAGIC='DIENC1', ITER=600000, key=null, keySalt=null, docs=[];
+  var form=document.getElementById('lockForm'), pw=document.getElementById('pw'), msg=document.getElementById('lockMsg'), btn=document.getElementById('pwBtn');
+  var lock=document.getElementById('lock'), list=document.getElementById('memList');
+  if(!window.crypto||!crypto.subtle){ msg.textContent='이 브라우저에서는 열 수 없습니다. 최신 Chrome·Edge·Safari로 접속해 주세요.'; btn.disabled=true; return; }
+  function parse(buf){ var u=new Uint8Array(buf); if(new TextDecoder().decode(u.slice(0,6))!==MAGIC) throw new Error('format'); return {salt:u.slice(6,22), iv:u.slice(22,34), data:u.slice(34)}; }
+  function same(a,b){ if(!a||a.length!==b.length) return false; for(var i=0;i<a.length;i++) if(a[i]!==b[i]) return false; return true; }
+  function derive(pass,salt){ return crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']).then(function(k){ return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:ITER,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt']); }); }
+  function open(url,pass){
+    return fetch(url,{cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('fetch'); return r.arrayBuffer(); }).then(function(b){
+      var p=parse(b);
+      var kp=(pass!=null)?derive(pass,p.salt).then(function(k){ key=k; keySalt=p.salt; return k; }):(same(keySalt,p.salt)?Promise.resolve(key):Promise.reject(new Error('salt')));
+      return kp.then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:p.iv},k,p.data); });
+    });
+  }
+  function esc(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+  function render(){
+    var groups={}; docs.forEach(function(d){ (groups[d.group]=groups[d.group]||[]).push(d); });
+    var h=''; Object.keys(groups).forEach(function(g){
+      h+='<div class="mem-grp"><h3>'+esc(g)+'</h3><div class="docs">';
+      groups[g].forEach(function(d){ var ext=(d.name.split('.').pop()||'').toUpperCase().slice(0,3); var view=d.type==='application/pdf';
+        h+='<a class="doc" href="#" data-id="'+esc(d.id)+'"><div class="ic">'+esc(ext==='DOC'?'DOC':ext)+'</div><div><b>'+esc(d.title)+'</b><span>'+esc(d.desc)+'</span></div><em>'+(view?'보기 →':'받기 →')+'</em></a>'; });
+      h+='</div></div>'; });
+    h+='<p style="margin-top:22px;font-size:13.5px;color:var(--sub)">※ 내부 자료입니다. 제출 후 파일은 PC에서 지워 주세요. <a href="#" id="relock" style="color:var(--blue);font-weight:700">잠그기</a></p>';
+    list.innerHTML=h; list.hidden=false; lock.hidden=true;
+    document.getElementById('relock').addEventListener('click',function(e){ e.preventDefault(); key=null; keySalt=null; docs=[]; list.hidden=true; list.innerHTML=''; lock.hidden=false; pw.value=''; pw.focus(); });
+  }
+  list.addEventListener('click',function(e){
+    var a=e.target.closest('.doc'); if(!a) return; e.preventDefault(); if(a.getAttribute('aria-busy')==='true') return;
+    var d=docs.filter(function(x){ return x.id===a.dataset.id; })[0]; if(!d) return;
+    var w=d.type==='application/pdf'?window.open('','_blank'):null; a.setAttribute('aria-busy','true');
+    open('files/internal/'+d.id+'.bin',null).then(function(buf){
+      var url=URL.createObjectURL(new Blob([buf],{type:d.type}));
+      if(w){ w.location.href=url; } else { var l=document.createElement('a'); l.href=url; l.download=d.name; document.body.appendChild(l); l.click(); l.remove(); }
+      setTimeout(function(){ URL.revokeObjectURL(url); },60000);
+    }).catch(function(){ if(w) w.close(); alert('파일을 열지 못했습니다. 잠시 후 다시 시도해 주세요.'); }).then(function(){ a.removeAttribute('aria-busy'); });
+  });
+  form.addEventListener('submit',function(e){
+    e.preventDefault(); var pass=pw.value; if(!pass) return;
+    btn.disabled=true; btn.textContent='확인 중…'; msg.textContent='';
+    open('files/internal/index.bin',pass).then(function(buf){ docs=JSON.parse(new TextDecoder().decode(buf)).docs||[]; render(); })
+      .catch(function(err){ key=null; keySalt=null; msg.textContent=(err&&err.message==='fetch')?'아직 올린 자료가 없거나 목록을 불러오지 못했습니다.':'비밀번호가 맞지 않습니다.'; pw.select(); })
+      .then(function(){ btn.disabled=false; btn.textContent='열기'; });
+  });
+})();
+</script>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-top">
+      <div>
+        <img src="img/logo_white.png" alt="(주)동인엔시스">
+        <p class="tag-line">설비를 제어하고, 데이터를 연결하다.</p>
+        <ul>
+          <li>본사 : 부산광역시 부산진구 진연로9번길 47 (양정동)</li>
+          <li>연구소 : 부산광역시 부산진구 진연로9번길 39, 엔에스타워 8층</li>
+          <li>양산 1공장 : 경상남도 양산시 상북면 공원로 107</li>
+          <li>양산 2공장 : 경상남도 양산시 상북면 공원로 103-5</li>
+          <li>기장공장 : 부산광역시 기장군 정관읍 달음산길 20</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li>TEL : <a href="tel:0518623668">051-862-3668</a></li>
+          <li>FAX : 051-862-3325</li>
+          <li>E-mail : dongin@donginmne.com</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div><a href="company.html">회사소개</a><a href="resources.html">자료실</a><a href="news.html">보도자료</a><a href="https://blog.naver.com/donginensis" target="_blank" rel="noopener">블로그</a><a href="privacy.html"><b>개인정보처리방침</b></a></div>
+      <div>Copyright ⓒ DONG-IN ENSIS. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+<script src="js/site.js?v=20261010a"></script>
+</body>
+</html>

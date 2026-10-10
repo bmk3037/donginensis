@@ -1,6 +1,7 @@
 // 비밀번호 자료실(members.html) 암호화 도구
 // 사용: PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>
 //       PRIVATE_OUT=files/innov/private PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>   ← 자료실 '혁신제품' 잠금 자료
+//       PRIVATE_OUT=files/internal PRIVATE_PASS="$INTERNAL_PASS" node _src/private/encrypt.js <원본 폴더>   ← 내부 자료실(internal.html, 대표 전용 · 파트너와 다른 비밀번호)
 //   <원본 폴더>에는 docs.json(목록)과 그 안에 적힌 파일들이 있어야 합니다. 원본 폴더는 저장소 밖에 둡니다.
 // 결과: files/private/ 를 비우고 index.bin(암호화된 목록)과 무작위 이름의 암호화 파일을 새로 만듭니다.
 // 형식: "DIENC1"(6바이트) + salt(16) + iv(12) + AES-256-GCM 암호문(+태그 16바이트), 키는 PBKDF2-SHA256 600,000회
