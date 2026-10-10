@@ -10,6 +10,7 @@
 | `files/DONG-IN-ENSIS_Company-Profile_EN.pdf` (회사소개서 영문, 23장 · 국문과 같은 구성) | `build_profile_refs_en.py` | `python3 build_profile_refs_en.py` → `base/profile_base_EN.pdf` 사이에 영문 실적 7장을 끼워 `files/`에 저장(무손실 압축 저장) |
 | `files/DONG-IN-ENSIS_Sales-Profile_KR.pdf` (영업용 회사소개서 · 전기제어시스템 설계·제작, 18장) | `build_sales.py` | `python3 build_sales.py [base\|marine\|plant\|machine] [--to "OOO 귀중"] [--contact "담당자 줄"]` → `out/sales_<변형>.pdf`. 자료실에는 `base`를 복사해 올림. 제출처별 변형(marine · plant · machine)은 홈페이지에 올리지 않고 직접 보냄 |
 | `files/DONG-IN-ENSIS_IT-Partner-Proposal_KR.pdf` (IT 파트너 제안서 · MES·AI·디지털트윈 솔루션 기업용, 8장) | `build_partner.py` | `python3 build_partner.py` → `out/partner_KR.pdf`. 디자인은 `build_sales.py`의 CSS·헬퍼를 그대로 씀 |
+| 영업용 레퍼런스 사례집 (1사례 1쪽 · 익명판 2쪽+양식 1쪽 / 실명판 2쪽) | `build_cases.py` | `python3 build_cases.py` → `out/cases_KR_anon.pdf`, `python3 build_cases.py --named` → `out/cases_KR_named.pdf`. 홈페이지에 올리지 않고 영업 담당자가 직접 보냄. 실명판은 고객 동의 후 사용. `□` 표시 숫자는 확인 후 `CASES`에 기입 |
 | `files/partner/DONG-IN-ENSIS_Data-Integration-Overview_KR.pdf` (데이터 연동 개요, A4 2쪽) | `build_overview.py` | `python3 build_overview.py` → `out/overview_KR.pdf` |
 | 영업용 브리핑 대본 (6쪽, 파트너 자료실 `members.html` 잠금 자료) | 저장소 밖 (내부 영업 자료 — 원본 `briefing_script.md`와 생성 스크립트는 비공개 원본 폴더에 보관) | `_src/private/README.md` 절차로 암호화해 `files/private/`에 올림 |
 
