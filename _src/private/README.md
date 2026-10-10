@@ -16,7 +16,7 @@
    [{ "group": "가격 · 견적", "title": "가격정책 및 단가표 (DI-DS-02)", "desc": "Rev.00 · 4쪽", "file": "DI-DS-02_Rev00.pdf", "type": "application/pdf" }]
    ```
 
-2. `PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` — `files/private/`를 새로 만듭니다(전체 다시 암호화).
+2. `PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` — `files/private/`를 갱신합니다. 내용이 그대로인 자료는 기존 암호화 파일을 그대로 두고 새로 넣거나 바뀐 자료만 암호화합니다(저장소 용량 절약). 비밀번호를 바꾸면 자동으로 전부 다시 암호화되고, 일부러 전부 새로 하려면 `PRIVATE_FULL=1`을 붙입니다.
 3. `files/private/`를 커밋·푸시합니다.
 
 ## 자료실 '혁신제품' 폴더의 잠금 자료 (`files/innov/private/`)
