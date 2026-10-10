@@ -32,6 +32,21 @@
 .lock-box form{display:flex;gap:8px}.lock-box input{flex:1;min-width:0;height:48px;border:1px solid var(--line);border-radius:6px;padding:0 14px;font:inherit;font-size:15px}
 .lock-box .btn{height:48px;white-space:nowrap}.lock-msg{min-height:22px;margin-top:10px;font-size:14px;color:var(--red)}
 .mem-grp{margin-top:28px}.mem-grp h3{font-size:17px;margin-bottom:12px}
+.fld{background:#fff;border:1px solid var(--line);border-radius:10px;margin-top:12px}
+.fld>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;padding:18px 22px}
+.fld>summary::-webkit-details-marker{display:none}
+.fld>summary b{font-size:17px}.fld>summary small{color:var(--sub);font-size:13.5px;white-space:nowrap}
+.fld>summary::after{content:"";flex:none;margin-left:auto;width:9px;height:9px;border-right:2px solid var(--sub);border-bottom:2px solid var(--sub);transform:rotate(45deg);transition:transform .2s}
+.fld[open]>summary::after{transform:rotate(-135deg)}
+.fld>summary:hover b{color:var(--blue)}
+.fic{flex:none;width:28px;height:21px;margin-top:5px;background:var(--blue-l);border:2px solid var(--blue);border-radius:2px 3px 3px 3px;position:relative}
+.fic::before{content:"";position:absolute;left:-2px;top:-7px;width:12px;height:5px;background:var(--blue-l);border:2px solid var(--blue);border-bottom:0;border-radius:3px 3px 0 0}
+.fld-body{padding:0 22px 22px;border-top:1px solid var(--line)}
+.fld-body .docs{margin-top:16px}
+.fld-desc{margin-top:14px;font-size:14px;color:var(--sub)}
+.fld-empty{margin-top:16px;padding:18px;border:1px dashed var(--line);border-radius:8px;text-align:center;font-size:14px;color:var(--sub)}
+.fld-body h4{margin-top:22px;font-size:14.5px;color:var(--sub)}
+@media (max-width:720px){.fld>summary{padding:16px}.fld-body{padding:0 16px 16px}}
 .doc[aria-busy="true"] em{opacity:.5}
 </style>
 </head>
@@ -93,7 +108,7 @@
 </section>
 <script>
 (function(){
-  var MAGIC='DIENC1', ITER=600000, key=null, keySalt=null, docs=[];
+  var MAGIC='DIENC1', ITER=600000, key=null, keySalt=null, docs=[], folders=[];
   var form=document.getElementById('lockForm'), pw=document.getElementById('pw'), msg=document.getElementById('lockMsg'), btn=document.getElementById('pwBtn');
   var lock=document.getElementById('lock'), list=document.getElementById('memList');
   if(!window.crypto||!crypto.subtle){ msg.textContent='이 브라우저에서는 열 수 없습니다. 최신 Chrome·Edge·Safari로 접속해 주세요.'; btn.disabled=true; return; }
@@ -108,16 +123,34 @@
     });
   }
   function esc(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+  function card(d){ var ext=(d.name.split('.').pop()||'').toUpperCase().slice(0,3); var view=d.type==='application/pdf';
+    return '<a class="doc" href="#" data-id="'+esc(d.id)+'"><div class="ic">'+esc(ext)+'</div><div><b>'+esc(d.title)+'</b><span>'+esc(d.desc||'')+'</span></div><em>'+(view?'보기 →':'받기 →')+'</em></a>'; }
   function render(){
-    var groups={}; docs.forEach(function(d){ (groups[d.group]=groups[d.group]||[]).push(d); });
-    var h=''; Object.keys(groups).forEach(function(g){
-      h+='<div class="mem-grp"><h3>'+esc(g)+'</h3><div class="docs">';
-      groups[g].forEach(function(d){ var ext=(d.name.split('.').pop()||'').toUpperCase().slice(0,3); var view=d.type==='application/pdf';
-        h+='<a class="doc" href="#" data-id="'+esc(d.id)+'"><div class="ic">'+esc(ext==='DOC'?'DOC':ext)+'</div><div><b>'+esc(d.title)+'</b><span>'+esc(d.desc)+'</span></div><em>'+(view?'보기 →':'받기 →')+'</em></a>'; });
-      h+='</div></div>'; });
+    // 폴더: index의 folders(빈 폴더도 표시) + 자료의 group. 'A/B'는 A 아래 B 폴더.
+    function norm(p){ return String(p==null?'':p).split('/').map(function(x){ return x.trim(); }).join('/'); }
+    var fl=(folders||[]).slice(), seen={}; fl.forEach(function(f){ seen[norm(f.path)]=1; });
+    docs.forEach(function(d){ if(!seen[norm(d.group)]){ seen[norm(d.group)]=1; fl.push({path:d.group}); } });
+    var byName={}; docs.forEach(function(d){ if(!byName[d.name]) byName[d.name]=d; });
+    var tops=[], topOf={};
+    fl.forEach(function(f){ var p=norm(f.path).split('/'), t=p[0], sub=p.slice(1).join(' / ');
+      if(!topOf[t]){ topOf[t]={name:t,self:null,subs:[]}; tops.push(topOf[t]); }
+      if(sub) topOf[t].subs.push({f:f,label:sub}); else topOf[t].self=f; });
+    function folder(f,label,open){
+      var own=docs.filter(function(d){ return norm(d.group)===norm(f.path); }), uses=(f.uses||[]).map(function(n){ return byName[n]; }).filter(Boolean);
+      var h='<details class="fld"'+(open?' open':'')+'><summary><span class="fic"></span><b>'+esc(label)+'</b><small>'+own.length+'건'+(uses.length?' · 공통 서류 '+uses.length+'건':'')+'</small></summary><div class="fld-body">';
+      if(f.desc) h+='<p class="fld-desc">'+esc(f.desc)+'</p>';
+      h+=own.length?'<div class="docs">'+own.map(card).join('')+'</div>':'<p class="fld-empty">아직 올린 서류가 없습니다.</p>';
+      if(uses.length) h+='<h4>공통 제출서류에서 함께 낼 서류</h4><div class="docs">'+uses.map(card).join('')+'</div>';
+      return h+'</div></details>'; }
+    var h='', first=true;
+    tops.forEach(function(t){ h+='<div class="mem-grp">';
+      if(t.subs.length) h+='<h3>'+esc(t.name)+'</h3>';
+      if(t.self){ h+=folder(t.self,t.name,first); first=false; }
+      t.subs.forEach(function(s){ h+=folder(s.f,s.label,false); });
+      h+='</div>'; });
     h+='<p style="margin-top:22px;font-size:13.5px;color:var(--sub)">※ 내부 자료입니다. 제출 후 파일은 PC에서 지워 주세요. <a href="#" id="relock" style="color:var(--blue);font-weight:700">잠그기</a></p>';
     list.innerHTML=h; list.hidden=false; lock.hidden=true;
-    document.getElementById('relock').addEventListener('click',function(e){ e.preventDefault(); key=null; keySalt=null; docs=[]; list.hidden=true; list.innerHTML=''; lock.hidden=false; pw.value=''; pw.focus(); });
+    document.getElementById('relock').addEventListener('click',function(e){ e.preventDefault(); key=null; keySalt=null; docs=[]; folders=[]; list.hidden=true; list.innerHTML=''; lock.hidden=false; pw.value=''; pw.focus(); });
   }
   list.addEventListener('click',function(e){
     var a=e.target.closest('.doc'); if(!a) return; e.preventDefault(); if(a.getAttribute('aria-busy')==='true') return;
@@ -132,7 +165,7 @@
   form.addEventListener('submit',function(e){
     e.preventDefault(); var pass=pw.value; if(!pass) return;
     btn.disabled=true; btn.textContent='확인 중…'; msg.textContent='';
-    open('files/internal/index.bin',pass).then(function(buf){ docs=JSON.parse(new TextDecoder().decode(buf)).docs||[]; render(); })
+    open('files/internal/index.bin',pass).then(function(buf){ var ix=JSON.parse(new TextDecoder().decode(buf)); docs=ix.docs||[]; folders=ix.folders||[]; render(); })
       .catch(function(err){ key=null; keySalt=null; msg.textContent=(err&&err.message==='fetch')?'아직 올린 자료가 없거나 목록을 불러오지 못했습니다.':'비밀번호가 맞지 않습니다.'; pw.select(); })
       .then(function(){ btn.disabled=false; btn.textContent='열기'; });
   });
