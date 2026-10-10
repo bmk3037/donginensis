@@ -29,6 +29,17 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="css/style.css?v=20261009c">
+<style>
+.rrow-lock{align-items:flex-start;cursor:default}.rrow-lock:hover{background:#fff}
+.rrow-lock .ty-lock{border-color:var(--blue-dd);background:var(--blue-dd);color:#fff;font-size:13px;line-height:1;padding:5px 0;margin-top:3px}
+.lock-form{display:flex;gap:8px;margin-top:10px;max-width:360px}.lock-form input{flex:1;min-width:0;height:40px;border:1px solid var(--line);border-radius:6px;padding:0 12px;font:inherit;font-size:14px}
+.lock-form .btn{height:40px;padding:0 16px;font-size:14px;white-space:nowrap}
+.lock-msg{min-height:18px;margin-top:6px;font-size:13px;color:var(--red)}.lock-msg:empty{margin-top:0;min-height:0}
+.lock-list a{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 14px;border:1px solid #CFE0F5;border-radius:8px;background:var(--blue-l);color:var(--ink);font-size:14.5px;font-weight:600}
+.lock-list a .ty{flex:none}.lock-list a em{margin-left:auto;font-style:normal;font-weight:700;color:var(--blue);font-size:13px;white-space:nowrap}
+.lock-list a[aria-busy="true"] em{opacity:.5}.lock-list small{display:block;font-size:12.5px;color:var(--sub);margin-top:8px}.lock-list small a{display:inline;margin:0;padding:0;border:0;background:none;color:var(--blue);font-weight:700;font-size:12.5px}
+.rrow-lock.on .lock-form{display:none}
+</style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
 <script>
@@ -85,7 +96,7 @@
   <div class="wrap">
     <div class="rtools">
       <input type="search" id="dq" class="dq" placeholder="자료 검색 (예: ISO, 벤처, 특허)" aria-label="자료 검색 (예: ISO, 벤처, 특허)">
-      <p class="dcount" id="dcount" aria-live="polite">총 39건</p>
+      <p class="dcount" id="dcount" aria-live="polite">총 42건</p>
     </div>
     <div class="rboard" id="docBoard">
         <section class="rpanel" id="cat-cert" data-cat="cert">
@@ -129,9 +140,17 @@
           </div>
         </section>
         <section class="rpanel" id="cat-innov" data-cat="innov">
-          <button type="button" class="rp-h" aria-expanded="false"><i>혁신</i><div><b>혁신제품</b><small>지능형 제어반 혁신제품 지정 추진</small></div><span class="rp-n">1</span><span class="chev" aria-hidden="true"></span></button>
+          <button type="button" class="rp-h" aria-expanded="false"><i>혁신</i><div><b>혁신제품</b><small>지능형 제어반 혁신제품 지정 추진 · 추진 전략(비밀번호)</small></div><span class="rp-n">2</span><span class="chev" aria-hidden="true"></span></button>
           <div class="rp-b" hidden>
             <a class="rrow" href="files/innov/DI-IN-01_Rev00.pdf" target="_blank" rel="noopener"><span class="ty">PDF</span><span class="tx"><b>지능형 제어반 혁신제품 안내 (DI-IN-01)</b><small>조달청 혁신제품 지정 추진 · 홍보용 1쪽 안내문 · Rev.00 · 2026.10 · 1쪽</small></span><span class="go">보기 →</span></a>
+            <div class="rrow rrow-lock" id="innovLock">
+              <span class="ty ty-lock" aria-hidden="true">🔒</span>
+              <span class="tx"><b>지능형 제어반 혁신제품 지정 추진 전략 (DI-IN-02)</b><small>대외비 · Rev.00 · 2026.10.10 · 8쪽 · 비밀번호를 받은 임직원·파트너만 열람 (암호화되어 있으며, 이 브라우저 안에서만 풀립니다)</small>
+                <form class="lock-form" id="innovForm" autocomplete="off"><input type="password" id="innovPw" placeholder="비밀번호" aria-label="비밀번호" autocomplete="current-password" required><button type="submit" class="btn btn-blue" id="innovBtn">열기</button></form>
+                <div class="lock-msg" id="innovMsg" role="alert" aria-live="polite"></div>
+                <div class="lock-list" id="innovList" hidden></div>
+              </span>
+            </div>
           </div>
         </section>
         <section class="rpanel" id="cat-ip" data-cat="ip">
@@ -201,5 +220,49 @@
   </div>
 </footer>
 <script src="js/site.js?v=20261009b"></script>
+<script>
+(function(){
+  // 자료실 '혁신제품' 잠금 자료: members.html과 같은 방식(DIENC1 · AES-256-GCM · PBKDF2 600,000회). 원본은 저장소에 없고 files/innov/private/ 의 암호화 파일만 있음
+  var box=document.getElementById('innovLock'); if(!box) return;
+  var MAGIC='DIENC1', ITER=600000, BASE='files/innov/private/', key=null, keySalt=null, docs=[];
+  var form=document.getElementById('innovForm'), pw=document.getElementById('innovPw'), msg=document.getElementById('innovMsg'), btn=document.getElementById('innovBtn'), list=document.getElementById('innovList');
+  if(!window.crypto||!crypto.subtle){ msg.textContent='이 브라우저에서는 열 수 없습니다. 최신 Chrome·Edge·Safari로 접속해 주세요.'; btn.disabled=true; return; }
+  function parse(buf){ var u=new Uint8Array(buf); if(new TextDecoder().decode(u.slice(0,6))!==MAGIC) throw new Error('format'); return {salt:u.slice(6,22), iv:u.slice(22,34), data:u.slice(34)}; }
+  function same(a,b){ if(!a||a.length!==b.length) return false; for(var i=0;i<a.length;i++) if(a[i]!==b[i]) return false; return true; }
+  function derive(pass,salt){ return crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']).then(function(k){ return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:ITER,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt']); }); }
+  function open(url,pass){
+    return fetch(url,{cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('fetch'); return r.arrayBuffer(); }).then(function(b){
+      var p=parse(b);
+      var kp=(pass!=null)?derive(pass,p.salt).then(function(k){ key=k; keySalt=p.salt; return k; }):(same(keySalt,p.salt)?Promise.resolve(key):Promise.reject(new Error('salt')));
+      return kp.then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:p.iv},k,p.data); });
+    });
+  }
+  function esc(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+  function render(){
+    var h=''; docs.forEach(function(d){ var ext=(d.name.split('.').pop()||'').toUpperCase().slice(0,3); var view=d.type==='application/pdf';
+      h+='<a href="#" data-id="'+esc(d.id)+'"><span class="ty">'+esc(ext)+'</span><span>'+esc(d.title)+'</span><em>'+(view?'보기 →':'받기 →')+'</em></a>'; });
+    h+='<small>※ 대외비 자료입니다. 내려받은 파일을 외부에 공유하지 마세요. <a href="#" id="innovRelock">잠그기</a></small>';
+    list.innerHTML=h; list.hidden=false; box.classList.add('on');
+    document.getElementById('innovRelock').addEventListener('click',function(e){ e.preventDefault(); key=null; keySalt=null; docs=[]; list.hidden=true; list.innerHTML=''; box.classList.remove('on'); pw.value=''; pw.focus(); });
+  }
+  list.addEventListener('click',function(e){
+    var a=e.target.closest('a[data-id]'); if(!a) return; e.preventDefault(); if(a.getAttribute('aria-busy')==='true') return;
+    var d=docs.filter(function(x){ return x.id===a.dataset.id; })[0]; if(!d) return;
+    var w=d.type==='application/pdf'?window.open('','_blank'):null; a.setAttribute('aria-busy','true');
+    open(BASE+d.id+'.bin',null).then(function(buf){
+      var url=URL.createObjectURL(new Blob([buf],{type:d.type}));
+      if(w){ w.location.href=url; } else { var l=document.createElement('a'); l.href=url; l.download=d.name; document.body.appendChild(l); l.click(); l.remove(); }
+      setTimeout(function(){ URL.revokeObjectURL(url); },60000);
+    }).catch(function(){ if(w) w.close(); alert('파일을 열지 못했습니다. 잠시 후 다시 시도해 주세요.'); }).then(function(){ a.removeAttribute('aria-busy'); });
+  });
+  form.addEventListener('submit',function(e){
+    e.preventDefault(); var pass=pw.value; if(!pass) return;
+    btn.disabled=true; btn.textContent='확인 중…'; msg.textContent='';
+    open(BASE+'index.bin',pass).then(function(buf){ docs=JSON.parse(new TextDecoder().decode(buf)).docs||[]; render(); })
+      .catch(function(err){ key=null; keySalt=null; msg.textContent=(err&&err.message==='fetch')?'자료 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.':'비밀번호가 맞지 않습니다.'; pw.select(); })
+      .then(function(){ btn.disabled=false; btn.textContent='열기'; });
+  });
+})();
+</script>
 </body>
 </html>
