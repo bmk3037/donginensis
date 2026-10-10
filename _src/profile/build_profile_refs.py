@@ -26,7 +26,7 @@ bs.FOOT = 'DONG-IN ENSIS · 회사소개서'  # 기존 소개서와 같은 꼬�
 def customers_profile():
     # 영업용 12종 + 실적 페이지에 나오는 SK에코플랜트 · KSB · GSI = 15종 (5 × 3)
     L = [bs.LG(x) for x in ['atlas.svg', 'bobst.svg', 'hhitm.svg', 'sunbo.png', 'oriental.svg', 'hiair.svg', 'nikkiso.svg',
-                            'skens.svg', 'skecoplant.svg', 'kiswire.svg', 'kos.svg', 'ksb.svg', 'gsi.svg', 'kte.svg', 'wilo.svg']]
+                            'skens.svg', 'skecoplant.svg', 'kiswire.svg', 'kos.svg', 'ksb.svg', 'gsi.png', 'kte.svg', 'wilo.svg']]
     return bs.page('Customers', '국내외 고객과 함께<br><b>현장을 만들어 왔습니다</b>', '<div class="logos p5">' + ''.join(f'<div><img src="{x}"></div>' for x in L) + '</div>'
         '<div class="row six" style="margin-top:20px">' + bs.STATS6 + '</div>')
 

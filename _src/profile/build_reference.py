@@ -80,7 +80,7 @@ def plant(L):
     f = ''.join(f'<div class="feat"><img class="ph" src="{ph}"><div class="b"><img class="lg" src="{lg}"><h3>{t}</h3><p>{d}</p></div></div>' for ph,lg,t,d in feats)
     lis = ''.join(f'<li>{x}</li>' for x in L['others'])
     # 고객사 로고 띠 — logos/ 폴더의 벡터 로고 (파일명, 표시 높이 px)
-    logos = [('skens.svg', 30), ('bobst.svg', 22), ('atlas.svg', 26), ('skecoplant.svg', 28), ('hhitm.svg', 20), ('hiair.svg', 26), ('kiswire.svg', 32), ('sunbo.png', 22), ('ksb.svg', 24), ('gsi.svg', 22), ('kte.svg', 30), ('wilo.svg', 28)]
+    logos = [('skens.svg', 30), ('bobst.svg', 22), ('atlas.svg', 26), ('skecoplant.svg', 28), ('hhitm.svg', 20), ('hiair.svg', 26), ('kiswire.svg', 32), ('sunbo.png', 22), ('ksb.svg', 24), ('gsi.png', 22), ('kte.svg', 30), ('wilo.svg', 28)]
     strip = '<div class="strip">' + ''.join(f'<img src="{ROOT}/logos/{x}" style="height:{h}px">' for x, h in logos) + '</div>'
     return f'<div class="grid">{f}<div class="list"><h3>{L["oh"]}</h3><ul>{lis}</ul></div></div>{strip}'
 
