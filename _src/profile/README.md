@@ -15,6 +15,8 @@
 - 필요한 것: Python 3, Playwright(Chromium).
 - 서체는 `fonts/`(Pretendard, OFL 라이선스)를 씁니다.
 - 사진·로고는 `crops/`(기존 회사소개서에서 추출), 홈페이지 이미지는 `img/`를 씁니다. 영업용 소개서 사진·고객 로고는 `sales/`(원본 49쪽 회사소개서에서 추출)를 씁니다.
+- 회사소개서 국문·영문 4쪽 회사 개요의 "인증·선정" 행은 2026.10에 `patch_overview_certs.py`로 세 줄(스마트공장 공급기업 · 혁신기업 국가대표 1000 · 부산 전략산업 선도기업 · 레전드 50+ · 서비스 강소기업 추가)로 바꿨습니다. base PDF에 원본이 없어 PyMuPDF로 글자를 지우고 Chromium이 그린 PDF를 그 행에 겹쳐 넣는 방식입니다(PyMuPDF insert_text는 Pretendard OTF의 괄호·+ 글리프가 깨짐).
+- 영업용 회사소개서 16쪽 회사 개요: 슬로건 행, 연구소(엔에스타워) 사진(건물 전체 · WHAT WE DO 반투명 겹침), 인증·선정 행 확장(2026.10). 고객사 로고 SB선보는 공식 CI(`logos/sunbo.png`, sbsunbo.com CI 페이지)로 교체.
 - 회사소개서 국문 5쪽 연혁의 "지능형 제어반 사업 본격화"는 2026.10에 PyMuPDF로 "지능형 제어반 출시 · 데이터 사업 진출"로 고쳤습니다(글자 치환 후 글꼴 서브셋). 홈페이지 연혁과 맞춥니다.
 - 회사소개서 본문(1~11쪽, 19~23쪽)은 별도 원본 없이 `base/profile_base_KR.pdf`(국문) · `base/profile_base_EN.pdf`(영문)로만 관리합니다. 실적 7장(12~18쪽)은 `build_sales.py`의 실적 페이지를 재사용합니다.
 - 영문 회사소개서(19장)는 `build_reference.py`의 Major Reference 3장을 `base/profile_base_EN.pdf` 11쪽 뒤에 끼운 것입니다. 국문 통합본의 실적 4장(에너지 · 플랜트·OEM · 서보 · 실적표)은 아직 영문이 없습니다.
