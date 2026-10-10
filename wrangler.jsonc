@@ -1,9 +1,8 @@
 {
-  // Cloudflare Workers 정적 사이트 설정 (GitHub 푸시 시 자동 배포)
+  // Cloudflare Workers 설정 (main 푸시 시 자동 배포)
+  // 옛 전시회 배너 QR 주소(fancy-mud-ff3d.bmk3037.workers.dev)를 donginensis.com으로 바로 넘기는 용도만 남김.
+  // 사이트 파일은 올리지 않습니다(홈페이지는 GitHub Pages).
   "name": "fancy-mud-ff3d",
-  "compatibility_date": "2026-09-01",
-  "assets": {
-    "directory": "./",
-    "not_found_handling": "404-page"
-  }
+  "main": "_src/cloudflare/redirect.js",
+  "compatibility_date": "2026-09-01"
 }
