@@ -3,6 +3,7 @@
 //       PRIVATE_OUT=files/innov/private PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>   ← 자료실 '혁신제품' 잠금 자료
 //       PRIVATE_OUT=files/internal PRIVATE_PASS="$INTERNAL_PASS" node _src/private/encrypt.js <원본 폴더>   ← 내부 자료실(internal.html, 대표 전용 · 파트너와 다른 비밀번호)
 //   <원본 폴더>에는 docs.json(목록)과 그 안에 적힌 파일들이 있어야 합니다. 원본 폴더는 저장소 밖에 둡니다.
+//   docs.json은 자료 배열이거나, 폴더를 함께 적는 {"folders":[{"path","desc","uses"}], "docs":[…]} 형식(내부 자료실)입니다.
 // 결과: files/private/ 를 비우고 index.bin(암호화된 목록)과 무작위 이름의 암호화 파일을 새로 만듭니다.
 // 형식: "DIENC1"(6바이트) + salt(16) + iv(12) + AES-256-GCM 암호문(+태그 16바이트), 키는 PBKDF2-SHA256 600,000회
 const fs = require('fs');
@@ -27,7 +28,10 @@ const seal = buf => {
   return Buffer.concat([MAGIC, salt, iv, body]);
 };
 
-const docs = JSON.parse(fs.readFileSync(path.join(srcDir, 'docs.json'), 'utf8'));
+const src = JSON.parse(fs.readFileSync(path.join(srcDir, 'docs.json'), 'utf8'));
+const docs = Array.isArray(src) ? src : src.docs;
+const folders = Array.isArray(src) ? null : (src.folders || []);  // 폴더 목록(빈 폴더 표시 · 공통 서류 참조)
+for (const f of folders || []) for (const u of f.uses || []) if (!docs.some(d => d.file === u)) { console.error(`폴더 '${f.path}'의 uses에 적은 파일이 목록에 없습니다: ${u}`); process.exit(1); }
 fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -37,5 +41,5 @@ const list = docs.map(d => {
   fs.writeFileSync(path.join(outDir, id + '.bin'), seal(data));
   return { group: d.group, title: d.title, desc: d.desc, name: d.file, type: d.type, id, size: data.length };
 });
-fs.writeFileSync(path.join(outDir, 'index.bin'), seal(Buffer.from(JSON.stringify({ v: 1, docs: list }), 'utf8')));
+fs.writeFileSync(path.join(outDir, 'index.bin'), seal(Buffer.from(JSON.stringify(folders ? { v: 1, folders, docs: list } : { v: 1, docs: list }), 'utf8')));
 console.log(`암호화 완료: 자료 ${list.length}건 → ${path.relative(process.cwd(), outDir)}`);
