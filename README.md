@@ -15,6 +15,10 @@
 - 접속하면 `https://donginensis.com/?utm_source=banner&utm_medium=qr&utm_campaign=flyasia2026`으로 자동 이동합니다 (각 페이지 `<head>`의 스크립트).
 - **Cloudflare Workers 배포(`fancy-mud-ff3d`)와 이 저장소 연결은 삭제하지 마세요.** 삭제하면 인쇄된 배너 QR이 동작하지 않습니다.
 
+## 비공개 자료 (비밀번호)
+- 비밀번호가 걸린 자료는 파트너 자료실(`members.html` → `files/private/`)과 자료실 혁신제품 폴더의 잠금 행(`files/innov/private/`) 두 곳입니다. 저장소에는 암호화된 파일만 있고, 원본과 비밀번호는 저장소 밖에 둡니다.
+- **비공개 파일·폴더의 비밀번호는 전부 하나로 통일합니다**(파트너 자료실 비밀번호). 새 비공개 자료를 올릴 때도 같은 비밀번호를 쓰고, 바꿀 때는 모두 함께 다시 암호화합니다. 방법과 확인 명령은 `_src/private/README.md`.
+
 ## 업데이트가 바로 안 보일 때
 - CSS·JS는 브라우저가 최대 10분 캐시합니다. `css/style.css`나 `js/site.js`를 바꾸면 모든 페이지의 `?v=` 값을 새 값으로 올려 주세요.
 
