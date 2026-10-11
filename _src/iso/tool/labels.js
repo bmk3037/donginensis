@@ -38,7 +38,7 @@
   function defaults(p) {
     var std = A.P.clean(String(p.laws || '').split('/')[0]) || 'IEC 60204-1';
     return {
-      np: { volt: '3상 380V 60Hz', ctrl: 'DC 24V', sccr: '', ip: 'IP54', std: std, date: ym(), size: 's', qr: true, holes: true,
+      np: { volt: '3상 380V 60Hz', ctrl: 'DC 24V', sccr: '', ip: 'IP54', std: std, date: /^\d{4}-\d{2}/.test(A.P.clean(p.dShip)) ? A.P.clean(p.dShip).slice(0, 7).replace('-', '.') : ym(), size: 's', qr: true, holes: true,
         dwg: [A.P.clean(p.pj), A.P.clean(p.drawRev)].filter(Boolean).join(' ') },
       per: {},
       kinds: KINDS.reduce(function (o, k) { o[k.id] = { on: k.on, sheet: k.sheet, copies: k.copies }; return o; }, {}),

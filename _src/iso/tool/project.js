@@ -307,6 +307,17 @@
     return saved;
   }
 
+  // ---------------------------------------------------------------- 일정(예정일)
+  var SCHEDULE = [['dOrder', '수주'], ['dDesign', '설계 승인'], ['dMaterial', '자재 입고'], ['dWiring', '배선 완료'],
+    ['dFat', 'FAT'], ['dShip', '출하'], ['dSat', 'SAT·인수']];
+  function md(d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(clean(d)); return m ? (+m[2]) + '/' + (+m[3]) : clean(d); }
+  /** '수주 10/1 · 설계 승인 10/8 · … · 납기 11/20' (full: 연도 포함) */
+  function scheduleText(p, full) {
+    var out = SCHEDULE.filter(function (s) { return clean(p[s[0]]); }).map(function (s) { return s[1] + ' ' + (full ? clean(p[s[0]]) : md(p[s[0]])); });
+    if (clean(p.due)) out.push('납기 ' + (full ? clean(p.due) : md(p.due)));
+    return out.join(' · ');
+  }
+
   /** 생성할 문서 목록. 각 문서: {folder, file, code, panel, values, rows, blankMin} */
   function plan(p, bom, io, std, opts) {
     opts = opts || {};
@@ -357,7 +368,7 @@
       '프로젝트 번호': pj, '판넬 번호': tagList, '설계 책임자': p.designer, '검토자(설계자 외)': p.reviewer,
       '입력자료 목록·Rev': [p.spec ? '고객 사양서 ' + p.spec : '', p.po ? 'PO ' + p.po : '', p.drawRev ? '도면 ' + p.drawRev : '', p.bomRev ? 'BOM ' + p.bomRev : '', p.ioRev ? 'I/O ' + p.ioRev : '']
         .filter(Boolean).join(' / '),
-      '법규·규격·환경조건': p.laws, '단계 일정': p.due ? '납기 ' + p.due : '',
+      '법규·규격·환경조건': p.laws, '단계 일정': scheduleText(p),
       '고객 승인도 필요 여부': p.approval ? '필요' : '불필요',
       '검토·검증·유효성 확인 방법': '설계검증: 입출력 대조·용량/보호협조 검토·논리시험 / 유효성: FAT(QF-06·QF-06-1)' + (p.sat ? '·SAT(QF-07)' : '') + '·고객 인수'
     });
@@ -416,12 +427,24 @@
       perPanel[t] = { f16: 'QF-16_' + t, f02s: 'SF-02_' + t };
     });
 
+    function fatWhen() {
+      var d = clean(p.dFat) ? md(p.dFat) + ' (예정)' : '';
+      return d || clean(p.tester) ? [d, clean(p.tester)].join(' / ') : '';
+    }
+
     // 04 제작: 공정 이동표의 담당 작업자·도면 Rev는 입력값으로 채운다(일자·판정은 현장에서)
     function qf16Rows() {
       var tpl = (opts.forms && opts.forms['QF-16'] && opts.forms['QF-16'].rows) || [];
       var who = { '입고·불출': p.production, '외함 준비·가공': p.wirer || p.production, '부품 취부': p.wirer, '배선': p.wirer,
         '숙련자 배선 확인': p.inspector, '자체시험·FAT': p.tester, '포장·출하': p.production };
-      return tpl.map(function (r) { var row = r.slice(); row[3] = clean(who[row[0]]); row[4] = clean(p.drawRev); return row; });
+      var when = { '입고·불출': p.dMaterial, '외함 준비·가공': p.dMaterial, '배선': p.dWiring, '숙련자 배선 확인': p.dWiring,
+        '자체시험·FAT': p.dFat, '포장·출하': p.dShip };
+      return tpl.map(function (r) {
+        var row = r.slice();
+        row[2] = clean(when[row[0]]) ? '예정 ' + md(when[row[0]]) : '';
+        row[3] = clean(who[row[0]]); row[4] = clean(p.drawRev);
+        return row;
+      });
     }
 
     // 04 제작
@@ -429,7 +452,7 @@
       var t = clean(panel.tag);
       add('04_제작', 'QF-16', t, {
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), '제조 수량': '1',
-        '착수·완료 예정일': p.due ? '납기 ' + p.due : '',
+        '착수·완료 예정일': [p.dMaterial ? '착수 ' + md(p.dMaterial) : '', p.dShip ? '출하 ' + md(p.dShip) : '', p.due ? '납기 ' + md(p.due) : ''].filter(Boolean).join(' · '),
         '승인 도면 Rev / QF-15': [p.drawRev, stdRev].filter(Boolean).join(' / '), '생산관리 책임자': p.production
       }, qf16Rows());
       add('04_제작', 'QF-05', t, {
@@ -455,7 +478,7 @@
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel),
         '도면 Rev / QF-15 번호': [p.drawRev, stdRev].filter(Boolean).join(' / '),
         'PLC Ver / SF-02 번호': [p.plcVer, perPanel[t].f02s].filter(Boolean).join(' / '),
-        '시험일 / 시험자': p.tester ? ' / ' + p.tester : '', '계측기 관리번호': p.meters,
+        '시험일 / 시험자': fatWhen(), '계측기 관리번호': p.meters,
         '고객 입회자·서명 또는 승인메일': p.witness
       }, fatRows.length ? fatRows : undefined);
       var pts = io.filter(function (x) { return !x.panel || norm(x.panel) === norm(t); });
@@ -464,11 +487,11 @@
       });
       add('05_FAT출하', 'QF-06-1', t, {
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), 'PLC Ver': p.plcVer, 'I/O 리스트 Rev': p.ioRev,
-        '시험일 / 시험자': p.tester ? ' / ' + p.tester : '', '고객 입회자': p.witness
+        '시험일 / 시험자': fatWhen(), '고객 입회자': p.witness
       }, ioRows.length ? ioRows : undefined, 2);
       add('05_FAT출하', 'SF-02', t, {
         '프로젝트 번호': pj, '현장': '공장 FAT', '판넬·전원 범위': pv(panel) + ' 주회로·제어회로',
-        '작업책임자': p.tester, '시험자': p.tester, '감시자': p.watcher, '위험성평가 번호': 'SF-01 (시험·통전 작업)',
+        '작업일': clean(p.dFat) ? md(p.dFat) + ' (예정)' : '', '작업책임자': p.tester, '시험자': p.tester, '감시자': p.watcher, '위험성평가 번호': 'SF-01 (시험·통전 작업)',
         '작업모드': '시험 통전 (FAT)', '허가·현장요구': '공장 시험구역 출입 통제·표지'
       });
     });
@@ -488,7 +511,7 @@
       add('06_SAT인수', 'QF-07', '', {
         '프로젝트 번호': pj, '현장': p.name, '판넬 번호': tagList, '고객': p.customer,
         '도면 Rev / PLC 최종 Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '),
-        '시운전일 / 담당': p.tester ? ' / ' + p.tester : '',
+        '시운전일 / 담당': clean(p.dSat) || clean(p.tester) ? [clean(p.dSat) ? md(p.dSat) + ' (예정)' : '', clean(p.tester)].join(' / ') : '',
         'SF-02 / SF-03 번호': 'SF-02 (현장 통전)' + (p.outsource ? ' / SF-03 (외주 현장 배선)' : '')
       });
       if (p.outsource) add('06_SAT인수', 'SF-03', '', {
@@ -542,7 +565,7 @@
       orient: 'landscape', mode: 'register',
       cols: [['단계', 10], ['양식', 9], ['문서', 24], ['판넬', 9], ['파일 위치', 40], ['담당', 14], ['상태', 10], ['확인일', 10], ['확인자', 10], ['승인 증거·대체 기록 경로', 30], ['해당없음 사유', 18]],
       fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['계약·PO 번호', null], ['납기', null]],
-        [['판넬 LOT (제조번호)', null]], [['담당 (설계 / 생산 / 품질 / 시험)', null]],
+        [['판넬 LOT (제조번호)', null]], [['담당 (설계 / 생산 / 품질 / 시험)', null]], [['일정 (예정일)', null]],
         [['도면 Rev / PLC Ver', null], ['생성일', null]], [['BOM 번호·Rev', null], ['I/O 리스트 Rev', null]],
         [['BOM 수량 기준', null], ['총수량 BOM 원본파일', null]], [['프로젝트 원본 보관 경로', null]], [['별도 백업 경로', null]], [['문서관리 담당', null], ['접근권한 관리 담당', null]]],
       notes: ['이 묶음의 기록과 별도 증빙 목록입니다. 상태·확인일·확인자를 실제 사실대로 기록합니다. 승인 상태는 승인자·일시·기록 버전을 확인할 수 있는 원본 증거 경로가 필요하며, 이 표의 입력만으로 전자승인이 되지 않습니다.',
@@ -714,6 +737,7 @@
         '계약·PO 번호': p.po, '납기': p.due,
         '판넬 LOT (제조번호)': (p.panels || []).filter(function (x) { return x.tag; }).map(function (x) { return clean(x.tag) + ' ' + (clean(x.serial) || '(LOT 없음)'); }).join(', '),
         '담당 (설계 / 생산 / 품질 / 시험)': [p.designer, p.production, p.quality, p.tester].map(function (v) { return clean(v) || '-'; }).join(' / '),
+        '일정 (예정일)': scheduleText(p, true),
         'BOM 번호·Rev': p.bomRev, 'I/O 리스트 Rev': p.ioRev,
         'BOM 수량 기준': {perPanel: '판넬 1면당 수량', allocated: '프로젝트 총수량의 판넬별 배분'}[p.bomBasis] || '', '총수량 BOM 원본파일': p.bomTotalFile,
         '프로젝트 원본 보관 경로': p.recordPath, '별도 백업 경로': p.backupPath,
@@ -777,7 +801,7 @@
   var api = {
     norm: norm, clean: clean, today: today, detectColumns: detectColumns, LABELS: LABELS, SYN: SYN,
     parseBom: parseBom, parseIo: parseIo, parseStd: parseStd, classify: classify, METHOD: METHOD,
-    splitTags: splitTags, plan: plan, signNames: signNames, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, compareBom: compareBom, readProject: readProject
+    splitTags: splitTags, plan: plan, signNames: signNames, SCHEDULE: SCHEDULE, scheduleText: scheduleText, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, compareBom: compareBom, readProject: readProject
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.IsoProject = api;

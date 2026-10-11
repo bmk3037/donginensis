@@ -387,6 +387,11 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
         <h2 id="h-s1"><span class="num">1</span>프로젝트 정보</h2>
         <div class="grid" id="fieldsBasic"></div>
         <div class="sign-box">
+          <p class="sign-h">일정 (예정일 한 번 입력)</p>
+          <div class="grid" id="fieldsSchedule"></div>
+          <p class="help">공정 이동표 일자, 시험일·작업일·시운전일, 설계 단계 일정에 '예정'으로 들어가고 기록 현황판이 다음 일정과 지연을 알려 줍니다. 날짜가 바뀌면 여기만 고쳐 묶음을 다시 만들고, 실제 한 날은 문서에 덮어씁니다.</p>
+        </div>
+        <div class="sign-box">
           <p class="sign-h">결재란 (모든 문서 공통)</p>
           <div class="grid" id="fieldsSign"></div>
           <p class="help">한 번 적으면 모든 문서의 작성·검토·승인 칸에 이름이 들어갑니다. 서명과 일자는 실제로 확인한 사람이 그때 직접 적습니다(미리 서명하지 않음).</p>
@@ -1317,6 +1322,17 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     return saved;
   }
 
+  // ---------------------------------------------------------------- 일정(예정일)
+  var SCHEDULE = [['dOrder', '수주'], ['dDesign', '설계 승인'], ['dMaterial', '자재 입고'], ['dWiring', '배선 완료'],
+    ['dFat', 'FAT'], ['dShip', '출하'], ['dSat', 'SAT·인수']];
+  function md(d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(clean(d)); return m ? (+m[2]) + '/' + (+m[3]) : clean(d); }
+  /** '수주 10/1 · 설계 승인 10/8 · … · 납기 11/20' (full: 연도 포함) */
+  function scheduleText(p, full) {
+    var out = SCHEDULE.filter(function (s) { return clean(p[s[0]]); }).map(function (s) { return s[1] + ' ' + (full ? clean(p[s[0]]) : md(p[s[0]])); });
+    if (clean(p.due)) out.push('납기 ' + (full ? clean(p.due) : md(p.due)));
+    return out.join(' · ');
+  }
+
   /** 생성할 문서 목록. 각 문서: {folder, file, code, panel, values, rows, blankMin} */
   function plan(p, bom, io, std, opts) {
     opts = opts || {};
@@ -1367,7 +1383,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       '프로젝트 번호': pj, '판넬 번호': tagList, '설계 책임자': p.designer, '검토자(설계자 외)': p.reviewer,
       '입력자료 목록·Rev': [p.spec ? '고객 사양서 ' + p.spec : '', p.po ? 'PO ' + p.po : '', p.drawRev ? '도면 ' + p.drawRev : '', p.bomRev ? 'BOM ' + p.bomRev : '', p.ioRev ? 'I/O ' + p.ioRev : '']
         .filter(Boolean).join(' / '),
-      '법규·규격·환경조건': p.laws, '단계 일정': p.due ? '납기 ' + p.due : '',
+      '법규·규격·환경조건': p.laws, '단계 일정': scheduleText(p),
       '고객 승인도 필요 여부': p.approval ? '필요' : '불필요',
       '검토·검증·유효성 확인 방법': '설계검증: 입출력 대조·용량/보호협조 검토·논리시험 / 유효성: FAT(QF-06·QF-06-1)' + (p.sat ? '·SAT(QF-07)' : '') + '·고객 인수'
     });
@@ -1426,12 +1442,24 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       perPanel[t] = { f16: 'QF-16_' + t, f02s: 'SF-02_' + t };
     });
 
+    function fatWhen() {
+      var d = clean(p.dFat) ? md(p.dFat) + ' (예정)' : '';
+      return d || clean(p.tester) ? [d, clean(p.tester)].join(' / ') : '';
+    }
+
     // 04 제작: 공정 이동표의 담당 작업자·도면 Rev는 입력값으로 채운다(일자·판정은 현장에서)
     function qf16Rows() {
       var tpl = (opts.forms && opts.forms['QF-16'] && opts.forms['QF-16'].rows) || [];
       var who = { '입고·불출': p.production, '외함 준비·가공': p.wirer || p.production, '부품 취부': p.wirer, '배선': p.wirer,
         '숙련자 배선 확인': p.inspector, '자체시험·FAT': p.tester, '포장·출하': p.production };
-      return tpl.map(function (r) { var row = r.slice(); row[3] = clean(who[row[0]]); row[4] = clean(p.drawRev); return row; });
+      var when = { '입고·불출': p.dMaterial, '외함 준비·가공': p.dMaterial, '배선': p.dWiring, '숙련자 배선 확인': p.dWiring,
+        '자체시험·FAT': p.dFat, '포장·출하': p.dShip };
+      return tpl.map(function (r) {
+        var row = r.slice();
+        row[2] = clean(when[row[0]]) ? '예정 ' + md(when[row[0]]) : '';
+        row[3] = clean(who[row[0]]); row[4] = clean(p.drawRev);
+        return row;
+      });
     }
 
     // 04 제작
@@ -1439,7 +1467,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       var t = clean(panel.tag);
       add('04_제작', 'QF-16', t, {
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), '제조 수량': '1',
-        '착수·완료 예정일': p.due ? '납기 ' + p.due : '',
+        '착수·완료 예정일': [p.dMaterial ? '착수 ' + md(p.dMaterial) : '', p.dShip ? '출하 ' + md(p.dShip) : '', p.due ? '납기 ' + md(p.due) : ''].filter(Boolean).join(' · '),
         '승인 도면 Rev / QF-15': [p.drawRev, stdRev].filter(Boolean).join(' / '), '생산관리 책임자': p.production
       }, qf16Rows());
       add('04_제작', 'QF-05', t, {
@@ -1465,7 +1493,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel),
         '도면 Rev / QF-15 번호': [p.drawRev, stdRev].filter(Boolean).join(' / '),
         'PLC Ver / SF-02 번호': [p.plcVer, perPanel[t].f02s].filter(Boolean).join(' / '),
-        '시험일 / 시험자': p.tester ? ' / ' + p.tester : '', '계측기 관리번호': p.meters,
+        '시험일 / 시험자': fatWhen(), '계측기 관리번호': p.meters,
         '고객 입회자·서명 또는 승인메일': p.witness
       }, fatRows.length ? fatRows : undefined);
       var pts = io.filter(function (x) { return !x.panel || norm(x.panel) === norm(t); });
@@ -1474,11 +1502,11 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       });
       add('05_FAT출하', 'QF-06-1', t, {
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), 'PLC Ver': p.plcVer, 'I/O 리스트 Rev': p.ioRev,
-        '시험일 / 시험자': p.tester ? ' / ' + p.tester : '', '고객 입회자': p.witness
+        '시험일 / 시험자': fatWhen(), '고객 입회자': p.witness
       }, ioRows.length ? ioRows : undefined, 2);
       add('05_FAT출하', 'SF-02', t, {
         '프로젝트 번호': pj, '현장': '공장 FAT', '판넬·전원 범위': pv(panel) + ' 주회로·제어회로',
-        '작업책임자': p.tester, '시험자': p.tester, '감시자': p.watcher, '위험성평가 번호': 'SF-01 (시험·통전 작업)',
+        '작업일': clean(p.dFat) ? md(p.dFat) + ' (예정)' : '', '작업책임자': p.tester, '시험자': p.tester, '감시자': p.watcher, '위험성평가 번호': 'SF-01 (시험·통전 작업)',
         '작업모드': '시험 통전 (FAT)', '허가·현장요구': '공장 시험구역 출입 통제·표지'
       });
     });
@@ -1498,7 +1526,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       add('06_SAT인수', 'QF-07', '', {
         '프로젝트 번호': pj, '현장': p.name, '판넬 번호': tagList, '고객': p.customer,
         '도면 Rev / PLC 최종 Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '),
-        '시운전일 / 담당': p.tester ? ' / ' + p.tester : '',
+        '시운전일 / 담당': clean(p.dSat) || clean(p.tester) ? [clean(p.dSat) ? md(p.dSat) + ' (예정)' : '', clean(p.tester)].join(' / ') : '',
         'SF-02 / SF-03 번호': 'SF-02 (현장 통전)' + (p.outsource ? ' / SF-03 (외주 현장 배선)' : '')
       });
       if (p.outsource) add('06_SAT인수', 'SF-03', '', {
@@ -1552,7 +1580,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       orient: 'landscape', mode: 'register',
       cols: [['단계', 10], ['양식', 9], ['문서', 24], ['판넬', 9], ['파일 위치', 40], ['담당', 14], ['상태', 10], ['확인일', 10], ['확인자', 10], ['승인 증거·대체 기록 경로', 30], ['해당없음 사유', 18]],
       fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['계약·PO 번호', null], ['납기', null]],
-        [['판넬 LOT (제조번호)', null]], [['담당 (설계 / 생산 / 품질 / 시험)', null]],
+        [['판넬 LOT (제조번호)', null]], [['담당 (설계 / 생산 / 품질 / 시험)', null]], [['일정 (예정일)', null]],
         [['도면 Rev / PLC Ver', null], ['생성일', null]], [['BOM 번호·Rev', null], ['I/O 리스트 Rev', null]],
         [['BOM 수량 기준', null], ['총수량 BOM 원본파일', null]], [['프로젝트 원본 보관 경로', null]], [['별도 백업 경로', null]], [['문서관리 담당', null], ['접근권한 관리 담당', null]]],
       notes: ['이 묶음의 기록과 별도 증빙 목록입니다. 상태·확인일·확인자를 실제 사실대로 기록합니다. 승인 상태는 승인자·일시·기록 버전을 확인할 수 있는 원본 증거 경로가 필요하며, 이 표의 입력만으로 전자승인이 되지 않습니다.',
@@ -1724,6 +1752,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         '계약·PO 번호': p.po, '납기': p.due,
         '판넬 LOT (제조번호)': (p.panels || []).filter(function (x) { return x.tag; }).map(function (x) { return clean(x.tag) + ' ' + (clean(x.serial) || '(LOT 없음)'); }).join(', '),
         '담당 (설계 / 생산 / 품질 / 시험)': [p.designer, p.production, p.quality, p.tester].map(function (v) { return clean(v) || '-'; }).join(' / '),
+        '일정 (예정일)': scheduleText(p, true),
         'BOM 번호·Rev': p.bomRev, 'I/O 리스트 Rev': p.ioRev,
         'BOM 수량 기준': {perPanel: '판넬 1면당 수량', allocated: '프로젝트 총수량의 판넬별 배분'}[p.bomBasis] || '', '총수량 BOM 원본파일': p.bomTotalFile,
         '프로젝트 원본 보관 경로': p.recordPath, '별도 백업 경로': p.backupPath,
@@ -1787,7 +1816,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   var api = {
     norm: norm, clean: clean, today: today, detectColumns: detectColumns, LABELS: LABELS, SYN: SYN,
     parseBom: parseBom, parseIo: parseIo, parseStd: parseStd, classify: classify, METHOD: METHOD,
-    splitTags: splitTags, plan: plan, signNames: signNames, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, compareBom: compareBom, readProject: readProject
+    splitTags: splitTags, plan: plan, signNames: signNames, SCHEDULE: SCHEDULE, scheduleText: scheduleText, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, compareBom: compareBom, readProject: readProject
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.IsoProject = api;
@@ -1805,7 +1834,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     warranty: '계약서 확인 (예시: 납품 후 12개월)', packing: '목재 팔레트 수직 고정, 방습 포장',
     custSupply: '없음', designer: '김설계 (예시)', reviewer: '이검토 (예시)', production: '박생산 (예시)',
     quality: '문품질 (예시)', tester: '최시험 (예시)', inspector: '정숙련 (예시)', wirer: '이배선 (예시)', watcher: '박감시 (예시)', programmer: '정프로 (예시)',
-    meters: 'M-01 절연저항계 · M-02 접지저항계 · M-03 멀티미터 (예시)', witness: '고객 품질 담당 (예시)', signWriter: '', signReviewer: '문품질 (예시)', signApprover: '대표이사 (예시)', outsourceCo: '○○전기 (예시)',
+    meters: 'M-01 절연저항계 · M-02 접지저항계 · M-03 멀티미터 (예시)', witness: '고객 품질 담당 (예시)', signWriter: '', dOrder: '2026-10-01', dDesign: '2026-10-08', dMaterial: '2026-10-12', dWiring: '2026-10-21',
+    dFat: '2026-10-25', dShip: '2026-10-28', dSat: '2026-11-05', signReviewer: '문품질 (예시)', signApprover: '대표이사 (예시)', outsourceCo: '○○전기 (예시)',
     stdRev: 'TS-INV-01 Rev.0 (예시)',
     approval: true, sat: true, outsource: true,
     panels: [
@@ -1935,6 +1965,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   ];
   var FIELDS_OPT = [['approval', '고객 승인도 필요'], ['sat', 'SAT·시운전 포함 (QF-07)'], ['outsource', '현장 배선 외주 (SF-03)']];
   var FIELDS_STD = [['stdRev', '기준표 번호·Rev'], ['stdName', '기준표 이름 (판넬 타입)']];
+  var FIELDS_SCHEDULE = [['dOrder', '수주(계약)일', 'date'], ['dDesign', '설계 승인 예정', 'date'], ['dMaterial', '자재 입고 예정', 'date'],
+    ['dWiring', '배선 완료 예정', 'date'], ['dFat', 'FAT 예정', 'date'], ['dShip', '출하 예정', 'date'], ['dSat', 'SAT·인수 예정', 'date']];
   var FIELDS_SIGN = [['signWriter', '작성자 (비우면 문서별 담당자)'], ['signReviewer', '검토자'], ['signApprover', '승인자']];
   var FIELDS_STORAGE = [['recordPath', '프로젝트 원본 보관 경로 (공용폴더/NAS)'], ['backupPath', '별도 저장장치의 백업 경로'], ['documentOwner', '문서관리 담당'], ['accessOwner', '접근권한 관리 담당']];
 
@@ -2028,7 +2060,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   }
 
   function renderFields() {
-    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD], ['fieldsStorage', FIELDS_STORAGE], ['fieldsSign', FIELDS_SIGN]].forEach(function (g) {
+    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD], ['fieldsStorage', FIELDS_STORAGE], ['fieldsSign', FIELDS_SIGN], ['fieldsSchedule', FIELDS_SCHEDULE]].forEach(function (g) {
       var box = $(g[0]);
       clear(box);
       g[1].forEach(function (f) { box.appendChild(fieldInput(f[0], f[1], f[2])); });
@@ -2600,7 +2632,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   function defaults(p) {
     var std = A.P.clean(String(p.laws || '').split('/')[0]) || 'IEC 60204-1';
     return {
-      np: { volt: '3상 380V 60Hz', ctrl: 'DC 24V', sccr: '', ip: 'IP54', std: std, date: ym(), size: 's', qr: true, holes: true,
+      np: { volt: '3상 380V 60Hz', ctrl: 'DC 24V', sccr: '', ip: 'IP54', std: std, date: /^\d{4}-\d{2}/.test(A.P.clean(p.dShip)) ? A.P.clean(p.dShip).slice(0, 7).replace('-', '.') : ym(), size: 's', qr: true, holes: true,
         dwg: [A.P.clean(p.pj), A.P.clean(p.drawRev)].filter(Boolean).join(' ') },
       per: {},
       kinds: KINDS.reduce(function (o, k) { o[k.id] = { on: k.on, sheet: k.sheet, copies: k.copies }; return o; }, {}),
@@ -3688,7 +3720,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       pj: fieldVal(rows, h, '프로젝트 번호'), customer: fieldVal(rows, h, '고객'), name: fieldVal(rows, h, '프로젝트명·현장'),
       panelsText: fieldVal(rows, h, '판넬'), po: fieldVal(rows, h, '계약·PO 번호'), due: fieldVal(rows, h, '납기'),
       lots: fieldVal(rows, h, '판넬 LOT (제조번호)'), staff: fieldVal(rows, h, '담당 (설계 / 생산 / 품질 / 시험)'),
-      created: fieldVal(rows, h, '생성일'), drawPlc: fieldVal(rows, h, '도면 Rev / PLC Ver'), records: recs
+      created: fieldVal(rows, h, '생성일'), drawPlc: fieldVal(rows, h, '도면 Rev / PLC Ver'), schedText: fieldVal(rows, h, '일정 (예정일)'), records: recs
     };
   }
 
@@ -3835,7 +3867,35 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     pr.name = pr.name || info.name || '';
     pr.due = pr.due || info.due || '';
     pr.dday = dday(pr.due);
+    schedule(pr);
     return pr;
+  }
+
+  // 일정: 예정일이 지났는데 그 단계 기록이 끝나지 않았으면 지연
+  var STAGE_OF = { dDesign: '2 설계', dMaterial: '3 구매·입고', dWiring: '4 제작', dShip: '5 FAT·출하', dSat: '6 SAT·인수' };
+  function schedule(pr) {
+    var info = pr.info || {}, list = [];
+    A.P.SCHEDULE.forEach(function (s) { if (cl(info[s[0]])) list.push({ key: s[0], label: s[1], date: cl(info[s[0]]) }); });
+    if (!list.length && pr.schedText) {
+      pr.schedText.split('·').forEach(function (t) {
+        var m = /^\s*(.+?)\s+(\d{4}-\d{2}-\d{2})\s*$/.exec(t);
+        if (!m) return;
+        var hit = A.P.SCHEDULE.filter(function (s) { return s[1] === m[1]; })[0];
+        if (hit) list.push({ key: hit[0], label: hit[1], date: m[2] });
+      });
+    }
+    pr.sched = list;
+    pr.late = [];
+    list.forEach(function (x) {
+      var st = STAGE_OF[x.key], dd = dday(x.date);
+      if (!st || dd === null || dd >= 0) return;
+      var stg = (pr.stages || []).filter(function (g) { return g.name === st; })[0];
+      if (x.key === 'dShip' && pr.panels && pr.panels.length && pr.panels.every(function (q) { return q.ship; })) return;
+      if (stg && stg.state !== 'done' && stg.state !== 'none') {
+        pr.late.push(x.label + ' 예정일 ' + x.date.slice(5).replace('-', '/') + ' 지남 (' + (-dd) + '일) — ' + st.slice(2) + ' 기록 ' + (stg.n - stg.done) + '건 남음');
+      }
+    });
+    pr.next = list.filter(function (x) { var dd = dday(x.date); return dd !== null && dd >= 0; })[0] || null;
   }
   function dday(d) {
     var m = /^(\d{4})[-.\/](\d{1,2})[-.\/](\d{1,2})/.exec(cl(d));
@@ -3862,7 +3922,12 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     function vc(recRev, revs, recVer, vers, issues) {
       return { managed: true, recRev: recRev, recVer: recVer, revs: revs, latestRev: top(revs, cmpRev), vers: vers, latestVer: top(vers, cmpVer), issues: issues || [], notes: [] };
     }
-    function mk(pr, v) { pr.vc = v; return pr; }
+    function mk(pr, v, sch) {
+      pr.vc = v;
+      pr.info = sch;
+      schedule(pr);
+      return pr;
+    }
     var d = new Date(), iso = function (k) { var x = new Date(d.getTime() + k * 86400000); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
     data = {
       sample: true, mode: 'sample', note: '',
@@ -3871,11 +3936,14 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
           [{ lot: 'EX-26-015-01', tag: 'VFD-01', fat: '합격 10/25', ship: '' }, { lot: 'EX-26-015-02', tag: 'VFD-02', fat: '', ship: '' }]),
           vc('1', ['2'], '1.0', ['1.0', '1.1'], ['기록의 도면 Rev.1 ≠ 승인 도면 최신 Rev.2 — QF-02 변경 기록 후 01 탭 도면 Rev를 바꿔 묶음을 다시 만드세요',
             '기록의 PLC V1.0 ≠ 최신 릴리스 V1.1 — QF-08에 버전 기록 후 01 탭 PLC Ver를 바꾸세요',
-            'FAT 시험 버전 V1.0, 최신 릴리스 V1.1 — 변경 후 재시험 기록(QF-08·QF-06)을 확인하세요'])),
+            'FAT 시험 버전 V1.0, 최신 릴리스 V1.1 — 변경 후 재시험 기록(QF-08·QF-06)을 확인하세요']),
+          { dDesign: iso(-20), dMaterial: iso(-14), dWiring: iso(-6), dFat: iso(-2), dShip: iso(3), dSat: iso(8) }),
         mk(make('EX-26-021', '현대터보기계 (예시)', '터보 블로워 MCC반 (예시)', iso(34), 1, true,
-          [{ lot: 'EX-26-021-01', tag: 'MCC-01', fat: '', ship: '' }]), vc('A', [], '', [])),
+          [{ lot: 'EX-26-021-01', tag: 'MCC-01', fat: '', ship: '' }]), vc('A', [], '', []),
+          { dDesign: iso(-1), dMaterial: iso(8), dWiring: iso(18), dFat: iso(24), dShip: iso(28), dSat: iso(34) }),
         mk(make('EX-26-009', '○○산업 (예시)', '펌프 제어반 (예시)', iso(-6), 5, false,
-          [{ lot: 'EX-26-009-01', tag: 'LCP-01', fat: '합격 10/02', ship: '10/06 품질 확인' }]), vc('3', ['3'], '2.0', ['2.0']))
+          [{ lot: 'EX-26-009-01', tag: 'LCP-01', fat: '합격 10/02', ship: '10/06 품질 확인' }]), vc('3', ['3'], '2.0', ['2.0']),
+          { dDesign: iso(-40), dMaterial: iso(-32), dWiring: iso(-24), dFat: iso(-20), dShip: iso(-16), dSat: iso(-9) })
       ]
     };
   }
@@ -3895,10 +3963,11 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: head.length } };
     }
     var ps = filtered();
-    sheet('프로젝트', ['프로젝트 번호', '고객', '프로젝트명', '납기', 'D-day', '현재 단계', '기록 완료율(%)', '완료', '전체', '남은 기록', '판넬 LOT'],
-      ps.map(function (p) { return [p.pj, p.customer, p.name, p.due, p.dday === null ? '' : p.dday, p.current, p.pct, p.doneN, p.total, p.left.length,
+    sheet('프로젝트', ['프로젝트 번호', '고객', '프로젝트명', '납기', 'D-day', '현재 단계', '다음 일정', '일정 지연', '기록 완료율(%)', '완료', '전체', '남은 기록', '판넬 LOT'],
+      ps.map(function (p) { return [p.pj, p.customer, p.name, p.due, p.dday === null ? '' : p.dday, p.current,
+        p.next ? p.next.label + ' ' + p.next.date : '', (p.late || []).join(' / '), p.pct, p.doneN, p.total, p.left.length,
         p.panels.map(function (x) { return x.lot + (x.ship ? '(출하)' : x.fat ? '(FAT)' : ''); }).join(', ')]; }),
-      [14, 18, 26, 12, 7, 12, 12, 7, 7, 9, 36]);
+      [14, 18, 26, 12, 7, 12, 18, 40, 12, 7, 7, 9, 36]);
     var left = [];
     ps.forEach(function (p) { p.left.forEach(function (r) { if (!view.owner || r.owner === view.owner) left.push([p.pj, r.stage, r.code, r.doc, r.panel, r.owner, r.status, r.loc, r.exists === false ? '파일 없음' : '']); }); });
     sheet('남은 기록', ['프로젝트', '단계', '양식', '문서', '판넬', '담당', '상태', '파일 위치', '확인'], left, [12, 11, 9, 28, 9, 14, 9, 44, 10]);
@@ -3955,6 +4024,18 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     }));
   }
 
+  function schedLine(p) {
+    if (!p.sched || !p.sched.length) return null;
+    var nx = p.next, dd = nx ? dday(nx.date) : null;
+    return el('div', { cls: 'vc' }, [
+      el('div', { cls: 'lots' }, [
+        nx ? el('span', { cls: 'chip', text: '다음 일정 · ' + nx.label + ' ' + nx.date.slice(5).replace('-', '/') + (dd === 0 ? ' (오늘)' : ' (D-' + dd + ')') }) : el('span', { cls: 'chip chip-ok', text: '예정 일정 모두 지남' }),
+        el('span', { cls: 'sub', text: p.sched.map(function (x) { return x.label + ' ' + x.date.slice(5).replace('-', '/'); }).join(' · ') })
+      ]),
+      p.late.length ? el('ul', { cls: 'vc-issues' }, p.late.map(function (t) { return el('li', { text: t }); })) : null
+    ]);
+  }
+
   function vcLine(p) {
     var v = p.vc;
     if (!v) return null;
@@ -3984,6 +4065,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       ]),
       stepper(p),
       lotChips(p),
+      schedLine(p),
       vcLine(p),
       el('div', { cls: 'row-actions' }, [
         el('button', { type: 'button', cls: 'btn btn-sm', 'aria-expanded': open ? 'true' : 'false', text: (open ? '접기' : '남은 기록 보기') + ' (' + left.length + ')',
@@ -4034,6 +4116,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     k.appendChild(card('남은 기록', String(left), '승인·해당없음 전', left ? 'warn' : ''));
     k.appendChild(card('납기 14일 이내', String(soon), '기록 미완료 프로젝트', soon ? 'warn' : ''));
     k.appendChild(card('출하 대기 판넬', String(ready), 'FAT 완료 · 출하 기록 전'));
+    var lateN = all.filter(function (p) { return p.late && p.late.length; }).length;
+    k.appendChild(card('일정 지연', String(lateN), lateN ? '예정일 지났는데 기록 미완료' : '지연 없음', lateN ? 'warn' : ''));
     var vcBad = all.filter(function (p) { return p.vc && p.vc.issues.length; }).length;
     k.appendChild(card('도면·PLC 확인', String(vcBad), vcBad ? '버전 불일치·정리 필요 프로젝트' : '승인 도면·릴리스와 기록 일치', vcBad ? 'warn' : ''));
     var owners = {};
