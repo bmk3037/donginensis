@@ -280,10 +280,10 @@ def main():
     concat_xfade(segs, scenes, f'{work}/video.mp4')
     mix_audio(scenes, total, bgm, f'{work}/audio.wav')
     out = a.out or (f'{SITE}/video/company-intro_{lang}.mp4' if not a.sample else f'{OUT}/sample_{lang}.mp4')
-    # 25MB 이하(Cloudflare 정적 파일 한도)로: 평균 1.0Mbps 상한
+    # 25MiB 이하(Cloudflare 정적 파일 한도)로: 평균 0.86Mbps 상한
     run([FF, '-v', 'error', '-y', '-i', f'{work}/video.mp4', '-i', f'{work}/audio.wav', '-vf', f"ass={work}/subs.ass:fontsdir={FONTS}",
-         '-c:v', 'libx264', '-preset', 'slow', '-crf', '23', '-maxrate', '1000k', '-bufsize', '2500k', '-g', '60', '-pix_fmt', 'yuv420p',
-         '-c:a', 'aac', '-b:a', '112k', '-movflags', '+faststart', '-shortest', out])
+         '-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-maxrate', '860k', '-bufsize', '2000k', '-g', '60', '-pix_fmt', 'yuv420p',
+         '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', '-shortest', out])
     poster = a.poster or (out[:-4] + '.jpg')
     run([FF, '-v', 'error', '-y', '-ss', '4.5', '-i', out, '-frames:v', '1', '-q:v', '3', poster])
     print('->', out, f'{os.path.getsize(out) / 1e6:.1f} MB |', poster)
