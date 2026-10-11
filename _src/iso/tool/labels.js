@@ -38,7 +38,8 @@
   function defaults(p) {
     var std = A.P.clean(String(p.laws || '').split('/')[0]) || 'IEC 60204-1';
     return {
-      np: { volt: '3상 380V 60Hz', ctrl: 'DC 24V', sccr: '', ip: 'IP54', std: std, date: ym(), size: 's', qr: true, holes: true },
+      np: { volt: '3상 380V 60Hz', ctrl: 'DC 24V', sccr: '', ip: 'IP54', std: std, date: ym(), size: 's', qr: true, holes: true,
+        dwg: [A.P.clean(p.pj), A.P.clean(p.drawRev)].filter(Boolean).join(' ') },
       per: {},
       kinds: KINDS.reduce(function (o, k) { o[k.id] = { on: k.on, sheet: k.sheet, copies: k.copies }; return o; }, {}),
       panels: {}, dx: 0, dy: 0, outline: false, preview: ''
@@ -87,6 +88,7 @@
       ['보호등급', 'IP rating', np.ip],
       ['적용규격', 'Standard', np.std],
       ['중량', 'Weight', d.weight ? withUnit(d.weight, 'kg') : ''],
+      ['도면번호', 'Doc. No.', np.dwg],
       ['제조년월', 'Mfg. date', np.date]
     ];
     return rows.filter(function (r) { return r[3] || r[0] === '도면 Tag' || A.P.clean(r[2]); });
@@ -137,14 +139,14 @@
     o.push('<rect x="0.3" y="0.3" width="99.4" height="59.4" rx="1.6" fill="#fff" stroke="#1d2735" stroke-width="0.35"/>');
     o.push('<g clip-path="url(#np-c)"><rect x="0" y="0" width="100" height="10" fill="' + NAVY + '"/>' +
       '<rect x="0" y="10" width="100" height="0.6" fill="' + RED + '"/></g>');
-    o.push('<text x="9" y="6.7" fill="#fff" font-size="4.1" font-weight="700" letter-spacing="0.15">CONTROL PANEL</text>');
-    o.push('<text x="91" y="6.6" fill="#fff" font-size="3.4" font-weight="700" text-anchor="end">' + esc(COMPANY.ko) + '</text>');
+    o.push(logoNested(8, 2.4, 5.2, 'white'));
+    o.push('<text x="91" y="6.5" fill="#fff" font-size="3.2" font-weight="700" letter-spacing="0.2" text-anchor="end">CONTROL PANEL</text>');
     var top = 13, bottom = 54.2, step = Math.min(3.9, (bottom - top) / rows.length);
     var vRight = qr ? 70 : 94, vx = 34;
     rows.forEach(function (r, i) {
       var y = top + step * (i + 0.72);
       var lot = r[3] === 'lot';
-      o.push('<text x="6" y="' + y.toFixed(2) + '" font-size="2.1" font-weight="700" fill="#1d2735">' + esc(r[0]) +
+      o.push('<text x="6" y="' + y.toFixed(2) + '" font-size="2.1" font-weight="700" fill="' + NAVY + '">' + esc(r[0]) +
         '<tspan dx="1" font-size="1.45" font-weight="400" fill="#55657a">' + esc(r[1]) + '</tspan></text>');
       var v = r[2] || '', fs = fit(v, vRight - vx, lot ? 3.0 : 2.4);
       o.push('<text x="' + vx + '" y="' + y.toFixed(2) + '" font-size="' + fs.toFixed(2) + '"' + (lot ? ' font-weight="700" fill="' + BLUE + '"' : ' fill="#1d2735"') + '>' + esc(v) + '</text>');
@@ -198,7 +200,7 @@
       });
     } else if (kindId === 'panel') {
       pans.forEach(function (pn) {
-        push(pn, lines([[pn.tag, 0.4, 1], [pn.desc, 0.2, 0], [pn.serial ? 'LOT ' + pn.serial : '', 0.15, 0, 1]]), [pn.tag, pn.desc, pn.serial]);
+        push(pn, lines([[pn.tag, 0.4, 1], [pn.desc, 0.2, 0], [pn.serial ? 'LOT ' + pn.serial : '', 0.15, 1, 'lot']]), [pn.tag, pn.desc, pn.serial]);
       });
     } else if (kindId === 'ship') {
       pans.forEach(function (pn) { push(pn, { type: 'ship', p: p, pn: pn }, [pn.serial, pn.tag, p.customer]); });
@@ -208,15 +210,36 @@
     return out;
   }
 
-  function linesHtml(c, w, h) {
-    var pad = Math.min(2, h * 0.08), avail = h - 2 * pad, ls = c.lines.filter(function (l) { return l && A.P.clean(l[0]); });
+  /** CI 로고(벡터). variant 'white': 남색 바탕용(글자 흰색, i 점 빨강 유지). h: 높이 mm */
+  function logoSvg(h, variant) {
+    var L = window.ISO_LOGO_SVG;
+    if (!L) return '<b style="font-size:' + (h * 0.8).toFixed(2) + 'mm;color:' + (variant === 'white' ? '#fff' : BLUE) + '">' + esc(COMPANY.ko) + '</b>';
+    var vb = L.viewBox.split(/\s+/).map(Number), inner = variant === 'white' ? L.inner.replace(/#1857A5/gi, '#FFFFFF') : L.inner;
+    return '<svg class="lbx-logo" width="' + (h * vb[2] / vb[3]).toFixed(2) + 'mm" height="' + h + 'mm" viewBox="' + L.viewBox + '" role="img" aria-label="동인엔시스">' + inner + '</svg>';
+  }
+  /** SVG(명판) 안에 넣는 로고: 좌표·높이는 명판 도안 단위 */
+  function logoNested(x, y, h, variant) {
+    var L = window.ISO_LOGO_SVG;
+    if (!L) return '<text x="' + x + '" y="' + (y + h * 0.8) + '" font-size="' + (h * 0.8) + '" font-weight="700" fill="' + (variant === 'white' ? '#fff' : BLUE) + '">' + esc(COMPANY.ko) + '</text>';
+    var vb = L.viewBox.split(/\s+/).map(Number), inner = variant === 'white' ? L.inner.replace(/#1857A5/gi, '#FFFFFF') : L.inner;
+    return '<svg x="' + x + '" y="' + y + '" width="' + (h * vb[2] / vb[3]).toFixed(3) + '" height="' + h + '" viewBox="' + L.viewBox + '">' + inner + '</svg>';
+  }
+
+  /** 글줄 라벨(기기·전선·판넬): 위에 남색 띠 + 흰 로고 + 빨간 선, 아래 글 */
+  function linesHtml(c, w, h, caption) {
+    var bh = Math.max(3.4, Math.min(8, h * 0.2)), body = h - bh - 0.35;
+    var pad = Math.min(1.6, body * 0.08), avail = body - 2 * pad, ls = c.lines.filter(function (l) { return l && A.P.clean(l[0]); });
     var sizes = ls.map(function (l) { return fit(l[0], w - 2 * pad, l[1] * h); });
-    var total = sizes.reduce(function (a, b) { return a + b * 1.18; }, 0);
+    var total = sizes.reduce(function (a, b) { return a + b * 1.15; }, 0);
     var k = total > avail ? avail / total : 1;
-    return ls.map(function (l, i) {
-      return '<div style="font-size:' + (sizes[i] * k).toFixed(2) + 'mm;line-height:1.15;font-weight:' + (l[2] ? 700 : 400) +
-        ';color:' + (l[3] ? '#55657a' : '#111') + ';white-space:nowrap">' + esc(l[0]) + '</div>';
-    }).join('');
+    var color = function (l, i) { return l[3] === 'lot' ? BLUE : l[3] ? '#55657a' : i === 0 ? NAVY : '#263445'; };
+    return '<div class="lbx" style="width:' + w + 'mm;height:' + h + 'mm">' +
+      '<div class="lbx-band" style="height:' + bh.toFixed(2) + 'mm;padding:0 ' + (bh * 0.35).toFixed(2) + 'mm">' + logoSvg(+(bh * 0.6).toFixed(2), 'white') +
+      (caption && w >= 60 ? '<span style="font-size:' + (bh * 0.36).toFixed(2) + 'mm">' + esc(caption) + '</span>' : '') + '</div>' +
+      '<div class="lbx-body">' + ls.map(function (l, i) {
+        return '<div style="font-size:' + (sizes[i] * k).toFixed(2) + 'mm;line-height:1.12;font-weight:' + (l[2] ? 700 : 400) +
+          ';color:' + color(l, i) + ';white-space:nowrap">' + esc(l[0]) + '</div>';
+      }).join('') + '</div></div>';
   }
 
   function warnSvg(size) {
@@ -234,45 +257,53 @@
     var row = function (k, v, big) {
       return '<tr><th>' + k + '</th><td' + (big ? ' class="big"' : '') + '>' + esc(v || '') + '</td></tr>';
     };
-    return '<div class="ship" style="width:' + w + 'mm;height:' + h + 'mm">' +
-      '<div class="ship-h"><b>' + esc(COMPANY.ko) + '</b><span>' + esc(COMPANY.en) + '</span></div>' +
-      '<table>' + row('고객<small>Customer</small>', p.customer) + row('프로젝트<small>Project</small>', A.P.clean(p.pj) + (p.name ? ' · ' + p.name : '')) +
+    return '<div class="lbx-ship" style="width:' + w + 'mm;height:' + h + 'mm">' +
+      '<div class="lbx-sh-h">' + logoSvg(7, 'color') + '<span><b>출하 라벨</b>SHIPPING LABEL</span></div>' +
+      '<div class="lbx-sh-in"><table>' + row('고객<small>Customer</small>', p.customer) + row('프로젝트<small>Project</small>', A.P.clean(p.pj) + (p.name ? ' · ' + p.name : '')) +
       row('판넬<small>Panel</small>', pn.tag + (pn.desc ? ' · ' + pn.desc : '')) + row('LOT<small>Serial</small>', pn.serial, true) +
       row('중량<small>Weight</small>', weight) + row('납기<small>Delivery</small>', p.due) + '</table>' +
-      '<div class="ship-f"><div class="ship-qr">' + qr + '</div><div class="ship-hd">' +
-      '<div><b>↑↑</b> 이쪽이 위 · THIS SIDE UP</div><div><b>!</b> 취급주의 · FRAGILE</div><div><b>☂</b> 습기주의 · KEEP DRY</div></div></div>' +
-      '<div class="ship-a">' + esc(COMPANY.addr + ' · ' + COMPANY.tel) + '</div></div>';
+      '<div class="lbx-sh-f"><div>' + qr + '</div><div class="lbx-sh-hd">' +
+      '<div><b>↑↑</b> 이쪽이 위 · THIS SIDE UP</div><div><b>!</b> 취급주의 · FRAGILE</div><div><b>☂</b> 습기주의 · KEEP DRY</div></div></div></div>' +
+      '<div class="lbx-sh-a">' + esc(COMPANY.ko + ' ' + COMPANY.en + ' · ' + COMPANY.addr + ' · ' + COMPANY.tel) + '</div></div>';
   }
 
   function warnHtml(w, h) {
-    var s = Math.min(h * 0.62, w * 0.34);
-    return '<div class="warn" style="width:' + w + 'mm;height:' + h + 'mm">' + warnSvg(s) +
-      '<div class="warn-t"><div class="w1">위험 · DANGER</div><div class="w2">고압 감전주의</div>' +
-      '<div class="w3">점검·작업 전 전원을 차단하십시오</div><div class="w4">HAZARDOUS VOLTAGE<br>Disconnect power before servicing</div></div></div>';
+    var s = Math.min(h * 0.6, w * 0.32);
+    return '<div class="lbx-warn" style="width:' + w + 'mm;height:' + h + 'mm">' + warnSvg(s) +
+      '<div class="lbx-w-t"><div class="lbx-w1">위험 · DANGER</div><div class="lbx-w2">고압 감전주의</div>' +
+      '<div class="lbx-w3">점검·작업 전 전원을 차단하십시오</div><div class="lbx-w4">HAZARDOUS VOLTAGE · Disconnect power before servicing</div>' +
+      '<div class="lbx-w-logo">' + logoSvg(3.2, 'color') + '</div></div></div>';
   }
 
+  var CAPTION = { device: '', wire: '', panel: 'CONTROL PANEL' };
   function labelInner(l, sh) {
     var c = l.content;
     if (c.type === 'ship') return shipHtml(c, sh.w, sh.h);
     if (c.type === 'warn') return warnHtml(sh.w, sh.h);
-    return linesHtml(c, sh.w, sh.h);
+    return linesHtml(c, sh.w, sh.h, CAPTION[l.kind]);
   }
 
+  // 라벨 모양(인쇄 문서와 화면 미리보기에 같이 쓴다). 남색 #0A2A55 · 파랑 #1857A5 · 빨강 #E83E30
   var LABEL_CSS = '.sheet{position:relative;width:210mm;height:297mm;overflow:hidden;page-break-after:always;break-after:page}' +
     '.sheet:last-child{page-break-after:auto;break-after:auto}' +
     '.lb{position:absolute;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}' +
     '.lb.ol{outline:0.2mm dashed #9aa7b8;outline-offset:-0.1mm}' +
-    '.ship{display:flex;flex-direction:column;padding:4mm;gap:2mm;text-align:left;font-size:3.2mm}' +
-    '.ship-h{display:flex;align-items:baseline;justify-content:space-between;border-bottom:0.8mm solid ' + NAVY + ';padding-bottom:1.5mm}' +
-    '.ship-h b{font-size:5mm;color:' + NAVY + '}.ship-h span{font-size:2.6mm;color:#55657a}' +
-    '.ship table{width:100%;border-collapse:collapse}.ship th{width:24mm;text-align:left;font-size:3mm;font-weight:700;padding:1.3mm 0;vertical-align:top;border-bottom:0.2mm solid #c6cfdb}' +
-    '.ship th small{display:block;font-size:2.1mm;font-weight:400;color:#55657a}.ship td{font-size:3.6mm;padding:1.3mm 0;border-bottom:0.2mm solid #c6cfdb;word-break:keep-all}' +
-    '.ship td.big{font-size:7mm;font-weight:700;color:' + BLUE + ';letter-spacing:-0.02em}' +
-    '.ship-f{display:flex;gap:3mm;align-items:center;margin-top:auto}.ship-hd{display:grid;gap:1.2mm;font-size:3mm}.ship-hd b{display:inline-block;width:6mm;text-align:center;font-size:4mm}' +
-    '.ship-a{font-size:2.2mm;color:#55657a;border-top:0.2mm solid #c6cfdb;padding-top:1mm}' +
-    '.warn{display:flex;align-items:center;gap:3mm;padding:3mm;border:1.6mm solid #f7c600;text-align:left}' +
-    '.warn-t{display:grid;gap:0.8mm}.w1{font-size:6mm;font-weight:800;letter-spacing:0.02em}.w2{font-size:5mm;font-weight:700;color:#c0321f}' +
-    '.w3{font-size:3mm;font-weight:600}.w4{font-size:2.4mm;color:#333}';
+    '.lbx-logo{display:block;flex:none}' +
+    '.lbx{display:flex;flex-direction:column;overflow:hidden;background:#fff}' +
+    '.lbx-band{flex:none;display:flex;align-items:center;justify-content:space-between;background:' + NAVY + ';border-bottom:0.35mm solid ' + RED + ';color:#fff;font-weight:700;letter-spacing:0.08em}' +
+    '.lbx-body{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:0}' +
+    '.lbx-ship{display:flex;flex-direction:column;text-align:left;font-size:3.2mm;color:#263445;border:0.5mm solid ' + NAVY + '}' +
+    '.lbx-sh-h{display:flex;align-items:center;justify-content:space-between;padding:3mm 4mm 2.5mm;border-bottom:1mm solid ' + NAVY + ';box-shadow:0 0.5mm 0 ' + RED + '}' +
+    '.lbx-sh-h span{display:grid;text-align:right;font-size:2.4mm;color:#55657a;letter-spacing:0.06em}.lbx-sh-h b{font-size:4.2mm;color:' + NAVY + ';letter-spacing:0}' +
+    '.lbx-sh-in{flex:1;display:flex;flex-direction:column;padding:2mm 4mm 2mm;gap:2mm;min-height:0}' +
+    '.lbx-ship table{width:100%;border-collapse:collapse}.lbx-ship th{width:24mm;text-align:left;font-size:3mm;font-weight:700;color:' + NAVY + ';padding:1.3mm 0;vertical-align:top;border-bottom:0.2mm solid #c6cfdb}' +
+    '.lbx-ship th small{display:block;font-size:2.1mm;font-weight:400;color:#55657a}.lbx-ship td{font-size:3.6mm;padding:1.3mm 0;border-bottom:0.2mm solid #c6cfdb;word-break:keep-all}' +
+    '.lbx-ship td.big{font-size:7mm;font-weight:700;color:' + BLUE + ';letter-spacing:-0.02em}' +
+    '.lbx-sh-f{display:flex;gap:3mm;align-items:center;margin-top:auto}.lbx-sh-hd{display:grid;gap:1.2mm;font-size:3mm}.lbx-sh-hd b{display:inline-block;width:6mm;text-align:center;font-size:4mm;color:' + RED + '}' +
+    '.lbx-sh-a{background:' + NAVY + ';color:#fff;font-size:2.1mm;padding:1.4mm 4mm;letter-spacing:0.01em}' +
+    '.lbx-warn{display:flex;align-items:center;gap:3mm;padding:3mm;border:1.6mm solid #f7c600;text-align:left;background:#fff;color:#111}' +
+    '.lbx-w-t{display:grid;gap:0.7mm}.lbx-w1{font-size:6mm;font-weight:800;letter-spacing:0.02em}.lbx-w2{font-size:5mm;font-weight:700;color:#c0321f}' +
+    '.lbx-w3{font-size:3mm;font-weight:600}.lbx-w4{font-size:2.2mm;color:#333}.lbx-w-logo{margin-top:1mm}';
 
   function sheetPages(list, sh) {
     var per = sh.cols * sh.rows, pages = [];
@@ -431,7 +462,8 @@
       field('np-sccr', '단락정격 (kA)', np.sccr, function (v) { np.sccr = v; changed(); }, { inputmode: 'decimal' }),
       field('np-ip', '보호등급', np.ip, function (v) { np.ip = v; changed(); }),
       field('np-std', '적용규격', np.std, function (v) { np.std = v; changed(); }),
-      field('np-date', '제조년월', np.date, function (v) { np.date = v; changed(); })
+      field('np-date', '제조년월', np.date, function (v) { np.date = v; changed(); }),
+      field('np-dwg', '도면번호 (주 문서)', np.dwg, function (v) { np.dwg = v; changed(); })
     ]);
     var tb = el('tbody');
     panelsOf(p).forEach(function (pn, i) {
@@ -573,6 +605,7 @@
   window.IsoViews.labels = {
     show: function () {
       A = window.IsoApp; P = A.P; el = A.el; $ = A.$; esc = A.esc;
+      if (!document.getElementById('lbxCss')) { var css = document.createElement('style'); css.id = 'lbxCss'; css.textContent = LABEL_CSS.replace(/\.sheet[^}]*\}/g, ''); document.head.appendChild(css); }
       render();
     },
     // 시험용

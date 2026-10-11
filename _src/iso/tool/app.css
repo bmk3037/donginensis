@@ -238,25 +238,12 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 
 /* 명판·라벨 */
 .np-prev { border: 1px dashed var(--line); background: var(--sunken); padding: 14px; display: grid; place-items: center; }
-.np-prev svg { max-width: 520px; height: auto; background: #fff; box-shadow: 0 1px 4px rgba(10,42,85,0.15); }
+.np-prev > svg { max-width: 520px; height: auto; background: #fff; box-shadow: 0 1px 4px rgba(10,42,85,0.15); }
 .lb-prev { display: grid; gap: 12px; }
 .lb-prev:empty { display: none; }
 .lb-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; overflow-x: auto; padding: 10px; background: var(--sunken); border: 1px solid var(--line); }
 .lb-cap { flex-basis: 100%; font-size: var(--fs-xs); color: var(--muted); font-weight: 600; }
-.lb-one { flex: none; background: #fff; border: 1px dashed #9aa7b8; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #111; }
-.lb-one .ship { display: flex; flex-direction: column; padding: 4mm; gap: 2mm; text-align: left; font-size: 3.2mm; }
-.lb-one .ship-h { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 0.8mm solid var(--navy); padding-bottom: 1.5mm; }
-.lb-one .ship-h b { font-size: 5mm; color: var(--navy); } .lb-one .ship-h span { font-size: 2.6mm; color: var(--muted); }
-.lb-one .ship table { width: 100%; border-collapse: collapse; }
-.lb-one .ship th { width: 24mm; text-align: left; font-size: 3mm; padding: 1.3mm 0; vertical-align: top; border-bottom: 0.2mm solid #c6cfdb; }
-.lb-one .ship th small { display: block; font-size: 2.1mm; font-weight: 400; color: var(--muted); }
-.lb-one .ship td { font-size: 3.6mm; padding: 1.3mm 0; border-bottom: 0.2mm solid #c6cfdb; }
-.lb-one .ship td.big { font-size: 7mm; font-weight: 700; color: var(--accent); }
-.lb-one .ship-f { display: flex; gap: 3mm; align-items: center; margin-top: auto; } .lb-one .ship-hd { display: grid; gap: 1.2mm; font-size: 3mm; }
-.lb-one .ship-a { font-size: 2.2mm; color: var(--muted); border-top: 0.2mm solid #c6cfdb; padding-top: 1mm; }
-.lb-one .warn { display: flex; align-items: center; gap: 3mm; padding: 3mm; border: 1.6mm solid #f7c600; text-align: left; }
-.lb-one .warn-t { display: grid; gap: 0.8mm; } .lb-one .w1 { font-size: 6mm; font-weight: 800; } .lb-one .w2 { font-size: 5mm; font-weight: 700; color: #c0321f; }
-.lb-one .w3 { font-size: 3mm; font-weight: 600; } .lb-one .w4 { font-size: 2.4mm; color: #333; }
+.lb-one { flex: none; background: #fff; outline: 1px dashed #9aa7b8; overflow: hidden; color: #111; }
 #lbTable td .sub { margin-top: 2px; }
 #lbTable select { min-width: 190px; }
 
