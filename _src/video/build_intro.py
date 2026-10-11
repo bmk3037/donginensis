@@ -1,5 +1,7 @@
 """회사소개 영상 생성기 — 회사소개서(23장) 쪽 이미지 + 나레이션(TTS) + 자막(새김) + 배경음악 → video/company-intro_{kr,en}.mp4
 
+※ 국문 영상(company-intro_kr.mp4)은 build_motion.py(모션판)가 만든다. 이 생성기(쪽 확대 방식)는 현재 영문 영상용.
+
 사용: python3 _src/video/build_intro.py kr|en [--sample N] [--out 파일.mp4]
   --sample N : 앞 N개 장면만 만들어 시안 확인
 
@@ -317,6 +319,8 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument('lang', choices=['kr', 'en']); ap.add_argument('--sample', type=int, default=0)
     ap.add_argument('--out', default=None); ap.add_argument('--poster', default=None)
     a = ap.parse_args(); lang = a.lang
+    if lang == 'kr' and not a.sample and not a.out:   # 국문 영상은 모션판(build_motion.py)이 만든다
+        raise SystemExit('국문 영상은 build_motion.py(모션판)로 만듭니다. 쪽 확대 방식 국문판이 꼭 필요하면 --out 파일을 지정하세요.')
     scenes = [dict(s) for s in (SCENES[lang][:a.sample] if a.sample else SCENES[lang])]
     work = f'{OUT}/work_{lang}'; os.makedirs(work, exist_ok=True)
     bgm = ensure_bgm()
