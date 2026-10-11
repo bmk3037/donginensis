@@ -416,6 +416,14 @@
       perPanel[t] = { f16: 'QF-16_' + t, f02s: 'SF-02_' + t };
     });
 
+    // 04 제작: 공정 이동표의 담당 작업자·도면 Rev는 입력값으로 채운다(일자·판정은 현장에서)
+    function qf16Rows() {
+      var tpl = (opts.forms && opts.forms['QF-16'] && opts.forms['QF-16'].rows) || [];
+      var who = { '입고·불출': p.production, '외함 준비·가공': p.wirer || p.production, '부품 취부': p.wirer, '배선': p.wirer,
+        '숙련자 배선 확인': p.inspector, '자체시험·FAT': p.tester, '포장·출하': p.production };
+      return tpl.map(function (r) { var row = r.slice(); row[3] = clean(who[row[0]]); row[4] = clean(p.drawRev); return row; });
+    }
+
     // 04 제작
     panels.forEach(function (panel) {
       var t = clean(panel.tag);
@@ -423,10 +431,10 @@
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), '제조 수량': '1',
         '착수·완료 예정일': p.due ? '납기 ' + p.due : '',
         '승인 도면 Rev / QF-15': [p.drawRev, stdRev].filter(Boolean).join(' / '), '생산관리 책임자': p.production
-      });
+      }, qf16Rows());
       add('04_제작', 'QF-05', t, {
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), '도면 Rev': p.drawRev, 'QF-15 번호': stdRev,
-        '숙련 확인자 / 확인일': p.inspector ? p.inspector + ' / ' : ''
+        '숙련 확인자 / 확인일': p.inspector ? p.inspector + ' / ' : '', '작업자 / 검사일': p.wirer ? p.wirer + ' / ' : ''
       });
     });
 
@@ -460,7 +468,8 @@
       }, ioRows.length ? ioRows : undefined, 2);
       add('05_FAT출하', 'SF-02', t, {
         '프로젝트 번호': pj, '현장': '공장 FAT', '판넬·전원 범위': pv(panel) + ' 주회로·제어회로',
-        '작업책임자': p.tester, '시험자': p.tester, '위험성평가 번호': 'SF-01 (시험·통전 작업)'
+        '작업책임자': p.tester, '시험자': p.tester, '감시자': p.watcher, '위험성평가 번호': 'SF-01 (시험·통전 작업)',
+        '작업모드': '시험 통전 (FAT)', '허가·현장요구': '공장 시험구역 출입 통제·표지'
       });
     });
 
@@ -545,24 +554,108 @@
     };
   }
 
-  /** 직접 적는 칸의 작성 예시(표 첫 행, 열 번호는 1부터). 판넬 1면 기준으로 1번 판넬 문서와 공통 문서에만 넣는다. */
+  /** 직접 적는 칸의 작성 예시(열 번호는 1부터). 판넬 1면 기준으로 1번 판넬 문서와 공통 문서에만 넣는다.
+   *  rows: 양식 행 순서대로 한 행씩, each: 행마다 같은 예시(목록형), fields: 비어 있는 머리 항목 */
+  function exRows(list) { return list.map(function (r) { var o = {}; r.forEach(function (v, k) { if (v !== null) o[k + r.start] = v; }); return o; }); }
+  function at(start, arr) { arr.start = start; return arr; }
   var EXAMPLES = {
-    'PF-00': { 4: '승인', 5: '없음', 6: '영업관리 김○○', 7: '2026.10.05' },
-    'QF-02': { 4: '사양서 Rev.B와 대조 완료, 질의 2건 메일 회신(10/03)', 5: '없음', 6: '이○○ 10/04', 7: '승인 10/05, 공용 저장소 배포' },
-    'QF-15': { 5: '제조사 설명서 p.12', 6: '적용', 8: 'Rev.0 승인 10/05 하○○' },
-    'QF-03': { 5: '모델·정격 일치, 외관 이상 없음', 6: '합격', 7: '시험성적서 첨부', 8: '문○○ 10/12' },
-    'QF-16': { 3: '10/12 · 1식', 4: '박○○ (QF-12 승인)', 5: 'Rev.1', 6: 'QF-03 입고 0012', 7: 'QF-03 합격', 8: '박○○ → 이○○', 9: '없음' },
-    'QF-05': { 3: '적합', 4: '적합', 5: '없음', 6: '—' },
-    'QF-06': { 4: '도면과 일치, 명판·경고표시 부착 확인', 5: '합격', 6: '육안 · 사진 3장', 7: '—' },
-    'QF-06-1': { 6: 'PB 누름 → 입력 ON 확인', 7: '합격', 8: '최○○', 9: '' },
-    'SF-02': { 3: '적합', 4: '최○○ 09:10', 5: '없음' },
-    'QF-04': { 4: '10/20', 5: '합격 10/25', 6: '10/28 품질 문○○', 7: '고객 현장 압축기실', 8: '11/05', 9: '없음' },
-    'QF-07': { 3: '기동·정지 정상, 사진 첨부', 4: '합격', 5: '없음', 6: '—', 7: '고객 담당 확인 11/05' },
-    'SF-03': { 3: '박○○', 4: '외주 현장소장', 5: '양측 서명 11/01', 6: '—' },
-    'QF-08': { 2: '10/18', 4: '정○○ 최초 작성', 5: '전체 (신규)', 6: 'QF-06 FAT', 7: '하○○ 10/24', 8: '07_PLC/V1.0', 9: '출하 시 USB 전달' },
-    'QF-09': { 2: '단자 체결 누락 1개소 (TB2-14)', 3: '박○○', 4: '10/22', 5: '재체결 사진', 6: '재검사 합격', 7: '문○○ 10/23' }
+    'PF-00': { rows: exRows([
+      at(4, ['승인', '없음', '영업관리 김○○', '10/05']), at(4, ['승인', '없음', '기술팀 하○○', '10/08']),
+      at(4, ['승인', '없음', '품질 문○○', '10/14']), at(4, ['승인', '없음', '생산관리 박○○', '10/22']),
+      at(4, ['승인', '없음 (NCR-26-001 종결)', '품질 문○○', '10/28']), at(4, ['승인', '미결 1건 11/15까지 (고객 합의 메일)', '품질 문○○', '11/06']),
+      at(4, ['승인', '없음', '대표이사 ○○○', '11/20'])]),
+      fields: { '미합의 사항·해결': '없음 (질의 2건 10/03 메일 회신)', '수주 가능 판단': '가능', '수주검토 확인자·일자': '영업관리 김○○ 10/05' } },
+    'QF-02': { rows: exRows([
+      at(3, ['사양서 체크리스트 대조', '사양서 Rev.B 대조 완료, 질의 2건 회신(10/03)', '없음', '이○○ 10/04', '승인 10/05, 공용폴더 배포']),
+      at(3, ['회로도↔BOM↔단자대도 상호 대조', '불일치 3건 수정 → Rev.1', 'BOM 수량 정정', '이○○ 10/07', '승인 10/08, Rev.0 회수']),
+      at(3, ['고객 제출·코멘트 반영', '10/06 제출, 코멘트 2건 반영, 10/09 승인 메일', '없음', '김○○ 10/09', '승인본 배포']),
+      at(3, ['용량·보호협조 계산, 논리 시뮬레이션', '계산서·시뮬레이션 결과 첨부', '없음', '하○○ 10/10', '승인 10/10']),
+      at(3, ['FAT·SAT 결과 확인', 'FAT 10/25 합격, SAT 11/05 인수', '없음', '문○○ 11/06', '—']),
+      at(3, ['변경 영향 검토', 'Rev.1→Rev.2 냉각팬 MPCB 변경, 2면 영향', 'QF-05·QF-06 재검사', '하○○ 10/18', '승인 10/18, Rev.1 회수']),
+      at(3, ['정격·치수 비교표', 'GV2ME08→GV2ME10 동등품, 고객 승인 메일', 'BOM Rev.2', '하○○ 10/16', '승인 10/16'])]) },
+    'QF-15': { each: { 5: '제조사 설명서 / 고객 사양서 p.○', 6: '적용', 7: 'Rev.0 승인 10/05 하○○' },
+      fields: { '승인자·승인일 / 고객 승인 증거': '하○○ 10/05 / 고객 승인 메일 10/09' } },
+    'QF-03': { each: { 5: '모델·정격 일치, 외관 이상 없음', 6: '합격', 7: '성적서 첨부 (해당 시)', 8: '문○○ 10/12' },
+      fields: { '입고일·검사일': '10/12 / 10/12', '관련 성적서·인증서': '인버터 시험성적서, 차단기 인증서' } },
+    'QF-16': { rows: exRows([
+      at(3, ['10/12 · 1식', null, null, 'QF-03 입고 0012', 'QF-03 합격', '→ 외함 준비', '없음']),
+      at(3, ['10/13 · 1면', null, null, '외함 입고 0013', '치수·접지점 적합', '→ 부품 취부', '없음']),
+      at(3, ['10/15 · 1면', null, null, '—', 'BOM·배치도 대조 적합', '→ 배선', '없음']),
+      at(3, ['10/17~10/20', null, null, '—', 'QF-05 작업자 검사 적합', '→ 숙련자 확인', '냉각팬 MPCB 교체 (도면 Rev.2)']),
+      at(3, ['10/21', null, null, '—', 'QF-05 숙련자 확인 적합', '→ 시험', '선번 1건 수정 후 재검사']),
+      at(3, ['10/25', null, null, '—', 'QF-06 합격, SF-02 적합', '→ 포장', '없음']),
+      at(3, ['10/28', null, null, '—', '포장 확인 적합, PF-00 출하 승인', '→ 운송', '없음'])]) },
+    'QF-05': { rows: exRows([
+      at(3, ['적합', '적합', '없음', '—']), at(3, ['적합', '적합', '없음', '—']), at(3, ['적합', '적합', '없음', '—']),
+      at(3, ['적합', '적합', '없음', '—']), at(3, ['적합', '적합', '토크렌치 TW-02 (QF-11 유효)', '—']), at(3, ['적합', '적합', '없음', '—']),
+      at(3, ['부적합', '—', 'X1-12 선번 누락 → 부착', '10/21 정○○ 적합']), at(3, ['적합', '적합', '없음', '—']),
+      at(3, ['적합', '적합', '없음', '—']), at(3, ['적합', '적합', '없음', '—']), at(3, ['적합', '적합', '없음', '—']),
+      at(3, ['적합', '적합', '없음', '—'])]),
+      fields: { '작업자 / 검사일': '이○○ / 10/20', '숙련 확인자 / 확인일': '정○○ / 10/21' } },
+    'QF-06': { rows: exRows([
+      at(4, ['BOM·도면과 일치, 명판·경고표시 부착', '합격', '육안 · 사진 3장', '—']),
+      at(4, ['개스킷·글랜드·팬필터 이상 없음', '합격', '육안', '—']),
+      at(4, ['부스바 최소 이격 22 mm', '합격', '줄자 M-05', '—']),
+      at(4, ['핸들 인터록·차단기 조작 정상', '합격', '조작 확인', '—']),
+      at(4, ['MCCB Ir 200 A, EOCR 18 A = 설정표', '합격', '설정표 대조', '—']),
+      at(4, ['주회로-PE 520 MΩ (DC 500 V, 1분)', '합격', 'M-01 절연저항계', '—']),
+      at(4, ['고객 요구 없음 (QF-15 근거)', '해당없음', '—', '—']),
+      at(4, ['0.04 Ω (10 A)', '합격', 'M-02 접지저항계', '—']),
+      at(4, ['R-S-T 정상, 381 V / DC 24.1 V', '합격', 'M-03 멀티미터', '—']),
+      at(4, ['QF-06-1 30점: 합격 29, 해당없음 1', '합격', 'QF-06-1 첨부', '—']),
+      at(4, ['비상정지 시 인버터 정지, 수동 리셋 후 재기동', '합격', '시나리오 표', '—']),
+      at(4, ['파라미터 V1.0 일치, Force 해제 확인', '합격', 'QF-08 V1.0', '—']),
+      at(4, ['인버터 고장·과열 알람 HMI 표시', '합격', 'HMI 화면 사진', '—'])]) },
+    'QF-06-1': { byType: {
+      DI: { 6: '입력 ON/OFF 확인', 7: '합격' }, DO: { 6: '출력 ON → 대상 기기 동작', 7: '합격' },
+      AI: { 6: '4 mA→0, 20 mA→최대 표시', 7: '합격' }, AO: { 6: '0·50·100% 출력 측정 일치', 7: '합격' },
+      '': { 6: '통신·값 갱신 확인', 7: '합격' } }, by: 8,
+      fields: { 'Force·시뮬레이션 해제 확인자·시각': '최○○ 15:30' } },
+    'SF-02': { rows: exRows([
+      at(3, ['적합 (Q0 잠금 L-01)', '최○○ 09:00', '없음']), at(3, ['적합', '최○○ 09:10', '없음']),
+      at(3, ['적합 (감시자 배치)', '최○○ 09:20', '없음']), at(3, ['승인', '최○○ 09:25', '없음']),
+      at(3, ['해당없음 (수정 없음)', '—', '—']), at(3, ['해당없음', '—', '—']), at(3, ['적합, 잠금 해제·복구', '최○○ 16:40', '없음'])]),
+      fields: { '작업일': '10/25', '감시자': '박○○', '작업모드': '시험 통전', '허가·현장요구': '공장 시험구역 출입 통제',
+        '통전 승인자·시각': '최○○ 09:25', '종료 확인자·시각': '최○○ 16:40' } },
+    'QF-04': { each: { 4: '10/21', 5: '합격 10/25', 6: '10/28 품질 문○○', 7: '고객 현장 압축기실', 8: '11/05', 9: '없음' } },
+    'QF-07': { rows: exRows([
+      at(3, ['운송 손상 없음, 앵커 고정 사진', '합격', '없음', '—', '고객 김○○']),
+      at(3, ['외주 배선 검사표 첨부', '합격', '없음', '—', '고객 김○○']),
+      at(3, ['현장 절연 300 MΩ, 접지 0.1 Ω', '합격', '없음', '—', '고객 김○○']),
+      at(3, ['전압·상순 정상 (SF-02)', '합격', '없음', '—', '고객 김○○']),
+      at(3, ['현장 30점 확인 (QF-06-1)', '합격', 'AI 1점 스케일 조정 / 최○○ / 11/04', '11/04 재확인 합격', '고객 김○○']),
+      at(3, ['부하 운전 2시간 이상 없음', '합격', '없음', '—', '고객 김○○']),
+      at(3, ['비상정지·재시작 정상', '합격', '없음', '—', '고객 김○○']),
+      at(3, ['교육 3명 참석, 자료 인계', '합격', '없음', '—', '인수 메일 11/06']),
+      at(3, ['PLC V1.1 백업 (QF-08)', '합격', '없음', '—', 'USB 전달 11/06'])]),
+      fields: { '고객 인수 확인자·서명 또는 메일': '고객 설비팀 김○○ 인수 메일 11/06' } },
+    'SF-03': { rows: exRows([
+      at(3, ['박○○', '외주 소장 ○○○', '양측 서명 11/01', '—']), at(3, ['최○○ (통전 승인)', '외주 소장', '양측 서명', '—']),
+      at(3, ['박○○', '외주 소장', '양측 서명', '—']), at(3, ['박○○', '외주 작업자 3명 교육', '교육일지 첨부', '—']),
+      at(3, ['박○○', '외주 소장', '비상연락망 공유', '—']), at(3, ['박○○ 11/02·11/03', '—', '지적 1건(정리정돈) 조치', '—']),
+      at(3, ['박○○', '외주 소장', '외주 배선 검사 합격', '종료 11/03'])]),
+      fields: { '작업 기간 / 인원': '11/01~11/03 / 3명', '외주 책임자': '외주 소장 ○○○', '고객 현장책임자': '고객 설비팀 김○○',
+        '작업허가·현장규칙': '고객 작업허가서 발급, 현장 안전수칙 서명', '필요 자격·교육·보호구': '전기기능사, 안전교육, 절연장갑·안전모' } },
+    'QF-08': { each: { 2: '10/18', 4: '정○○ 최초 작성', 5: '전체 (신규)', 6: 'QF-06 FAT', 7: '하○○ 10/24', 8: '07_PLC/V1.0', 9: '출하 시 USB 전달' } },
+    'QF-09': { rows: exRows([
+      at(3, ['박○○', '10/21', '재체결 사진', '재검사 적합', '문○○ 10/21']), at(3, ['이○○', '10/23', '원인 분석서', '유사 판넬 2면 점검 이상 없음', '문○○ 10/23']),
+      at(3, ['하○○', '10/30', 'WI-01 개정·교육 기록', '1개월간 재발 없음', '문○○ 11/30']), at(3, ['정○○', '10/21', 'QF-05 재검사', '적합', '문○○ 10/21']),
+      at(3, ['김○○', '10/22', '통보 메일', '고객 회신 확인', '문○○ 10/22']), at(3, ['문○○', '11/30', '점검 기록', '재발 0건', '문○○ 11/30'])]),
+      fields: { 'NCR 번호': 'NCR-26-001', '구분': '공정', '발생일 / 발견자': '10/21 / 정○○', '내용·증거': 'TB2-14 단자 체결 누락 (사진)',
+        '격리·작업중지·고객통보': '해당 판넬 시험 보류, 고객 통보 10/22', '처분 (수정·반품·폐기·특채)': '수정 (재체결 후 재검사)',
+        '특채 시 고객 승인 증거': '해당없음', 'AS: 보증 판정·교체부품(QF-04 이력)': '해당없음 (출하 전)' } }
   };
-  var EXAMPLE_NOTE = '회색 기울임 \'예)\' 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 실제 내용으로 덮어써 작성합니다.';
+  /** 문서 하나의 예시: 원래 행(d.rows 또는 양식 행) 수만큼 */
+  function exampleFor(d, spec, p) {
+    var e = EXAMPLES[d.code];
+    if (!e) return null;
+    var rows = spec.rows || [], list = [];
+    if (e.rows) list = e.rows.slice(0, rows.length);
+    else if (e.byType) list = rows.map(function (r) { var o = Object.assign({}, e.byType[r[3]] || e.byType['']); o[e.by] = clean(p.tester) || '최○○'; return o; });
+    else if (e.each) list = rows.map(function () { return e.each; });
+    return { rows: list, fields: e.fields || {} };
+  }
+  var EXAMPLE_NOTE = '회색 기울임 \'예)\' 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 실제 내용으로 덮어써 작성하고, 해당 없는 예시는 지웁니다.';
 
   function commonSpec(common, date) {
     return {
@@ -574,6 +667,19 @@
         '양식집의 작성 시점·보존 기준을 표시한 참조 목록입니다. 고객·법규가 더 엄격하면 승인된 기준을 적용합니다. 개인정보 원본은 권한이 제한된 저장소에 보관하고 이 표에는 관리번호·접근 가능한 경로만 연결합니다.'],
       rows: common.map(function (s) { return [s.code, s.title, s.owner, s.when, '', '미확인', '', s.keep]; }),
       blank: 0, row_h: 24, dv: {'6': ['미확인', '확인중', '유효 기록 확인', '갱신 필요', '해당없음']}, sign: ['작성', '검토(품질)', '승인']
+    };
+  }
+
+  // 결재란 작성자: '작성자'를 비우면 문서별 담당자를 쓴다
+  var WRITER = {
+    'PF-00': 'production', 'QF-02': 'designer', 'QF-15': 'designer', 'QF-03': 'production', 'QF-04': 'production',
+    'QF-05': 'wirer', 'QF-06': 'tester', 'QF-06-1': 'tester', 'SF-02': 'tester', 'QF-07': 'tester',
+    'QF-08': 'programmer', 'QF-16': 'production', 'SF-03': 'production', 'QF-09': 'production', 'REC': 'documentOwner'
+  };
+  function signNames(p, code) {
+    return {
+      '작성': clean(p.signWriter) || clean(p[WRITER[code]]),
+      '검토': clean(p.signReviewer), '승인': clean(p.signApprover)
     };
   }
 
@@ -589,15 +695,17 @@
       var spec = JSON.parse(JSON.stringify(F[d.code]));
       if (d.rows) spec.rows = d.rows;
       if (d.blankMin !== undefined) spec.blank = d.blankMin;
-      if (env.examples !== false && EXAMPLES[d.code] && (!d.panel || d.panel === firstPanel)) {
-        spec.example = { row: 0, cells: EXAMPLES[d.code] };
+      var ex = env.examples !== false && (!d.panel || d.panel === firstPanel) ? exampleFor(d, spec, p) : null;
+      if (ex) {
+        spec.example = { rows: ex.rows };
+        spec.fieldExamples = ex.fields;
         spec.notes = (spec.notes || []).concat([EXAMPLE_NOTE]);
       }
-      return { path: root + '/' + d.folder + '/' + d.file, spec: spec, values: d.values };
+      return { path: root + '/' + d.folder + '/' + d.file, spec: spec, values: d.values, sign: signNames(p, d.code) };
     });
     var idx = indexSpec(p, docs, F, date);
     jobs.unshift({
-      path: root + '/00_기록현황_' + clean(p.pj) + '.xlsx', spec: idx,
+      path: root + '/00_기록현황_' + clean(p.pj) + '.xlsx', spec: idx, sign: signNames(p, 'REC'),
       specs: [idx, commonSpec(env.forms.common || [], date)],
       values: {
         '프로젝트 번호': clean(p.pj), '고객': p.customer, '프로젝트명·현장': p.name,
@@ -614,6 +722,35 @@
     });
     ['01_수주고객', '02_설계기준', '03_구매입고', '04_제작', '05_FAT출하', '06_SAT인수', '07_PLC', '08_NCR_AS']
       .forEach(function (f) { zip.folder(root + '/' + f); });
+    // 도면·PLC는 하위 폴더로 승인본·작업본·구본을 나눠 둔다(QF-02·QF-08과 연결)
+    var pjn = clean(p.pj);
+    ['02_설계기준/도면_승인본', '02_설계기준/도면_작업중', '02_설계기준/도면_구본', '02_설계기준/고객승인도',
+      '07_PLC/릴리스', '07_PLC/작업중', '07_PLC/구본'].forEach(function (f) { zip.folder(root + '/' + f); });
+    zip.file(root + '/02_설계기준/도면관리_방법.txt', [
+      pjn + ' 설계 도면 관리 (QF-02)', '',
+      '도면_승인본: 검토·승인을 마친 도면만 둔다. PDF(배포용)와 DWG(원본)를 같은 Rev로 함께 둔다.',
+      '  파일명: ' + pjn + '_회로도_Rev1.pdf / ' + pjn + '_회로도_Rev1.dwg (BOM·단자대도·배치도도 같은 규칙)',
+      '  승인본 폴더는 읽기전용으로 두고, 바꿀 때는 새 Rev로만 올린다.',
+      '도면_작업중: 설계자가 고치는 중인 파일. 현장·제작에 배포하지 않는다.',
+      '도면_구본: 새 Rev가 승인되면 이전 Rev를 옮긴다(지우지 않음). 현장 출력본도 회수해 폐기한다.',
+      '고객승인도: 고객 제출본·코멘트·승인 메일.',
+      '',
+      'Rev가 바뀌면 QF-02 \'변경\' 행(사유·영향·재검증)을 적고, 이 도구 01 탭의 도면 Rev를 바꿔 묶음을 다시 만든다.',
+      '현장·제작은 항상 도면_승인본의 최신 Rev만 쓴다(QF-16 도면 Rev 칸으로 확인).'
+    ].join('\r\n'));
+    zip.file(root + '/07_PLC/PLC관리_방법.txt', [
+      pjn + ' PLC·HMI·인버터 파라미터 관리 (QF-08)', '',
+      '릴리스: 시험(FAT·SAT)을 통과해 판넬에 들어간 버전만 둔다. 버전마다 폴더 하나.',
+      '  폴더명: V1.0_20261025_FAT / V1.1_20261105_SAT',
+      '  안에 넣을 것: Machine Expert 프로젝트(.project), 내보낸 압축본(Archive), HMI 화면, 인버터 파라미터, 변경 내용 메모',
+      '작업중: 개발·현장 수정 중인 파일. 판넬에 넣기 전에 시험하고 릴리스로 옮긴다.',
+      '구본: 이전 릴리스(지우지 않음).',
+      '',
+      '버전을 올리면 QF-08에 한 줄(Ver·일자·변경 내용·재시험·승인자·경로)을 적는다.',
+      'FAT 성적서(QF-06)와 명판·QF-04의 PLC Ver가 릴리스 폴더의 최신 버전과 같아야 한다.',
+      '출하·SAT 후 최종 릴리스는 별도 저장장치(백업)에도 복사한다(QF-13).'
+    ].join('\r\n'));
+
     // 프로젝트 입력 정보: 공용 저장소에서 기록 현황판·다른 담당자가 불러 쓴다
     if (env.projectJson) zip.file(root + '/00_프로젝트정보_' + safeName(clean(p.pj)) + '.json', env.projectJson);
     var done = 0;
@@ -622,7 +759,7 @@
         var specs = job.specs || [job.spec];
         specs.forEach(function (spec) { spec.notes = ['초안·미승인: 작업 사용 금지. 실제 수행·검토·승인 증거 확인 필요. 기록 Rev ' + (clean(p.recordRev) || '00')].concat(spec.notes || []); });
         var wb = env.engine.buildWorkbook(env.ExcelJS, specs, {
-          values: job.values, rev: env.forms.rev, date: env.forms.date, logo: env.logo
+          values: job.values, rev: env.forms.rev, date: env.forms.date, logo: env.logo, signNames: job.sign
         });
         return wb.xlsx.writeBuffer().then(function (buf) {
           zip.file(job.path, buf);
@@ -640,7 +777,7 @@
   var api = {
     norm: norm, clean: clean, today: today, detectColumns: detectColumns, LABELS: LABELS, SYN: SYN,
     parseBom: parseBom, parseIo: parseIo, parseStd: parseStd, classify: classify, METHOD: METHOD,
-    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, compareBom: compareBom, readProject: readProject
+    splitTags: splitTags, plan: plan, signNames: signNames, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, compareBom: compareBom, readProject: readProject
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.IsoProject = api;

@@ -208,7 +208,7 @@
     this.setH(this.row, 4);
     this.row += 1;
     var values = this.opt.values || {};
-    var self = this;
+    var self = this, ws = this.ws;
     rows.forEach(function (frow) {
       var groups = self.groups(frow.map(function (f) { return f[0]; }));
       var r = self.row, h = 20;
@@ -216,8 +216,14 @@
         var f = frow[i], label = f[0];
         var le = self.spanFor(g[0], g[1], label);
         self.cell(r, g[0], le, label, { size: 9, bg: C.LABEL });
-        var val = values[label];
+        var val = values[label], fex = (self.spec.fieldExamples || {})[label];
         self.cell(r, le + 1, g[1], val === undefined ? null : val, { size: 10, bg: C.WHITE });
+        if ((val === undefined || val === null || val === '') && fex) {
+          var fc = ws.getCell(r, le + 1);
+          fc.value = '예) ' + fex;
+          fc.font = { name: C.FONT, size: 9, italic: true, color: { argb: argb(C.EX) } };
+          val = fc.value;
+        }
         if (f[1] && f[1].length) self.dvList([colL(le + 1) + r], f[1]);
         h = Math.max(h, textHeight(label, self.width(g[0], le), 9, 20, 4));
         if (val) h = Math.max(h, textHeight(val, self.width(le + 1, g[1]), 10, 20, 4));
@@ -298,18 +304,21 @@
     var last = first + data.length - 1;
     this.first = first; this.last = last;
     // 작성 예시: 지정한 행의 빈칸에 회색 기울임 '예)' 글을 넣는다(실제 기록 아님, 덮어써 작성)
-    var ex = s.example;
-    if (ex && ex.cells && data.length) {
-      var er = first + Math.min(ex.row || 0, data.length - 1), erh = ws.getRow(er).height || base;
-      Object.keys(ex.cells).forEach(function (col) {
-        var c = ws.getCell(er, +col), t = ex.cells[col];
+    // ex.rows: 행마다 {열: 글} (원래 행 수만큼), ex.cells: ex.row 한 행
+    var ex = s.example, exRows = ex ? (ex.rows || (ex.cells ? [] : null)) : null;
+    if (ex && ex.cells && !ex.rows) exRows[ex.row || 0] = ex.cells;
+    (exRows || []).forEach(function (cells, k) {
+      if (!cells || k >= data.length) return;
+      var er = first + k, erh = ws.getRow(er).height || base;
+      Object.keys(cells).forEach(function (col) {
+        var c = ws.getCell(er, +col), t = cells[col];
         if (!t || (c.value !== null && c.value !== undefined && c.value !== '') || (s.formulas || {})[col]) return;
         c.value = '예) ' + t;
         c.font = { name: C.FONT, size: 9, italic: true, color: { argb: argb(C.EX) } };
         erh = Math.max(erh, textHeight(c.value, self.widths[+col - 1], 9, base, 6));
       });
       self.setH(er, erh);
-    }
+    });
     function colCells(col) {
       var out = [];
       for (var r = first; r <= last; r++) out.push(colL(col) + r);
@@ -377,6 +386,13 @@
   };
 
   // ---------- 결재란 ----------
+  /** 결재란 성명: '검토(품질)'처럼 괄호가 붙은 구분도 '검토'로 찾는다. 서명·일자는 비워 둔다. */
+  function signName(names, label) {
+    if (!names) return null;
+    var v = names[label] || names[String(label).replace(/\s*\(.*\)$/, '')];
+    return v ? String(v) : null;
+  }
+
   Sheet.prototype.sign = function () {
     var labels = this.spec.sign === undefined ? DEFAULT_SIGN : this.spec.sign;
     if (labels === null) return;
@@ -408,7 +424,7 @@
       groups.forEach(function (g, j) {
         if (k === 0) self.cell(rr, g[0], g[1], heads[j], { size: 9, bold: true, bg: C.LABEL, h: 'center' });
         else if (j === 0) self.cell(rr, g[0], g[1], row[0], { size: 9, bg: C.LABEL, h: 'center' });
-        else self.cell(rr, g[0], g[1], null, { size: 10, bg: C.WHITE });
+        else self.cell(rr, g[0], g[1], k === 1 ? signName(self.opt.signNames, heads[j]) : null, { size: 10, bg: C.WHITE, h: 'center' });
       });
     });
     if (leftEnd >= 1) {

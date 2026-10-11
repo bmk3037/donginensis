@@ -334,3 +334,6 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .fat-io td:nth-child(6) { min-width: 196px; }
 
 #bomBasis.invalid, select.invalid { border-color: var(--bad); background: var(--bad-soft); outline: 2px solid var(--bad); }
+
+.sign-box { border: 1px solid var(--accent); background: var(--accent-soft); padding: 10px 12px; display: grid; gap: 8px; }
+.sign-h { margin: 0; font-weight: 700; color: var(--accent); font-size: var(--fs-sm); }

@@ -95,7 +95,8 @@
     var v061 = Object.assign({}, tp.v061, {
       '판넬 번호(제조번호)': cur.tag + (cur.lot ? ' / ' + cur.lot : ''), '시험일 / 시험자': tl, '고객 입회자': cur.witness
     });
-    return A.E.buildWorkbook(window.ExcelJS, [f06, f061], { valuesList: [v06, v061], rev: A.FORMS.rev, date: A.FORMS.date, logo: window.ISO_LOGO });
+    return A.E.buildWorkbook(window.ExcelJS, [f06, f061], { valuesList: [v06, v061], rev: A.FORMS.rev, date: A.FORMS.date, logo: window.ISO_LOGO,
+      signNames: { '작성': cur.tester || p.tester, '검토': p.signReviewer || p.quality, '승인': p.signApprover } });
   }
   function fileBase() {
     return (cur.pj || '프로젝트') + '_FAT_' + cur.tag.replace(/[\\\/:*?"<>|\s]/g, '') + '_' + cur.date.replace(/-/g, '');
