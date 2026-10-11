@@ -13,6 +13,7 @@
 - 회사소개서: 국문 `_src/profile/build_profile_refs.py` ↔ 영문 `build_profile_refs_en.py`(실적 7장), 본문은 `base/profile_base_KR.pdf` · `base/profile_base_EN.pdf`를 함께 고친다. 장수가 바뀌면 메인(`index.html`, `en/index.html`) 숫자 칸과 자료실 표기도 고친다.
 - 보도자료: 국문 `news-*.html`을 올리면 같은 이름의 `en/` 영문판, 국문·영문 보도자료 목록과 메인 미디어 목록(같은 순서), `sitemap.xml`의 hreflang 짝까지 함께 올린다.
 - 커밋 전 확인: `python3 _src/check_ko_en.py` — 페이지 짝, 자료실 파일·건수, 보도자료 순서, 연혁, 회사소개서 장수가 모두 맞아야 한다.
+- 회사소개 영상(`video/company-intro_kr.mp4` · `_en.mp4`)은 `_src/video/build_intro.py kr|en`으로 만든다. 회사소개서 내용이나 대본(국문 SCENES)을 바꾸면 영문 대본도 같이 고치고 두 언어를 다시 만든다.
 
 ## 저장소 용량
 - 공개 저장소는 1GB 이하를 목표로 한다(GitHub 권장). 파일을 바꾸면 이전 판도 기록에 계속 남으므로 큰 파일은 신중히 올린다.
