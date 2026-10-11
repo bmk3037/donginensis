@@ -258,6 +258,37 @@ img,video{display:block;max-width:100%}
   .ft-top{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+/* 메인 첫 화면 모션: 배경이 천천히 자리 잡고 → 태그 → 제목 줄이 아래에서 올라오고 빨간 밑줄이 그어짐 → 설명 → 버튼 → 아래 지표 */
+@keyframes hZoom{from{transform:scale(1.12)}to{transform:none}}
+@keyframes hVeil{from{opacity:1}to{opacity:0}}
+@keyframes hIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes hLine{from{transform:translateY(108%)}to{transform:none}}
+@keyframes hBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes hPing{0%{transform:scale(1);opacity:.75}80%,100%{transform:scale(3.4);opacity:0}}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:#06142c;pointer-events:none;animation:hVeil 1.4s .1s ease both}
+.hero video{animation:hZoom 3s cubic-bezier(.2,.7,.2,1) both}
+.hero-fx{position:absolute;inset:0;z-index:1;width:100%;height:100%;pointer-events:none}
+.hero .wrap{will-change:transform}
+.hero .tag{animation:hIn .8s .35s both}
+.hero .tag .dot{position:relative}
+.hero .tag .dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--red);animation:hPing 2.4s 1.2s ease-out infinite}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
+.hero h1 .ln>span{display:inline-block;animation:hLine 1s cubic-bezier(.2,.8,.2,1) both}
+.hero h1 .ln:nth-child(1)>span{animation-delay:.55s}
+.hero h1 .ln:nth-child(2)>span{animation-delay:.72s}
+.hero h1 .rl::after{transform-origin:left;animation:hBar .8s 1.45s cubic-bezier(.6,0,.2,1) both}
+.hero p{animation:hIn .9s 1.05s both}
+.hero .cta .btn{animation:hIn .8s 1.25s both}
+.hero .cta .btn+.btn{animation-delay:1.37s}
+.hero .note .wrap>span{position:relative;padding-top:12px;animation:hIn .8s both}
+.hero .note .wrap>span::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:rgba(255,255,255,.35);transform-origin:left;animation:hBar 1s both;animation-delay:inherit}
+.hero .note .wrap>span:nth-child(1){animation-delay:1.6s}
+.hero .note .wrap>span:nth-child(2){animation-delay:1.72s}
+.hero .note .wrap>span:nth-child(3){animation-delay:1.84s}
+.hero .note .wrap>span:nth-child(4){animation-delay:1.96s}
+.hero .snd-btn{animation:hIn .8s 2s both}
+@media (prefers-reduced-motion:reduce){.hero::before{display:none}.hero *,.hero *::before,.hero *::after{animation:none!important}.hero-fx{display:none}}
+
 
 /* ===== 공통 서브페이지 ===== */
 .sub-hero{position:relative;background:var(--blue-dd);color:#fff;padding:190px 0 110px;overflow:hidden}
