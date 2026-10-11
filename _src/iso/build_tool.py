@@ -64,7 +64,9 @@ def export():
     forms = {code: to_json_spec(by_code[code]) for code in PROJECT_FORMS}
     common = [{key: s.get(key, '') for key in ('code', 'title', 'owner', 'when', 'keep', 'clause')}
               for s in D.FORMS if s['code'] not in PROJECT_FORMS]
-    return {'rev': D.REV, 'date': D.DATE, 'forms': forms, 'common': common}
+    # 회사 단위 양식 전체 정의(05 회사 연간 기록 탭에서 양식을 채워 만든다)
+    company = {s['code']: to_json_spec(s) for s in D.FORMS if s['code'] not in PROJECT_FORMS}
+    return {'rev': D.REV, 'date': D.DATE, 'effective': getattr(D, 'EFFECTIVE', D.DATE), 'forms': forms, 'common': common, 'company': company}
 
 
 def build():
