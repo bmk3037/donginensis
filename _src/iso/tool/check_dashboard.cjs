@@ -41,8 +41,17 @@ const app = {P, el: (tag, attrs, children) => ({tag, attrs, children: children |
 const window = {IsoApp: app};
 const code = fs.readFileSync(require.resolve('./dash.js'), 'utf8')
   .replace('var A, el, $;', 'var A = window.IsoApp, el = window.IsoApp.el, $;')
-  .replace('window.IsoViews = window.IsoViews || {};', 'window.testLoad = loadFiles; window.testVc = vcLine; window.IsoViews = window.IsoViews || {};');
+  .replace('window.IsoViews = window.IsoViews || {};', 'window.testLoad = loadFiles; window.testVc = vcLine; window.testSamples = function () { sampleData(); return data; }; window.IsoViews = window.IsoViews || {};');
 vm.runInNewContext(code, {window});
+app.S = {project: {pj: 'UNRELATED', panels: [{tag: 'OLD-PANEL'}], sat: true, outsource: true}};
+app.FORMS = {forms: JSON.parse(fs.readFileSync(require('node:path').join(__dirname, 'dist/forms.json'), 'utf8')).forms};
+for (const project of window.testSamples().projects) {
+  for (const record of project.records) {
+    assert.ok(!record.loc.includes('UNRELATED'));
+    if (/\.xlsx$/.test(record.loc)) assert.ok(record.loc.includes(project.pj + '_'));
+  }
+  assert.equal(project.records.filter(x => x.code === 'QF-05').length, project.panels.length);
+}
 const vc = {managed: true, latestRev: '2', latestVer: '1.0', recRev: '', recVer: '', revs: ['2'], issues: [], notes: []};
 for (const chip of window.testVc({vc}).children[0].children) {
   assert.ok(chip.attrs.text.includes('기록 버전 미입력'));
