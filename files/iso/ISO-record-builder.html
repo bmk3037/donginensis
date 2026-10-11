@@ -343,6 +343,8 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .lots { display: flex; flex-wrap: wrap; gap: 6px; }
 .fat-io .jg { flex-wrap: nowrap; }
 .fat-io td:nth-child(6) { min-width: 196px; }
+
+#bomBasis.invalid, select.invalid { border-color: var(--bad); background: var(--bad-soft); outline: 2px solid var(--bad); }
 </style>
 
 <header class="appbar">
@@ -2088,7 +2090,12 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       if (!P.clean(state.project.pj)) $('f-pj').classList.add('invalid');
       if (!P.clean(state.project.customer)) $('f-customer').classList.add('invalid');
       if (!state.panels.some(function (x) { return P.clean(x.tag); })) { var t = $('p-0-tag'); if (t) t.classList.add('invalid'); }
-      setStatus('필요한 입력을 채운 뒤 다시 누르세요.', 'bad');
+      if (miss.indexOf('BOM 수량 기준 선택') >= 0) $('bomBasis').classList.add('invalid');
+      setStatus('묶음을 만들지 못했습니다. 필요한 입력: ' + miss.slice(0, 3).join(', ') + (miss.length > 3 ? ' 외 ' + (miss.length - 3) + '건' : ''), 'bad');
+      // 비어 있는 첫 칸으로 이동(휴대폰에서는 오른쪽 안내가 안 보이므로)
+      var first = document.querySelector('#view-pack .invalid');
+      if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); first.focus({ preventScroll: true }); }
+      else { var mi = $('missing'); if (mi) mi.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
       return;
     }
     if (!libsReady()) return;
@@ -2173,10 +2180,11 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
 
   function start() {
     loadSample();
+    $('bomBasis').value = 'perPanel';   // 예시 BOM은 판넬 1면당 수량
     renderAll();
     wireDrops();
     $('btnClear').addEventListener('click', clearAll);
-    $('bomBasis').addEventListener('change', renderPlan);
+    $('bomBasis').addEventListener('change', function () { $('bomBasis').classList.remove('invalid'); renderPlan(); });
     $('btnSaveProject').addEventListener('click', function () {
       var blob = new Blob([projectJson()], {type: 'application/json'});
       if (blob.size > 20 * 1024 * 1024) { setStatus('프로젝트 저장 파일이 20MB를 초과합니다. BOM·I/O·기준표를 필요한 시트만 있는 파일로 바꿔 저장하세요.', 'bad'); return; }
