@@ -211,7 +211,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         for li, (a, b, line) in enumerate(sc['cues']):
             if li in sc.get('nosub', ()): continue
             nxt = sc['cues'][li + 1][0] if li + 1 < len(sc['cues']) else b + 0.6
-            st = 'SubDark' if (sc.get('video') or sc.get('page') in (1, 23)) else 'Sub'   # 어두운 배경(영상·표지·마무리)은 흰 글자
+            st = 'SubDark' if (sc.get('video') or sc.get('page') == 1) else 'Sub'   # 어두운 배경(영상·표지)은 흰 글자, 흰 쪽(마무리 포함)은 남색 글자
             ev.append(f'Dialogue: 0,{ass_time(a - 0.1)},{ass_time(min(b + 0.5, nxt - 0.05))},{st},,0,0,0,,{{\\fad(120,160)}}{SUB_TEXT.get(line, line)}')
     open(path, 'w', encoding='utf-8').write(hdr + '\n'.join(ev) + '\n')
 
