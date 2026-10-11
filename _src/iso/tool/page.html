@@ -4,9 +4,18 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>/*@CSS@*/</style>
 
+<header class="appbar">
+  <div class="appbar-in">
+    <img class="appbar-logo" src="@LOGO_WHITE@" alt="동인엔시스" width="150" height="28">
+    <span class="appbar-sep" aria-hidden="true"></span>
+    <span class="appbar-name">통합경영 기록 시스템</span>
+    <span class="appbar-code">DI-IMS-F-01 Rev.00</span>
+  </div>
+</header>
+
 <div class="wrap">
   <header class="top">
-    <p class="eyebrow">동인엔시스 · DI-IMS-F-01 통합 기록양식</p>
+    <p class="eyebrow">품질 ISO 9001 · 환경 ISO 14001 · 안전보건 ISO 45001</p>
     <h1>ISO 기록 묶음 생성기</h1>
     <p class="lead">프로젝트 정보와 BOM·I/O 리스트를 넣으면 통합 기록양식을 채워 프로젝트 폴더(01~08)째로 만들어 줍니다. 실측값·판정·서명 칸은 현장에서 직접 적도록 비워 둡니다.</p>
     <div class="sample-bar" id="sampleBar">
@@ -80,8 +89,10 @@
 
     <aside class="out" aria-labelledby="h-out">
       <div class="out-card">
-        <h2 id="h-out">만들어질 문서</h2>
-        <p class="count"><b id="docCount">0</b>개 파일 · 판넬 <b id="panelCount">0</b>면</p>
+        <div class="out-head">
+          <h2 id="h-out">만들어질 문서</h2>
+          <p class="count"><b id="docCount">0</b>개 파일 · 판넬 <b id="panelCount">0</b>면</p>
+        </div>
         <div class="tree" id="tree"></div>
         <p class="missing" id="missing" role="alert"></p>
         <button type="button" class="btn btn-primary" id="btnGen">문서 묶음 만들기 (.zip)</button>
@@ -97,6 +108,7 @@
   </main>
 
   <footer class="foot">
+    <p class="foot-brand">㈜동인엔시스 · 제어하는 곳에서, 데이터가 시작됩니다</p>
     <p>파일은 이 화면 안에서만 처리되고 밖으로 보내지 않습니다. 받은 zip을 공용 저장소의 프로젝트 폴더에 풀고, <span class="mono">00_기록현황</span> 표의 상태를 바꿔 가며 기록을 채웁니다.</p>
     <p>양식 원본: 통합 기록양식집 DI-IMS-F-01 Rev.00 (운영기준안). 양식이 바뀌면 생성기도 다시 만듭니다.</p>
   </footer>

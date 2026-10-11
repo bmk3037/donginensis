@@ -66,6 +66,8 @@ def build():
 
     page = read('page.html')
     page = page.replace('/*@CSS@*/', read('app.css'))
+    with open(os.path.join(TOOL, 'logo_white.png'), 'rb') as f:
+        page = page.replace('@LOGO_WHITE@', 'data:image/png;base64,' + base64.b64encode(f.read()).decode())
     script = ('window.ISO_FORMS = ' + json.dumps(data, ensure_ascii=False) + ';\n'
               + 'window.ISO_LOGO = "' + logo + '";\n'
               + read('engine.js') + '\n' + read('project.js') + '\n' + read('samples.js') + '\n' + read('app.js'))

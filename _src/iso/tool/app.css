@@ -1,46 +1,61 @@
 /* Layout: 작업지시서처럼 왼쪽은 입력 순서(1~5), 오른쪽은 만들어질 프로젝트 폴더를 고정해서 보여 준다. */
+/* Layout: 홈페이지와 같은 남색 상단 바(로고) 아래, 왼쪽은 입력 순서(1~5), 오른쪽은 만들어질 프로젝트 폴더.
+   Color: 회사 로고의 파랑 #1857A5·남색 #0A2A55, 로고 i 점의 빨강 #E83E30은 상단 바 아래 선과 필수 표시에만 쓴다. */
 :root {
-  --bg: #eef2f6;
+  --bg: #f5f7fa;
   --surface: #ffffff;
-  --sunken: #f5f7fa;
-  --ink: #1b2533;
-  --muted: #5a687a;
-  --line: #d3dce6;
+  --sunken: #f0f3f7;
+  --ink: #111b2e;
+  --muted: #5a6577;
+  --line: #e2e7ee;
   --accent: #1857a5;
   --accent-ink: #ffffff;
-  --accent-soft: #e3ecf7;
+  --accent-soft: #eaf1fa;
+  --navy: #0a2a55;
+  --navy-2: #0f3f7e;
+  --brand-red: #e83e30;
   --ok: #1d6b45;
   --ok-soft: #e2f2e9;
   --warn: #8a5a00;
   --warn-soft: #fbf0d6;
-  --bad: #b42318;
-  --bad-soft: #fbe5e2;
-  --font-ui: "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --bad: #c0321f;
+  --bad-soft: #fde7e4;
+  --font-ui: "Pretendard", "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
   --r: 8px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e141b; --surface: #161f29; --sunken: #111921; --ink: #e4ebf3; --muted: #9aa9ba; --line: #2b3746;
-    --accent: #6aa5ec; --accent-ink: #0b1420; --accent-soft: #1b2b40; --ok: #5fcf96; --ok-soft: #13291f;
-    --warn: #e8b84d; --warn-soft: #2d2410; --bad: #f4887d; --bad-soft: #351a18; color-scheme: dark;
+    --bg: #0a1220; --surface: #111c2e; --sunken: #0d1727; --ink: #e6edf6; --muted: #9caabd; --line: #22324a;
+    --accent: #5c9be8; --accent-ink: #06101e; --accent-soft: #15284a; --navy: #061a36; --navy-2: #0c2c57; --brand-red: #f0574a;
+    --ok: #5fcf96; --ok-soft: #13291f; --warn: #e8b84d; --warn-soft: #2d2410; --bad: #f4887d; --bad-soft: #351a18; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e141b; --surface: #161f29; --sunken: #111921; --ink: #e4ebf3; --muted: #9aa9ba; --line: #2b3746;
-  --accent: #6aa5ec; --accent-ink: #0b1420; --accent-soft: #1b2b40; --ok: #5fcf96; --ok-soft: #13291f;
-  --warn: #e8b84d; --warn-soft: #2d2410; --bad: #f4887d; --bad-soft: #351a18; color-scheme: dark;
+  --bg: #0a1220; --surface: #111c2e; --sunken: #0d1727; --ink: #e6edf6; --muted: #9caabd; --line: #22324a;
+  --accent: #5c9be8; --accent-ink: #06101e; --accent-soft: #15284a; --navy: #061a36; --navy-2: #0c2c57; --brand-red: #f0574a;
+  --ok: #5fcf96; --ok-soft: #13291f; --warn: #e8b84d; --warn-soft: #2d2410; --bad: #f4887d; --bad-soft: #351a18; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 14px; line-height: 1.55; }
-.wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 40px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 14px; line-height: 1.55; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 40px; }
+
+.appbar { background: var(--navy); border-bottom: 3px solid var(--brand-red); color: #fff; }
+.appbar-in { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.appbar-logo { display: block; height: 26px; width: auto; }
+.appbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.28); }
+.appbar-name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+.appbar-code { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.75); padding: 2px 8px;
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 4px; }
+@media (max-width: 520px) { .appbar-sep, .appbar-code { display: none; } }
 .mono { font-family: var(--font-mono); font-size: 0.92em; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 .top { display: grid; gap: 8px; margin-bottom: 20px; }
 .eyebrow { margin: 0; color: var(--muted); font-size: 12px; letter-spacing: 0.04em; }
-h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; color: var(--ink); }
+.eyebrow { color: var(--accent) !important; font-weight: 600; }
 .lead { margin: 0; max-width: 68ch; color: var(--muted); }
 .sample-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 6px; padding: 10px 12px;
   border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
@@ -51,6 +66,7 @@ h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; text
 .steps { display: grid; gap: 16px; min-width: 0; }
 
 .step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; min-width: 0; display: grid; gap: 12px; }
+.step { border-top: 3px solid var(--accent); }
 .step h2 { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; }
 .num { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
   font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; flex: none; }
@@ -60,7 +76,7 @@ h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; text
 .grid-2 { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 .field { display: grid; gap: 4px; min-width: 0; }
 .field label { font-size: 12.5px; color: var(--muted); }
-.field label .req { color: var(--bad); margin-left: 2px; }
+.field label .req { color: var(--brand-red); margin-left: 2px; }
 .field.wide { grid-column: 1 / -1; }
 input[type="text"], input[type="date"], select {
   width: 100%; min-width: 0; font: inherit; color: var(--ink); background: var(--sunken); border: 1px solid var(--line);
@@ -120,7 +136,11 @@ input.invalid { border-color: var(--bad); background: var(--bad-soft); }
 .out { min-width: 0; }
 @media (min-width: 1000px) { .out { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); } }
 .out-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 12px; }
-.out-card h2 { margin: 0; font-size: 17px; font-weight: 600; }
+.out-card { overflow: hidden; padding-top: 0; }
+.out-head { margin: 0 -18px; padding: 14px 18px; background: var(--navy); color: #fff; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.out-card h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.out-head .count { color: rgba(255,255,255,0.75); }
+.out-head .count b { color: #fff; }
 .count { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
 .count b { color: var(--ink); }
 .tree { font-family: var(--font-mono); font-size: 12px; line-height: 1.6; max-height: 46vh; overflow: auto; padding: 10px; background: var(--sunken);
@@ -142,5 +162,6 @@ input.invalid { border-color: var(--bad); background: var(--bad-soft); }
 
 .foot { margin-top: 24px; color: var(--muted); font-size: 12.5px; display: grid; gap: 4px; max-width: 80ch; }
 .foot p { margin: 0; }
+.foot-brand { color: var(--ink); font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) { .progress span { transition: none; } }
