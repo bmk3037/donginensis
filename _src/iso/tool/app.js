@@ -29,11 +29,12 @@
     ['laws', '적용 법규·제품규격'], ['custReq', '고객 검사·입회·기록 요구'], ['warranty', '보증기간·무상범위'],
     ['packing', '포장·운송 조건'], ['custSupply', '고객 지급품'], ['designer', '설계 책임자'],
     ['reviewer', '검토자 (설계자 외)'], ['production', '생산관리 책임자'], ['quality', '품질 담당 (입고·출하 확인)'], ['tester', '시험 담당 (FAT·SAT)'],
-    ['inspector', '배선 숙련 확인자 (QF-12 승인)'], ['programmer', 'PLC 프로그램 담당'], ['meters', '계측기 관리번호 (절연·접지·멀티미터)'],
+    ['wirer', '배선 작업자'], ['inspector', '배선 숙련 확인자 (QF-12 승인)'], ['watcher', '통전 작업 감시자'], ['programmer', 'PLC 프로그램 담당'], ['meters', '계측기 관리번호 (절연·접지·멀티미터)'],
     ['witness', '고객 입회자'], ['outsourceCo', '외주 현장배선 업체'], ['previousDrawRev', '변경 전 도면 Rev (변경 시)'], ['changeReason', '도면 변경 사유'], ['changePanels', '변경 영향 판넬 Tag'], ['changeImpact', '변경 영향·수정·재검사 계획']
   ];
   var FIELDS_OPT = [['approval', '고객 승인도 필요'], ['sat', 'SAT·시운전 포함 (QF-07)'], ['outsource', '현장 배선 외주 (SF-03)']];
   var FIELDS_STD = [['stdRev', '기준표 번호·Rev'], ['stdName', '기준표 이름 (판넬 타입)']];
+  var FIELDS_SIGN = [['signWriter', '작성자 (비우면 문서별 담당자)'], ['signReviewer', '검토자'], ['signApprover', '승인자']];
   var FIELDS_STORAGE = [['recordPath', '프로젝트 원본 보관 경로 (공용폴더/NAS)'], ['backupPath', '별도 저장장치의 백업 경로'], ['documentOwner', '문서관리 담당'], ['accessOwner', '접근권한 관리 담당']];
 
   var state = { project: {}, panels: [], bom: null, bomTotal: null, io: null, std: null, sample: false };
@@ -126,7 +127,7 @@
   }
 
   function renderFields() {
-    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD], ['fieldsStorage', FIELDS_STORAGE]].forEach(function (g) {
+    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD], ['fieldsStorage', FIELDS_STORAGE], ['fieldsSign', FIELDS_SIGN]].forEach(function (g) {
       var box = $(g[0]);
       clear(box);
       g[1].forEach(function (f) { box.appendChild(fieldInput(f[0], f[1], f[2])); });
