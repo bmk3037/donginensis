@@ -17,6 +17,25 @@
    - 엑셀과 같은 열 너비로 인쇄되도록 Carlito 글꼴(Calibri 호환)이 있어야 합니다.
 4. 양식을 추가·삭제하면 매뉴얼 부록 C, `forms_data.py`의 `FORMS` 목록, `resources.html`의 쪽수·종수를 함께 고칩니다.
 
+## ISO 기록 묶음 생성기 (프로젝트별 양식 자동 채우기)
+
+`tool/` 폴더는 브라우저에서 쓰는 생성기입니다. 프로젝트 정보·BOM·I/O 리스트·시험 기준표를 넣으면
+프로젝트 폴더(01_수주고객 ~ 08_NCR_AS)와 양식 엑셀(PF-00, QF-02~16, SF-02·03)을 채워 zip으로 저장합니다.
+실측값·판정·서명 칸은 비워 둡니다.
+
+| 파일 | 내용 |
+|---|---|
+| `tool/engine.js` | 양식 배치 엔진(`build_forms.py`의 자바스크립트판) |
+| `tool/project.js` | BOM·I/O·기준표 읽기, 만들 문서 목록, zip 생성 |
+| `tool/samples.js` | 예시 데이터(가상의 인버터 제어반 2면) |
+| `tool/app.js`, `tool/app.css`, `tool/page.html` | 화면 |
+| `build_tool.py` | 위 파일과 `forms_data.py`의 양식 정의를 묶어 한 파일로 만든다 |
+
+- 다시 만들기: `python3 _src/iso/build_tool.py` → `tool/dist/ISO-기록생성기.html`
+- 쓰는 법: 이 HTML 파일을 회사 공용 저장소에 두고 크롬·엣지로 엽니다(엑셀 라이브러리를 인터넷에서 불러오므로 인터넷 연결 필요).
+- 회사 BOM·I/O 파일은 브라우저 안에서만 처리되고 밖으로 보내지 않습니다. 실제 프로젝트 파일이나 생성 결과는 이 저장소에 올리지 않습니다.
+- `forms_data.py`의 양식을 고치면 `build_forms.py`와 `build_tool.py`를 둘 다 다시 실행합니다.
+
 ## 배치 규칙
 
 - 1장 양식(`mode='single'`): A4 한 장에 맞춰 인쇄합니다.
