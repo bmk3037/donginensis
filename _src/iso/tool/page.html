@@ -35,6 +35,9 @@
           <div class="grid" id="fieldsReq"></div>
         </details>
         <div class="checks" id="fieldsOpt"></div>
+        <div class="row-actions"><button type="button" class="btn" id="btnSaveProject">입력 프로젝트 저장 (.json)</button><label for="fileProject">저장한 프로젝트 불러오기</label><input type="file" id="fileProject" accept=".json"></div>
+        <p class="help">저장 파일에는 고객·BOM·I/O·기준표 정보가 포함됩니다. 회사의 접근권한이 관리되는 저장소에 보관하세요. 엑셀에서 작성한 검사 결과·서명은 이 파일에 포함되지 않습니다.</p>
+
       </section>
 
       <section class="step" aria-labelledby="h-s2">
@@ -54,7 +57,9 @@
 
       <section class="step" aria-labelledby="h-s3">
         <h2 id="h-s3"><span class="num">3</span>부품표 (BOM)</h2>
-        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)에 들어갑니다. 부품에는 LOT 번호를 따로 매기지 않습니다. 판넬 열이 없으면 모든 판넬에 같은 BOM을 씁니다.</p>
+        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)에 들어갑니다. 부품에는 LOT 번호를 따로 매기지 않습니다. 수량 기준을 선택하세요. 프로젝트 총수량은 판넬별로 배분하고 판넬 열을 채워야 합니다.</p>
+        <label for="bomBasis">BOM 수량 기준</label>
+        <select id="bomBasis"><option value="">선택하세요</option><option value="perPanel">판넬 1면당 수량 (공통 행은 각 판넬에 적용)</option><option value="allocated">프로젝트 총수량을 판넬별로 배분한 BOM</option></select>
         <div class="drop" data-kind="bom">
           <input type="file" id="fileBom" accept=".xlsx,.xls,.csv">
           <label for="fileBom"><b>BOM 파일 고르기</b> 또는 여기로 끌어다 놓기</label>
@@ -76,7 +81,7 @@
 
       <section class="step" aria-labelledby="h-s5">
         <h2 id="h-s5"><span class="num">5</span>시험·검사 기준 (QF-15)</h2>
-        <p class="help">같은 타입 판넬은 기술팀 총괄이 한 번 승인한 기준표를 계속 씁니다. 기준값은 QF-15와 FAT 성적서(QF-06) 기준란에 들어갑니다.</p>
+        <p class="help">모델·정격·회로·고객 요구·규격·시험조건이 동일한지 확인한 기준만 재사용합니다. 변경 시 기술팀 검토·승인을 다시 받습니다. 기준값은 QF-15와 FAT 성적서(QF-06) 기준란에 들어갑니다.</p>
         <div class="grid grid-2" id="fieldsStd"></div>
         <div class="drop" data-kind="std">
           <input type="file" id="fileStd" accept=".xlsx,.xls,.csv">

@@ -213,3 +213,8 @@ h1 { color: var(--accent); }
 .tree { background: var(--sunken); }
 .tree .file { border-left: 1px dashed var(--line); margin-left: 4px; }
 
+
+/* 업무 입력은 현재 홈페이지 색상과 서체 유지 */
+#bomBasis{display:block;width:100%;min-height:44px;margin:8px 0 16px;padding:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;}
+.row-actions{flex-wrap:wrap;gap:12px;}
+#fileProject{max-width:100%;min-height:44px;}

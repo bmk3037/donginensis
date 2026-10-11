@@ -228,6 +228,43 @@
     return bom.filter(function (it) { return !it.panel || norm(it.panel) === norm(panel.tag); });
   }
 
+  function validateInput(p, bom, basis) {
+    var errors = [], panels = (p.panels || []).filter(function (x) { return clean(x.tag); });
+    var tags = panels.map(function (x) { return norm(x.tag); });
+    var serials = panels.map(function (x) { return clean(x.serial); }).filter(Boolean);
+    if (clean(p.previousDrawRev) && (!clean(p.drawRev) || !clean(p.changeReason) || !clean(p.changePanels) || !clean(p.changeImpact))) errors.push('도면 변경 시 새 Rev·변경 사유·대상 판넬·영향/재검사 계획 입력');
+    if (clean(p.previousDrawRev) && clean(p.previousDrawRev) === clean(p.drawRev)) errors.push('변경 전·후 도면 Rev가 같습니다');
+    if (new Set(tags).size !== tags.length) errors.push('판넬 Tag 중복');
+    if (new Set(serials).size !== serials.length) errors.push('제조번호 중복');
+    if (bom.length && basis !== 'perPanel' && basis !== 'allocated') errors.push('BOM 수량 기준 선택');
+    bom.forEach(function (it, i) {
+      var row = 'BOM ' + (i + 1) + '행: ';
+      if ((it.major || it.qty !== null) && (!Number.isFinite(Number(it.qty)) || Number(it.qty) <= 0)) errors.push(row + '양수 수량 필요');
+      if (basis === 'allocated' && !clean(it.panel)) errors.push(row + '총수량을 판넬별 배분하고 판넬 열 입력');
+      if (clean(it.panel) && tags.indexOf(norm(it.panel)) < 0) errors.push(row + '등록되지 않은 판넬');
+    });
+    return errors;
+  }
+
+  function readProject(text) {
+    var saved = JSON.parse(text);
+    if (!saved || saved.format !== 'DI-ISO-PROJECT' || saved.version !== 1 || !saved.state) throw new Error('지원하는 프로젝트 저장 파일이 아닙니다.');
+    var data = saved.state;
+    if (!data.project || typeof data.project !== 'object' || Array.isArray(data.project) || !Array.isArray(data.panels) || !data.panels.length) throw new Error('프로젝트·판넬 정보가 잘못되었습니다.');
+    data.panels.forEach(function (x) {
+      if (!x || ['tag', 'desc', 'serial'].some(function (key) { return typeof x[key] !== 'string'; })) throw new Error('판넬 정보가 잘못되었습니다.');
+    });
+    ['bom', 'io', 'std'].forEach(function (kind) {
+      var value = data[kind];
+      if (value !== null && (!value || !Array.isArray(value.items) || !Array.isArray(value.rows) || !value.det)) throw new Error(kind + ' 원본 데이터가 잘못되었습니다.');
+      if (value) value.items.forEach(function (item) {
+        if (!item || typeof item !== 'object' || Array.isArray(item) || (kind === 'bom' && !Array.isArray(item.tags))) throw new Error(kind + ' 항목이 잘못되었습니다.');
+      });
+    });
+    if (['', 'perPanel', 'allocated'].indexOf(saved.bomBasis) < 0) throw new Error('BOM 수량 기준이 잘못되었습니다.');
+    return saved;
+  }
+
   /** 생성할 문서 목록. 각 문서: {folder, file, code, panel, values, rows, blankMin} */
   function plan(p, bom, io, std, opts) {
     opts = opts || {};
@@ -239,7 +276,7 @@
     var stdRev = clean(p.stdRev);
     var docs = [];
 
-    function file(code, panel) { return pj + '_' + code + (panel ? '_' + safeName(panel) : '') + '_' + date + '.xlsx'; }
+    function file(code, panel) { return pj + '_' + code + (panel ? '_' + safeName(panel) : '') + '_' + date + '_Rev' + safeName(clean(p.recordRev) || '00') + '.xlsx'; }
     function add(folder, code, panel, values, rows, blankMin) {
       var d = { folder: folder, code: code, panel: panel || '', file: file(code, panel), values: values || {}, rows: rows, blankMin: blankMin };
       docs.push(d);
@@ -276,6 +313,12 @@
       '고객 승인도 필요 여부': p.approval ? '필요' : '불필요',
       '검토·검증·유효성 확인 방법': '설계검증: 입출력 대조·용량/보호협조 검토·논리시험 / 유효성: FAT(QF-06·QF-06-1)' + (p.sat ? '·SAT(QF-07)' : '') + '·고객 인수'
     });
+
+    if (clean(p.previousDrawRev)) {
+      var design = docs.filter(function (d) { return d.code === 'QF-02'; })[0];
+      design.rows = JSON.parse(JSON.stringify((opts.forms && opts.forms['QF-02'] && opts.forms['QF-02'].rows) || []));
+      design.rows.push(['도면 변경', p.previousDrawRev + ' → ' + p.drawRev + ': ' + (p.changeReason || ''), '영향 판넬: ' + (p.changePanels || '미확인'), '', p.changeImpact || '영향·재검사 판단 필요', '', '검토·승인 전 관련 작업 보류']);
+    }
 
     // QF-15: 기준표 + 주요 부품 모델별 토크 행
     var stdRows = std.map(function (s) { return [s.item, s.target, s.value, s.method, s.source]; });
@@ -397,7 +440,7 @@
 
     // 08 NCR·AS: 빈 양식
     add('08_NCR_AS', 'QF-09', '', { '프로젝트·판넬 LOT·공정': pj });
-    docs[docs.length - 1].file = pj + '_QF-09_양식_빈칸.xlsx';
+    docs[docs.length - 1].file = file('QF-09');
     return docs;
   }
 
@@ -442,7 +485,8 @@
   /** 문서 묶음(zip)을 만든다. env: {ExcelJS, JSZip, engine, forms, logo, onProgress} */
   function generate(env, p, docs, date) {
     var zip = new env.JSZip();
-    var root = clean(p.pj) + (p.name ? '_' + safeName(p.name) : '');
+    var bundleId = new Date().toISOString().replace(/[^0-9]/g, '');
+    var root = clean(p.pj) + (p.name ? '_' + safeName(p.name) : '') + '_Rev' + safeName(clean(p.recordRev) || '00') + '_' + bundleId;
     var F = env.forms.forms;
     var jobs = docs.map(function (d) {
       var spec = JSON.parse(JSON.stringify(F[d.code]));
@@ -464,6 +508,7 @@
     var done = 0;
     return jobs.reduce(function (chain, job) {
       return chain.then(function () {
+        job.spec.notes = ['초안·미승인: 작업 사용 금지. 실제 수행·검토·승인 증거 확인 필요. 기록 Rev ' + (clean(p.recordRev) || '00')].concat(job.spec.notes || []);
         var wb = env.engine.buildWorkbook(env.ExcelJS, [job.spec], {
           values: job.values, rev: env.forms.rev, date: env.forms.date, logo: env.logo
         });
@@ -476,14 +521,14 @@
     }, Promise.resolve()).then(function () {
       return zip.generateAsync({ type: env.zipType || 'blob', compression: 'DEFLATE' });
     }).then(function (out) {
-      return { data: out, name: clean(p.pj) + '_ISO기록_' + date + '.zip', count: jobs.length };
+      return { data: out, name: clean(p.pj) + '_ISO기록_' + date + '_Rev' + safeName(clean(p.recordRev) || '00') + '_' + bundleId + '.zip', count: jobs.length };
     });
   }
 
   var api = {
     norm: norm, clean: clean, today: today, detectColumns: detectColumns, LABELS: LABELS, SYN: SYN,
     parseBom: parseBom, parseIo: parseIo, parseStd: parseStd, classify: classify, METHOD: METHOD,
-    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, STAGE: STAGE
+    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, STAGE: STAGE, validateInput: validateInput, readProject: readProject
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.IsoProject = api;

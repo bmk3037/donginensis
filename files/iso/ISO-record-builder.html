@@ -224,6 +224,11 @@ h1 { color: var(--accent); }
 .tree { background: var(--sunken); }
 .tree .file { border-left: 1px dashed var(--line); margin-left: 4px; }
 
+
+/* 업무 입력은 현재 홈페이지 색상과 서체 유지 */
+#bomBasis{display:block;width:100%;min-height:44px;margin:8px 0 16px;padding:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;}
+.row-actions{flex-wrap:wrap;gap:12px;}
+#fileProject{max-width:100%;min-height:44px;}
 </style>
 
 <header class="appbar">
@@ -257,6 +262,9 @@ h1 { color: var(--accent); }
           <div class="grid" id="fieldsReq"></div>
         </details>
         <div class="checks" id="fieldsOpt"></div>
+        <div class="row-actions"><button type="button" class="btn" id="btnSaveProject">입력 프로젝트 저장 (.json)</button><label for="fileProject">저장한 프로젝트 불러오기</label><input type="file" id="fileProject" accept=".json"></div>
+        <p class="help">저장 파일에는 고객·BOM·I/O·기준표 정보가 포함됩니다. 회사의 접근권한이 관리되는 저장소에 보관하세요. 엑셀에서 작성한 검사 결과·서명은 이 파일에 포함되지 않습니다.</p>
+
       </section>
 
       <section class="step" aria-labelledby="h-s2">
@@ -276,7 +284,9 @@ h1 { color: var(--accent); }
 
       <section class="step" aria-labelledby="h-s3">
         <h2 id="h-s3"><span class="num">3</span>부품표 (BOM)</h2>
-        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)에 들어갑니다. 부품에는 LOT 번호를 따로 매기지 않습니다. 판넬 열이 없으면 모든 판넬에 같은 BOM을 씁니다.</p>
+        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)에 들어갑니다. 부품에는 LOT 번호를 따로 매기지 않습니다. 수량 기준을 선택하세요. 프로젝트 총수량은 판넬별로 배분하고 판넬 열을 채워야 합니다.</p>
+        <label for="bomBasis">BOM 수량 기준</label>
+        <select id="bomBasis"><option value="">선택하세요</option><option value="perPanel">판넬 1면당 수량 (공통 행은 각 판넬에 적용)</option><option value="allocated">프로젝트 총수량을 판넬별로 배분한 BOM</option></select>
         <div class="drop" data-kind="bom">
           <input type="file" id="fileBom" accept=".xlsx,.xls,.csv">
           <label for="fileBom"><b>BOM 파일 고르기</b> 또는 여기로 끌어다 놓기</label>
@@ -298,7 +308,7 @@ h1 { color: var(--accent); }
 
       <section class="step" aria-labelledby="h-s5">
         <h2 id="h-s5"><span class="num">5</span>시험·검사 기준 (QF-15)</h2>
-        <p class="help">같은 타입 판넬은 기술팀 총괄이 한 번 승인한 기준표를 계속 씁니다. 기준값은 QF-15와 FAT 성적서(QF-06) 기준란에 들어갑니다.</p>
+        <p class="help">모델·정격·회로·고객 요구·규격·시험조건이 동일한지 확인한 기준만 재사용합니다. 변경 시 기술팀 검토·승인을 다시 받습니다. 기준값은 QF-15와 FAT 성적서(QF-06) 기준란에 들어갑니다.</p>
         <div class="grid grid-2" id="fieldsStd"></div>
         <div class="drop" data-kind="std">
           <input type="file" id="fileStd" accept=".xlsx,.xls,.csv">
@@ -1042,6 +1052,43 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
     return bom.filter(function (it) { return !it.panel || norm(it.panel) === norm(panel.tag); });
   }
 
+  function validateInput(p, bom, basis) {
+    var errors = [], panels = (p.panels || []).filter(function (x) { return clean(x.tag); });
+    var tags = panels.map(function (x) { return norm(x.tag); });
+    var serials = panels.map(function (x) { return clean(x.serial); }).filter(Boolean);
+    if (clean(p.previousDrawRev) && (!clean(p.drawRev) || !clean(p.changeReason) || !clean(p.changePanels) || !clean(p.changeImpact))) errors.push('도면 변경 시 새 Rev·변경 사유·대상 판넬·영향/재검사 계획 입력');
+    if (clean(p.previousDrawRev) && clean(p.previousDrawRev) === clean(p.drawRev)) errors.push('변경 전·후 도면 Rev가 같습니다');
+    if (new Set(tags).size !== tags.length) errors.push('판넬 Tag 중복');
+    if (new Set(serials).size !== serials.length) errors.push('제조번호 중복');
+    if (bom.length && basis !== 'perPanel' && basis !== 'allocated') errors.push('BOM 수량 기준 선택');
+    bom.forEach(function (it, i) {
+      var row = 'BOM ' + (i + 1) + '행: ';
+      if ((it.major || it.qty !== null) && (!Number.isFinite(Number(it.qty)) || Number(it.qty) <= 0)) errors.push(row + '양수 수량 필요');
+      if (basis === 'allocated' && !clean(it.panel)) errors.push(row + '총수량을 판넬별 배분하고 판넬 열 입력');
+      if (clean(it.panel) && tags.indexOf(norm(it.panel)) < 0) errors.push(row + '등록되지 않은 판넬');
+    });
+    return errors;
+  }
+
+  function readProject(text) {
+    var saved = JSON.parse(text);
+    if (!saved || saved.format !== 'DI-ISO-PROJECT' || saved.version !== 1 || !saved.state) throw new Error('지원하는 프로젝트 저장 파일이 아닙니다.');
+    var data = saved.state;
+    if (!data.project || typeof data.project !== 'object' || Array.isArray(data.project) || !Array.isArray(data.panels) || !data.panels.length) throw new Error('프로젝트·판넬 정보가 잘못되었습니다.');
+    data.panels.forEach(function (x) {
+      if (!x || ['tag', 'desc', 'serial'].some(function (key) { return typeof x[key] !== 'string'; })) throw new Error('판넬 정보가 잘못되었습니다.');
+    });
+    ['bom', 'io', 'std'].forEach(function (kind) {
+      var value = data[kind];
+      if (value !== null && (!value || !Array.isArray(value.items) || !Array.isArray(value.rows) || !value.det)) throw new Error(kind + ' 원본 데이터가 잘못되었습니다.');
+      if (value) value.items.forEach(function (item) {
+        if (!item || typeof item !== 'object' || Array.isArray(item) || (kind === 'bom' && !Array.isArray(item.tags))) throw new Error(kind + ' 항목이 잘못되었습니다.');
+      });
+    });
+    if (['', 'perPanel', 'allocated'].indexOf(saved.bomBasis) < 0) throw new Error('BOM 수량 기준이 잘못되었습니다.');
+    return saved;
+  }
+
   /** 생성할 문서 목록. 각 문서: {folder, file, code, panel, values, rows, blankMin} */
   function plan(p, bom, io, std, opts) {
     opts = opts || {};
@@ -1053,7 +1100,7 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
     var stdRev = clean(p.stdRev);
     var docs = [];
 
-    function file(code, panel) { return pj + '_' + code + (panel ? '_' + safeName(panel) : '') + '_' + date + '.xlsx'; }
+    function file(code, panel) { return pj + '_' + code + (panel ? '_' + safeName(panel) : '') + '_' + date + '_Rev' + safeName(clean(p.recordRev) || '00') + '.xlsx'; }
     function add(folder, code, panel, values, rows, blankMin) {
       var d = { folder: folder, code: code, panel: panel || '', file: file(code, panel), values: values || {}, rows: rows, blankMin: blankMin };
       docs.push(d);
@@ -1090,6 +1137,12 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
       '고객 승인도 필요 여부': p.approval ? '필요' : '불필요',
       '검토·검증·유효성 확인 방법': '설계검증: 입출력 대조·용량/보호협조 검토·논리시험 / 유효성: FAT(QF-06·QF-06-1)' + (p.sat ? '·SAT(QF-07)' : '') + '·고객 인수'
     });
+
+    if (clean(p.previousDrawRev)) {
+      var design = docs.filter(function (d) { return d.code === 'QF-02'; })[0];
+      design.rows = JSON.parse(JSON.stringify((opts.forms && opts.forms['QF-02'] && opts.forms['QF-02'].rows) || []));
+      design.rows.push(['도면 변경', p.previousDrawRev + ' → ' + p.drawRev + ': ' + (p.changeReason || ''), '영향 판넬: ' + (p.changePanels || '미확인'), '', p.changeImpact || '영향·재검사 판단 필요', '', '검토·승인 전 관련 작업 보류']);
+    }
 
     // QF-15: 기준표 + 주요 부품 모델별 토크 행
     var stdRows = std.map(function (s) { return [s.item, s.target, s.value, s.method, s.source]; });
@@ -1211,7 +1264,7 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
 
     // 08 NCR·AS: 빈 양식
     add('08_NCR_AS', 'QF-09', '', { '프로젝트·판넬 LOT·공정': pj });
-    docs[docs.length - 1].file = pj + '_QF-09_양식_빈칸.xlsx';
+    docs[docs.length - 1].file = file('QF-09');
     return docs;
   }
 
@@ -1256,7 +1309,8 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
   /** 문서 묶음(zip)을 만든다. env: {ExcelJS, JSZip, engine, forms, logo, onProgress} */
   function generate(env, p, docs, date) {
     var zip = new env.JSZip();
-    var root = clean(p.pj) + (p.name ? '_' + safeName(p.name) : '');
+    var bundleId = new Date().toISOString().replace(/[^0-9]/g, '');
+    var root = clean(p.pj) + (p.name ? '_' + safeName(p.name) : '') + '_Rev' + safeName(clean(p.recordRev) || '00') + '_' + bundleId;
     var F = env.forms.forms;
     var jobs = docs.map(function (d) {
       var spec = JSON.parse(JSON.stringify(F[d.code]));
@@ -1278,6 +1332,7 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
     var done = 0;
     return jobs.reduce(function (chain, job) {
       return chain.then(function () {
+        job.spec.notes = ['초안·미승인: 작업 사용 금지. 실제 수행·검토·승인 증거 확인 필요. 기록 Rev ' + (clean(p.recordRev) || '00')].concat(job.spec.notes || []);
         var wb = env.engine.buildWorkbook(env.ExcelJS, [job.spec], {
           values: job.values, rev: env.forms.rev, date: env.forms.date, logo: env.logo
         });
@@ -1290,14 +1345,14 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
     }, Promise.resolve()).then(function () {
       return zip.generateAsync({ type: env.zipType || 'blob', compression: 'DEFLATE' });
     }).then(function (out) {
-      return { data: out, name: clean(p.pj) + '_ISO기록_' + date + '.zip', count: jobs.length };
+      return { data: out, name: clean(p.pj) + '_ISO기록_' + date + '_Rev' + safeName(clean(p.recordRev) || '00') + '_' + bundleId + '.zip', count: jobs.length };
     });
   }
 
   var api = {
     norm: norm, clean: clean, today: today, detectColumns: detectColumns, LABELS: LABELS, SYN: SYN,
     parseBom: parseBom, parseIo: parseIo, parseStd: parseStd, classify: classify, METHOD: METHOD,
-    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, STAGE: STAGE
+    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, STAGE: STAGE, validateInput: validateInput, readProject: readProject
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.IsoProject = api;
@@ -1432,12 +1487,12 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
   var FIELDS_BASIC = [
     ['pj', '프로젝트 번호', 'req'], ['customer', '고객', 'req'], ['name', '프로젝트명·현장'], ['po', '계약·PO 번호'],
     ['spec', '사양서 번호·Rev'], ['due', '납기', 'date'], ['drawRev', '도면 Rev'], ['ioRev', 'I/O 리스트 Rev'],
-    ['plc', 'PLC 기종'], ['plcVer', 'PLC Ver'], ['tool', '개발도구·Ver']
+    ['plc', 'PLC 기종'], ['plcVer', 'PLC Ver'], ['tool', '개발도구·Ver'], ['recordRev', '작성 기록 Rev (미입력: 00)']
   ];
   var FIELDS_REQ = [
     ['laws', '적용 법규·제품규격'], ['custReq', '고객 검사·입회·기록 요구'], ['warranty', '보증기간·무상범위'],
     ['packing', '포장·운송 조건'], ['custSupply', '고객 지급품'], ['designer', '설계 책임자'],
-    ['reviewer', '검토자 (설계자 외)'], ['production', '생산관리 책임자']
+    ['reviewer', '검토자 (설계자 외)'], ['production', '생산관리 책임자'], ['previousDrawRev', '변경 전 도면 Rev (변경 시)'], ['changeReason', '도면 변경 사유'], ['changePanels', '변경 영향 판넬 Tag'], ['changeImpact', '변경 영향·수정·재검사 계획']
   ];
   var FIELDS_OPT = [['approval', '고객 승인도 필요'], ['sat', 'SAT·시운전 포함 (QF-07)'], ['outsource', '현장 배선 외주 (SF-03)']];
   var FIELDS_STD = [['stdRev', '기준표 번호·Rev'], ['stdName', '기준표 이름 (판넬 타입)']];
@@ -1470,6 +1525,7 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
   }
 
   function clearAll() {
+    $('bomBasis').value = '';
     state.project = { approval: false, sat: true, outsource: false };
     state.panels = [{ tag: '', desc: '', serial: '' }];
     state.bom = state.io = state.std = null;
@@ -1692,6 +1748,7 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
     if (!P.clean(state.project.pj)) miss.push('프로젝트 번호');
     if (!P.clean(state.project.customer)) miss.push('고객');
     if (!state.panels.some(function (x) { return P.clean(x.tag); })) miss.push('판넬 Tag 1개 이상');
+    miss = miss.concat(P.validateInput(currentProject(), state.bom ? state.bom.items : [], $('bomBasis').value));
     return miss;
   }
 
@@ -1881,6 +1938,26 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
     renderAll();
     wireDrops();
     $('btnClear').addEventListener('click', clearAll);
+    $('bomBasis').addEventListener('change', renderPlan);
+    $('btnSaveProject').addEventListener('click', function () {
+      var saved = {format: 'DI-ISO-PROJECT', version: 1, savedAt: new Date().toISOString(), bomBasis: $('bomBasis').value, state: state};
+      saveFile((P.clean(state.project.pj) || '프로젝트') + '_입력_' + Date.now() + '.json', new Blob([JSON.stringify(saved, null, 2)], {type: 'application/json'}))
+        .then(function () { setStatus('프로젝트 입력을 저장했습니다. 실제 작성 엑셀도 별도로 보관하세요.', 'ok'); }, function (e) { saveError(e, '프로젝트'); });
+    });
+    $('fileProject').addEventListener('change', function (event) {
+      var input = event.target, file = input.files[0];
+      input.value = '';
+      if (!file) return;
+      if (file.size > 20 * 1024 * 1024) { setStatus('프로젝트 파일은 20MB 이하만 불러올 수 있습니다.', 'bad'); return; }
+      file.text().then(function (text) {
+        var saved = P.readProject(text);
+        state = saved.state;
+        $('bomBasis').value = saved.bomBasis;
+        $('sampleBar').hidden = !state.sample;
+        renderAll();
+        setStatus('저장한 프로젝트를 불러왔습니다. 생성 전 변경·승인 기준을 확인하세요.', 'ok');
+      }).catch(function (e) { setStatus('불러오기 실패: ' + e.message, 'bad'); });
+    });
     $('btnAddPanel').addEventListener('click', function () {
       state.panels.push({ tag: '', desc: '', serial: '' });
       renderPanels();
