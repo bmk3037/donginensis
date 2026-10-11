@@ -4000,10 +4000,12 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
 
   // ---------------------------------------------------------------- 예시
   function sampleData() {
-    var plan = A.plan(), F = A.FORMS.forms;
+    var F = A.FORMS.forms;
     var p0 = JSON.parse(JSON.stringify(A.S.project));
-    var base = A.P.indexSpec(p0, plan.docs, F, A.P.today()).rows;
     function make(pj, customer, name, due, upto, doing, panels) {
+      var p = Object.assign({}, p0, { pj: pj, panels: panels.map(function (x) { return { tag: x.tag, serial: x.lot }; }) });
+      var docs = A.P.plan(p, [], [], [], { forms: F });
+      var base = A.P.indexSpec(p, docs, F, A.P.today()).rows;
       var recs = base.map(function (r) {
         var si = STAGES.indexOf(r[0]);
         var st = si < 0 ? '미작성' : si < upto ? '승인' : si === upto && doing ? (r[1] === '증빙' ? '작성중' : '승인') : '미작성';
