@@ -16,7 +16,7 @@
    [{ "group": "가격 · 견적", "title": "가격정책 및 단가표 (DI-DS-02)", "desc": "Rev.00 · 4쪽", "file": "DI-DS-02_Rev00.pdf", "type": "application/pdf" }]
    ```
 
-2. `PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` — `files/private/`를 새로 만듭니다(전체 다시 암호화).
+2. `PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` — `files/private/`를 갱신합니다. 내용이 그대로인 자료는 기존 암호화 파일을 그대로 두고 새로 넣거나 바뀐 자료만 암호화합니다(저장소 용량 절약). 비밀번호를 바꾸면 자동으로 전부 다시 암호화되고, 일부러 전부 새로 하려면 `PRIVATE_FULL=1`을 붙입니다.
 3. `files/private/`를 커밋·푸시합니다.
 
 ## 자료실 '혁신제품' 폴더의 잠금 자료 (`files/innov/private/`)
@@ -26,6 +26,21 @@
 - 원본(DI-IN-02 PDF, docs.json, 생성 스크립트)은 저장소 밖에 둡니다. 핵심특허 내용·내부 일정이 들어 있어 공개 폴더(`files/innov/`)에는 올리지 않습니다.
 - 교체·비밀번호 변경: `PRIVATE_OUT=files/innov/private PRIVATE_PASS='비밀번호' node _src/private/encrypt.js <원본 폴더>` → `files/innov/private/`를 새로 만들어 커밋·푸시합니다.
 - 복호화 스크립트는 `resources.html`·`en/resources.html` 끝에 있습니다(`files/innov/private/index.bin`을 읽음).
+
+## 내부 자료실 (`internal.html` · `files/internal/`) — 대표 전용
+
+사업자등록증·공장등록증·수출실적·중소기업확인서·사업계획서처럼 지원사업·거래처 등록 때 자주 내는 내부 서류를 두는 곳입니다. 파트너 자료실과 **다른 비밀번호**(`INTERNAL_PASS`)를 쓰고, 메뉴·사이트맵·검색에 노출하지 않습니다(`robots.txt` 차단, `noindex`). 주소(`/internal.html`)는 대표만 압니다.
+
+- 추가·교체: 저장소 밖 폴더에 원본과 `docs.json`을 두고
+  `PRIVATE_OUT=files/internal PRIVATE_PASS="$INTERNAL_PASS" node _src/private/encrypt.js <원본 폴더>` → `files/internal/`를 커밋·푸시합니다.
+- 폴더 구성: `docs.json`을 `{"folders": [...], "docs": [...]}` 형식으로 씁니다.
+  - `folders`: 화면에 보일 폴더 순서. `path`가 `"2026 지원사업/성장사다리"`이면 "2026 지원사업" 제목 아래 "성장사다리" 폴더가 됩니다. 서류가 없는 폴더도 표시됩니다. `desc`는 폴더 설명입니다.
+  - `docs`의 `group`에 폴더 `path`를 적습니다. 지금 폴더: `공통 제출서류`, `2026 지원사업/성장사다리`, `2026 지원사업/지역주력육성산업`, `2026 지원사업/예비수소전문기업`.
+  - 등기부등본·사업자등록증·재무제표·납세증명처럼 여러 사업에 내는 서류는 **`공통 제출서류`에 한 벌만** 둡니다. 사업 폴더에는 그 사업에만 쓰는 서류(공고문·신청서·사업계획서·협약서·결과보고서 등)를 넣고, 공통 서류 중 그 사업에 내는 것은 폴더의 `uses`에 파일 이름으로 적습니다(예: `"uses": ["사업자등록증.pdf", "납세증명서.pdf"]`). 화면에서 "공통 제출서류에서 함께 낼 서류"로 같이 보이고, 새로 발급받으면 공통 폴더 한 곳만 바꾸면 됩니다.
+  - 해가 바뀌면 `"2027 지원사업/…"` 폴더를 추가합니다. 지난 연도 폴더는 그대로 둬도 됩니다.
+- 법인등기부등본·재무제표도 여기에 둘 수 있습니다(대표만 여는 곳). 다만 등기부등본은 보통 3개월 이내 발급본을 요구하므로 발급일을 `desc`에 적어 둡니다.
+- 비밀번호는 12자 이상, 파트너 자료실과 다르게. 바꿀 때는 `files/internal/`만 다시 암호화하면 됩니다(파트너용 폴더와 독립).
+- 확인: `PRIVATE_PASS='…' INTERNAL_PASS='…' node _src/private/check.js` (INTERNAL_PASS가 없으면 내부 자료실은 SKIP).
 
 ## 주의
 

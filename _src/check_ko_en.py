@@ -12,7 +12,7 @@
 import os, re, sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-KO_ONLY = {'404.html', 'members.html', 'profile.html', 'navercd5da1e18b67bfb5db7a114d9dc4b639.html'}  # 국문 전용으로 둔 페이지
+KO_ONLY = {'404.html', 'members.html', 'internal.html', 'profile.html', 'navercd5da1e18b67bfb5db7a114d9dc4b639.html'}  # 국문 전용으로 둔 페이지
 bad = []
 
 
