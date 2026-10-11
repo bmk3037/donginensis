@@ -9,19 +9,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
-<style>/* Layout: 작업지시서처럼 왼쪽은 입력 순서(1~5), 오른쪽은 만들어질 프로젝트 폴더를 고정해서 보여 준다. */
-/* Layout: 홈페이지와 같은 남색 상단 바(로고) 아래, 왼쪽은 입력 순서(1~5), 오른쪽은 만들어질 프로젝트 폴더.
-   Color: 회사 로고의 파랑 #1857A5·남색 #0A2A55, 로고 i 점의 빨강 #E83E30은 상단 바 아래 선과 필수 표시에만 쓴다. */
+<style>/* Layout: 홈페이지와 같은 남색 상단 바(로고) 아래, 왼쪽은 입력 순서(1~5), 오른쪽은 만들어질 프로젝트 폴더.
+   도면 느낌: 모눈종이 배경, 직각 테두리, 단계마다 표제란 같은 머리. 밝은 화면 하나로 고정한다.
+   Color: 기록양식집(DI-IMS-F-01) 엑셀 서식과 같은 색 — 제목·표 머리 #1857A5, 항목칸 #E8EEF6, 미리 적힌 칸 #F4F6F9,
+   테두리 #8A9BB0, 글자 #263445. 로고 i 점의 빨강 #E83E30은 상단 바 아래 선과 필수 표시에만 쓴다. */
 :root {
-  --bg: #f5f7fa;
+  color-scheme: light;
+  --bg: #fbfcfe;
   --surface: #ffffff;
-  --sunken: #f0f3f7;
-  --ink: #111b2e;
-  --muted: #5a6577;
-  --line: #e2e7ee;
+  --sunken: #f4f6f9;
+  --ink: #263445;
+  --muted: #55657a;
+  --line: #8a9bb0;
   --accent: #1857a5;
   --accent-ink: #ffffff;
-  --accent-soft: #eaf1fa;
+  --accent-soft: #e8eef6;
   --navy: #0a2a55;
   --navy-2: #0f3f7e;
   --brand-red: #e83e30;
@@ -33,22 +35,19 @@
   --bad-soft: #fde7e4;
   --font-ui: "Pretendard", "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
-  --r: 8px;
-  --fs-xs: 12px; --fs-sm: 13px; --fs-md: 14px; --fs-lg: 16px; --fs-xl: 18px; --fs-2xl: 28px;
+  --r: 0px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 18px;
+  --fs-2xl: 28px;
+  --label: #e8eef6;
+  --grid: rgba(24,87,165,0.06);
+  --head: #1857a5;
+  --th: #1857a5;
+  --th-ink: #ffffff;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0a1220; --surface: #111c2e; --sunken: #0d1727; --ink: #e6edf6; --muted: #9caabd; --line: #22324a;
-    --accent: #5c9be8; --accent-ink: #06101e; --accent-soft: #15284a; --navy: #061a36; --navy-2: #0c2c57; --brand-red: #f0574a;
-    --ok: #5fcf96; --ok-soft: #13291f; --warn: #e8b84d; --warn-soft: #2d2410; --bad: #f4887d; --bad-soft: #351a18; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0a1220; --surface: #111c2e; --sunken: #0d1727; --ink: #e6edf6; --muted: #9caabd; --line: #22324a;
-  --accent: #5c9be8; --accent-ink: #06101e; --accent-soft: #15284a; --navy: #061a36; --navy-2: #0c2c57; --brand-red: #f0574a;
-  --ok: #5fcf96; --ok-soft: #13291f; --warn: #e8b84d; --warn-soft: #2d2410; --bad: #f4887d; --bad-soft: #351a18; color-scheme: dark;
-}
-
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 14px; line-height: 1.55; }
 .wrap { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 40px; }
@@ -201,92 +200,30 @@ input.invalid { border-color: var(--bad); background: var(--bad-soft); }
 }
 @media (pointer: coarse) { .btn { min-height: 44px; } .btn-sm, .btn-icon { min-height: 40px; } }
 
-/* ================= 화면 스타일 시안 =================
-   B 도면: 모눈종이·직각 테두리·표제란, C 현장 HMI: 어두운 조작 패널(단일 테마) */
-.look-switch { display: inline-flex; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; overflow: hidden; }
-.look-switch button { font: inherit; font-size: var(--fs-xs); background: transparent; color: rgba(255,255,255,0.8); border: 0; padding: 5px 10px; cursor: pointer; min-height: 30px; }
-.look-switch button[aria-pressed="true"] { background: #fff; color: var(--navy); font-weight: 600; }
-.look-switch button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
-.appbar-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-.appbar-tools .appbar-code { margin-left: 0; }
 
-/* ---------- B 도면 ---------- */
-/* B 도면: 색은 기록양식집(DI-IMS-F-01) 엑셀 서식과 같게 — 제목·표 머리 #1857A5, 항목명 칸 #E8EEF6,
-   미리 적힌 칸 #F4F6F9, 테두리 #8A9BB0, 글자 #263445 */
-:root[data-look="drawing"] {
-  --bg: #fbfcfe; --surface: #ffffff; --sunken: #f4f6f9; --label: #e8eef6; --line: #8a9bb0; --grid: rgba(24,87,165,0.06);
-  --ink: #263445; --muted: #55657a; --accent: #1857a5; --accent-ink: #ffffff; --accent-soft: #e8eef6; --head: #1857a5;
-  --th: #1857a5; --th-ink: #ffffff; --r: 0px;
-}
-@media (prefers-color-scheme: dark) {
-  :root[data-look="drawing"]:not([data-theme="light"]) {
-    --bg: #0a1a33; --surface: #0d2140; --sunken: #0b1c37; --label: #14305a; --line: #4a6a94; --grid: rgba(140,180,235,0.08);
-    --ink: #e6eef8; --muted: #a9bcd6; --accent: #8fbaf0; --accent-ink: #06142a; --accent-soft: #14305a; --head: #1857a5;
-    --th: #1857a5; --th-ink: #ffffff;
-  }
-}
-:root[data-look="drawing"][data-theme="dark"] {
-  --bg: #0a1a33; --surface: #0d2140; --sunken: #0b1c37; --label: #14305a; --line: #4a6a94; --grid: rgba(140,180,235,0.08);
-  --ink: #e6eef8; --muted: #a9bcd6; --accent: #8fbaf0; --accent-ink: #06142a; --accent-soft: #14305a; --head: #1857a5;
-  --th: #1857a5; --th-ink: #ffffff;
-}
-[data-look="drawing"] body { background-color: var(--bg);
+/* ---------- 도면 스타일 ---------- */
+body { background-color: var(--bg);
   background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: 16px 16px; }
-[data-look="drawing"] .step, [data-look="drawing"] .out-card, [data-look="drawing"] .sample-bar { border: 1.5px solid var(--accent); border-radius: 0; box-shadow: 4px 4px 0 var(--accent-soft); }
-[data-look="drawing"] .step h2 { margin: -18px -18px 0; padding: 10px 18px; border-bottom: 1.5px solid var(--accent); background: var(--label); color: var(--accent);
+.step, .out-card, .sample-bar { border: 1.5px solid var(--accent); border-radius: 0; box-shadow: 4px 4px 0 var(--accent-soft); }
+.step h2 { margin: -18px -18px 0; padding: 10px 18px; border-bottom: 1.5px solid var(--accent); background: var(--label); color: var(--accent);
   font-size: var(--fs-lg); letter-spacing: 0.02em; }
-[data-look="drawing"] .num { border-radius: 0; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); font-family: var(--font-mono); }
-[data-look="drawing"] .out-head { background: var(--head); border-bottom: 1.5px solid var(--accent); }
-[data-look="drawing"] input[type="text"], [data-look="drawing"] input[type="date"], [data-look="drawing"] select,
-[data-look="drawing"] .btn, [data-look="drawing"] .drop, [data-look="drawing"] .tree, [data-look="drawing"] .table-wrap,
-[data-look="drawing"] .mapping, [data-look="drawing"] .note { border-radius: 0; }
-[data-look="drawing"] input[type="text"], [data-look="drawing"] input[type="date"] { background: var(--surface); }
-[data-look="drawing"] .field label { font-size: var(--fs-xs); font-weight: 600; color: var(--accent); }
-[data-look="drawing"] .btn-primary { background: var(--accent); border-color: var(--accent); letter-spacing: 0.04em; }
-[data-look="drawing"] .chip { border-radius: 0; border: 1px solid currentColor; background: transparent; }
-[data-look="drawing"] h1 { font-weight: 800; letter-spacing: -0.03em; }
-[data-look="drawing"] .tbl th { background: var(--th); color: var(--th-ink); font-weight: 600; border-bottom-color: var(--th); }
-[data-look="drawing"] .tbl td { border-bottom-color: var(--line); }
-[data-look="drawing"] h1 { color: var(--accent); }
-[data-look="drawing"] .tree { background: var(--sunken); }
-[data-look="drawing"] .tree .file { border-left: 1px dashed var(--line); margin-left: 4px; }
+.num { border-radius: 0; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); font-family: var(--font-mono); }
+.out-head { background: var(--head); border-bottom: 1.5px solid var(--accent); }
+input[type="text"], input[type="date"], select,
+.btn, .drop, .tree, .table-wrap,
+.mapping, .note { border-radius: 0; }
+input[type="text"], input[type="date"] { background: var(--surface); }
+.field label { font-size: var(--fs-xs); font-weight: 600; color: var(--accent); }
+.btn-primary { background: var(--accent); border-color: var(--accent); letter-spacing: 0.04em; }
+.chip { border-radius: 0; border: 1px solid currentColor; background: transparent; }
+h1 { font-weight: 800; letter-spacing: -0.03em; }
+.tbl th { background: var(--th); color: var(--th-ink); font-weight: 600; border-bottom-color: var(--th); }
+.tbl td { border-bottom-color: var(--line); }
+h1 { color: var(--accent); }
+.tree { background: var(--sunken); }
+.tree .file { border-left: 1px dashed var(--line); margin-left: 4px; }
 
-/* ---------- C 현장 HMI (어두운 단일 테마) ---------- */
-:root[data-look="hmi"] {
-  --bg: #0c121b; --surface: #151e2b; --sunken: #0a0f17; --ink: #edf2f8; --muted: #9fb0c4; --line: #2b3a4f;
-  --accent: #3b8cff; --accent-ink: #ffffff; --accent-soft: #14284a; --navy: #070b12; --brand-red: #e83e30;
-  --ok: #3fd47f; --ok-soft: #10301f; --warn: #ffb020; --warn-soft: #33260a; --bad: #ff5a4a; --bad-soft: #3a1512;
-  --r: 4px; color-scheme: dark;
-}
-[data-look="hmi"] body { background: var(--bg); }
-[data-look="hmi"] .appbar { background: var(--navy); }
-[data-look="hmi"] .step, [data-look="hmi"] .out-card, [data-look="hmi"] .sample-bar {
-  background: var(--surface); border: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 0 #05080d; }
-[data-look="hmi"] .step h2 { text-transform: none; font-size: var(--fs-xl); }
-[data-look="hmi"] .num { background: #0a0f17; color: var(--warn); border: 1px solid #3a2c0c; font-family: var(--font-mono); border-radius: 4px; width: 32px; height: 28px; }
-[data-look="hmi"] .field label { color: var(--muted); font-size: var(--fs-xs); letter-spacing: 0.04em; }
-[data-look="hmi"] input[type="text"], [data-look="hmi"] input[type="date"], [data-look="hmi"] select {
-  background: #0a0f17; border-color: #33445c; font-size: var(--fs-lg); min-height: 44px; color: var(--ink); }
-[data-look="hmi"] input:focus, [data-look="hmi"] select:focus { outline-color: var(--warn) !important; }
-[data-look="hmi"] .btn { min-height: 44px; background: #1c2737; border-color: #33445c; color: var(--ink); }
-[data-look="hmi"] .btn-primary { min-height: 60px; font-size: var(--fs-xl); background: #1f8f4e; border-color: #2bbf6a; color: #fff;
-  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.35); letter-spacing: 0.02em; }
-[data-look="hmi"] .btn-primary:hover { filter: brightness(1.1); }
-[data-look="hmi"] .out-head { background: #070b12; border-bottom: 2px solid var(--warn); }
-[data-look="hmi"] .checklist .ic { width: 14px; height: 14px; margin-top: 3px; font-size: 0; border: 0; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.35); }
-[data-look="hmi"] .checklist .ok .ic { background: var(--ok); }
-[data-look="hmi"] .checklist .warn .ic { background: var(--warn); }
-[data-look="hmi"] .checklist .off .ic { background: #3a4657; }
-[data-look="hmi"] .tree { background: #05080d; color: #7fe0a8; border-color: #1d2a3a; }
-[data-look="hmi"] .tree .folder { color: var(--warn); }
-[data-look="hmi"] .tree .file { color: #8fd9b0; }
-[data-look="hmi"] .tree .root, [data-look="hmi"] .tree .file.index { color: #d6ffe8; }
-[data-look="hmi"] .drop { background: #0a0f17; border-color: #33445c; }
-[data-look="hmi"] .chip { border-radius: 3px; }
-[data-look="hmi"] h1 { color: #fff; }
-[data-look="hmi"] .eyebrow { color: var(--warn) !important; }
-[data-look="hmi"] .foot-brand { color: var(--ink); }
 </style>
 
 <header class="appbar">
@@ -294,15 +231,8 @@ input.invalid { border-color: var(--bad); background: var(--bad-soft); }
     <img class="appbar-logo" src="data:image/png;base64,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" alt="동인엔시스" width="150" height="28">
     <span class="appbar-sep" aria-hidden="true"></span>
     <span class="appbar-name">통합경영 기록 시스템</span>
-    <div class="appbar-tools">
-      <div class="look-switch" role="group" aria-label="화면 스타일">
-        <button type="button" data-look="" aria-pressed="true">기본</button>
-        <button type="button" data-look="drawing" aria-pressed="false">도면</button>
-        <button type="button" data-look="hmi" aria-pressed="false">현장 HMI</button>
-      </div>
-      <span class="appbar-code">DI-IMS-F-01 Rev.00</span>
+    <span class="appbar-code">DI-IMS-F-01 Rev.00</span>
     </div>
-  </div>
 </header>
 
 <div class="wrap">
@@ -1944,23 +1874,7 @@ window.ISO_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAeAAAABdCAMAAABKKUW4AAAAYFBMVEUUWJ4XV
     renderPlan();
   }
 
-  function setLook(look) {
-    if (look) document.documentElement.setAttribute('data-look', look);
-    else document.documentElement.removeAttribute('data-look');
-    Array.prototype.forEach.call(document.querySelectorAll('.look-switch button'), function (b) {
-      b.setAttribute('aria-pressed', String((b.getAttribute('data-look') || '') === (look || '')));
-    });
-    try { localStorage.setItem('isoLook', look || ''); } catch (e) { /* 저장 불가 시 무시 */ }
-  }
-
   function start() {
-    var saved = '';
-    try { saved = localStorage.getItem('isoLook') || ''; } catch (e) { saved = ''; }
-    var forced = (location.hash || '').replace('#', '');
-    setLook(['drawing', 'hmi'].indexOf(forced) >= 0 ? forced : saved);
-    Array.prototype.forEach.call(document.querySelectorAll('.look-switch button'), function (b) {
-      b.addEventListener('click', function () { setLook(b.getAttribute('data-look')); });
-    });
     loadSample();
     renderAll();
     wireDrops();

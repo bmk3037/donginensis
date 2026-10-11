@@ -464,23 +464,7 @@
     renderPlan();
   }
 
-  function setLook(look) {
-    if (look) document.documentElement.setAttribute('data-look', look);
-    else document.documentElement.removeAttribute('data-look');
-    Array.prototype.forEach.call(document.querySelectorAll('.look-switch button'), function (b) {
-      b.setAttribute('aria-pressed', String((b.getAttribute('data-look') || '') === (look || '')));
-    });
-    try { localStorage.setItem('isoLook', look || ''); } catch (e) { /* 저장 불가 시 무시 */ }
-  }
-
   function start() {
-    var saved = '';
-    try { saved = localStorage.getItem('isoLook') || ''; } catch (e) { saved = ''; }
-    var forced = (location.hash || '').replace('#', '');
-    setLook(['drawing', 'hmi'].indexOf(forced) >= 0 ? forced : saved);
-    Array.prototype.forEach.call(document.querySelectorAll('.look-switch button'), function (b) {
-      b.addEventListener('click', function () { setLook(b.getAttribute('data-look')); });
-    });
     loadSample();
     renderAll();
     wireDrops();
