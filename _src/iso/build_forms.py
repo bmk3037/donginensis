@@ -2,7 +2,7 @@
 
 양식 내용은 forms_data.py에 있고, 이 파일은 공통 배치(머리 입력란, 표, 결재란, 인쇄 설정)를 만든다.
 
-    python3 _src/iso/build_forms.py            # files/iso/DI-IMS-F-01_Rev00.xlsx 생성
+    python3 _src/iso/build_forms.py            # _src/iso/source/DI-IMS-F-01_Rev00.xlsx 생성 (자료실에는 PDF만)
     python3 _src/iso/build_forms.py out.xlsx   # 다른 경로로 생성
 """
 import itertools
@@ -22,7 +22,7 @@ import forms_data as D
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-OUT = os.path.join(ROOT, 'files', 'iso', 'DI-IMS-F-01_Rev00.xlsx')
+OUT = os.path.join(ROOT, '_src', 'iso', 'source', 'DI-IMS-F-01_Rev00.xlsx')
 
 FONT = 'Malgun Gothic'
 BLUE = '1857A5'
