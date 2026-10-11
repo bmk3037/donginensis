@@ -305,6 +305,12 @@
       '보증기간·기산일·무상범위': p.warranty, '포장·운송 조건': p.packing, '고객 지급품': p.custSupply
     }, pfRows);
 
+    function makerList(items) {
+      var ms = [];
+      items.forEach(function (it) { if (it.major && it.maker && ms.indexOf(it.maker) < 0) ms.push(it.maker); });
+      return ms.join(', ');
+    }
+
     add(qf02.folder, 'QF-02', '', {
       '프로젝트 번호': pj, '판넬 번호': tagList, '설계 책임자': p.designer, '검토자(설계자 외)': p.reviewer,
       '입력자료 목록·Rev': [p.spec ? '고객 사양서 ' + p.spec : '', p.po ? 'PO ' + p.po : '', p.drawRev ? '도면 ' + p.drawRev : '']
@@ -358,7 +364,8 @@
       return [clean(it.name + ' ' + it.model) + (it.maker ? ' (' + it.maker + ')' : ''), qty + ' / ', a.lots.join(', '), METHOD[it.category] || METHOD['기타']];
     });
     add('03_구매입고', 'QF-03', '', {
-      '프로젝트 번호': pj, '검사기준(QF-15 번호)': stdRev || 'QF-15', '고객 지급품 여부': p.custSupply
+      '프로젝트 번호': pj, '검사기준(QF-15 번호)': stdRev || 'QF-15', '고객 지급품 여부': p.custSupply,
+      '발주서·입고번호': p.po ? '고객 PO ' + p.po + ' / 입고번호: ' : '', '공급자': makerList(bom), '검사자': p.quality
     }, qf03Rows, 2);
 
     var perPanel = {};
@@ -376,7 +383,8 @@
         '승인 도면 Rev / QF-15': [p.drawRev, stdRev].filter(Boolean).join(' / '), '생산관리 책임자': p.production
       });
       add('04_제작', 'QF-05', t, {
-        '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), '도면 Rev': p.drawRev, 'QF-15 번호': stdRev
+        '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), '도면 Rev': p.drawRev, 'QF-15 번호': stdRev,
+        '숙련 확인자 / 확인일': p.inspector ? p.inspector + ' / ' : ''
       });
     });
 
@@ -396,17 +404,21 @@
       add('05_FAT출하', 'QF-06', t, {
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel),
         '도면 Rev / QF-15 번호': [p.drawRev, stdRev].filter(Boolean).join(' / '),
-        'PLC Ver / SF-02 번호': [p.plcVer, perPanel[t].f02s].filter(Boolean).join(' / ')
+        'PLC Ver / SF-02 번호': [p.plcVer, perPanel[t].f02s].filter(Boolean).join(' / '),
+        '시험일 / 시험자': p.tester ? ' / ' + p.tester : '', '계측기 관리번호': p.meters,
+        '고객 입회자·서명 또는 승인메일': p.witness
       }, fatRows.length ? fatRows : undefined);
       var pts = io.filter(function (x) { return !x.panel || norm(x.panel) === norm(t); });
       var ioRows = pts.map(function (x, i) {
         return [i + 1, x.addr, clean(x.tag + ' ' + x.desc), x.type, x.expect];
       });
       add('05_FAT출하', 'QF-06-1', t, {
-        '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), 'PLC Ver': p.plcVer, 'I/O 리스트 Rev': p.ioRev
+        '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), 'PLC Ver': p.plcVer, 'I/O 리스트 Rev': p.ioRev,
+        '시험일 / 시험자': p.tester ? ' / ' + p.tester : '', '고객 입회자': p.witness
       }, ioRows.length ? ioRows : undefined, 2);
       add('05_FAT출하', 'SF-02', t, {
-        '프로젝트 번호': pj, '현장': '공장 FAT', '판넬·전원 범위': t + ' 주회로·제어회로'
+        '프로젝트 번호': pj, '현장': '공장 FAT', '판넬·전원 범위': t + ' 주회로·제어회로',
+        '작업책임자': p.tester, '시험자': p.tester, '위험성평가 번호': 'SF-01 (시험·통전 작업)'
       });
     });
 
@@ -416,16 +428,21 @@
         [p.drawRev, p.plcVer].filter(Boolean).join(' / ')];
     });
     add('05_FAT출하', 'QF-04', '', {
-      '프로젝트 번호': pj, '고객': p.customer, '프로젝트명·현장': p.name, '판넬 수량': tags.length ? tags.length + '면' : ''
+      '프로젝트 번호': pj, '고객': p.customer, '프로젝트명·현장': p.name, '판넬 수량': tags.length ? tags.length + '면' : '',
+      '작성자': p.production, '품질 확인자': p.quality
     }, lotRows.length ? lotRows : undefined, 2);
 
     // 06 SAT
     if (p.sat) {
       add('06_SAT인수', 'QF-07', '', {
         '프로젝트 번호': pj, '현장': p.name, '판넬 번호': tagList, '고객': p.customer,
-        '도면 Rev / PLC 최종 Ver': p.drawRev ? p.drawRev + ' / ' : ''
+        '도면 Rev / PLC 최종 Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '),
+        '시운전일 / 담당': p.tester ? ' / ' + p.tester : '',
+        'SF-02 / SF-03 번호': 'SF-02 (현장 통전)' + (p.outsource ? ' / SF-03 (외주 현장 배선)' : '')
       });
-      if (p.outsource) add('06_SAT인수', 'SF-03', '', { '현장': p.name, '작업내용': '현장 배선 (외주)' });
+      if (p.outsource) add('06_SAT인수', 'SF-03', '', {
+        '현장': p.name, '작업내용': '현장 배선 (외주)', '업체': p.outsourceCo, '당사 책임자': p.production
+      });
     }
 
     // 07 PLC
@@ -433,7 +450,7 @@
     var inv = bom.filter(function (it) { return it.category === '인버터'; }).map(function (it) { return it.model; });
     add('07_PLC', 'QF-08', '', {
       '프로젝트 번호': pj, '판넬 번호': tagList,
-      'PLC·HMI 기종': [p.plc].concat(hmi).filter(Boolean).join(' / '), '개발도구·Ver': p.tool,
+      'PLC·HMI 기종': [p.plc].concat(hmi).filter(Boolean).join(' / '), '개발도구·Ver': p.tool, '담당자': p.programmer,
       '복원 대상 (PLC·HMI·인버터 파라미터)': ['PLC 프로그램', hmi.length ? 'HMI 화면' : '', inv.length ? '인버터 파라미터(' + inv.join(', ') + ')' : '']
         .filter(Boolean).join(' / ')
     }, p.plcVer ? [[p.plcVer, '', '개발']] : undefined, 2);
@@ -473,7 +490,8 @@
       footer: '프로젝트 기록 현황 ' + clean(p.pj),
       orient: 'landscape', mode: 'register',
       cols: [['단계', 10], ['양식', 9], ['문서', 24], ['판넬', 9], ['파일 위치', 40], ['담당', 14], ['상태', 9], ['완료일', 10], ['확인자', 10]],
-      fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['도면 Rev / PLC Ver', null], ['생성일', null]]],
+      fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['계약·PO 번호', null], ['납기', null]],
+        [['판넬 LOT (제조번호)', null]], [['담당 (설계 / 생산 / 품질 / 시험)', null]], [['도면 Rev / PLC Ver', null], ['생성일', null]]],
       notes: ['이 묶음에 들어 있는 기록과 따로 보관할 증빙 목록입니다. 기록을 작성하면 상태를 바꾸고 완료일·확인자를 적습니다. 미작성은 붉게 표시됩니다.',
         '감사 때는 이 표 순서대로 수주 → 설계 → 입고 → 제작 → FAT → 출하(판넬 LOT, QF-04) → SAT 기록을 보여 줍니다. 해당없음은 사유를 확인자 칸에 함께 적습니다.'],
       rows: indexRows(p, docs, forms), blank: 2, row_h: 20,
@@ -482,16 +500,41 @@
     };
   }
 
+  /** 직접 적는 칸의 작성 예시(표 첫 행, 열 번호는 1부터). 판넬 1면 기준으로 1번 판넬 문서와 공통 문서에만 넣는다. */
+  var EXAMPLES = {
+    'PF-00': { 4: '승인', 5: '없음', 6: '영업관리 김○○', 7: '2026.10.05' },
+    'QF-02': { 4: '사양서 Rev.B와 대조 완료, 질의 2건 메일 회신(10/03)', 5: '없음', 6: '이○○ 10/04', 7: '승인 10/05, 공용 저장소 배포' },
+    'QF-15': { 5: '제조사 설명서 p.12', 6: '적용', 8: 'Rev.0 승인 10/05 하○○' },
+    'QF-03': { 5: '모델·정격 일치, 외관 이상 없음', 6: '합격', 7: '시험성적서 첨부', 8: '문○○ 10/12' },
+    'QF-16': { 3: '10/12 · 1식', 4: '박○○ (QF-12 승인)', 5: 'Rev.1', 6: 'QF-03 입고 0012', 7: 'QF-03 합격', 8: '박○○ → 이○○', 9: '없음' },
+    'QF-05': { 3: '적합', 4: '적합', 5: '없음', 6: '—' },
+    'QF-06': { 4: '도면과 일치, 명판·경고표시 부착 확인', 5: '합격', 6: '육안 · 사진 3장', 7: '—' },
+    'QF-06-1': { 6: 'PB 누름 → 입력 ON 확인', 7: '합격', 8: '최○○', 9: '' },
+    'SF-02': { 3: '적합', 4: '최○○ 09:10', 5: '없음' },
+    'QF-04': { 4: '10/20', 5: '합격 10/25', 6: '10/28 품질 문○○', 7: '고객 현장 압축기실', 8: '11/05', 9: '없음' },
+    'QF-07': { 3: '기동·정지 정상, 사진 첨부', 4: '합격', 5: '없음', 6: '—', 7: '고객 담당 확인 11/05' },
+    'SF-03': { 3: '박○○', 4: '외주 현장소장', 5: '양측 서명 11/01', 6: '—' },
+    'QF-08': { 2: '10/18', 4: '정○○ 최초 작성', 5: '전체 (신규)', 6: 'QF-06 FAT', 7: '하○○ 10/24', 8: '07_PLC/V1.0', 9: '출하 시 USB 전달' },
+    'QF-09': { 2: '단자 체결 누락 1개소 (TB2-14)', 3: '박○○', 4: '10/22', 5: '재체결 사진', 6: '재검사 합격', 7: '문○○ 10/23' }
+  };
+  var EXAMPLE_NOTE = '회색 기울임 \'예)\' 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 실제 내용으로 덮어써 작성합니다.';
+
   /** 문서 묶음(zip)을 만든다. env: {ExcelJS, JSZip, engine, forms, logo, onProgress} */
   function generate(env, p, docs, date) {
     var zip = new env.JSZip();
     var bundleId = new Date().toISOString().replace(/[^0-9]/g, '');
     var root = clean(p.pj) + (p.name ? '_' + safeName(p.name) : '') + '_Rev' + safeName(clean(p.recordRev) || '00') + '_' + bundleId;
     var F = env.forms.forms;
+    var firstPanel = ((p.panels || []).filter(function (x) { return clean(x.tag); })[0] || {}).tag;
+    firstPanel = firstPanel ? clean(firstPanel) : '';
     var jobs = docs.map(function (d) {
       var spec = JSON.parse(JSON.stringify(F[d.code]));
       if (d.rows) spec.rows = d.rows;
       if (d.blankMin !== undefined) spec.blank = d.blankMin;
+      if (env.examples !== false && EXAMPLES[d.code] && (!d.panel || d.panel === firstPanel)) {
+        spec.example = { row: 0, cells: EXAMPLES[d.code] };
+        spec.notes = (spec.notes || []).concat([EXAMPLE_NOTE]);
+      }
       return { path: root + '/' + d.folder + '/' + d.file, spec: spec, values: d.values };
     });
     var idx = indexSpec(p, docs, F, date);
@@ -500,11 +543,16 @@
       values: {
         '프로젝트 번호': clean(p.pj), '고객': p.customer, '프로젝트명·현장': p.name,
         '판넬': (p.panels || []).map(function (x) { return x.tag; }).filter(Boolean).join(', '),
-        '도면 Rev / PLC Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '), '생성일': date
+        '도면 Rev / PLC Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '), '생성일': date,
+        '계약·PO 번호': p.po, '납기': p.due,
+        '판넬 LOT (제조번호)': (p.panels || []).filter(function (x) { return x.tag; }).map(function (x) { return clean(x.tag) + ' ' + (clean(x.serial) || '(LOT 없음)'); }).join(', '),
+        '담당 (설계 / 생산 / 품질 / 시험)': [p.designer, p.production, p.quality, p.tester].map(function (v) { return clean(v) || '-'; }).join(' / ')
       }
     });
     ['01_수주고객', '02_설계기준', '03_구매입고', '04_제작', '05_FAT출하', '06_SAT인수', '07_PLC', '08_NCR_AS']
       .forEach(function (f) { zip.folder(root + '/' + f); });
+    // 프로젝트 입력 정보: 공용 저장소에서 기록 현황판·다른 담당자가 불러 쓴다
+    if (env.projectJson) zip.file(root + '/00_프로젝트정보_' + safeName(clean(p.pj)) + '.json', env.projectJson);
     var done = 0;
     return jobs.reduce(function (chain, job) {
       return chain.then(function () {

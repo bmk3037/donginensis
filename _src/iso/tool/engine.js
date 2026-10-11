@@ -6,7 +6,7 @@
 
   var C = {
     FONT: 'Malgun Gothic', BLUE: '1857A5', INK: '263445', LINE: '8A9BB0',
-    LABEL: 'E8EEF6', PRE: 'F4F6F9', WHITE: 'FFFFFF', NEG: 'F8D7DA', WARN: 'FFF3CD'
+    LABEL: 'E8EEF6', PRE: 'F4F6F9', WHITE: 'FFFFFF', EX: '7A8699', NEG: 'F8D7DA', WARN: 'FFF3CD'
   };
   var NEGATIVE = ['불합격', '보류', '부적합', '미흡', '미준수', '미확인', '실패', '사용금지', '중지·개선',
     '재교육·동행', 'C 발주중지', '중요', '미작성'];
@@ -297,6 +297,19 @@
     });
     var last = first + data.length - 1;
     this.first = first; this.last = last;
+    // 작성 예시: 지정한 행의 빈칸에 회색 기울임 '예)' 글을 넣는다(실제 기록 아님, 덮어써 작성)
+    var ex = s.example;
+    if (ex && ex.cells && data.length) {
+      var er = first + Math.min(ex.row || 0, data.length - 1), erh = ws.getRow(er).height || base;
+      Object.keys(ex.cells).forEach(function (col) {
+        var c = ws.getCell(er, +col), t = ex.cells[col];
+        if (!t || (c.value !== null && c.value !== undefined && c.value !== '') || (s.formulas || {})[col]) return;
+        c.value = '예) ' + t;
+        c.font = { name: C.FONT, size: 9, italic: true, color: { argb: argb(C.EX) } };
+        erh = Math.max(erh, textHeight(c.value, self.widths[+col - 1], 9, base, 6));
+      });
+      self.setH(er, erh);
+    }
     function colCells(col) {
       var out = [];
       for (var r = first; r <= last; r++) out.push(colL(col) + r);

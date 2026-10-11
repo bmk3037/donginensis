@@ -71,7 +71,8 @@ def build():
         page = page.replace('@LOGO_WHITE@', 'data:image/png;base64,' + base64.b64encode(f.read()).decode())
     script = ('window.ISO_FORMS = ' + json.dumps(data, ensure_ascii=False) + ';\n'
               + 'window.ISO_LOGO = "' + logo + '";\n'
-              + read('engine.js') + '\n' + read('project.js') + '\n' + read('samples.js') + '\n' + read('app.js'))
+              + read('engine.js') + '\n' + read('project.js') + '\n' + read('samples.js') + '\n' + read('app.js')
+              + '\n' + read('labels.js') + '\n' + read('fat.js') + '\n' + read('dash.js'))
     page = page.replace('/*@SCRIPT@*/', script.replace('</script', '<\\/script'))
     with open(os.path.join(DIST, 'artifact.html'), 'w', encoding='utf-8') as f:
         f.write(page)
