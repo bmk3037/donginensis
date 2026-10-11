@@ -31,7 +31,7 @@
 | `tool/app.js`, `tool/app.css`, `tool/page.html` | 화면(탭 전환, 다른 탭과 공유하는 `window.IsoApp`) |
 | `tool/labels.js` | 02 명판·라벨: 판넬 LOT 명판(실제 크기 SVG, QR), A4 라벨지 인쇄, 라벨 프린터용 CSV |
 | `tool/fat.js` | 03 FAT 시험 입력: 항목·I/O 점별 판정(시각 자동 기록) → QF-06·06-1 엑셀, 고객 제출용 성적서 |
-| `tool/dash.js` | 04 기록 현황판: 공용 저장소 폴더의 00_기록현황·QF-04·00_프로젝트정보를 모아 진행 단계 표시 |
+| `tool/dash.js` | 04 기록 현황판: 공용 저장소 폴더의 00_기록현황·QF-04·00_프로젝트정보를 모아 진행 단계 표시, 도면_승인본·07_PLC/릴리스의 최신 Rev·버전과 기록(도면 Rev·PLC Ver·FAT 시험 버전) 비교 |
 | `build_tool.py` | 위 파일과 `forms_data.py`의 양식 정의를 묶어 한 파일로 만든다 |
 
 - 다시 만들기: `python3 _src/iso/build_tool.py` → `tool/dist/ISO-기록생성기.html`

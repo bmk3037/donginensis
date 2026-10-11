@@ -348,6 +348,8 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 
 .sign-box { border: 1px solid var(--accent); background: var(--accent-soft); padding: 10px 12px; display: grid; gap: 8px; }
 .sign-h { margin: 0; font-weight: 700; color: var(--accent); font-size: var(--fs-sm); }
+.vc { display: grid; gap: 6px; }
+.vc-issues { margin: 0; padding: 8px 10px 8px 26px; background: var(--bad-soft); color: var(--bad); font-size: var(--fs-sm); display: grid; gap: 3px; }
 </style>
 
 <header class="appbar">
@@ -3686,7 +3688,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       pj: fieldVal(rows, h, '프로젝트 번호'), customer: fieldVal(rows, h, '고객'), name: fieldVal(rows, h, '프로젝트명·현장'),
       panelsText: fieldVal(rows, h, '판넬'), po: fieldVal(rows, h, '계약·PO 번호'), due: fieldVal(rows, h, '납기'),
       lots: fieldVal(rows, h, '판넬 LOT (제조번호)'), staff: fieldVal(rows, h, '담당 (설계 / 생산 / 품질 / 시험)'),
-      created: fieldVal(rows, h, '생성일'), records: recs
+      created: fieldVal(rows, h, '생성일'), drawPlc: fieldVal(rows, h, '도면 Rev / PLC Ver'), records: recs
     };
   }
 
@@ -3731,8 +3733,16 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         if (q4) jobs.push(A.readWorkbook(q4.file).then(function (w) { pr.panels = parseQf04(A.sheetRows(w, w.SheetNames[0])); }).catch(function () { /* 없는 셈 */ }));
         var js = under.filter(function (y) { return /^00_프로젝트정보_.*\.json$/i.test(base(y.path)); })[0];
         if (js) jobs.push(js.file.text().then(function (t) { pr.json = t; try { pr.info = JSON.parse(t).state.project; } catch (e) { pr.info = null; } }));
-        pr.fatFiles = under.filter(function (y) { return /_FAT_.*_QF-06\.xlsx$/i.test(base(y.path)); }).length;
-        return Promise.all(jobs).then(function () { return pr; });
+        var fats = under.filter(function (y) { return /_FAT_.*_QF-06\.xlsx$/i.test(base(y.path)); });
+        pr.fatFiles = fats.length;
+        pr.fatVers = [];
+        fats.forEach(function (y) {
+          jobs.push(A.readWorkbook(y.file).then(function (w) {
+            var rows = A.sheetRows(w, w.SheetNames[0]), v = verOf(fieldVal(rows, rows.length, 'PLC Ver / SF-02 번호'));
+            if (v) pr.fatVers.push({ ver: v, file: base(y.path) });
+          }).catch(function () { /* 못 읽으면 건너뜀 */ }));
+        });
+        return Promise.all(jobs).then(function () { pr._under = folderMode ? under : null; return pr; });
       }).catch(function (e) { return { error: x.path + ': ' + e.message }; });
     })).then(function (prs) {
       var errors = prs.filter(function (x) { return x.error; }).map(function (x) { return x.error; });
@@ -3742,10 +3752,67 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         if (!byPj[k] || byPj[k].modified < x.modified) { if (byPj[k]) x.older = (byPj[k].older || 0) + 1; byPj[k] = x; }
         else byPj[k].older = (byPj[k].older || 0) + 1;
       });
-      data = { projects: Object.keys(byPj).map(function (k) { return summarize(byPj[k]); }), sample: false, mode: folderMode ? 'folder' : 'files',
+      data = { projects: Object.keys(byPj).map(function (k) {
+        var pr = summarize(byPj[k]);
+        pr.vc = pr._under ? versionCheck(pr, pr._under, pr.root) : null;
+        delete pr._under;
+        return pr;
+      }), sample: false, mode: folderMode ? 'folder' : 'files',
         note: errors.length ? '읽지 못한 파일: ' + errors.join(' / ') : '' };
       return data;
     });
+  }
+
+  // ---------------------------------------------------------------- 도면·PLC 버전 확인
+  function revOf(t) { var m = /rev\.?\s*([0-9]+[a-z]?|[a-z])(?![a-z])/i.exec(cl(t)); return m ? m[1].toUpperCase() : ''; }
+  function verOf(t) { var m = /(?:^|[^a-z])v\s*(\d+(?:\.\d+)*)/i.exec(cl(t)); return m ? m[1] : ''; }
+  function cmpRev(a, b) { return /^\d+$/.test(a) && /^\d+$/.test(b) ? +a - +b : a < b ? -1 : a > b ? 1 : 0; }
+  function cmpVer(a, b) {
+    var x = a.split('.').map(Number), y = b.split('.').map(Number);
+    for (var i = 0; i < Math.max(x.length, y.length); i++) { var d = (x[i] || 0) - (y[i] || 0); if (d) return d; }
+    return 0;
+  }
+  function uniq(a) { return a.filter(function (v, i) { return v && a.indexOf(v) === i; }); }
+  function top(list, cmp) { return list.reduce(function (m, v) { return m === '' || cmp(v, m) > 0 ? v : m; }, ''); }
+
+  /** 공용 저장소 폴더의 승인 도면·PLC 릴리스와 기록에 적힌 Rev·Ver를 비교한다 */
+  function versionCheck(pr, under, root) {
+    var pre = root ? root + '/' : '', info = pr.info || {};
+    var inDir = function (d) { return under.filter(function (y) { return y.path.indexOf(pre + d) === 0 && !/\.txt$/i.test(y.path); }); };
+    var managed = under.some(function (y) { return y.path === pre + '02_설계기준/도면관리_방법.txt' || y.path === pre + '07_PLC/PLC관리_방법.txt'; });
+    var parts = String(pr.drawPlc || '').split('/');
+    var recRev = revOf(info.drawRev || parts[0] || ''), recVer = verOf(info.plcVer || parts.slice(1).join('/') || '');
+    var vc = { managed: managed, recRev: recRev, recVer: recVer, issues: [], notes: [] };
+    // 도면
+    var appr = inDir('02_설계기준/도면_승인본/'), work = inDir('02_설계기준/도면_작업중/');
+    var revs = uniq(appr.map(function (y) { return revOf(base(y.path)); }));
+    vc.revs = revs; vc.latestRev = top(revs, cmpRev);
+    var noRev = appr.filter(function (y) { return !revOf(base(y.path)); }).length;
+    if (!appr.length) { if (managed && pr.stages && pr.stages[1] && pr.stages[1].state === 'done') vc.issues.push('도면_승인본 폴더가 비어 있음 — 승인된 도면(PDF·DWG)을 넣으세요'); }
+    else {
+      if (revs.length > 1) vc.issues.push('도면_승인본에 Rev가 여러 개 (' + revs.map(function (r) { return 'Rev.' + r; }).join(', ') + ') — 이전 Rev는 도면_구본으로 옮기세요');
+      if (noRev) vc.issues.push('도면_승인본에 파일명에 Rev가 없는 파일 ' + noRev + '개 — 파일명에 Rev를 붙이세요');
+      if (recRev && vc.latestRev && recRev !== vc.latestRev) vc.issues.push('기록의 도면 Rev.' + recRev + ' ≠ 승인 도면 최신 Rev.' + vc.latestRev + ' — QF-02 변경 기록 후 01 탭 도면 Rev를 바꿔 묶음을 다시 만드세요');
+      var newest = Math.max.apply(null, appr.map(function (y) { return y.file.lastModified || 0; }));
+      var newerWork = work.filter(function (y) { return (y.file.lastModified || 0) > newest; }).length;
+      if (newerWork) vc.notes.push('도면_작업중에 승인본보다 최근 파일 ' + newerWork + '개 (배포 전 검토·승인 필요)');
+    }
+    // PLC
+    var rel = inDir('07_PLC/릴리스/');
+    var vers = uniq(rel.map(function (y) {
+      var rest = y.path.slice((pre + '07_PLC/릴리스/').length), seg = rest.split('/');
+      return verOf(seg.length > 1 ? seg[0] : seg[0]);
+    }));
+    vc.vers = vers; vc.latestVer = top(vers, cmpVer);
+    if (!rel.length) { if (managed && pr.panels.some(function (x) { return x.fat || x.ship; })) vc.issues.push('07_PLC/릴리스가 비어 있음 — FAT를 통과한 PLC 버전을 버전 폴더(예: V1.0_날짜_FAT)로 넣으세요'); }
+    else {
+      if (recVer && vc.latestVer && recVer !== vc.latestVer) vc.issues.push('기록의 PLC V' + recVer + ' ≠ 최신 릴리스 V' + vc.latestVer + ' — QF-08에 버전 기록 후 01 탭 PLC Ver를 바꾸세요');
+      (pr.fatVers || []).forEach(function (f) {
+        if (cmpVer(vc.latestVer, f.ver) > 0) vc.issues.push('FAT 시험 버전 V' + f.ver + ', 최신 릴리스 V' + vc.latestVer + ' — 변경 후 재시험 기록(QF-08·QF-06)을 확인하세요 (' + f.file + ')');
+        else if (vers.indexOf(f.ver) < 0) vc.issues.push('FAT에 쓴 V' + f.ver + '가 릴리스 폴더에 없음 — 시험한 버전을 릴리스로 보관하세요');
+      });
+    }
+    return vc;
   }
 
   function summarize(pr) {
@@ -3792,16 +3859,23 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       });
       return summarize({ pj: pj, customer: customer, name: name, due: due, records: recs, panels: panels, root: pj, fatFiles: 0, info: null });
     }
+    function vc(recRev, revs, recVer, vers, issues) {
+      return { managed: true, recRev: recRev, recVer: recVer, revs: revs, latestRev: top(revs, cmpRev), vers: vers, latestVer: top(vers, cmpVer), issues: issues || [], notes: [] };
+    }
+    function mk(pr, v) { pr.vc = v; return pr; }
     var d = new Date(), iso = function (k) { var x = new Date(d.getTime() + k * 86400000); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
     data = {
       sample: true, mode: 'sample', note: '',
       projects: [
-        make('EX-26-015', '아트라스콥코 (예시)', '공기압축기 인버터 제어반 (예시)', iso(9), 4, true,
+        mk(make('EX-26-015', '아트라스콥코 (예시)', '공기압축기 인버터 제어반 (예시)', iso(9), 4, true,
           [{ lot: 'EX-26-015-01', tag: 'VFD-01', fat: '합격 10/25', ship: '' }, { lot: 'EX-26-015-02', tag: 'VFD-02', fat: '', ship: '' }]),
-        make('EX-26-021', '현대터보기계 (예시)', '터보 블로워 MCC반 (예시)', iso(34), 1, true,
-          [{ lot: 'EX-26-021-01', tag: 'MCC-01', fat: '', ship: '' }]),
-        make('EX-26-009', '○○산업 (예시)', '펌프 제어반 (예시)', iso(-6), 5, false,
-          [{ lot: 'EX-26-009-01', tag: 'LCP-01', fat: '합격 10/02', ship: '10/06 품질 확인' }])
+          vc('1', ['2'], '1.0', ['1.0', '1.1'], ['기록의 도면 Rev.1 ≠ 승인 도면 최신 Rev.2 — QF-02 변경 기록 후 01 탭 도면 Rev를 바꿔 묶음을 다시 만드세요',
+            '기록의 PLC V1.0 ≠ 최신 릴리스 V1.1 — QF-08에 버전 기록 후 01 탭 PLC Ver를 바꾸세요',
+            'FAT 시험 버전 V1.0, 최신 릴리스 V1.1 — 변경 후 재시험 기록(QF-08·QF-06)을 확인하세요'])),
+        mk(make('EX-26-021', '현대터보기계 (예시)', '터보 블로워 MCC반 (예시)', iso(34), 1, true,
+          [{ lot: 'EX-26-021-01', tag: 'MCC-01', fat: '', ship: '' }]), vc('A', [], '', [])),
+        mk(make('EX-26-009', '○○산업 (예시)', '펌프 제어반 (예시)', iso(-6), 5, false,
+          [{ lot: 'EX-26-009-01', tag: 'LCP-01', fat: '합격 10/02', ship: '10/06 품질 확인' }]), vc('3', ['3'], '2.0', ['2.0']))
       ]
     };
   }
@@ -3831,6 +3905,11 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     var lots = [];
     ps.forEach(function (p) { p.panels.forEach(function (x) { lots.push([p.pj, x.lot, x.tag, x.fat, x.ship, x.sat || '']); }); });
     sheet('판넬 LOT', ['프로젝트', '판넬 LOT', 'Tag', 'FAT 판정·일자', '출하 승인·일자', 'SAT·인수일'], lots, [12, 16, 22, 16, 18, 12]);
+    sheet('도면·PLC', ['프로젝트', '기록 도면 Rev', '승인 도면 최신 Rev', '기록 PLC Ver', '최신 릴리스', '확인할 것'],
+      ps.filter(function (p) { return p.vc; }).map(function (p) {
+        var v = p.vc;
+        return [p.pj, v.recRev ? 'Rev.' + v.recRev : '', v.latestRev ? 'Rev.' + v.latestRev : '', v.recVer ? 'V' + v.recVer : '', v.latestVer ? 'V' + v.latestVer : '', v.issues.join(' / ') || '일치'];
+      }), [12, 13, 16, 12, 12, 90]);
     var name = '기록현황_요약_' + A.P.today() + '.xlsx';
     wb.xlsx.writeBuffer().then(function (buf) {
       return A.saveFile(name, new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
@@ -3876,6 +3955,22 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     }));
   }
 
+  function vcLine(p) {
+    var v = p.vc;
+    if (!v) return null;
+    function chip(label, latest, rec, pfx, list) {
+      if (!latest) return el('span', { cls: 'chip', text: label + ' · ' + (!v.managed ? '관리 폴더 없음' : label === 'PLC' ? '릴리스 없음' : '승인본 없음') });
+      var ok = !rec || rec === latest;
+      return el('span', { cls: 'chip ' + (ok && list.length <= 1 ? 'chip-ok' : 'chip-bad'),
+        text: label + ' ' + pfx + latest + (rec && rec !== latest ? ' (기록 ' + pfx + rec + ')' : ok ? ' ✓' : '') });
+    }
+    return el('div', { cls: 'vc' }, [
+      el('div', { cls: 'lots' }, [chip('도면', v.latestRev, v.recRev, 'Rev.', v.revs || []), chip('PLC', v.latestVer, v.recVer, 'V', [])]),
+      v.issues.length ? el('ul', { cls: 'vc-issues' }, v.issues.map(function (t) { return el('li', { text: t }); })) : null,
+      v.notes.length ? el('p', { cls: 'sub', text: v.notes.join(' · ') }) : null
+    ]);
+  }
+
   function projectRow(p) {
     var open = !!view.open[p.pj];
     var dd = p.dday === null ? '' : p.dday < 0 ? '납기 ' + (-p.dday) + '일 지남' : p.dday === 0 ? '오늘 납기' : 'D-' + p.dday;
@@ -3889,6 +3984,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       ]),
       stepper(p),
       lotChips(p),
+      vcLine(p),
       el('div', { cls: 'row-actions' }, [
         el('button', { type: 'button', cls: 'btn btn-sm', 'aria-expanded': open ? 'true' : 'false', text: (open ? '접기' : '남은 기록 보기') + ' (' + left.length + ')',
           onclick: function () { view.open[p.pj] = !open; renderList(); } }),
@@ -3938,6 +4034,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     k.appendChild(card('남은 기록', String(left), '승인·해당없음 전', left ? 'warn' : ''));
     k.appendChild(card('납기 14일 이내', String(soon), '기록 미완료 프로젝트', soon ? 'warn' : ''));
     k.appendChild(card('출하 대기 판넬', String(ready), 'FAT 완료 · 출하 기록 전'));
+    var vcBad = all.filter(function (p) { return p.vc && p.vc.issues.length; }).length;
+    k.appendChild(card('도면·PLC 확인', String(vcBad), vcBad ? '버전 불일치·정리 필요 프로젝트' : '승인 도면·릴리스와 기록 일치', vcBad ? 'warn' : ''));
     var owners = {};
     all.forEach(function (p) { p.left.forEach(function (r) { if (r.owner) owners[r.owner] = (owners[r.owner] || 0) + 1; }); });
     var sel = $('dashOwner');
@@ -3972,7 +4070,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     root.appendChild(el('section', { cls: 'step' }, [
       el('h2', {}, [el('span', { cls: 'num', text: '1' }), '공용 저장소 폴더']),
       drop,
-      el('p', { cls: 'help', text: '읽는 파일: 00_기록현황_*.xlsx(기록 상태), 05_FAT출하의 QF-04(판넬 LOT·출하), 00_프로젝트정보_*.json(입력 내용). 같은 프로젝트의 묶음이 여러 개면 가장 최근 것만 셉니다. 파일은 이 화면 안에서만 읽고 어디로도 보내지 않습니다.' }),
+      el('p', { cls: 'help', text: '읽는 파일: 00_기록현황_*.xlsx(기록 상태), 05_FAT출하의 QF-04(판넬 LOT·출하)·FAT 결과, 00_프로젝트정보_*.json(입력 내용), 02_설계기준/도면_승인본과 07_PLC/릴리스의 파일 이름(최신 Rev·버전 확인). 같은 프로젝트의 묶음이 여러 개면 가장 최근 것만 셉니다. 파일은 이 화면 안에서만 읽고 어디로도 보내지 않습니다.' }),
       el('p', { cls: 'status', id: 'dashStatus', role: 'status' })
     ]));
     root.appendChild(el('div', { id: 'dashBody', hidden: !data.projects.length }, [
