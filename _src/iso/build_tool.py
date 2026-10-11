@@ -47,6 +47,18 @@ def to_json_spec(spec):
     return out
 
 
+def logo_svg():
+    """CI 로고(벡터)의 안쪽 그림. 명판·라벨에 색을 바꿔 넣는다(파랑 #1857A5, i 점 빨강 #E83E30)."""
+    import re
+    path = os.path.join(HERE, '..', '..', 'files', 'brand', 'logo', 'DONG-IN-ENSIS_logo_color.svg')
+    with open(path, encoding='utf-8') as f:
+        svg = f.read()
+    vb = re.search(r'viewBox="([^"]+)"', svg).group(1)
+    inner = svg[svg.index('>', svg.index('<svg')) + 1:svg.rindex('</svg>')]
+    inner = re.sub(r'\s+', ' ', inner).strip()
+    return {'viewBox': vb, 'inner': inner}
+
+
 def export():
     by_code = {s['code']: s for s in D.FORMS}
     forms = {code: to_json_spec(by_code[code]) for code in PROJECT_FORMS}
@@ -73,7 +85,9 @@ def build():
         page = page.replace('@LOGO_WHITE@', 'data:image/png;base64,' + base64.b64encode(f.read()).decode())
     script = ('window.ISO_FORMS = ' + json.dumps(data, ensure_ascii=False) + ';\n'
               + 'window.ISO_LOGO = "' + logo + '";\n'
-              + read('engine.js') + '\n' + read('project.js') + '\n' + read('samples.js') + '\n' + read('app.js'))
+              + 'window.ISO_LOGO_SVG = ' + json.dumps(logo_svg()) + ';\n'
+              + read('engine.js') + '\n' + read('project.js') + '\n' + read('samples.js') + '\n' + read('app.js')
+              + '\n' + read('labels.js') + '\n' + read('fat.js') + '\n' + read('dash.js'))
     page = page.replace('/*@SCRIPT@*/', script.replace('</script', '<\\/script'))
     with open(os.path.join(DIST, 'artifact.html'), 'w', encoding='utf-8') as f:
         f.write(page)

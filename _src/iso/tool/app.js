@@ -28,7 +28,9 @@
   var FIELDS_REQ = [
     ['laws', '적용 법규·제품규격'], ['custReq', '고객 검사·입회·기록 요구'], ['warranty', '보증기간·무상범위'],
     ['packing', '포장·운송 조건'], ['custSupply', '고객 지급품'], ['designer', '설계 책임자'],
-    ['reviewer', '검토자 (설계자 외)'], ['production', '생산관리 책임자'], ['previousDrawRev', '변경 전 도면 Rev (변경 시)'], ['changeReason', '도면 변경 사유'], ['changePanels', '변경 영향 판넬 Tag'], ['changeImpact', '변경 영향·수정·재검사 계획']
+    ['reviewer', '검토자 (설계자 외)'], ['production', '생산관리 책임자'], ['quality', '품질 담당 (입고·출하 확인)'], ['tester', '시험 담당 (FAT·SAT)'],
+    ['inspector', '배선 숙련 확인자 (QF-12 승인)'], ['programmer', 'PLC 프로그램 담당'], ['meters', '계측기 관리번호 (절연·접지·멀티미터)'],
+    ['witness', '고객 입회자'], ['outsourceCo', '외주 현장배선 업체'], ['previousDrawRev', '변경 전 도면 Rev (변경 시)'], ['changeReason', '도면 변경 사유'], ['changePanels', '변경 영향 판넬 Tag'], ['changeImpact', '변경 영향·수정·재검사 계획']
   ];
   var FIELDS_OPT = [['approval', '고객 승인도 필요'], ['sat', 'SAT·시운전 포함 (QF-07)'], ['outsource', '현장 배선 외주 (SF-03)']];
   var FIELDS_STD = [['stdRev', '기준표 번호·Rev'], ['stdName', '기준표 이름 (판넬 타입)']];
@@ -403,6 +405,7 @@
     setStatus('문서를 만드는 중…', '');
     P.generate({
       ExcelJS: window.ExcelJS, JSZip: window.JSZip, engine: E, forms: FORMS, logo: window.ISO_LOGO,
+      projectJson: projectJson(),
       onProgress: function (done, total) {
         $('progressBar').style.width = Math.round(done / total * 100) + '%';
         setStatus('문서를 만드는 중… ' + done + ' / ' + total, '');
@@ -478,8 +481,7 @@
     $('btnClear').addEventListener('click', clearAll);
     $('bomBasis').addEventListener('change', renderPlan);
     $('btnSaveProject').addEventListener('click', function () {
-      var saved = {format: 'DI-ISO-PROJECT', version: 1, savedAt: new Date().toISOString(), bomBasis: $('bomBasis').value, state: state};
-      var blob = new Blob([JSON.stringify(saved, null, 2)], {type: 'application/json'});
+      var blob = new Blob([projectJson()], {type: 'application/json'});
       if (blob.size > 20 * 1024 * 1024) { setStatus('프로젝트 저장 파일이 20MB를 초과합니다. BOM·I/O·기준표를 필요한 시트만 있는 파일로 바꿔 저장하세요.', 'bad'); return; }
       saveFile((P.clean(state.project.pj) || '프로젝트') + '_입력_' + Date.now() + '.json', blob)
         .then(function () { setStatus('프로젝트 입력을 저장했습니다. 실제 작성 엑셀도 별도로 보관하세요.', 'ok'); }, function (e) { saveError(e, '프로젝트'); });
@@ -513,8 +515,127 @@
     });
     $('btnGen').addEventListener('click', generate);
     $('btnGenM').addEventListener('click', generate);
+    wireTabs();
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
+  /** 프로젝트 입력 저장 파일(묶음 zip에도 00_프로젝트정보_*.json으로 들어감). 원본 엑셀 통째(wb)는 빼고 읽은 표만 둔다. */
+  function projectJson() {
+    function slim(d) { return d ? { kind: d.kind, fileName: d.fileName, rows: d.rows, det: d.det, items: d.items, sample: d.sample } : null; }
+    var st = { project: state.project, panels: state.panels, bom: slim(state.bom), io: slim(state.io), std: slim(state.std), sample: state.sample };
+    return JSON.stringify({ format: 'DI-ISO-PROJECT', version: 1, savedAt: new Date().toISOString(), bomBasis: $('bomBasis').value, state: st }, null, 1);
+  }
+  /** 다른 도구(현황판)에서 저장 파일 내용을 넣어 01 탭을 그 프로젝트로 바꾼다 */
+  function loadProjectText(text) {
+    var saved = P.readProject(text);
+    state = saved.state;
+    $('bomBasis').value = saved.bomBasis || '';
+    $('sampleBar').hidden = !state.sample;
+    renderAll();
+  }
+
+  // ---------------------------------------------------------------- 다른 도구(명판·라벨, FAT, 현황판)와 공유
+  function saveErrorText(e, what) {
+    var code = e && e.code;
+    if (code === 'declined') return what + ' 저장을 취소했습니다.';
+    if (code === 'rate_limited') return '저장 창이 이미 열려 있습니다. 그 창을 먼저 닫으세요.';
+    if (code === 'unavailable' || code === 'not_granted' || code === 'capability_disabled' || code === 'capability_removed') {
+      return '이 화면에서는 파일 저장을 쓸 수 없습니다. 도구 HTML 파일을 PC에서 크롬으로 열어 쓰세요.';
+    }
+    return what + '을(를) 저장하지 못했습니다: ' + ((e && e.message) || code || '알 수 없는 오류');
+  }
+
+  /** 인쇄용 HTML을 숨은 틀에 넣고 인쇄 창을 연다. 인쇄 창을 못 열면 false. */
+  function printHtml(html) {
+    var f = document.createElement('iframe');
+    f.setAttribute('aria-hidden', 'true');
+    f.style.cssText = 'position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0';
+    document.body.appendChild(f);
+    var w = f.contentWindow, d = w.document;
+    d.open(); d.write(html); d.close();
+    var ready = d.fonts && d.fonts.ready ? d.fonts.ready : Promise.resolve();
+    var wait = new Promise(function (r) { setTimeout(r, 2500); });
+    return Promise.race([ready, wait]).then(function () {
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          var ok = true;
+          try { w.focus(); w.print(); } catch (e) { ok = false; }
+          setTimeout(function () { f.remove(); }, 60000);
+          resolve(ok);
+        }, 200);
+      });
+    });
+  }
+
+  var VIEWS = ['pack', 'labels', 'fat', 'dash'];
+  function showView(name) {
+    if (VIEWS.indexOf(name) < 0) name = 'pack';
+    VIEWS.forEach(function (v) {
+      var on = v === name;
+      $('view-' + v).hidden = !on;
+      var t = $('tab-' + v);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    try { localStorage.setItem('iso-tool-view', name); } catch (e) { /* 저장 안 돼도 됨 */ }
+    var mod = window.IsoViews && window.IsoViews[name];
+    if (mod && mod.show) mod.show();
+  }
+  function wireTabs() {
+    var tabs = VIEWS.map(function (v) { return $('tab-' + v); });
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { showView(t.getAttribute('data-view')); });
+      t.addEventListener('keydown', function (e) {
+        var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : null;
+        if (j === null) return;
+        e.preventDefault();
+        j = (j + tabs.length) % tabs.length;
+        tabs[j].focus();
+        showView(tabs[j].getAttribute('data-view'));
+      });
+    });
+    var first = (location.hash || '').slice(1);
+    if (VIEWS.indexOf(first) < 0) { try { first = localStorage.getItem('iso-tool-view') || 'pack'; } catch (e) { first = 'pack'; } }
+    showView(first);
+  }
+
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  /** 인쇄용 문서(A4). 화면에서 열면 안내 띠가 보이고 인쇄 때는 숨는다. */
+  function docHtml(title, body, css, orient) {
+    return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<title>' + esc(title) + '</title>' +
+      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">' +
+      '<style>@page{size:A4 ' + (orient || 'portrait') + ';margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}' +
+      'body{font-family:"Pretendard","IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:#1d2735;' +
+      '-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+      '.screen-note{font-size:13px;padding:10px 16px;background:#0a2a55;color:#fff;border-bottom:3px solid #e83e30}' +
+      '@media screen{body{background:#e9edf2}.sheet{margin:10mm auto;box-shadow:0 1px 6px rgba(0,0,0,.2);background:#fff}}' +
+      '@media print{.screen-note{display:none}}' + (css || '') + '</style></head><body>' +
+      '<div class="screen-note">인쇄: Ctrl+P → 배율 <b>실제 크기(100%)</b>, 여백 <b>없음</b>, 배경 그래픽 켜기. PDF로 저장하려면 대상에서 \'PDF로 저장\'을 고릅니다.</div>' +
+      body + '</body></html>';
+  }
+
+  window.IsoApp = {
+    esc: esc, docHtml: docHtml,
+    $: $, el: el, clear: clear, P: P, E: E, S: S, FORMS: FORMS,
+    saveFile: saveFile, saveErrorText: saveErrorText, printHtml: printHtml, showView: showView,
+    readWorkbook: readWorkbook, sheetRows: sheetRows,
+    state: function () { return state; },
+    project: currentProject,
+    plan: currentPlan,
+    bomItems: function () { return state.bom ? state.bom.items : []; },
+    ioItems: function () { return state.io ? state.io.items : []; },
+    isSample: function () { return !!state.sample; },
+    projectJson: projectJson, loadProjectText: loadProjectText
+  };
+
+  window.IsoViews = window.IsoViews || {};
+  // 명판·라벨, FAT, 현황판 스크립트가 등록된 뒤 시작한다
+  setTimeout(function () {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
+  }, 0);
 })();
