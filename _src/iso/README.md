@@ -45,6 +45,7 @@
 - 직접 적는 칸의 작성 예시(`project.js`의 `EXAMPLES`)는 판넬 1면 기준으로 1번 판넬 문서와 공통 문서 표 첫 행에 회색 '예)' 글로 들어갑니다. 현황판은 '예)' 값을 실제 기록으로 세지 않습니다.
 - 인쇄(명판·라벨·성적서)는 화면 안 숨은 틀로 인쇄 창을 열고, 열 수 없는 환경(아티팩트 등)에서는 인쇄용 HTML 파일을 받아 크롬에서 인쇄합니다.
 - `forms_data.py`의 양식을 고치면 `build_forms.py`와 `build_tool.py`를 둘 다 다시 실행합니다.
+- 직원 안내서: 역할별 업무 안내서 `python3 _src/iso/build_guides.py`(DI-IMS-G-01), 도구 사용 안내 `python3 _src/iso/build_usage_guide.py`(DI-IMS-G-02, 크롬 필요). G-02의 화면은 `guides/shots/*.jpg`(예시 데이터)이며 도구 화면이 바뀌면 `node _src/iso/guides/capture_shots.cjs <ISO-기록생성기.html> <playwright-core 설치 폴더>`로 전체 탭을 다시 찍어 잘라 넣고 안내서를 다시 만듭니다. 명판·라벨·FAT 성적서도 기록양식집과 같은 색·머리말(로고·파란 제목·문서줄)을 씁니다.
 
 ## 배치 규칙
 
