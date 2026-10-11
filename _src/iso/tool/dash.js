@@ -85,7 +85,7 @@
       pj: fieldVal(rows, h, '프로젝트 번호'), customer: fieldVal(rows, h, '고객'), name: fieldVal(rows, h, '프로젝트명·현장'),
       panelsText: fieldVal(rows, h, '판넬'), po: fieldVal(rows, h, '계약·PO 번호'), due: fieldVal(rows, h, '납기'),
       lots: fieldVal(rows, h, '판넬 LOT (제조번호)'), staff: fieldVal(rows, h, '담당 (설계 / 생산 / 품질 / 시험)'),
-      created: fieldVal(rows, h, '생성일'), drawPlc: fieldVal(rows, h, '도면 Rev / PLC Ver'), records: recs
+      created: fieldVal(rows, h, '생성일'), drawPlc: fieldVal(rows, h, '도면 Rev / PLC Ver'), schedText: fieldVal(rows, h, '일정 (예정일)'), records: recs
     };
   }
 
@@ -232,7 +232,35 @@
     pr.name = pr.name || info.name || '';
     pr.due = pr.due || info.due || '';
     pr.dday = dday(pr.due);
+    schedule(pr);
     return pr;
+  }
+
+  // 일정: 예정일이 지났는데 그 단계 기록이 끝나지 않았으면 지연
+  var STAGE_OF = { dDesign: '2 설계', dMaterial: '3 구매·입고', dWiring: '4 제작', dShip: '5 FAT·출하', dSat: '6 SAT·인수' };
+  function schedule(pr) {
+    var info = pr.info || {}, list = [];
+    A.P.SCHEDULE.forEach(function (s) { if (cl(info[s[0]])) list.push({ key: s[0], label: s[1], date: cl(info[s[0]]) }); });
+    if (!list.length && pr.schedText) {
+      pr.schedText.split('·').forEach(function (t) {
+        var m = /^\s*(.+?)\s+(\d{4}-\d{2}-\d{2})\s*$/.exec(t);
+        if (!m) return;
+        var hit = A.P.SCHEDULE.filter(function (s) { return s[1] === m[1]; })[0];
+        if (hit) list.push({ key: hit[0], label: hit[1], date: m[2] });
+      });
+    }
+    pr.sched = list;
+    pr.late = [];
+    list.forEach(function (x) {
+      var st = STAGE_OF[x.key], dd = dday(x.date);
+      if (!st || dd === null || dd >= 0) return;
+      var stg = (pr.stages || []).filter(function (g) { return g.name === st; })[0];
+      if (x.key === 'dShip' && pr.panels && pr.panels.length && pr.panels.every(function (q) { return q.ship; })) return;
+      if (stg && stg.state !== 'done' && stg.state !== 'none') {
+        pr.late.push(x.label + ' 예정일 ' + x.date.slice(5).replace('-', '/') + ' 지남 (' + (-dd) + '일) — ' + st.slice(2) + ' 기록 ' + (stg.n - stg.done) + '건 남음');
+      }
+    });
+    pr.next = list.filter(function (x) { var dd = dday(x.date); return dd !== null && dd >= 0; })[0] || null;
   }
   function dday(d) {
     var m = /^(\d{4})[-.\/](\d{1,2})[-.\/](\d{1,2})/.exec(cl(d));
@@ -259,7 +287,12 @@
     function vc(recRev, revs, recVer, vers, issues) {
       return { managed: true, recRev: recRev, recVer: recVer, revs: revs, latestRev: top(revs, cmpRev), vers: vers, latestVer: top(vers, cmpVer), issues: issues || [], notes: [] };
     }
-    function mk(pr, v) { pr.vc = v; return pr; }
+    function mk(pr, v, sch) {
+      pr.vc = v;
+      pr.info = sch;
+      schedule(pr);
+      return pr;
+    }
     var d = new Date(), iso = function (k) { var x = new Date(d.getTime() + k * 86400000); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
     data = {
       sample: true, mode: 'sample', note: '',
@@ -268,11 +301,14 @@
           [{ lot: 'EX-26-015-01', tag: 'VFD-01', fat: '합격 10/25', ship: '' }, { lot: 'EX-26-015-02', tag: 'VFD-02', fat: '', ship: '' }]),
           vc('1', ['2'], '1.0', ['1.0', '1.1'], ['기록의 도면 Rev.1 ≠ 승인 도면 최신 Rev.2 — QF-02 변경 기록 후 01 탭 도면 Rev를 바꿔 묶음을 다시 만드세요',
             '기록의 PLC V1.0 ≠ 최신 릴리스 V1.1 — QF-08에 버전 기록 후 01 탭 PLC Ver를 바꾸세요',
-            'FAT 시험 버전 V1.0, 최신 릴리스 V1.1 — 변경 후 재시험 기록(QF-08·QF-06)을 확인하세요'])),
+            'FAT 시험 버전 V1.0, 최신 릴리스 V1.1 — 변경 후 재시험 기록(QF-08·QF-06)을 확인하세요']),
+          { dDesign: iso(-20), dMaterial: iso(-14), dWiring: iso(-6), dFat: iso(-2), dShip: iso(3), dSat: iso(8) }),
         mk(make('EX-26-021', '현대터보기계 (예시)', '터보 블로워 MCC반 (예시)', iso(34), 1, true,
-          [{ lot: 'EX-26-021-01', tag: 'MCC-01', fat: '', ship: '' }]), vc('A', [], '', [])),
+          [{ lot: 'EX-26-021-01', tag: 'MCC-01', fat: '', ship: '' }]), vc('A', [], '', []),
+          { dDesign: iso(-1), dMaterial: iso(8), dWiring: iso(18), dFat: iso(24), dShip: iso(28), dSat: iso(34) }),
         mk(make('EX-26-009', '○○산업 (예시)', '펌프 제어반 (예시)', iso(-6), 5, false,
-          [{ lot: 'EX-26-009-01', tag: 'LCP-01', fat: '합격 10/02', ship: '10/06 품질 확인' }]), vc('3', ['3'], '2.0', ['2.0']))
+          [{ lot: 'EX-26-009-01', tag: 'LCP-01', fat: '합격 10/02', ship: '10/06 품질 확인' }]), vc('3', ['3'], '2.0', ['2.0']),
+          { dDesign: iso(-40), dMaterial: iso(-32), dWiring: iso(-24), dFat: iso(-20), dShip: iso(-16), dSat: iso(-9) })
       ]
     };
   }
@@ -292,10 +328,11 @@
       ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: head.length } };
     }
     var ps = filtered();
-    sheet('프로젝트', ['프로젝트 번호', '고객', '프로젝트명', '납기', 'D-day', '현재 단계', '기록 완료율(%)', '완료', '전체', '남은 기록', '판넬 LOT'],
-      ps.map(function (p) { return [p.pj, p.customer, p.name, p.due, p.dday === null ? '' : p.dday, p.current, p.pct, p.doneN, p.total, p.left.length,
+    sheet('프로젝트', ['프로젝트 번호', '고객', '프로젝트명', '납기', 'D-day', '현재 단계', '다음 일정', '일정 지연', '기록 완료율(%)', '완료', '전체', '남은 기록', '판넬 LOT'],
+      ps.map(function (p) { return [p.pj, p.customer, p.name, p.due, p.dday === null ? '' : p.dday, p.current,
+        p.next ? p.next.label + ' ' + p.next.date : '', (p.late || []).join(' / '), p.pct, p.doneN, p.total, p.left.length,
         p.panels.map(function (x) { return x.lot + (x.ship ? '(출하)' : x.fat ? '(FAT)' : ''); }).join(', ')]; }),
-      [14, 18, 26, 12, 7, 12, 12, 7, 7, 9, 36]);
+      [14, 18, 26, 12, 7, 12, 18, 40, 12, 7, 7, 9, 36]);
     var left = [];
     ps.forEach(function (p) { p.left.forEach(function (r) { if (!view.owner || r.owner === view.owner) left.push([p.pj, r.stage, r.code, r.doc, r.panel, r.owner, r.status, r.loc, r.exists === false ? '파일 없음' : '']); }); });
     sheet('남은 기록', ['프로젝트', '단계', '양식', '문서', '판넬', '담당', '상태', '파일 위치', '확인'], left, [12, 11, 9, 28, 9, 14, 9, 44, 10]);
@@ -352,6 +389,18 @@
     }));
   }
 
+  function schedLine(p) {
+    if (!p.sched || !p.sched.length) return null;
+    var nx = p.next, dd = nx ? dday(nx.date) : null;
+    return el('div', { cls: 'vc' }, [
+      el('div', { cls: 'lots' }, [
+        nx ? el('span', { cls: 'chip', text: '다음 일정 · ' + nx.label + ' ' + nx.date.slice(5).replace('-', '/') + (dd === 0 ? ' (오늘)' : ' (D-' + dd + ')') }) : el('span', { cls: 'chip chip-ok', text: '예정 일정 모두 지남' }),
+        el('span', { cls: 'sub', text: p.sched.map(function (x) { return x.label + ' ' + x.date.slice(5).replace('-', '/'); }).join(' · ') })
+      ]),
+      p.late.length ? el('ul', { cls: 'vc-issues' }, p.late.map(function (t) { return el('li', { text: t }); })) : null
+    ]);
+  }
+
   function vcLine(p) {
     var v = p.vc;
     if (!v) return null;
@@ -381,6 +430,7 @@
       ]),
       stepper(p),
       lotChips(p),
+      schedLine(p),
       vcLine(p),
       el('div', { cls: 'row-actions' }, [
         el('button', { type: 'button', cls: 'btn btn-sm', 'aria-expanded': open ? 'true' : 'false', text: (open ? '접기' : '남은 기록 보기') + ' (' + left.length + ')',
@@ -431,6 +481,8 @@
     k.appendChild(card('남은 기록', String(left), '승인·해당없음 전', left ? 'warn' : ''));
     k.appendChild(card('납기 14일 이내', String(soon), '기록 미완료 프로젝트', soon ? 'warn' : ''));
     k.appendChild(card('출하 대기 판넬', String(ready), 'FAT 완료 · 출하 기록 전'));
+    var lateN = all.filter(function (p) { return p.late && p.late.length; }).length;
+    k.appendChild(card('일정 지연', String(lateN), lateN ? '예정일 지났는데 기록 미완료' : '지연 없음', lateN ? 'warn' : ''));
     var vcBad = all.filter(function (p) { return p.vc && p.vc.issues.length; }).length;
     k.appendChild(card('도면·PLC 확인', String(vcBad), vcBad ? '버전 불일치·정리 필요 프로젝트' : '승인 도면·릴리스와 기록 일치', vcBad ? 'warn' : ''));
     var owners = {};

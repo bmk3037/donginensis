@@ -34,6 +34,8 @@
   ];
   var FIELDS_OPT = [['approval', '고객 승인도 필요'], ['sat', 'SAT·시운전 포함 (QF-07)'], ['outsource', '현장 배선 외주 (SF-03)']];
   var FIELDS_STD = [['stdRev', '기준표 번호·Rev'], ['stdName', '기준표 이름 (판넬 타입)']];
+  var FIELDS_SCHEDULE = [['dOrder', '수주(계약)일', 'date'], ['dDesign', '설계 승인 예정', 'date'], ['dMaterial', '자재 입고 예정', 'date'],
+    ['dWiring', '배선 완료 예정', 'date'], ['dFat', 'FAT 예정', 'date'], ['dShip', '출하 예정', 'date'], ['dSat', 'SAT·인수 예정', 'date']];
   var FIELDS_SIGN = [['signWriter', '작성자 (비우면 문서별 담당자)'], ['signReviewer', '검토자'], ['signApprover', '승인자']];
   var FIELDS_STORAGE = [['recordPath', '프로젝트 원본 보관 경로 (공용폴더/NAS)'], ['backupPath', '별도 저장장치의 백업 경로'], ['documentOwner', '문서관리 담당'], ['accessOwner', '접근권한 관리 담당']];
 
@@ -127,7 +129,7 @@
   }
 
   function renderFields() {
-    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD], ['fieldsStorage', FIELDS_STORAGE], ['fieldsSign', FIELDS_SIGN]].forEach(function (g) {
+    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD], ['fieldsStorage', FIELDS_STORAGE], ['fieldsSign', FIELDS_SIGN], ['fieldsSchedule', FIELDS_SCHEDULE]].forEach(function (g) {
       var box = $(g[0]);
       clear(box);
       g[1].forEach(function (f) { box.appendChild(fieldInput(f[0], f[1], f[2])); });
