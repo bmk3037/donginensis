@@ -318,7 +318,7 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .pbar { height: 8px; background: var(--sunken); border: 1px solid var(--line); }
 .pbar span { display: block; height: 100%; background: var(--accent); }
 .pj-done .pbar span { background: var(--ok); }
-.stg { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0; }
+.stg { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 0; }
 .stg li { display: grid; justify-items: center; gap: 4px; position: relative; font-size: var(--fs-xs); color: var(--muted); text-align: center; }
 .stg li::before { content: ""; position: absolute; top: 6px; left: -50%; right: 50%; height: 2px; background: var(--line); }
 .stg li:first-child::before { display: none; }
