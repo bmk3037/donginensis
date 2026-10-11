@@ -342,6 +342,10 @@
     var qf15 = { folder: '02_설계기준', file: file('QF-15') };
 
     // 01 PF-00
+    // 계약·입력으로 해당 없는 줄은 '해당없음 (자동: 사유)'로 미리 채운다(작성 예시도 넣지 않음)
+    function NA(why) { return '해당없음 (자동: ' + why + ')'; }
+    function tplRows(code) { return ((opts.forms && opts.forms[code] && opts.forms[code].rows) || []).map(function (r) { return r.slice(); }); }
+
     var pfRows = [
       ['수주', '계약 요구·규격·납기·보증·포장 조건 합의 / 미합의 해결', '01_수주고객 (PO·사양서·견적서)'],
       ['설계', 'QF-02 입력·검토·검증 / QF-15 기술기준 승인 / 고객 승인도(해당 시)', '02_설계기준 / QF-02, QF-15'],
@@ -351,6 +355,7 @@
       ['SAT·인수', 'QF-07 기능·미결 종결·고객 인수 / SF-02·SF-03 해당 시', p.sat ? '06_SAT인수 / QF-07' + (p.outsource ? ', SF-03' : '') : ''],
       ['종료', '최종 도면·PLC 백업 · 납품자료 · 고객재산 반환 · 보증 개시일 확정', '07_PLC / QF-08']
     ];
+    if (!p.sat) { pfRows[5][3] = '해당없음'; pfRows[5][4] = NA('SAT·시운전 계약 범위 아님'); }
     add('01_수주고객', 'PF-00', '', {
       '프로젝트 번호': pj, '고객': p.customer, '프로젝트명·현장': p.name, '판넬 번호·수량': tagList,
       '계약·PO 번호': p.po, '사양서 번호·Rev': p.spec, '납기': p.due, '적용 법규·제품규격': p.laws,
@@ -371,11 +376,16 @@
       '법규·규격·환경조건': p.laws, '단계 일정': scheduleText(p),
       '고객 승인도 필요 여부': p.approval ? '필요' : '불필요',
       '검토·검증·유효성 확인 방법': '설계검증: 입출력 대조·용량/보호협조 검토·논리시험 / 유효성: FAT(QF-06·QF-06-1)' + (p.sat ? '·SAT(QF-07)' : '') + '·고객 인수'
-    });
+    }, tplRows('QF-02').map(function (r) {
+      if (r[0] === '고객 승인도' && !p.approval) r[3] = NA('고객 승인도 불필요 계약');
+      if (r[0] === '변경' && !clean(p.previousDrawRev)) r[3] = NA('도면 변경 없음 — 변경하면 이 줄에 작성');
+      if (r[0] === '부품 대체') r[3] = NA('부품 대체 없음 — 대체하면 이 줄에 작성');
+      return r;
+    }));
 
     if (clean(p.previousDrawRev)) {
       var design = docs.filter(function (d) { return d.code === 'QF-02'; })[0];
-      design.rows = JSON.parse(JSON.stringify((opts.forms && opts.forms['QF-02'] && opts.forms['QF-02'].rows) || []));
+      design.rows = design.rows || tplRows('QF-02');
       design.rows.push(['도면 변경', p.previousDrawRev + ' → ' + p.drawRev + ': ' + (p.changeReason || ''), '영향 판넬: ' + (p.changePanels || '미확인'), '', p.changeImpact || '영향·재검사 판단 필요', '', '검토·승인 전 관련 작업 보류']);
     }
 
@@ -513,7 +523,10 @@
         '도면 Rev / PLC 최종 Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '),
         '시운전일 / 담당': clean(p.dSat) || clean(p.tester) ? [clean(p.dSat) ? md(p.dSat) + ' (예정)' : '', clean(p.tester)].join(' / ') : '',
         'SF-02 / SF-03 번호': 'SF-02 (현장 통전)' + (p.outsource ? ' / SF-03 (외주 현장 배선)' : '')
-      });
+      }, tplRows('QF-07').map(function (r) {
+        if (r[0] === '현장 배선(외주)' && !p.outsource) { r[2] = NA('외주 현장 배선 없음'); r[3] = '해당없음'; }
+        return r;
+      }));
       if (p.outsource) add('06_SAT인수', 'SF-03', '', {
         '현장': p.name, '작업내용': '현장 배선 (외주)', '업체': p.outsourceCo, '당사 책임자': p.production
       });
@@ -676,6 +689,9 @@
     if (e.rows) list = e.rows.slice(0, rows.length);
     else if (e.byType) list = rows.map(function (r) { var o = Object.assign({}, e.byType[r[3]] || e.byType['']); o[e.by] = clean(p.tester) || '최○○'; return o; });
     else if (e.each) list = rows.map(function () { return e.each; });
+    list = list.map(function (cells, k) {
+      return (rows[k] || []).some(function (v) { return /^해당없음 \(자동/.test(clean(v)); }) ? null : cells;
+    });
     return { rows: list, fields: e.fields || {} };
   }
   var EXAMPLE_NOTE = '회색 기울임 \'예)\' 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 실제 내용으로 덮어써 작성하고, 해당 없는 예시는 지웁니다.';

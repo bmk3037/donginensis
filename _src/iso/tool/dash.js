@@ -247,6 +247,7 @@
       var row = rows[r] || [];
       if (/^첨부/.test(cl(row[0]))) break;
       if (!cl(row[0]) && !cl(row[1])) continue;
+      if (row.some(function (v) { return /^해당없음 \(자동/.test(cl(v)); })) continue;   // 계약상 해당 없는 줄
       out.rows++;
       if (inputs.some(function (k) { var v = cl(row[k]); return v && !isEx(v) && !isPlanned(v); })) out.filled++;
     }
