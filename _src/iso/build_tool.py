@@ -9,6 +9,7 @@ forms_data.py의 양식 정의를 JSON으로 바꿔 tool/ 폴더의 HTML·JS에 
   _src/iso/tool/dist/ISO-기록생성기.html   공용 저장소에 두고 크롬으로 여는 파일
   _src/iso/tool/dist/artifact.html          claude.ai 아티팩트 게시용(문서 머리 없음)
   _src/iso/tool/dist/forms.json             양식 정의(테스트용)
+  files/iso/ISO-record-builder.html         홈페이지 자료실 게시본(위 HTML과 같음)
 """
 import base64
 import json
@@ -78,6 +79,8 @@ def build():
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
             '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
     with open(os.path.join(DIST, 'ISO-기록생성기.html'), 'w', encoding='utf-8') as f:
+        f.write(full)
+    with open(os.path.join(HERE, '..', '..', 'files', 'iso', 'ISO-record-builder.html'), 'w', encoding='utf-8') as f:
         f.write(full)
     print('built', DIST)
 

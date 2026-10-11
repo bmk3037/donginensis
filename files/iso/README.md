@@ -4,6 +4,7 @@
 직원용 바로가기: https://donginensis.com/resources.html#iso
 
 - 현재: 통합경영 매뉴얼(DI-IMS-M-01), 통합 기록양식집(DI-IMS-F-01) Rev.00 — PDF(보기용)와 원본(docx/xlsx)
+- ISO 기록 묶음 생성기(`ISO-record-builder.html`): 프로젝트 정보·BOM·I/O 리스트로 프로젝트 기록 폴더를 엑셀로 만드는 한 파일짜리 도구. `_src/iso/build_tool.py`가 만들며 직접 고치지 않습니다. 가상 예시 데이터만 들어 있습니다.
 - 기록양식집은 양식 33종 + 별지 2종(QF-06-1 I/O 점검표, QF-13-2 백업·복구 확인)이며, 엑셀 원본은 `_src/iso/`의 생성기로 만듭니다(`_src/iso/README.md`).
 - 매뉴얼 원본은 `DI-IMS-M-01_Rev00.docx`를 Word로 직접 고칩니다. 고친 뒤 목차를 업데이트하고 PDF를 다시 저장합니다.
 - 파일 추가 후 `resources.html`, `en/resources.html`의 `#docList`에 `data-cat="iso"` 카드 한 줄을 추가합니다.
