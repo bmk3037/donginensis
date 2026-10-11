@@ -196,8 +196,9 @@
     var vcls = s.verdict === '합격' ? 'v-ok' : s.verdict === '미완료' ? 'v-na' : 'v-bad';
     var body =
       '<div class="rep">' +
-      '<header class="rh">' + logo + '<div class="rt"><h1>FAT 시험 성적서</h1><p>Factory Acceptance Test Report</p></div>' +
-      '<div class="rno">DI-QF-06 · Rev.' + esc(A.FORMS.rev) + '<br>' + esc(fileBase()) + '</div></header>' +
+      '<header class="rh">' + logo + '<div class="rno">FAT 시험 성적서 | DI-QF-06 Rev.' + esc(A.FORMS.rev) + '</div>' +
+      '<h1>FAT 시험 성적서 <small>Factory Acceptance Test Report</small></h1>' +
+      '<p class="docline">동인엔시스 | DI-QF-06 · QF-06-1 | Rev.' + esc(A.FORMS.rev) + ' | ' + esc(fileBase()) + '</p></header>' +
       '<table class="info">' + infoRows + '</table>' +
       '<div class="verdict ' + vcls + '"><span>종합 판정 Result</span><b>' + esc(s.verdict) + '</b>' +
       '<em>시험 항목 ' + s.itemsDone + '/' + s.items + ' · I/O ' + s.ioPass + ' 합격 / ' + s.ioFail + ' 불합격 / ' + s.ioNa + ' 해당없음 (총 ' + s.io + '점)</em></div>' +
@@ -209,13 +210,13 @@
       '<tr><td>' + esc(cur.tester) + '</td><td>' + esc(p.quality || '') + '</td><td>' + esc(cur.witness) + '</td></tr>' +
       '<tr class="sg"><td>서명 / 일자</td><td>서명 / 일자</td><td>서명 / 일자</td></tr></table>' +
       '<p class="fine">이 성적서는 ㈜동인엔시스 통합경영 기록양식 QF-06·QF-06-1의 결과를 옮긴 것입니다. 시험 기준은 승인된 QF-15(' + esc(p.stdRev || '') + ')를 따릅니다. 판정 시각은 입력 시 자동 기록되었습니다.</p>' +
-      '</div><footer class="pf">㈜동인엔시스 DONG-IN ENSIS · 부산광역시 부산진구 진연로9번길 47 · TEL 051-862-3668 · ' + esc(fileBase()) + '</footer>';
+      '</div><footer class="pf">동인엔시스 | DI-QF-06 Rev.' + esc(A.FORMS.rev) + ' | ㈜동인엔시스 부산광역시 부산진구 진연로9번길 47 · TEL 051-862-3668</footer>';
     var css = '@page{size:A4 portrait;margin:12mm 12mm 16mm}' +
-      '.rep{font-size:9.5pt;line-height:1.45}.rh{display:flex;align-items:center;gap:6mm;border-bottom:1.2mm solid #0a2a55;padding-bottom:3mm;margin-bottom:4mm}' +
-      '.logo{height:9mm}.rt{flex:1}.rt h1{margin:0;font-size:17pt;color:#1857a5;letter-spacing:-0.02em}.rt p{margin:0;color:#55657a;font-size:9pt}' +
-      '.rno{font-size:7.5pt;color:#55657a;text-align:right}' +
+      '.rep{font-size:9.5pt;line-height:1.45;color:#263445}.rh{position:relative;margin-bottom:4mm}' +
+      '.logo{height:7mm;display:block}.rh h1{margin:3.5mm 0 1mm;font-size:17pt;color:#1857a5;font-weight:800;letter-spacing:-0.02em}.rh h1 small{font-size:9pt;color:#55657a;font-weight:400;margin-left:2mm}' +
+      '.docline{margin:0;font-size:8.2pt;color:#55657a}.rno{position:absolute;top:0;right:0;font-size:7.5pt;color:#55657a}' +
       'table{width:100%;border-collapse:collapse;margin-bottom:3mm}th,td{border:0.25mm solid #8a9bb0;padding:1.2mm 2mm;vertical-align:middle;word-break:keep-all;overflow-wrap:anywhere}' +
-      '.info th{background:#e8eef6;color:#1d2735;text-align:left;font-weight:600;width:20%;font-size:8.5pt}.info td{width:30%}' +
+      '.info th{background:#e8eef6;color:#263445;text-align:left;font-weight:600;width:20%;font-size:8.5pt}.info td{width:30%}' +
       '.grid thead th{background:#1857a5;color:#fff;font-weight:600;font-size:8.5pt}.grid td{font-size:8.5pt}.grid.io td{font-size:7.8pt;padding:0.8mm 1.5mm}' +
       '.grid thead{display:table-header-group}.grid tr{break-inside:avoid}' +
       '.c{text-align:center}.b{font-weight:600}.mono{font-family:Consolas,monospace}.w-no{width:9mm}.w-j{width:17mm}' +
@@ -223,9 +224,9 @@
       '.verdict{display:flex;align-items:center;gap:5mm;border:0.6mm solid;padding:3mm 4mm;margin:2mm 0 4mm}.verdict span{font-size:9pt;font-weight:600}' +
       '.verdict b{font-size:18pt}.verdict em{font-style:normal;color:#55657a;font-size:8.5pt;margin-left:auto}' +
       '.v-ok{border-color:#1d6b45}.v-ok b{color:#1d6b45}.v-bad{border-color:#c0321f}.v-bad b{color:#c0321f}.v-na{border-color:#8a9bb0}.v-na b{color:#55657a}' +
-      'h2{font-size:11pt;color:#0a2a55;margin:5mm 0 2mm;border-left:1.2mm solid #1857a5;padding-left:2mm;break-after:avoid}' +
+      'h2{font-size:10.5pt;color:#263445;margin:4.5mm 0 1.8mm;font-weight:700;break-after:avoid}h2::before{content:"■ ";color:#1857a5}' +
       '.fails{margin:0 0 3mm;padding-left:5mm;font-size:8.5pt}.sign{break-inside:avoid}.sign th{background:#e8eef6;width:33.3%}.sign td{text-align:center;height:8mm}.sign .sg td{height:16mm;vertical-align:bottom;color:#8a9bb0;font-size:7.5pt}' +
-      '.fine{font-size:7.5pt;color:#55657a}.pf{position:fixed;bottom:-10mm;left:0;right:0;text-align:center;font-size:7pt;color:#8a9bb0}' +
+      '.fine{font-size:7.5pt;color:#55657a}.pf{position:fixed;bottom:-10mm;left:0;right:0;text-align:center;font-size:7.5pt;color:#55657a}' +
       '@media screen{.rep{max-width:186mm;margin:8mm auto;background:#fff;padding:12mm;box-shadow:0 1px 6px rgba(0,0,0,.2)}.pf{position:static;margin-bottom:8mm}}';
     return A.docHtml('FAT 성적서 ' + cur.tag, body, css);
   }
