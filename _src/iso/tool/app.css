@@ -347,3 +347,16 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .an-late td { background: var(--bad-soft); }
 .an-done td { color: var(--muted); }
 .an-legal { margin-left: 6px; }
+
+.an-table .tbl { min-width: 0; }
+.an-task { line-height: 1.45; }
+.an-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 4px; }
+.an-get { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.an-quicks { display: grid; gap: 6px; }
+.an-quicks:empty { display: none; }
+.an-quick { display: grid; text-align: left; gap: 1px; width: 100%; border: 1.5px solid var(--accent); background: var(--accent-soft); padding: 8px 12px; }
+.an-quick b { color: var(--accent); }
+.an-quick span { font-size: var(--fs-sm); color: var(--ink); }
+.an-quick small { font-size: var(--fs-xs); color: var(--muted); }
+.an-quick.legal { border-color: var(--bad); background: var(--bad-soft); }
+.an-quick.legal b { color: var(--bad); }

@@ -383,12 +383,13 @@
         el('div', { cls: 'field' }, [el('label', { for: 'an-show', text: '보기' }), showSel])
       ]),
       el('div', { cls: 'table-wrap an-table' }, [el('table', { cls: 'tbl' }, [
-        el('thead', {}, [el('tr', {}, ['기한', '', '양식', '할 일', '담당', '주기', '저장 파일명', '상태', ''].map(function (h) { return el('th', { text: h }); }))]),
+        el('thead', {}, [el('tr', {}, ['기한', '', '할 일 · 양식 받기', '담당', '완료 확인'].map(function (h) { return el('th', { text: h }); }))]),
         el('tbody', { id: 'anBody' })])])
     ]));
     layout.appendChild(el('aside', { cls: 'out' }, [el('div', { cls: 'out-card' }, [
       el('div', { cls: 'out-head' }, [el('h2', { text: '요약' }), el('p', { cls: 'count' }, [el('b', { id: 'anTotal', text: '0' }), '건 / 15개월'])]),
       el('ul', { cls: 'checklist', id: 'anSum' }),
+      el('div', { cls: 'an-quicks', id: 'anQuick' }),
       el('button', { type: 'button', cls: 'btn btn-primary', text: '캘린더에 넣기 (.ics)', onclick: exportIcs }),
       el('button', { type: 'button', cls: 'btn', text: '30일 안에 할 양식 한꺼번에 받기 (zip)', onclick: makeSoon }),
       el('button', { type: 'button', cls: 'btn', text: '연간 계획표 엑셀 받기', onclick: exportXlsx }),
@@ -421,21 +422,23 @@
     var lastMonth = '';
     shown.forEach(function (t) {
       var mk = t.due.getFullYear() + '년 ' + (t.due.getMonth() + 1) + '월';
-      if (mk !== lastMonth) { tb.appendChild(el('tr', { cls: 'an-month' }, [el('td', { colspan: '9', text: mk })])); lastMonth = mk; }
+      if (mk !== lastMonth) { tb.appendChild(el('tr', { cls: 'an-month' }, [el('td', { colspan: '5', text: mk })])); lastMonth = mk; }
       var dd = dday(t.due);
       var late = t.done !== true && !t.audit && dd < 0;
       tb.appendChild(el('tr', { cls: late ? 'an-late' : t.done ? 'an-done' : '' }, [
         el('td', { cls: 'c-mono', text: iso(t.due).slice(5).replace('-', '/') }),
         el('td', {}, [el('span', { cls: 'chip ' + (t.done ? 'chip-ok' : late ? 'chip-bad' : dd <= 14 ? 'chip-warn' : ''), text: t.done ? '완료' : dd === 0 ? '오늘' : dd > 0 ? 'D-' + dd : (-dd) + '일 지남' })]),
-        el('td', { cls: 'c-mono', text: t.code }),
-        el('td', {}, [el('span', { text: t.task }), t.legal ? el('span', { cls: 'chip chip-bad an-legal', text: '★법정' }) : null]),
-        el('td', { text: t.owner }), el('td', { cls: 'sub', text: t.freq + (t.period ? ' · ' + t.period : '') }),
-        el('td', { cls: 'c-mono', text: t.file }),
-        el('td', { text: t.done === true ? '파일 있음' : t.done === false ? '파일 없음' : '—' }),
-        el('td', {}, [(A.FORMS.company || {})[t.code] ? el('button', { type: 'button', cls: 'btn btn-sm', text: '양식 받기', 'aria-label': t.code + ' ' + t.task + ' 양식 받기', onclick: function () { makeOne(t); } }) : null])
+        el('td', {}, [
+          el('div', { cls: 'an-task' }, [el('b', { cls: 'c-mono', text: t.code }), ' ', el('span', { text: t.task }), t.legal ? el('span', { cls: 'chip chip-bad an-legal', text: '★법정' }) : null]),
+          el('div', { cls: 'an-meta' }, [
+            (A.FORMS.company || {})[t.code] ? el('button', { type: 'button', cls: 'btn btn-sm an-get', text: '양식 받기', 'aria-label': t.code + ' ' + t.task + ' 양식 받기', onclick: function () { makeOne(t); } }) : null,
+            el('span', { cls: 'sub', text: t.freq + (t.period ? ' · ' + t.period : '') + (t.file ? ' · 파일명 ' + t.file + '…' : '') })])
+        ]),
+        el('td', { text: t.owner }),
+        el('td', { text: t.done === true ? '파일 있음' : t.done === false ? '파일 없음' : '—' })
       ]));
     });
-    if (!shown.length) tb.appendChild(el('tr', {}, [el('td', { colspan: '9', cls: 'empty', text: '해당하는 할 일이 없습니다.' })]));
+    if (!shown.length) tb.appendChild(el('tr', {}, [el('td', { colspan: '5', cls: 'empty', text: '해당하는 할 일이 없습니다.' })]));
     // 요약
     var sum = $('anSum');
     A.clear(sum);
@@ -448,6 +451,18 @@
     li(soon.length ? 'warn' : 'ok', '30일 이내', soon.length + '건');
     if (nextLegal) li('warn', '다음 법정 기한', nextLegal.code + ' ' + iso(nextLegal.due) + ' (D-' + dday(nextLegal.due) + ')');
     li(found ? 'ok' : 'off', '완료 확인', found ? real.filter(function (t) { return t.done; }).length + '건 파일 확인' : '회사기록 폴더를 고르면 확인');
+    // 지금 받아야 할 양식: 기한 지남 + 다음 법정 + 14일 이내 (최대 6개)
+    var urgent = late.concat(nextLegal ? [nextLegal] : []).concat(real.filter(function (t) { return t.done !== true && dday(t.due) >= 0 && dday(t.due) <= 14; }));
+    var seen = {}, quick = $('anQuick');
+    urgent = urgent.filter(function (t) { var k = t.file || t.code; if (seen[k] || !(A.FORMS.company || {})[t.code]) return false; seen[k] = 1; return true; }).slice(0, 6);
+    A.clear(quick);
+    if (urgent.length) quick.appendChild(el('p', { cls: 'sign-h', text: '지금 받아야 할 양식' }));
+    urgent.forEach(function (t) {
+      var dd = dday(t.due);
+      quick.appendChild(el('button', { type: 'button', cls: 'btn an-quick' + (t.legal ? ' legal' : ''), onclick: function () { makeOne(t); } }, [
+        el('b', { text: t.code + ' 양식 받기' }), el('span', { text: t.task }),
+        el('small', { text: (dd < 0 ? (-dd) + '일 지남' : 'D-' + dd) + ' · ' + iso(t.due) + (t.legal ? ' · ★법정' : '') })]));
+    });
     $('anTotal').textContent = real.length;
   }
 
