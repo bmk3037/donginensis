@@ -22,7 +22,7 @@
 
   var FIELDS_BASIC = [
     ['pj', '프로젝트 번호', 'req'], ['customer', '고객', 'req'], ['name', '프로젝트명·현장'], ['po', '계약·PO 번호'],
-    ['spec', '사양서 번호·Rev'], ['due', '납기', 'date'], ['drawRev', '도면 Rev'], ['ioRev', 'I/O 리스트 Rev'],
+    ['spec', '사양서 번호·Rev'], ['due', '납기', 'date'], ['drawRev', '도면 Rev'], ['bomRev', 'BOM 번호·Rev'], ['ioRev', 'I/O 리스트 Rev'],
     ['plc', 'PLC 기종'], ['plcVer', 'PLC Ver'], ['tool', '개발도구·Ver'], ['recordRev', '작성 기록 Rev (미입력: 00)']
   ];
   var FIELDS_REQ = [
@@ -34,6 +34,7 @@
   ];
   var FIELDS_OPT = [['approval', '고객 승인도 필요'], ['sat', 'SAT·시운전 포함 (QF-07)'], ['outsource', '현장 배선 외주 (SF-03)']];
   var FIELDS_STD = [['stdRev', '기준표 번호·Rev'], ['stdName', '기준표 이름 (판넬 타입)']];
+  var FIELDS_STORAGE = [['recordPath', '프로젝트 원본 보관 경로 (공용폴더/NAS)'], ['backupPath', '별도 저장장치의 백업 경로'], ['documentOwner', '문서관리 담당'], ['accessOwner', '접근권한 관리 담당']];
 
   var state = { project: {}, panels: [], bom: null, io: null, std: null, sample: false };
 
@@ -124,7 +125,7 @@
   }
 
   function renderFields() {
-    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD]].forEach(function (g) {
+    [['fieldsBasic', FIELDS_BASIC], ['fieldsReq', FIELDS_REQ], ['fieldsStd', FIELDS_STD], ['fieldsStorage', FIELDS_STORAGE]].forEach(function (g) {
       var box = $(g[0]);
       clear(box);
       g[1].forEach(function (f) { box.appendChild(fieldInput(f[0], f[1], f[2])); });
@@ -286,7 +287,7 @@
     if (!P.clean(state.project.pj)) miss.push('프로젝트 번호');
     if (!P.clean(state.project.customer)) miss.push('고객');
     if (!state.panels.some(function (x) { return P.clean(x.tag); })) miss.push('판넬 Tag 1개 이상');
-    miss = miss.concat(P.validateInput(currentProject(), state.bom ? state.bom.items : [], $('bomBasis').value));
+    miss = miss.concat(P.validateInput(currentProject(), state.bom ? state.bom.items : [], $('bomBasis').value, state.io ? state.io.items : []));
     return miss;
   }
 
@@ -327,6 +328,7 @@
     }
     var nPanels = p.panels.filter(function (x) { return x.tag; }).length;
     item(P.clean(p.pj) && P.clean(p.customer) ? 'ok' : 'off', '프로젝트', P.clean(p.pj) ? P.clean(p.pj) : '번호·고객 입력 필요');
+    item(P.clean(p.recordPath) ? 'off' : 'warn', '원본 보관', P.clean(p.recordPath) ? '입력 경로의 권한·백업 확인 필요' : '공용폴더/NAS 경로 미확정 — 확정 후 기록');
     var noLot = p.panels.filter(function (x) { return x.tag && !x.serial; }).length;
     if (!nPanels) item('off', '판넬', 'Tag 입력 필요');
     else if (noLot) item('warn', '판넬 LOT', noLot + '면 제조번호 비어 있음 — 명판·QF-04에 쓸 번호를 채우세요');
@@ -479,7 +481,9 @@
     $('btnClear').addEventListener('click', clearAll);
     $('bomBasis').addEventListener('change', renderPlan);
     $('btnSaveProject').addEventListener('click', function () {
-      saveFile((P.clean(state.project.pj) || '프로젝트') + '_입력_' + Date.now() + '.json', new Blob([projectJson()], {type: 'application/json'}))
+      var blob = new Blob([projectJson()], {type: 'application/json'});
+      if (blob.size > 20 * 1024 * 1024) { setStatus('프로젝트 저장 파일이 20MB를 초과합니다. BOM·I/O·기준표를 필요한 시트만 있는 파일로 바꿔 저장하세요.', 'bad'); return; }
+      saveFile((P.clean(state.project.pj) || '프로젝트') + '_입력_' + Date.now() + '.json', blob)
         .then(function () { setStatus('프로젝트 입력을 저장했습니다. 실제 작성 엑셀도 별도로 보관하세요.', 'ok'); }, function (e) { saveError(e, '프로젝트'); });
     });
     $('fileProject').addEventListener('change', function (event) {

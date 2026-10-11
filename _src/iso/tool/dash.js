@@ -4,7 +4,8 @@
   'use strict';
   var A, el, $;
   var STAGES = ['1 수주', '2 설계', '3 구매·입고', '4 제작', '5 FAT·출하', '6 SAT·인수', '7 PLC'];
-  var DONE = ['완료', '해당없음'];
+  var DONE = ['승인', '해당없음', '완료'];   // 완료: 이전 묶음의 상태 값
+  var STARTED = ['작성중', '검토대기', '불합격', '보류'];
 
   var data = { projects: [], sample: false, mode: '', note: '' };
   var view = { owner: '', q: '', open: {} };
@@ -72,13 +73,13 @@
     var h = headerAt(rows, ['양식', '상태']);
     if (h < 0) throw new Error('기록현황 표를 찾지 못했습니다');
     var head = rows[h].map(cl), col = {};
-    ['단계', '양식', '문서', '판넬', '파일 위치', '담당', '상태', '완료일', '확인자'].forEach(function (k) { col[k] = head.indexOf(k); });
+    ['단계', '양식', '문서', '판넬', '파일 위치', '담당', '상태', '완료일', '확인일', '확인자'].forEach(function (k) { col[k] = head.indexOf(k); });
     var recs = [];
     for (var r = h + 1; r < rows.length; r++) {
       var row = rows[r] || [], g = function (k) { return col[k] < 0 ? '' : cl(row[col[k]]); };
       if (!/^\d\s/.test(g('단계'))) continue;
       recs.push({ stage: g('단계'), code: g('양식'), doc: g('문서'), panel: g('판넬'), loc: g('파일 위치'), owner: g('담당'),
-        status: g('상태') || '미작성', done: g('완료일'), by: g('확인자'), exists: null });
+        status: g('상태') || '미작성', done: g('확인일') || g('완료일'), by: g('확인자'), exists: null });
     }
     return {
       pj: fieldVal(rows, h, '프로젝트 번호'), customer: fieldVal(rows, h, '고객'), name: fieldVal(rows, h, '프로젝트명·현장'),
@@ -156,7 +157,7 @@
     pr.stages = STAGES.map(function (s) {
       var rs = recs.filter(function (r) { return r.stage === s; });
       var d = rs.filter(function (r) { return DONE.indexOf(r.status) >= 0; }).length;
-      var started = rs.some(function (r) { return r.status === '작성중' || DONE.indexOf(r.status) >= 0; });
+      var started = rs.some(function (r) { return STARTED.indexOf(r.status) >= 0 || DONE.indexOf(r.status) >= 0; });
       return { name: s, n: rs.length, done: d, state: !rs.length ? 'none' : d === rs.length ? 'done' : started ? 'doing' : 'todo' };
     });
     var curStage = pr.stages.filter(function (s) { return s.state !== 'done' && s.state !== 'none'; })[0];
@@ -184,9 +185,9 @@
     function make(pj, customer, name, due, upto, doing, panels) {
       var recs = base.map(function (r) {
         var si = STAGES.indexOf(r[0]);
-        var st = si < 0 ? '미작성' : si < upto ? '완료' : si === upto && doing ? (r[1] === '증빙' ? '작성중' : '완료') : '미작성';
-        if (si === upto && doing && /QF-06/.test(r[1]) && /02/.test(r[3])) st = '작성중';
-        return { stage: r[0], code: r[1], doc: r[2], panel: r[3], loc: r[4], owner: r[5], status: st, done: st === '완료' ? '10/1' + (si + 1) : '', by: '', exists: null };
+        var st = si < 0 ? '미작성' : si < upto ? '승인' : si === upto && doing ? (r[1] === '증빙' ? '작성중' : '승인') : '미작성';
+        if (si === upto && doing && /QF-06/.test(r[1]) && /02/.test(r[3])) st = '검토대기';
+        return { stage: r[0], code: r[1], doc: r[2], panel: r[3], loc: r[4], owner: r[5], status: st, done: st === '승인' ? '10/1' + (si + 1) : '', by: '', exists: null };
       });
       return summarize({ pj: pj, customer: customer, name: name, due: due, records: recs, panels: panels, root: pj, fatFiles: 0, info: null });
     }
@@ -298,7 +299,7 @@
       var tb = el('tbody');
       left.forEach(function (r) {
         tb.appendChild(el('tr', {}, [el('td', { text: r.stage.slice(2) }), el('td', { cls: 'c-mono', text: r.code }), el('td', { text: r.doc }), el('td', { text: r.panel }),
-          el('td', { text: r.owner }), el('td', {}, [el('span', { cls: 'chip ' + (r.status === '작성중' ? '' : 'chip-bad'), text: r.status })]),
+          el('td', { text: r.owner }), el('td', {}, [el('span', { cls: 'chip ' + (r.status === '미작성' || r.status === '불합격' ? 'chip-bad' : r.status === '보류' ? 'chip-warn' : ''), text: r.status })]),
           el('td', { cls: 'c-mono', text: r.loc })]));
       });
       if (!left.length) tb.appendChild(el('tr', {}, [el('td', { colspan: '7', cls: 'empty', text: '남은 기록이 없습니다.' })]));
@@ -333,7 +334,7 @@
     });
     k.appendChild(card('진행 프로젝트', String(all.filter(function (p) { return p.pct < 100; }).length), '전체 ' + all.length));
     k.appendChild(card('기록 완료율', (recs ? Math.round(done / recs * 100) : 0) + '%', done + ' / ' + recs + '건'));
-    k.appendChild(card('남은 기록', String(left), '미작성·작성중', left ? 'warn' : ''));
+    k.appendChild(card('남은 기록', String(left), '승인·해당없음 전', left ? 'warn' : ''));
     k.appendChild(card('납기 14일 이내', String(soon), '기록 미완료 프로젝트', soon ? 'warn' : ''));
     k.appendChild(card('출하 대기 판넬', String(ready), 'FAT 완료 · 출하 기록 전'));
     var owners = {};

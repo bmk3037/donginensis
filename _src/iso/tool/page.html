@@ -42,9 +42,14 @@
           <summary id="moreReqSum">고객 요구 · 담당자</summary>
           <div class="grid" id="fieldsReq"></div>
         </details>
+        <details class="more">
+          <summary>공용폴더·NAS 보관 정보</summary>
+          <div class="grid" id="fieldsStorage"></div>
+          <p class="help">회사에서 승인한 경로·담당자를 입력하면 현황표에 반영됩니다. 실제 저장·접근권한·백업은 회사 저장소에서 설정하고 확인합니다.</p>
+        </details>
         <div class="checks" id="fieldsOpt"></div>
         <div class="row-actions"><button type="button" class="btn" id="btnSaveProject">입력 프로젝트 저장 (.json)</button><label for="fileProject">저장한 프로젝트 불러오기</label><input type="file" id="fileProject" accept=".json"></div>
-        <p class="help">저장 파일에는 고객·BOM·I/O·기준표 정보가 포함됩니다. 회사의 접근권한이 관리되는 저장소에 보관하세요. 엑셀에서 작성한 검사 결과·서명은 이 파일에 포함되지 않습니다.</p>
+        <p class="help">저장 파일에는 고객·BOM·I/O·기준표 정보가 포함됩니다. 회사의 접근권한이 관리되는 저장소에 보관하세요. 엑셀에서 작성한 검사 결과·서명은 이 파일에 포함되지 않습니다. 도면 변경 대상은 판넬 Tag 목록 또는 ‘전체’로 입력합니다.</p>
 
       </section>
 
@@ -107,6 +112,7 @@
           <p class="count"><b id="docCount">0</b>개 파일 · 판넬 <b id="panelCount">0</b>면</p>
         </div>
         <ul class="checklist" id="checklist" aria-label="입력 상태"></ul>
+        <p class="help">00_기록현황에는 프로젝트 기록과 공통기록참조 두 시트가 들어갑니다. 공급자·교정·자격·안전·환경·경영 기록은 회사 원본 경로를 연결하세요.</p>
         <div class="tree" id="tree"></div>
         <p class="missing" id="missing" role="alert"></p>
         <button type="button" class="btn btn-primary" id="btnGen">문서 묶음 만들기 (.zip)</button>
