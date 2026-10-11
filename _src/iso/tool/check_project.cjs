@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const P = require('./project.js');
+const catalog = require('./dist/forms.json');
 const rows = [['품명', '모델', '수량'], ['외함', 'BOX', 1]];
 const det = P.detectColumns(rows, 'bom');
 const bom = {kind: 'bom', fileName: 'BOM.xlsx', sample: false, rows, det, items: P.parseBom(rows, det)};
@@ -28,4 +29,26 @@ for (const count of [1, 3, 7]) {
   assert.equal(P.validateInput(p, bom.items, 'perPanel').length, 0);
   assert.ok(P.validateInput(p, bom.items, 'allocated').length);
 }
-console.log('PASS: per-project panel documents and validated project restore');
+const p = {...saved.state.project, panels: saved.state.panels, sat: true, outsource: true,
+  drawRev: '02', previousDrawRev: '01', changeReason: '배선 변경', changePanels: 'P-01', changeImpact: '재배선·재시험', bomRev: 'BOM-A Rev.03', ioRev: 'IO-A Rev.02'};
+assert.equal(P.validateInput(p, bom.items, 'perPanel', [{panel: 'P-01'}]).length, 0);
+assert.ok(P.validateInput(p, bom.items, 'perPanel', [{panel: 'UNKNOWN'}]).length);
+assert.ok(P.validateInput({...p, changePanels: 'UNKNOWN'}, [], '').length);
+assert.equal(P.validateInput({...p, changePanels: '전체'}, [], '').length, 0);
+const docs = P.plan(p, bom.items, [], [], {forms: catalog.forms, date: '20261011'});
+assert.ok(docs.find(x => x.code === 'QF-02').values['입력자료 목록·Rev'].includes(p.bomRev));
+assert.ok(docs.find(x => x.code === 'QF-15').values['입력자료·도면 Rev'].includes(p.bomRev));
+assert.ok(docs.find(x => x.code === 'SF-02').values['판넬·전원 범위'].includes('A-01'));
+for (const doc of docs) {
+  const form = catalog.forms[doc.code];
+  const fields = form.fields.flat().map(x => x[0]);
+  assert.ok(Object.keys(doc.values).every(key => fields.includes(key)), doc.code + ': unmapped field');
+  assert.ok((doc.rows || []).every(row => row.length <= form.cols.length), doc.code + ': row overflow');
+}
+const common = P.commonSpec(catalog.common, '20261011');
+assert.equal(new Set([...Object.keys(catalog.forms), ...catalog.common.map(x => x.code)]).size, 35);
+assert.ok(common.rows.some(row => row[0] === 'QF-13-2'));
+assert.ok(common.rows.some(row => row[0] === 'MF-01'));
+assert.ok(common.rows.every(row => row[4] === '' && row[5] === '미확인' && row[6] === ''));
+assert.ok(P.indexSpec(p, docs, catalog.forms, '20261011').dv['7'].includes('검토대기'));
+console.log('PASS: project restore, variable panel count, revision/LOT mapping, unknown panel blocking, complete form catalog');

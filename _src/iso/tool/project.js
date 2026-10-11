@@ -228,12 +228,13 @@
     return bom.filter(function (it) { return !it.panel || norm(it.panel) === norm(panel.tag); });
   }
 
-  function validateInput(p, bom, basis) {
+  function validateInput(p, bom, basis, io) {
     var errors = [], panels = (p.panels || []).filter(function (x) { return clean(x.tag); });
     var tags = panels.map(function (x) { return norm(x.tag); });
     var serials = panels.map(function (x) { return clean(x.serial); }).filter(Boolean);
     if (clean(p.previousDrawRev) && (!clean(p.drawRev) || !clean(p.changeReason) || !clean(p.changePanels) || !clean(p.changeImpact))) errors.push('도면 변경 시 새 Rev·변경 사유·대상 판넬·영향/재검사 계획 입력');
     if (clean(p.previousDrawRev) && clean(p.previousDrawRev) === clean(p.drawRev)) errors.push('변경 전·후 도면 Rev가 같습니다');
+    if (clean(p.previousDrawRev) && clean(p.changePanels) && clean(p.changePanels) !== '전체' && splitTags(p.changePanels).some(function (tag) { return tags.indexOf(norm(tag)) < 0; })) errors.push('도면 변경 대상에 등록되지 않은 판넬이 있습니다 (Tag 목록 또는 전체 입력)');
     if (new Set(tags).size !== tags.length) errors.push('판넬 Tag 중복');
     if (new Set(serials).size !== serials.length) errors.push('제조번호 중복');
     if (bom.length && basis !== 'perPanel' && basis !== 'allocated') errors.push('BOM 수량 기준 선택');
@@ -242,6 +243,9 @@
       if ((it.major || it.qty !== null) && (!Number.isFinite(Number(it.qty)) || Number(it.qty) <= 0)) errors.push(row + '양수 수량 필요');
       if (basis === 'allocated' && !clean(it.panel)) errors.push(row + '총수량을 판넬별 배분하고 판넬 열 입력');
       if (clean(it.panel) && tags.indexOf(norm(it.panel)) < 0) errors.push(row + '등록되지 않은 판넬');
+    });
+    (io || []).forEach(function (point, i) {
+      if (clean(point.panel) && tags.indexOf(norm(point.panel)) < 0) errors.push('I/O ' + (i + 1) + '행: 등록되지 않은 판넬');
     });
     return errors;
   }
@@ -317,7 +321,7 @@
 
     add(qf02.folder, 'QF-02', '', {
       '프로젝트 번호': pj, '판넬 번호': tagList, '설계 책임자': p.designer, '검토자(설계자 외)': p.reviewer,
-      '입력자료 목록·Rev': [p.spec ? '고객 사양서 ' + p.spec : '', p.po ? 'PO ' + p.po : '', p.drawRev ? '도면 ' + p.drawRev : '']
+      '입력자료 목록·Rev': [p.spec ? '고객 사양서 ' + p.spec : '', p.po ? 'PO ' + p.po : '', p.drawRev ? '도면 ' + p.drawRev : '', p.bomRev ? 'BOM ' + p.bomRev : '', p.ioRev ? 'I/O ' + p.ioRev : '']
         .filter(Boolean).join(' / '),
       '법규·규격·환경조건': p.laws, '단계 일정': p.due ? '납기 ' + p.due : '',
       '고객 승인도 필요 여부': p.approval ? '필요' : '불필요',
@@ -345,7 +349,7 @@
     add(qf15.folder, 'QF-15', '', {
       '프로젝트 번호': pj, '판넬 번호': tagList, '고객': p.customer, '기준 Rev': stdRev,
       '적용 고객사양·법규·제품규격 판본': [p.spec, p.laws].filter(Boolean).join(' / '),
-      '입력자료·도면 Rev': [p.drawRev ? '도면 ' + p.drawRev : '', p.ioRev ? 'I/O 리스트 ' + p.ioRev : ''].filter(Boolean).join(' / '),
+      '입력자료·도면 Rev': [p.drawRev ? '도면 ' + p.drawRev : '', p.bomRev ? 'BOM ' + p.bomRev : '', p.ioRev ? 'I/O 리스트 ' + p.ioRev : ''].filter(Boolean).join(' / '),
       '설계자 / 검토자': [p.designer, p.reviewer].filter(Boolean).join(' / ')
     }, stdRows.length ? stdRows : undefined, 2);
 
@@ -416,7 +420,7 @@
         '프로젝트 번호': pj, '판넬 번호(제조번호)': pv(panel), 'PLC Ver': p.plcVer, 'I/O 리스트 Rev': p.ioRev
       }, ioRows.length ? ioRows : undefined, 2);
       add('05_FAT출하', 'SF-02', t, {
-        '프로젝트 번호': pj, '현장': '공장 FAT', '판넬·전원 범위': t + ' 주회로·제어회로'
+        '프로젝트 번호': pj, '현장': '공장 FAT', '판넬·전원 범위': pv(panel) + ' 주회로·제어회로'
       });
     });
 
@@ -482,13 +486,27 @@
       docLine: '동인엔시스 | 프로젝트 기록 현황 | ISO 기록 묶음 생성기로 ' + date + ' 생성',
       footer: '프로젝트 기록 현황 ' + clean(p.pj),
       orient: 'landscape', mode: 'register',
-      cols: [['단계', 10], ['양식', 9], ['문서', 24], ['판넬', 9], ['파일 위치', 40], ['담당', 14], ['상태', 9], ['완료일', 10], ['확인자', 10]],
-      fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['도면 Rev / PLC Ver', null], ['생성일', null]]],
-      notes: ['이 묶음에 들어 있는 기록과 따로 보관할 증빙 목록입니다. 기록을 작성하면 상태를 바꾸고 완료일·확인자를 적습니다. 미작성은 붉게 표시됩니다.',
-        '감사 때는 이 표 순서대로 수주 → 설계 → 입고 → 제작 → FAT → 출하(판넬 LOT, QF-04) → SAT 기록을 보여 줍니다. 해당없음은 사유를 확인자 칸에 함께 적습니다.'],
+      cols: [['단계', 10], ['양식', 9], ['문서', 24], ['판넬', 9], ['파일 위치', 40], ['담당', 14], ['상태', 10], ['확인일', 10], ['확인자', 10], ['승인 증거·대체 기록 경로', 30], ['해당없음 사유', 18]],
+      fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['도면 Rev / PLC Ver', null], ['생성일', null]], [['BOM 번호·Rev', null], ['I/O 리스트 Rev', null]],
+        [['프로젝트 원본 보관 경로', null]], [['별도 백업 경로', null]], [['문서관리 담당', null], ['접근권한 관리 담당', null]]],
+      notes: ['이 묶음의 기록과 별도 증빙 목록입니다. 상태·확인일·확인자를 실제 사실대로 기록합니다. 승인 상태는 승인자·일시·기록 버전을 확인할 수 있는 원본 증거 경로가 필요하며, 이 표의 입력만으로 전자승인이 되지 않습니다.',
+        '해당없음은 사유·확인자를 남깁니다. 고객/ERP 대체 기록은 필수 항목·승인·추적성을 확인하고 원본 번호·Rev·경로를 연결합니다. 공통기록참조 시트에서 공급자·교정·자격·안전·환경·경영 기록을 찾습니다.'],
       rows: indexRows(p, docs, forms), blank: 2, row_h: 20,
-      dv: { '7': ['미작성', '작성중', '완료', '해당없음'] }, formats: { '8': 'yyyy-mm-dd' },
+      dv: { '7': ['미작성', '작성중', '검토대기', '승인', '불합격', '보류', '해당없음'] }, formats: { '8': 'yyyy-mm-dd' },
       sign: ['작성', '검토(품질)', '승인']
+    };
+  }
+
+  function commonSpec(common, date) {
+    return {
+      sheet: '공통기록참조', code: 'REC-COMMON', title: '공통 기록 및 감사 증빙 참조',
+      docLine: '동인엔시스 | 공통 기록 참조 | ' + date + ' 생성', orient: 'landscape', mode: 'register',
+      cols: [['양식', 10], ['문서', 27], ['담당', 17], ['작성·확인 시점', 28], ['원본 번호·Rev·보관 경로', 38], ['상태', 13], ['확인자·확인일 / 해당없음 사유', 27], ['보존 기준', 25]],
+      fields: [[['프로젝트 번호', null], ['고객', null]]],
+      notes: ['공통 기록은 프로젝트마다 다시 만들지 않고 관리 중인 원본을 연결합니다. 현재 프로젝트에 해당하는 범위·유효성·승인 증거를 확인한 뒤 상태를 바꿉니다. 미확인은 미이행 판정이 아니라 아직 증거를 확인하지 않은 상태입니다.',
+        '양식집의 작성 시점·보존 기준을 표시한 참조 목록입니다. 고객·법규가 더 엄격하면 승인된 기준을 적용합니다. 개인정보 원본은 권한이 제한된 저장소에 보관하고 이 표에는 관리번호·접근 가능한 경로만 연결합니다.'],
+      rows: common.map(function (s) { return [s.code, s.title, s.owner, s.when, '', '미확인', '', s.keep]; }),
+      blank: 0, row_h: 24, dv: {'6': ['미확인', '확인중', '유효 기록 확인', '갱신 필요', '해당없음']}, sign: ['작성', '검토(품질)', '승인']
     };
   }
 
@@ -507,10 +525,14 @@
     var idx = indexSpec(p, docs, F, date);
     jobs.unshift({
       path: root + '/00_기록현황_' + clean(p.pj) + '.xlsx', spec: idx,
+      specs: [idx, commonSpec(env.forms.common || [], date)],
       values: {
         '프로젝트 번호': clean(p.pj), '고객': p.customer, '프로젝트명·현장': p.name,
         '판넬': (p.panels || []).map(function (x) { return x.tag; }).filter(Boolean).join(', '),
-        '도면 Rev / PLC Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '), '생성일': date
+        '도면 Rev / PLC Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '), '생성일': date,
+        'BOM 번호·Rev': p.bomRev, 'I/O 리스트 Rev': p.ioRev,
+        '프로젝트 원본 보관 경로': p.recordPath, '별도 백업 경로': p.backupPath,
+        '문서관리 담당': p.documentOwner, '접근권한 관리 담당': p.accessOwner
       }
     });
     ['01_수주고객', '02_설계기준', '03_구매입고', '04_제작', '05_FAT출하', '06_SAT인수', '07_PLC', '08_NCR_AS']
@@ -518,8 +540,9 @@
     var done = 0;
     return jobs.reduce(function (chain, job) {
       return chain.then(function () {
-        job.spec.notes = ['초안·미승인: 작업 사용 금지. 실제 수행·검토·승인 증거 확인 필요. 기록 Rev ' + (clean(p.recordRev) || '00')].concat(job.spec.notes || []);
-        var wb = env.engine.buildWorkbook(env.ExcelJS, [job.spec], {
+        var specs = job.specs || [job.spec];
+        specs.forEach(function (spec) { spec.notes = ['초안·미승인: 작업 사용 금지. 실제 수행·검토·승인 증거 확인 필요. 기록 Rev ' + (clean(p.recordRev) || '00')].concat(spec.notes || []); });
+        var wb = env.engine.buildWorkbook(env.ExcelJS, specs, {
           values: job.values, rev: env.forms.rev, date: env.forms.date, logo: env.logo
         });
         return wb.xlsx.writeBuffer().then(function (buf) {
@@ -538,7 +561,7 @@
   var api = {
     norm: norm, clean: clean, today: today, detectColumns: detectColumns, LABELS: LABELS, SYN: SYN,
     parseBom: parseBom, parseIo: parseIo, parseStd: parseStd, classify: classify, METHOD: METHOD,
-    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, STAGE: STAGE, validateInput: validateInput, readProject: readProject
+    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, readProject: readProject
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.IsoProject = api;

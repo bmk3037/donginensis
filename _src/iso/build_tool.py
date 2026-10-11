@@ -50,7 +50,9 @@ def to_json_spec(spec):
 def export():
     by_code = {s['code']: s for s in D.FORMS}
     forms = {code: to_json_spec(by_code[code]) for code in PROJECT_FORMS}
-    return {'rev': D.REV, 'date': D.DATE, 'forms': forms}
+    common = [{key: s.get(key, '') for key in ('code', 'title', 'owner', 'when', 'keep', 'clause')}
+              for s in D.FORMS if s['code'] not in PROJECT_FORMS]
+    return {'rev': D.REV, 'date': D.DATE, 'forms': forms, 'common': common}
 
 
 def build():
