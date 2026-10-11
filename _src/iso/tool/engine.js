@@ -136,7 +136,7 @@
     }
     this.setH(2, 28);
     this.cell(2, 1, this.n, s.title, { size: 16, bold: true, color: C.BLUE, border: false });
-    var line = s.docLine || ('동인엔시스 | ' + docNo(s.code) + ' | Rev.' + this.opt.rev + ' | 제정 ' + this.opt.date + ' | 시행일: 대표 승인일');
+    var line = s.docLine || ('동인엔시스 | ' + docNo(s.code) + ' | Rev.' + this.opt.rev + ' | 제정 ' + this.opt.date + ' | 시행 ' + (this.opt.effective || this.opt.date) + ' (대표 승인)');
     if (s.owner) line += '   ·   담당: ' + s.owner + ' | 작성: ' + s.when;
     this.setH(3, textHeight(line, this.width(1, this.n), 9, 16, 2));
     this.cell(3, 1, this.n, line, { size: 9, border: false });
