@@ -4,10 +4,11 @@
   --sample N : 앞 N개 장면만 만들어 시안 확인
 
 흐름
-  1. files/DONG-IN-ENSIS_Company-Profile_{KR,EN}.pdf 쪽을 2880×1620 PNG로 렌더링 (out/pages_{lang}/)
+  1. files/DONG-IN-ENSIS_Company-Profile_{KR,EN}.pdf 의 쪽을 장면으로 쓴다 (4에서 매 프레임 직접 그림)
   2. 장면마다 문장을 한 번에 TTS(edge-tts, 단어 시각 포함) → 앞뒤 무음 제거 → 문장별 자막 구간
-  3. 장면 시간표: 말이 전환(크로스페이드) 중간부터 시작, 장면 사이 쉼 약 1.2초
-  4. 쪽 이미지에 느린 확대/이동(zoompan) → xfade로 이어 붙임 (첫 장면은 video/hero_e.mp4 위에 로고·제목)
+  3. 장면 시간표: 말이 전환(크로스페이드) 중간부터 시작, 장면 사이 쉼 약 0.55초(LEAD+TAIL+PAUSE)
+  4. 쪽을 매 프레임 PDF에서 직접 그려 느리게 확대/이동(소수점 위치라 끊김 없음) → xfade로 이어 붙임 (첫 장면은 video/hero_e.mp4 위에 로고·제목)
+     나레이션은 문장 사이 긴 쉼(TTS가 1초 넘게 쉼)을 MAXP초로 줄인다
   5. 나레이션 음량 정규화(-16 LUFS) + 배경음(Mixkit 'Your Breath', 나레이션 중 자동 감쇠)
   6. ASS 자막(흰 쪽: 남색 글자+흰 테두리, 어두운 장면: 흰 글자) 새김, H.264 1080p, 25MB 이하
 
@@ -27,9 +28,10 @@ OUT = f'{HERE}/out'
 BGM_URL, BGM_FILE = 'https://assets.mixkit.co/music/634/634.mp3', f'{HERE}/bgm/mixkit-your-breath-634.mp3'
 W, H, FPS = 1920, 1080, 30
 XF = 0.8          # 장면 전환(크로스페이드) 길이
-PAUSE = 0.35      # 장면 사이 나레이션 쉼
-LEAD = 0.25       # 전환이 절반쯤 지난 뒤 말이 시작되기까지
-TAIL = 0.25       # 말이 끝난 뒤 장면이 머무는 시간(전환 겹침 전)
+PAUSE = 0.15      # 장면 사이 나레이션 쉼 (LEAD·TAIL과 합쳐 약 0.55초)
+LEAD = 0.2        # 전환이 절반쯤 지난 뒤 말이 시작되기까지
+TAIL = 0.2        # 말이 끝난 뒤 장면이 머무는 시간(전환 겹침 전)
+MAXP = 0.5        # 한 장면 안에서 문장·구 사이 쉼의 최대 길이(초)
 VOICE = {'kr': 'ko-KR-InJoonNeural', 'en': 'en-US-AndrewNeural'}
 RATE = {'kr': '+4%', 'en': '+2%'}     # 3분 안팎에 맞추기 위한 읽기 속도
 PDF = {'kr': f'{SITE}/files/DONG-IN-ENSIS_Company-Profile_KR.pdf', 'en': f'{SITE}/files/DONG-IN-ENSIS_Company-Profile_EN.pdf'}
@@ -120,13 +122,28 @@ def read_wav(p):
     return sr, x
 
 
-def render_pages(lang):
-    import pymupdf as fitz
-    d = fitz.open(PDF[lang]); pdir = f'{OUT}/pages_{lang}'; os.makedirs(pdir, exist_ok=True)
-    stamp = f'{pdir}/.src'; src = f'{os.path.getmtime(PDF[lang])}:{d.page_count}'
-    if os.path.exists(stamp) and open(stamp).read() == src: return pdir
-    for i, p in enumerate(d): p.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False).save(f'{pdir}/p{i + 1:02d}.png')
-    open(stamp, 'w').write(src); return pdir
+def write_wav(p, sr, x):
+    with wave.open(p, 'wb') as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(sr); w.writeframes((np.clip(x, -1, 1) * 32767).astype(np.int16).tobytes())
+
+
+def compress_pauses(sr, x, cues, maxp=MAXP, thr=0.012):
+    """말 사이의 긴 쉼을 maxp초로 줄인다(무음 구간의 가운데를 잘라 냄). 자막 구간 시각도 같이 옮긴다. → (소리, 구간, 잘라 낸 길이)"""
+    win = int(sr * 0.01); n = len(x) // win
+    quiet = np.sqrt((x[:n * win].reshape(n, win) ** 2).mean(1)) < thr
+    cuts = []; s = None
+    for k in range(n + 1):
+        v = bool(quiet[k]) if k < n else False
+        if v and s is None: s = k
+        if not v and s is not None:
+            if (k - s) * 0.01 > maxp + 0.05: cuts.append((s * win + int(maxp / 2 * sr), k * win - int(maxp / 2 * sr)))
+            s = None
+    if not cuts: return x, cues, 0.0
+    pieces = []; removed = []; pos = 0
+    for a, b in cuts: pieces.append(x[pos:a]); removed.append((a / sr, (b - a) / sr)); pos = b
+    pieces.append(x[pos:]); y = np.concatenate(pieces)
+    def remap(t): return t - sum(min(d, max(0.0, t - ts)) for ts, d in removed)
+    return y, [(remap(a), remap(b)) for a, b in cues], sum(d for _, d in removed)
 
 
 def ensure_bgm():
@@ -160,7 +177,10 @@ async def tts_scene(sc, voice, rate, base):
             total = (b - a) / sr; L = [len(l) for l in sc['lines']]; t = 0.0
             for n in L: d = total * n / sum(L); cues.append((t, t + d)); t += d
         json.dump(dict(text=text, rate=rate, cues=cues, dur=(b - a) / sr), open(meta, 'w'))
-    m = json.load(open(meta)); sc['wav'] = wav; sc['ndur'] = m['dur']; sc['rel_cues'] = m['cues']
+    m = json.load(open(meta)); sr, x = read_wav(wav)
+    y, cues, cut = compress_pauses(sr, x, m['cues'])          # 문장 사이 긴 쉼 줄이기
+    write_wav(f'{base}_c.wav', sr, y)
+    sc['wav'] = f'{base}_c.wav'; sc['ndur'] = len(y) / sr; sc['rel_cues'] = cues; sc['cut'] = round(cut, 2)
 
 
 async def tts_all(scenes, voice, rate, tdir):
@@ -216,16 +236,43 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     open(path, 'w', encoding='utf-8').write(hdr + '\n'.join(ev) + '\n')
 
 
-def motion_filter(kind, frames):
-    if kind == 'in':    z = f"'min(1+0.09*on/{frames},1.09)'"; x = "'iw/2-(iw/zoom/2)'"; y = "'ih/2-(ih/zoom/2)'"
-    elif kind == 'out': z = f"'max(1.09-0.09*on/{frames},1.0)'"; x = "'iw/2-(iw/zoom/2)'"; y = "'ih/2-(ih/zoom/2)'"
-    elif kind == 'pan': z = "'1.07'"; x = f"'(iw-iw/zoom)*on/{frames}'"; y = "'ih/2-(ih/zoom/2)'"
-    else:               z = "'1.0'"; x = "'0'"; y = "'0'"
-    return f"zoompan=z={z}:x={x}:y={y}:d={frames}:s={W}x{H}:fps={FPS}"
+def ease(u): return u * u * (3 - 2 * u)   # 천천히 시작해 천천히 멈춤
 
 
-def build_segments(scenes, pdir, sdir):
-    os.makedirs(sdir, exist_ok=True); segs = []
+def camera(kind, u):
+    """장면 진행도 u(0~1) → (배율, 화면 중심의 가로 위치 비율)"""
+    e = ease(u)
+    if kind == 'in':  return 1.0 + 0.08 * e, 0.5
+    if kind == 'out': return 1.08 - 0.08 * e, 0.5
+    if kind == 'pan': z = 1.07; return z, 0.5 / z + (1 - 1 / z) * e   # 왼쪽 끝에서 오른쪽 끝으로
+    return 1.0, 0.5
+
+
+def render_scene(job):
+    """쪽 한 장면을 매 프레임 PDF에서 직접 그려 ffmpeg로 보낸다. 위치가 소수점 단위라 ffmpeg zoompan처럼 픽셀 단위로 튀지 않는다."""
+    import pymupdf as fitz
+    pdf, pno, kind, frames, out = job
+    page = fitz.open(pdf)[pno - 1]; pw, ph = page.rect.width, page.rect.height; base = W / pw
+    p = subprocess.Popen([FF, '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
+                          '-c:v', 'libx264', '-preset', 'fast', '-crf', '14', '-pix_fmt', 'yuv420p', out], stdin=subprocess.PIPE)
+    for f in range(frames):
+        zf, cxf = camera(kind, f / max(frames - 1, 1)); z = base * zf
+        x0, y0 = pw * cxf - W / 2 / z, ph / 2 - H / 2 / z                  # 화면 왼쪽 위의 쪽 좌표
+        M = fitz.Matrix(z, 0, 0, z, 2 - x0 * z, 2 - y0 * z)                 # 그 점이 기기 좌표 (2,2)에 오도록
+        clip = fitz.Rect(x0 - 2 / z, y0 - 2 / z, x0 + (W + 2) / z, y0 + (H + 2) / z)
+        pix = page.get_pixmap(matrix=M, clip=clip, alpha=False)
+        a = np.frombuffer(pix.samples, np.uint8).reshape(pix.h, pix.w, 3)
+        sy, sx = 2 - pix.y, 2 - pix.x; fr = a[sy:sy + H, sx:sx + W]
+        if fr.shape != (H, W, 3):   # 쪽 가장자리에서 1px 모자라면 흰색으로 채움
+            fr = np.pad(fr, ((0, H - fr.shape[0]), (0, W - fr.shape[1]), (0, 0)), constant_values=255)
+        p.stdin.write(np.ascontiguousarray(fr).tobytes())
+    p.stdin.close(); p.wait()
+    if p.returncode: raise SystemExit(f'render failed: {out}')
+    return out
+
+
+def build_segments(scenes, lang, sdir):
+    os.makedirs(sdir, exist_ok=True); segs = []; jobs = []
     for i, sc in enumerate(scenes):
         out = f'{sdir}/seg{i:02d}_{sc["dur"]:.2f}.mp4'; segs.append(out)
         if os.path.exists(out): continue
@@ -235,8 +282,10 @@ def build_segments(scenes, pdir, sdir):
                  '-filter_complex', f'[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={FPS}[bg];[1:v]scale=-1:58[lg];[bg][lg]overlay=150:300:format=auto',
                  '-c:v', 'libx264', '-preset', 'fast', '-crf', '17', '-pix_fmt', 'yuv420p', out])
         else:
-            run([FF, '-v', 'error', '-y', '-loop', '1', '-framerate', str(FPS), '-i', f"{pdir}/p{sc['page']:02d}.png", '-t', f"{sc['dur']:.3f}",
-                 '-vf', motion_filter(sc['motion'], frames) + ',format=yuv420p', '-c:v', 'libx264', '-preset', 'fast', '-crf', '17', '-r', str(FPS), out])
+            jobs.append((PDF[lang], sc['page'], sc['motion'], frames, out))
+    if jobs:
+        from concurrent.futures import ProcessPoolExecutor
+        with ProcessPoolExecutor(max_workers=min(4, os.cpu_count() or 1)) as ex: list(ex.map(render_scene, jobs))
     return segs
 
 
@@ -270,13 +319,13 @@ def main():
     a = ap.parse_args(); lang = a.lang
     scenes = [dict(s) for s in (SCENES[lang][:a.sample] if a.sample else SCENES[lang])]
     work = f'{OUT}/work_{lang}'; os.makedirs(work, exist_ok=True)
-    pdir = render_pages(lang); bgm = ensure_bgm()
+    bgm = ensure_bgm()
     asyncio.run(tts_all(scenes, VOICE[lang], RATE[lang], f'{work}/tts'))
     total = timeline(scenes)
     json.dump(scenes, open(f'{work}/timeline.json', 'w'), ensure_ascii=False, indent=1, default=list)
-    print(f'[{lang}] scenes {len(scenes)} | total {total:.1f}s | narration {sum(sc["ndur"] for sc in scenes):.1f}s | per scene', [round(sc['dur'], 1) for sc in scenes])
+    print(f'[{lang}] scenes {len(scenes)} | total {total:.1f}s | narration {sum(sc["ndur"] for sc in scenes):.1f}s (쉼 {sum(sc["cut"] for sc in scenes):.1f}s 줄임) | per scene', [round(sc['dur'], 1) for sc in scenes])
     write_ass(scenes, f'{work}/subs.ass')
-    segs = build_segments(scenes, pdir, f'{work}/seg')
+    segs = build_segments(scenes, lang, f'{work}/seg')
     concat_xfade(segs, scenes, f'{work}/video.mp4')
     mix_audio(scenes, total, bgm, f'{work}/audio.wav')
     out = a.out or (f'{SITE}/video/company-intro_{lang}.mp4' if not a.sample else f'{OUT}/sample_{lang}.mp4')
