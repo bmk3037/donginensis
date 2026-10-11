@@ -211,25 +211,30 @@ input.invalid { border-color: var(--bad); background: var(--bad-soft); }
 .appbar-tools .appbar-code { margin-left: 0; }
 
 /* ---------- B 도면 ---------- */
+/* B 도면: 색은 기록양식집(DI-IMS-F-01) 엑셀 서식과 같게 — 제목·표 머리 #1857A5, 항목명 칸 #E8EEF6,
+   미리 적힌 칸 #F4F6F9, 테두리 #8A9BB0, 글자 #263445 */
 :root[data-look="drawing"] {
-  --bg: #fbfcfe; --surface: #ffffff; --sunken: #f4f7fb; --line: #9fb1c8; --grid: rgba(24,87,165,0.07);
-  --accent: #0f3f7e; --accent-soft: #e6eef8; --head: #0f3f7e; --r: 0px;
+  --bg: #fbfcfe; --surface: #ffffff; --sunken: #f4f6f9; --label: #e8eef6; --line: #8a9bb0; --grid: rgba(24,87,165,0.06);
+  --ink: #263445; --muted: #55657a; --accent: #1857a5; --accent-ink: #ffffff; --accent-soft: #e8eef6; --head: #1857a5;
+  --th: #1857a5; --th-ink: #ffffff; --r: 0px;
 }
 @media (prefers-color-scheme: dark) {
   :root[data-look="drawing"]:not([data-theme="light"]) {
-    --bg: #0a1a33; --surface: #0d2140; --sunken: #0b1c37; --line: #3c5c86; --grid: rgba(140,180,235,0.08);
-    --ink: #e6eef8; --muted: #a9bcd6; --accent: #8fbaf0; --accent-ink: #06142a; --accent-soft: #15325a; --head: #15325a;
+    --bg: #0a1a33; --surface: #0d2140; --sunken: #0b1c37; --label: #14305a; --line: #4a6a94; --grid: rgba(140,180,235,0.08);
+    --ink: #e6eef8; --muted: #a9bcd6; --accent: #8fbaf0; --accent-ink: #06142a; --accent-soft: #14305a; --head: #1857a5;
+    --th: #1857a5; --th-ink: #ffffff;
   }
 }
 :root[data-look="drawing"][data-theme="dark"] {
-  --bg: #0a1a33; --surface: #0d2140; --sunken: #0b1c37; --line: #3c5c86; --grid: rgba(140,180,235,0.08);
-  --ink: #e6eef8; --muted: #a9bcd6; --accent: #8fbaf0; --accent-ink: #06142a; --accent-soft: #15325a; --head: #15325a;
+  --bg: #0a1a33; --surface: #0d2140; --sunken: #0b1c37; --label: #14305a; --line: #4a6a94; --grid: rgba(140,180,235,0.08);
+  --ink: #e6eef8; --muted: #a9bcd6; --accent: #8fbaf0; --accent-ink: #06142a; --accent-soft: #14305a; --head: #1857a5;
+  --th: #1857a5; --th-ink: #ffffff;
 }
 [data-look="drawing"] body { background-color: var(--bg);
   background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: 16px 16px; }
 [data-look="drawing"] .step, [data-look="drawing"] .out-card, [data-look="drawing"] .sample-bar { border: 1.5px solid var(--accent); border-radius: 0; box-shadow: 4px 4px 0 var(--accent-soft); }
-[data-look="drawing"] .step h2 { margin: -18px -18px 0; padding: 10px 18px; border-bottom: 1.5px solid var(--accent); background: var(--sunken);
+[data-look="drawing"] .step h2 { margin: -18px -18px 0; padding: 10px 18px; border-bottom: 1.5px solid var(--accent); background: var(--label); color: var(--accent);
   font-size: var(--fs-lg); letter-spacing: 0.02em; }
 [data-look="drawing"] .num { border-radius: 0; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); font-family: var(--font-mono); }
 [data-look="drawing"] .out-head { background: var(--head); border-bottom: 1.5px solid var(--accent); }
@@ -241,7 +246,10 @@ input.invalid { border-color: var(--bad); background: var(--bad-soft); }
 [data-look="drawing"] .btn-primary { background: var(--accent); border-color: var(--accent); letter-spacing: 0.04em; }
 [data-look="drawing"] .chip { border-radius: 0; border: 1px solid currentColor; background: transparent; }
 [data-look="drawing"] h1 { font-weight: 800; letter-spacing: -0.03em; }
-[data-look="drawing"] .tbl th { font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; }
+[data-look="drawing"] .tbl th { background: var(--th); color: var(--th-ink); font-weight: 600; border-bottom-color: var(--th); }
+[data-look="drawing"] .tbl td { border-bottom-color: var(--line); }
+[data-look="drawing"] h1 { color: var(--accent); }
+[data-look="drawing"] .tree { background: var(--sunken); }
 [data-look="drawing"] .tree .file { border-left: 1px dashed var(--line); margin-left: 4px; }
 
 /* ---------- C 현장 HMI (어두운 단일 테마) ---------- */
