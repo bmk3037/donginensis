@@ -337,3 +337,5 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 
 .sign-box { border: 1px solid var(--accent); background: var(--accent-soft); padding: 10px 12px; display: grid; gap: 8px; }
 .sign-h { margin: 0; font-weight: 700; color: var(--accent); font-size: var(--fs-sm); }
+.vc { display: grid; gap: 6px; }
+.vc-issues { margin: 0; padding: 8px 10px 8px 26px; background: var(--bad-soft); color: var(--bad); font-size: var(--fs-sm); display: grid; gap: 3px; }
