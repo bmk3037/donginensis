@@ -2641,7 +2641,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     ko: '㈜동인엔시스', en: 'DONG-IN ENSIS Co., Ltd.',
     addr: '부산광역시 부산진구 진연로9번길 47', tel: 'TEL 051-862-3668', origin: 'MADE IN KOREA'
   };
-  var NAVY = '#0a2a55', BLUE = '#1857a5', RED = '#e83e30';
+  // 동인엔시스 문서 서식(기록양식집)과 같은 색: 머리 #1857A5 · 항목칸 #E8EEF6 · 테두리 #8A9BB0 · 글자 #263445
+  var NAVY = '#1857a5', BLUE = '#1857a5', RED = '#e83e30', LABEL = '#e8eef6', LINE = '#8a9bb0', INK = '#263445';
 
   // 명판 크기(가로×세로 mm). 비율이 같아 도안을 그대로 키운다.
   var NP_SIZES = { s: ['100 × 60 mm', 100, 60], m: ['120 × 72 mm', 120, 72], l: ['150 × 90 mm', 150, 90] };
@@ -2769,9 +2770,9 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     o.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + sz[1] + 'mm" height="' + sz[2] + 'mm" viewBox="0 0 ' + W + ' ' + H + '" font-family="' + font + '">');
     o.push('<title>' + esc('명판 ' + pn.tag + ' ' + (pn.serial || '')) + '</title>');
     o.push('<defs><clipPath id="np-c"><rect x="0.3" y="0.3" width="99.4" height="59.4" rx="1.6"/></clipPath></defs>');
-    o.push('<rect x="0.3" y="0.3" width="99.4" height="59.4" rx="1.6" fill="#fff" stroke="#1d2735" stroke-width="0.35"/>');
+    o.push('<rect x="0.3" y="0.3" width="99.4" height="59.4" rx="1.6" fill="#fff" stroke="' + LINE + '" stroke-width="0.35"/>');
     o.push('<g clip-path="url(#np-c)"><rect x="0" y="0" width="100" height="10" fill="' + NAVY + '"/>' +
-      '<rect x="0" y="10" width="100" height="0.6" fill="' + RED + '"/></g>');
+      '</g>');
     o.push(logoNested(8, 2.4, 5.2, 'white'));
     o.push('<text x="91" y="6.5" fill="#fff" font-size="3.2" font-weight="700" letter-spacing="0.2" text-anchor="end">CONTROL PANEL</text>');
     var top = 13, bottom = 54.2, step = Math.min(3.9, (bottom - top) / rows.length);
@@ -2779,23 +2780,26 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     rows.forEach(function (r, i) {
       var y = top + step * (i + 0.72);
       var lot = r[3] === 'lot';
+      o.push('<rect x="4.5" y="' + (top + step * i).toFixed(2) + '" width="28.5" height="' + step.toFixed(2) + '" fill="' + LABEL + '"/>');
       o.push('<text x="6" y="' + y.toFixed(2) + '" font-size="2.1" font-weight="700" fill="' + NAVY + '">' + esc(r[0]) +
         '<tspan dx="1" font-size="1.45" font-weight="400" fill="#55657a">' + esc(r[1]) + '</tspan></text>');
       var v = r[2] || '', fs = fit(v, vRight - vx, lot ? 3.0 : 2.4);
-      o.push('<text x="' + vx + '" y="' + y.toFixed(2) + '" font-size="' + fs.toFixed(2) + '"' + (lot ? ' font-weight="700" fill="' + BLUE + '"' : ' fill="#1d2735"') + '>' + esc(v) + '</text>');
-      if (i < rows.length - 1) o.push('<line x1="6" x2="' + (vRight + 0.5) + '" y1="' + (top + step * (i + 1)).toFixed(2) + '" y2="' + (top + step * (i + 1)).toFixed(2) + '" stroke="#c6cfdb" stroke-width="0.12"/>');
+      o.push('<text x="' + vx + '" y="' + y.toFixed(2) + '" font-size="' + fs.toFixed(2) + '"' + (lot ? ' font-weight="700" fill="' + BLUE + '"' : ' fill="' + INK + '"') + '>' + esc(v) + '</text>');
+      if (i < rows.length - 1) o.push('<line x1="6" x2="' + (vRight + 0.5) + '" y1="' + (top + step * (i + 1)).toFixed(2) + '" y2="' + (top + step * (i + 1)).toFixed(2) + '" stroke="' + LINE + '" stroke-width="0.15"/>');
     });
     if (qr) {
       o.push(qrPath(qrText(p, pn), 72.5, 13, 21));
       o.push('<text x="83" y="37" font-size="1.5" text-anchor="middle" fill="#55657a">QR · LOT 정보</text>');
       o.push('<text x="83" y="42" font-size="' + fit(pn.serial || '', 22, 2.4).toFixed(2) + '" font-weight="700" text-anchor="middle" fill="' + BLUE + '">' + esc(pn.serial || '') + '</text>');
     }
-    o.push('<line x1="4" x2="96" y1="55.2" y2="55.2" stroke="#1d2735" stroke-width="0.15"/>');
+    o.push('<line x1="33" x2="33" y1="' + top + '" y2="' + bottom.toFixed(2) + '" stroke="' + LINE + '" stroke-width="0.15"/>');
+    o.push('<rect x="4.5" y="' + top + '" width="' + (vRight - 4) + '" height="' + (bottom - top).toFixed(2) + '" fill="none" stroke="' + LINE + '" stroke-width="0.2"/>');
+    o.push('<line x1="4" x2="96" y1="55.2" y2="55.2" stroke="' + LINE + '" stroke-width="0.15"/>');
     var foot = COMPANY.ko + ' ' + COMPANY.en + ' · ' + COMPANY.addr + ' · ' + COMPANY.tel + ' · ' + COMPANY.origin;
-    o.push('<text x="50" y="58.1" font-size="' + fit(foot, 78, 1.45).toFixed(2) + '" text-anchor="middle" fill="#1d2735">' + esc(foot) + '</text>');
+    o.push('<text x="50" y="58.1" font-size="' + fit(foot, 78, 1.45).toFixed(2) + '" text-anchor="middle" fill="' + INK + '">' + esc(foot) + '</text>');
     if (st.np.holes) {
       [[3.6, 5], [96.4, 5], [3.6, 57.4], [96.4, 57.4]].forEach(function (h, i) {
-        o.push('<circle cx="' + h[0] + '" cy="' + h[1] + '" r="1.5" fill="' + (i < 2 ? '#fff' : 'none') + '" stroke="' + (i < 2 ? '#fff' : '#1d2735') + '" stroke-width="0.2"/>');
+        o.push('<circle cx="' + h[0] + '" cy="' + h[1] + '" r="1.5" fill="' + (i < 2 ? '#fff' : 'none') + '" stroke="' + (i < 2 ? '#fff' : '' + INK + '') + '" stroke-width="0.2"/>');
       });
     }
     o.push('</svg>');
@@ -2923,14 +2927,14 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     '.lb.ol{outline:0.2mm dashed #9aa7b8;outline-offset:-0.1mm}' +
     '.lbx-logo{display:block;flex:none}' +
     '.lbx{display:flex;flex-direction:column;overflow:hidden;background:#fff}' +
-    '.lbx-band{flex:none;display:flex;align-items:center;justify-content:space-between;background:' + NAVY + ';border-bottom:0.35mm solid ' + RED + ';color:#fff;font-weight:700;letter-spacing:0.08em}' +
+    '.lbx-band{flex:none;display:flex;align-items:center;justify-content:space-between;background:' + NAVY + ';color:#fff;font-weight:700;letter-spacing:0.08em}' +
     '.lbx-body{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:0}' +
-    '.lbx-ship{display:flex;flex-direction:column;text-align:left;font-size:3.2mm;color:#263445;border:0.5mm solid ' + NAVY + '}' +
-    '.lbx-sh-h{display:flex;align-items:center;justify-content:space-between;padding:3mm 4mm 2.5mm;border-bottom:1mm solid ' + NAVY + ';box-shadow:0 0.5mm 0 ' + RED + '}' +
+    '.lbx-ship{display:flex;flex-direction:column;text-align:left;font-size:3.2mm;color:#263445;border:0.3mm solid ' + LINE + '}' +
+    '.lbx-sh-h{display:flex;align-items:center;justify-content:space-between;padding:3mm 4mm 2.5mm;border-bottom:0.8mm solid ' + NAVY + '}' +
     '.lbx-sh-h span{display:grid;text-align:right;font-size:2.4mm;color:#55657a;letter-spacing:0.06em}.lbx-sh-h b{font-size:4.2mm;color:' + NAVY + ';letter-spacing:0}' +
     '.lbx-sh-in{flex:1;display:flex;flex-direction:column;padding:2mm 4mm 2mm;gap:2mm;min-height:0}' +
-    '.lbx-ship table{width:100%;border-collapse:collapse}.lbx-ship th{width:24mm;text-align:left;font-size:3mm;font-weight:700;color:' + NAVY + ';padding:1.3mm 0;vertical-align:top;border-bottom:0.2mm solid #c6cfdb}' +
-    '.lbx-ship th small{display:block;font-size:2.1mm;font-weight:400;color:#55657a}.lbx-ship td{font-size:3.6mm;padding:1.3mm 0;border-bottom:0.2mm solid #c6cfdb;word-break:keep-all}' +
+    '.lbx-ship table{width:100%;border-collapse:collapse}.lbx-ship th{width:24mm;text-align:left;font-size:3mm;font-weight:700;color:' + INK + ';background:' + LABEL + ';padding:1.3mm 1.5mm;vertical-align:top;border:0.2mm solid ' + LINE + '}' +
+    '.lbx-ship th small{display:block;font-size:2.1mm;font-weight:400;color:#55657a}.lbx-ship td{font-size:3.6mm;padding:1.3mm 1.5mm;border:0.2mm solid ' + LINE + ';word-break:keep-all}' +
     '.lbx-ship td.big{font-size:7mm;font-weight:700;color:' + BLUE + ';letter-spacing:-0.02em}' +
     '.lbx-sh-f{display:flex;gap:3mm;align-items:center;margin-top:auto}.lbx-sh-hd{display:grid;gap:1.2mm;font-size:3mm}.lbx-sh-hd b{display:inline-block;width:6mm;text-align:center;font-size:4mm;color:' + RED + '}' +
     '.lbx-sh-a{background:' + NAVY + ';color:#fff;font-size:2.1mm;padding:1.4mm 4mm;letter-spacing:0.01em}' +
@@ -3446,8 +3450,9 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     var vcls = s.verdict === '합격' ? 'v-ok' : s.verdict === '미완료' ? 'v-na' : 'v-bad';
     var body =
       '<div class="rep">' +
-      '<header class="rh">' + logo + '<div class="rt"><h1>FAT 시험 성적서</h1><p>Factory Acceptance Test Report</p></div>' +
-      '<div class="rno">DI-QF-06 · Rev.' + esc(A.FORMS.rev) + '<br>' + esc(fileBase()) + '</div></header>' +
+      '<header class="rh">' + logo + '<div class="rno">FAT 시험 성적서 | DI-QF-06 Rev.' + esc(A.FORMS.rev) + '</div>' +
+      '<h1>FAT 시험 성적서 <small>Factory Acceptance Test Report</small></h1>' +
+      '<p class="docline">동인엔시스 | DI-QF-06 · QF-06-1 | Rev.' + esc(A.FORMS.rev) + ' | ' + esc(fileBase()) + '</p></header>' +
       '<table class="info">' + infoRows + '</table>' +
       '<div class="verdict ' + vcls + '"><span>종합 판정 Result</span><b>' + esc(s.verdict) + '</b>' +
       '<em>시험 항목 ' + s.itemsDone + '/' + s.items + ' · I/O ' + s.ioPass + ' 합격 / ' + s.ioFail + ' 불합격 / ' + s.ioNa + ' 해당없음 (총 ' + s.io + '점)</em></div>' +
@@ -3459,13 +3464,13 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       '<tr><td>' + esc(cur.tester) + '</td><td>' + esc(p.quality || '') + '</td><td>' + esc(cur.witness) + '</td></tr>' +
       '<tr class="sg"><td>서명 / 일자</td><td>서명 / 일자</td><td>서명 / 일자</td></tr></table>' +
       '<p class="fine">이 성적서는 ㈜동인엔시스 통합경영 기록양식 QF-06·QF-06-1의 결과를 옮긴 것입니다. 시험 기준은 승인된 QF-15(' + esc(p.stdRev || '') + ')를 따릅니다. 판정 시각은 입력 시 자동 기록되었습니다.</p>' +
-      '</div><footer class="pf">㈜동인엔시스 DONG-IN ENSIS · 부산광역시 부산진구 진연로9번길 47 · TEL 051-862-3668 · ' + esc(fileBase()) + '</footer>';
+      '</div><footer class="pf">동인엔시스 | DI-QF-06 Rev.' + esc(A.FORMS.rev) + ' | ㈜동인엔시스 부산광역시 부산진구 진연로9번길 47 · TEL 051-862-3668</footer>';
     var css = '@page{size:A4 portrait;margin:12mm 12mm 16mm}' +
-      '.rep{font-size:9.5pt;line-height:1.45}.rh{display:flex;align-items:center;gap:6mm;border-bottom:1.2mm solid #0a2a55;padding-bottom:3mm;margin-bottom:4mm}' +
-      '.logo{height:9mm}.rt{flex:1}.rt h1{margin:0;font-size:17pt;color:#1857a5;letter-spacing:-0.02em}.rt p{margin:0;color:#55657a;font-size:9pt}' +
-      '.rno{font-size:7.5pt;color:#55657a;text-align:right}' +
+      '.rep{font-size:9.5pt;line-height:1.45;color:#263445}.rh{position:relative;margin-bottom:4mm}' +
+      '.logo{height:7mm;display:block}.rh h1{margin:3.5mm 0 1mm;font-size:17pt;color:#1857a5;font-weight:800;letter-spacing:-0.02em}.rh h1 small{font-size:9pt;color:#55657a;font-weight:400;margin-left:2mm}' +
+      '.docline{margin:0;font-size:8.2pt;color:#55657a}.rno{position:absolute;top:0;right:0;font-size:7.5pt;color:#55657a}' +
       'table{width:100%;border-collapse:collapse;margin-bottom:3mm}th,td{border:0.25mm solid #8a9bb0;padding:1.2mm 2mm;vertical-align:middle;word-break:keep-all;overflow-wrap:anywhere}' +
-      '.info th{background:#e8eef6;color:#1d2735;text-align:left;font-weight:600;width:20%;font-size:8.5pt}.info td{width:30%}' +
+      '.info th{background:#e8eef6;color:#263445;text-align:left;font-weight:600;width:20%;font-size:8.5pt}.info td{width:30%}' +
       '.grid thead th{background:#1857a5;color:#fff;font-weight:600;font-size:8.5pt}.grid td{font-size:8.5pt}.grid.io td{font-size:7.8pt;padding:0.8mm 1.5mm}' +
       '.grid thead{display:table-header-group}.grid tr{break-inside:avoid}' +
       '.c{text-align:center}.b{font-weight:600}.mono{font-family:Consolas,monospace}.w-no{width:9mm}.w-j{width:17mm}' +
@@ -3473,9 +3478,9 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       '.verdict{display:flex;align-items:center;gap:5mm;border:0.6mm solid;padding:3mm 4mm;margin:2mm 0 4mm}.verdict span{font-size:9pt;font-weight:600}' +
       '.verdict b{font-size:18pt}.verdict em{font-style:normal;color:#55657a;font-size:8.5pt;margin-left:auto}' +
       '.v-ok{border-color:#1d6b45}.v-ok b{color:#1d6b45}.v-bad{border-color:#c0321f}.v-bad b{color:#c0321f}.v-na{border-color:#8a9bb0}.v-na b{color:#55657a}' +
-      'h2{font-size:11pt;color:#0a2a55;margin:5mm 0 2mm;border-left:1.2mm solid #1857a5;padding-left:2mm;break-after:avoid}' +
+      'h2{font-size:10.5pt;color:#263445;margin:4.5mm 0 1.8mm;font-weight:700;break-after:avoid}h2::before{content:"■ ";color:#1857a5}' +
       '.fails{margin:0 0 3mm;padding-left:5mm;font-size:8.5pt}.sign{break-inside:avoid}.sign th{background:#e8eef6;width:33.3%}.sign td{text-align:center;height:8mm}.sign .sg td{height:16mm;vertical-align:bottom;color:#8a9bb0;font-size:7.5pt}' +
-      '.fine{font-size:7.5pt;color:#55657a}.pf{position:fixed;bottom:-10mm;left:0;right:0;text-align:center;font-size:7pt;color:#8a9bb0}' +
+      '.fine{font-size:7.5pt;color:#55657a}.pf{position:fixed;bottom:-10mm;left:0;right:0;text-align:center;font-size:7.5pt;color:#55657a}' +
       '@media screen{.rep{max-width:186mm;margin:8mm auto;background:#fff;padding:12mm;box-shadow:0 1px 6px rgba(0,0,0,.2)}.pf{position:static;margin-bottom:8mm}}';
     return A.docHtml('FAT 성적서 ' + cur.tag, body, css);
   }

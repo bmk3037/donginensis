@@ -8,7 +8,8 @@
     ko: '㈜동인엔시스', en: 'DONG-IN ENSIS Co., Ltd.',
     addr: '부산광역시 부산진구 진연로9번길 47', tel: 'TEL 051-862-3668', origin: 'MADE IN KOREA'
   };
-  var NAVY = '#0a2a55', BLUE = '#1857a5', RED = '#e83e30';
+  // 동인엔시스 문서 서식(기록양식집)과 같은 색: 머리 #1857A5 · 항목칸 #E8EEF6 · 테두리 #8A9BB0 · 글자 #263445
+  var NAVY = '#1857a5', BLUE = '#1857a5', RED = '#e83e30', LABEL = '#e8eef6', LINE = '#8a9bb0', INK = '#263445';
 
   // 명판 크기(가로×세로 mm). 비율이 같아 도안을 그대로 키운다.
   var NP_SIZES = { s: ['100 × 60 mm', 100, 60], m: ['120 × 72 mm', 120, 72], l: ['150 × 90 mm', 150, 90] };
@@ -136,9 +137,9 @@
     o.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + sz[1] + 'mm" height="' + sz[2] + 'mm" viewBox="0 0 ' + W + ' ' + H + '" font-family="' + font + '">');
     o.push('<title>' + esc('명판 ' + pn.tag + ' ' + (pn.serial || '')) + '</title>');
     o.push('<defs><clipPath id="np-c"><rect x="0.3" y="0.3" width="99.4" height="59.4" rx="1.6"/></clipPath></defs>');
-    o.push('<rect x="0.3" y="0.3" width="99.4" height="59.4" rx="1.6" fill="#fff" stroke="#1d2735" stroke-width="0.35"/>');
+    o.push('<rect x="0.3" y="0.3" width="99.4" height="59.4" rx="1.6" fill="#fff" stroke="' + LINE + '" stroke-width="0.35"/>');
     o.push('<g clip-path="url(#np-c)"><rect x="0" y="0" width="100" height="10" fill="' + NAVY + '"/>' +
-      '<rect x="0" y="10" width="100" height="0.6" fill="' + RED + '"/></g>');
+      '</g>');
     o.push(logoNested(8, 2.4, 5.2, 'white'));
     o.push('<text x="91" y="6.5" fill="#fff" font-size="3.2" font-weight="700" letter-spacing="0.2" text-anchor="end">CONTROL PANEL</text>');
     var top = 13, bottom = 54.2, step = Math.min(3.9, (bottom - top) / rows.length);
@@ -146,23 +147,26 @@
     rows.forEach(function (r, i) {
       var y = top + step * (i + 0.72);
       var lot = r[3] === 'lot';
+      o.push('<rect x="4.5" y="' + (top + step * i).toFixed(2) + '" width="28.5" height="' + step.toFixed(2) + '" fill="' + LABEL + '"/>');
       o.push('<text x="6" y="' + y.toFixed(2) + '" font-size="2.1" font-weight="700" fill="' + NAVY + '">' + esc(r[0]) +
         '<tspan dx="1" font-size="1.45" font-weight="400" fill="#55657a">' + esc(r[1]) + '</tspan></text>');
       var v = r[2] || '', fs = fit(v, vRight - vx, lot ? 3.0 : 2.4);
-      o.push('<text x="' + vx + '" y="' + y.toFixed(2) + '" font-size="' + fs.toFixed(2) + '"' + (lot ? ' font-weight="700" fill="' + BLUE + '"' : ' fill="#1d2735"') + '>' + esc(v) + '</text>');
-      if (i < rows.length - 1) o.push('<line x1="6" x2="' + (vRight + 0.5) + '" y1="' + (top + step * (i + 1)).toFixed(2) + '" y2="' + (top + step * (i + 1)).toFixed(2) + '" stroke="#c6cfdb" stroke-width="0.12"/>');
+      o.push('<text x="' + vx + '" y="' + y.toFixed(2) + '" font-size="' + fs.toFixed(2) + '"' + (lot ? ' font-weight="700" fill="' + BLUE + '"' : ' fill="' + INK + '"') + '>' + esc(v) + '</text>');
+      if (i < rows.length - 1) o.push('<line x1="6" x2="' + (vRight + 0.5) + '" y1="' + (top + step * (i + 1)).toFixed(2) + '" y2="' + (top + step * (i + 1)).toFixed(2) + '" stroke="' + LINE + '" stroke-width="0.15"/>');
     });
     if (qr) {
       o.push(qrPath(qrText(p, pn), 72.5, 13, 21));
       o.push('<text x="83" y="37" font-size="1.5" text-anchor="middle" fill="#55657a">QR · LOT 정보</text>');
       o.push('<text x="83" y="42" font-size="' + fit(pn.serial || '', 22, 2.4).toFixed(2) + '" font-weight="700" text-anchor="middle" fill="' + BLUE + '">' + esc(pn.serial || '') + '</text>');
     }
-    o.push('<line x1="4" x2="96" y1="55.2" y2="55.2" stroke="#1d2735" stroke-width="0.15"/>');
+    o.push('<line x1="33" x2="33" y1="' + top + '" y2="' + bottom.toFixed(2) + '" stroke="' + LINE + '" stroke-width="0.15"/>');
+    o.push('<rect x="4.5" y="' + top + '" width="' + (vRight - 4) + '" height="' + (bottom - top).toFixed(2) + '" fill="none" stroke="' + LINE + '" stroke-width="0.2"/>');
+    o.push('<line x1="4" x2="96" y1="55.2" y2="55.2" stroke="' + LINE + '" stroke-width="0.15"/>');
     var foot = COMPANY.ko + ' ' + COMPANY.en + ' · ' + COMPANY.addr + ' · ' + COMPANY.tel + ' · ' + COMPANY.origin;
-    o.push('<text x="50" y="58.1" font-size="' + fit(foot, 78, 1.45).toFixed(2) + '" text-anchor="middle" fill="#1d2735">' + esc(foot) + '</text>');
+    o.push('<text x="50" y="58.1" font-size="' + fit(foot, 78, 1.45).toFixed(2) + '" text-anchor="middle" fill="' + INK + '">' + esc(foot) + '</text>');
     if (st.np.holes) {
       [[3.6, 5], [96.4, 5], [3.6, 57.4], [96.4, 57.4]].forEach(function (h, i) {
-        o.push('<circle cx="' + h[0] + '" cy="' + h[1] + '" r="1.5" fill="' + (i < 2 ? '#fff' : 'none') + '" stroke="' + (i < 2 ? '#fff' : '#1d2735') + '" stroke-width="0.2"/>');
+        o.push('<circle cx="' + h[0] + '" cy="' + h[1] + '" r="1.5" fill="' + (i < 2 ? '#fff' : 'none') + '" stroke="' + (i < 2 ? '#fff' : '' + INK + '') + '" stroke-width="0.2"/>');
       });
     }
     o.push('</svg>');
@@ -290,14 +294,14 @@
     '.lb.ol{outline:0.2mm dashed #9aa7b8;outline-offset:-0.1mm}' +
     '.lbx-logo{display:block;flex:none}' +
     '.lbx{display:flex;flex-direction:column;overflow:hidden;background:#fff}' +
-    '.lbx-band{flex:none;display:flex;align-items:center;justify-content:space-between;background:' + NAVY + ';border-bottom:0.35mm solid ' + RED + ';color:#fff;font-weight:700;letter-spacing:0.08em}' +
+    '.lbx-band{flex:none;display:flex;align-items:center;justify-content:space-between;background:' + NAVY + ';color:#fff;font-weight:700;letter-spacing:0.08em}' +
     '.lbx-body{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:0}' +
-    '.lbx-ship{display:flex;flex-direction:column;text-align:left;font-size:3.2mm;color:#263445;border:0.5mm solid ' + NAVY + '}' +
-    '.lbx-sh-h{display:flex;align-items:center;justify-content:space-between;padding:3mm 4mm 2.5mm;border-bottom:1mm solid ' + NAVY + ';box-shadow:0 0.5mm 0 ' + RED + '}' +
+    '.lbx-ship{display:flex;flex-direction:column;text-align:left;font-size:3.2mm;color:#263445;border:0.3mm solid ' + LINE + '}' +
+    '.lbx-sh-h{display:flex;align-items:center;justify-content:space-between;padding:3mm 4mm 2.5mm;border-bottom:0.8mm solid ' + NAVY + '}' +
     '.lbx-sh-h span{display:grid;text-align:right;font-size:2.4mm;color:#55657a;letter-spacing:0.06em}.lbx-sh-h b{font-size:4.2mm;color:' + NAVY + ';letter-spacing:0}' +
     '.lbx-sh-in{flex:1;display:flex;flex-direction:column;padding:2mm 4mm 2mm;gap:2mm;min-height:0}' +
-    '.lbx-ship table{width:100%;border-collapse:collapse}.lbx-ship th{width:24mm;text-align:left;font-size:3mm;font-weight:700;color:' + NAVY + ';padding:1.3mm 0;vertical-align:top;border-bottom:0.2mm solid #c6cfdb}' +
-    '.lbx-ship th small{display:block;font-size:2.1mm;font-weight:400;color:#55657a}.lbx-ship td{font-size:3.6mm;padding:1.3mm 0;border-bottom:0.2mm solid #c6cfdb;word-break:keep-all}' +
+    '.lbx-ship table{width:100%;border-collapse:collapse}.lbx-ship th{width:24mm;text-align:left;font-size:3mm;font-weight:700;color:' + INK + ';background:' + LABEL + ';padding:1.3mm 1.5mm;vertical-align:top;border:0.2mm solid ' + LINE + '}' +
+    '.lbx-ship th small{display:block;font-size:2.1mm;font-weight:400;color:#55657a}.lbx-ship td{font-size:3.6mm;padding:1.3mm 1.5mm;border:0.2mm solid ' + LINE + ';word-break:keep-all}' +
     '.lbx-ship td.big{font-size:7mm;font-weight:700;color:' + BLUE + ';letter-spacing:-0.02em}' +
     '.lbx-sh-f{display:flex;gap:3mm;align-items:center;margin-top:auto}.lbx-sh-hd{display:grid;gap:1.2mm;font-size:3mm}.lbx-sh-hd b{display:inline-block;width:6mm;text-align:center;font-size:4mm;color:' + RED + '}' +
     '.lbx-sh-a{background:' + NAVY + ';color:#fff;font-size:2.1mm;padding:1.4mm 4mm;letter-spacing:0.01em}' +
