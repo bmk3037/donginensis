@@ -95,11 +95,11 @@
   ];
   var METHOD = {
     '외함': '도면 치수·가공·도장·접지점',
-    '인버터': '모델·용량·전압 명판 대조, 외관, S/N',
-    'PLC': '모델 대조, 외관, S/N',
-    'HMI': '모델 대조, 외관·화면, S/N',
+    '인버터': '모델·용량·전압 명판 대조, 외관',
+    'PLC': '모델 대조, 외관',
+    'HMI': '모델 대조, 외관·화면',
     '안전부품': '모델·인증 표시 대조, 외관',
-    '차단기': '모델·정격(AF/AT) 대조, 외관, LOT',
+    '차단기': '모델·정격(AF/AT) 대조, 외관',
     '접촉기·보호계전기': '모델·코일전압·정격 대조, 외관',
     '전원장치': '모델·출력전압·용량 대조, 외관',
     '기타': '모델·수량 대조, 외관'
@@ -218,7 +218,7 @@
 
   // ---------------------------------------------------------------- 문서 계획
   var STAGE = {
-    '01_수주고객': '1 수주', '02_설계기준': '2 설계', '03_구매입고LOT': '3 구매·입고', '04_제작': '4 제작',
+    '01_수주고객': '1 수주', '02_설계기준': '2 설계', '03_구매입고': '3 구매·입고', '04_제작': '4 제작',
     '05_FAT출하': '5 FAT·출하', '06_SAT인수': '6 SAT·인수', '07_PLC': '7 PLC', '08_NCR_AS': '8 NCR·AS'
   };
 
@@ -255,9 +255,9 @@
     var pfRows = [
       ['수주', '계약 요구·규격·납기·보증·포장 조건 합의 / 미합의 해결', '01_수주고객 (PO·사양서·견적서)'],
       ['설계', 'QF-02 입력·검토·검증 / QF-15 기술기준 승인 / 고객 승인도(해당 시)', '02_설계기준 / QF-02, QF-15'],
-      ['구매·입고', 'QF-10 승인 공급자 발주 / QF-03 판정 / QF-04 추적', '03_구매입고LOT / QF-03, QF-04 ×' + tags.length],
+      ['구매·입고', 'QF-10 승인 공급자 발주 / QF-03 판정 (부품 LOT 미부여)', '03_구매입고 / QF-03'],
       ['제작', 'QF-16 공정 이동 / QF-05 작업자 검사·숙련자 확인 / 변경 반영', '04_제작 / QF-16, QF-05 ×' + tags.length],
-      ['출하', 'QF-06 합격 · 최종 PLC(QF-08) · 포장 확인(QF-16) · 출하 영향 NCR 종결 또는 고객 특채 서면', '05_FAT출하 / QF-06, QF-06-1, SF-02 ×' + tags.length],
+      ['출하', 'QF-06 합격 · 최종 PLC(QF-08) · 포장 확인(QF-16) · 출하 영향 NCR 종결 또는 고객 특채 서면 · 판넬 LOT 출하 기록(QF-04)', '05_FAT출하 / QF-06, QF-06-1, SF-02 ×' + tags.length + ', QF-04'],
       ['SAT·인수', 'QF-07 기능·미결 종결·고객 인수 / SF-02·SF-03 해당 시', p.sat ? '06_SAT인수 / QF-07' + (p.outsource ? ', SF-03' : '') : ''],
       ['종료', '최종 도면·PLC 백업 · 납품자료 · 고객재산 반환 · 보증 개시일 확정', '07_PLC / QF-08']
     ];
@@ -303,35 +303,25 @@
         if (!it.major) return;
         var key = it.name + '|' + it.model + '|' + it.maker;
         var a = agg.filter(function (x) { return x.key === key; })[0];
-        if (!a) { a = { key: key, it: it, qty: 0, text: [] }; agg.push(a); }
+        if (!a) { a = { key: key, it: it, qty: 0, text: [], lots: [] }; agg.push(a); }
+        var lot = clean(panel.serial) || clean(panel.tag);
+        if (a.lots.indexOf(lot) < 0) a.lots.push(lot);
         if (it.qty !== null) a.qty += it.qty; else a.text.push(it.qtyText);
       });
     });
     var qf03Rows = agg.map(function (a) {
       var it = a.it;
       var qty = a.text.length ? (a.qty ? a.qty + ' + ' : '') + a.text.join(', ') : String(a.qty);
-      return [clean(it.name + ' ' + it.model) + (it.maker ? ' (' + it.maker + ')' : ''), qty + ' / ', '', METHOD[it.category] || METHOD['기타']];
+      return [clean(it.name + ' ' + it.model) + (it.maker ? ' (' + it.maker + ')' : ''), qty + ' / ', a.lots.join(', '), METHOD[it.category] || METHOD['기타']];
     });
-    add('03_구매입고LOT', 'QF-03', '', {
+    add('03_구매입고', 'QF-03', '', {
       '프로젝트 번호': pj, '검사기준(QF-15 번호)': stdRev || 'QF-15', '고객 지급품 여부': p.custSupply
     }, qf03Rows, 2);
 
     var perPanel = {};
     panels.forEach(function (panel) {
       var t = clean(panel.tag);
-      var f16 = 'QF-16_' + t, f02s = 'SF-02_' + t;
-      perPanel[t] = { f16: f16, f02s: f02s };
-      var lotRows = [];
-      itemsForPanel(bom, panel).forEach(function (it) {
-        if (!it.major || it.category === '외함') return;
-        var label = clean(it.name + ' ' + it.model);
-        if (it.tags.length) it.tags.forEach(function (tg) { lotRows.push([label, '', '', tg]); });
-        else for (var k = 0; k < Math.min(it.qty || 1, 20); k++) lotRows.push([label, '', '', '']);
-      });
-      add('03_구매입고LOT', 'QF-04', t, {
-        '프로젝트 번호': pj, '고객': p.customer, '판넬 번호(제조번호)': pv(panel),
-        '납품처·납품일': [p.name, p.due].filter(Boolean).join(' / '), '관련 QF-16 번호': f16
-      }, lotRows, 2);
+      perPanel[t] = { f16: 'QF-16_' + t, f02s: 'SF-02_' + t };
     });
 
     // 04 제작
@@ -377,6 +367,15 @@
       });
     });
 
+    // 판넬 LOT·출하 이력: LOT는 판넬에만 부여(제조번호 = 판넬 LOT)
+    var lotRows = panels.map(function (panel) {
+      return [clean(panel.serial), clean(clean(panel.tag) + ' ' + (panel.desc || '')),
+        [p.drawRev, p.plcVer].filter(Boolean).join(' / ')];
+    });
+    add('05_FAT출하', 'QF-04', '', {
+      '프로젝트 번호': pj, '고객': p.customer, '프로젝트명·현장': p.name, '판넬 수량': tags.length ? tags.length + '면' : ''
+    }, lotRows.length ? lotRows : undefined, 2);
+
     // 06 SAT
     if (p.sat) {
       add('06_SAT인수', 'QF-07', '', {
@@ -397,7 +396,7 @@
     }, p.plcVer ? [[p.plcVer, '', '개발']] : undefined, 2);
 
     // 08 NCR·AS: 빈 양식
-    add('08_NCR_AS', 'QF-09', '', { '프로젝트·판넬·LOT·공정': pj });
+    add('08_NCR_AS', 'QF-09', '', { '프로젝트·판넬 LOT·공정': pj });
     docs[docs.length - 1].file = pj + '_QF-09_양식_빈칸.xlsx';
     return docs;
   }
@@ -414,7 +413,7 @@
       ['02_설계기준', '승인 도면(회로도·BOM·단자대도) 최종 Rev', '설계']
     ];
     if (p.approval) ev.push(['02_설계기준', '고객 승인도 제출·회신', '설계']);
-    ev.push(['03_구매입고LOT', '발주서(ERP)·주요 부품 성적서', '생산관리']);
+    ev.push(['03_구매입고', '발주서(ERP)·주요 부품 성적서', '생산관리']);
     ev.push(['05_FAT출하', '포장 사진·납품서', '생산관리']);
     if (p.sat) ev.push(['06_SAT인수', '고객 인수 확인(서명·메일)', '시운전 담당']);
     ev.push(['07_PLC', '출하·SAT 최종 PLC·HMI·파라미터 백업 파일', '프로그램']);
@@ -433,7 +432,7 @@
       cols: [['단계', 10], ['양식', 9], ['문서', 24], ['판넬', 9], ['파일 위치', 40], ['담당', 14], ['상태', 9], ['완료일', 10], ['확인자', 10]],
       fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['도면 Rev / PLC Ver', null], ['생성일', null]]],
       notes: ['이 묶음에 들어 있는 기록과 따로 보관할 증빙 목록입니다. 기록을 작성하면 상태를 바꾸고 완료일·확인자를 적습니다. 미작성은 붉게 표시됩니다.',
-        '감사 때는 이 표 순서대로 수주 → 설계 → 입고 LOT → 제작 → FAT → 출하 → SAT 기록을 보여 줍니다. 해당없음은 사유를 확인자 칸에 함께 적습니다.'],
+        '감사 때는 이 표 순서대로 수주 → 설계 → 입고 → 제작 → FAT → 출하(판넬 LOT, QF-04) → SAT 기록을 보여 줍니다. 해당없음은 사유를 확인자 칸에 함께 적습니다.'],
       rows: indexRows(p, docs, forms), blank: 2, row_h: 20,
       dv: { '7': ['미작성', '작성중', '완료', '해당없음'] }, formats: { '8': 'yyyy-mm-dd' },
       sign: ['작성', '검토(품질)', '승인']
@@ -460,7 +459,7 @@
         '도면 Rev / PLC Ver': [p.drawRev, p.plcVer].filter(Boolean).join(' / '), '생성일': date
       }
     });
-    ['01_수주고객', '02_설계기준', '03_구매입고LOT', '04_제작', '05_FAT출하', '06_SAT인수', '07_PLC', '08_NCR_AS']
+    ['01_수주고객', '02_설계기준', '03_구매입고', '04_제작', '05_FAT출하', '06_SAT인수', '07_PLC', '08_NCR_AS']
       .forEach(function (f) { zip.folder(root + '/' + f); });
     var done = 0;
     return jobs.reduce(function (chain, job) {

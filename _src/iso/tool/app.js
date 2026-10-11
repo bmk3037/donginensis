@@ -214,7 +214,7 @@
     clear(box);
     var data = state[kind];
     if (!data) {
-      var empty = { bom: 'BOM이 없으면 입고검사(QF-03)와 LOT 추적표(QF-04)는 빈 표로 만듭니다.',
+      var empty = { bom: 'BOM이 없으면 입고검사(QF-03)는 빈 표로 만듭니다.',
         io: 'I/O 리스트가 없으면 I/O 점검표(QF-06-1)는 번호만 있는 빈 표로 만듭니다.',
         std: '기준표가 없으면 QF-15와 FAT 성적서(QF-06)의 기준란은 비워서 만듭니다.' }[kind];
       box.appendChild(el('p', { cls: 'help', text: empty }));
@@ -250,7 +250,7 @@
           onchange: function (e) { it.major = e.target.checked; renderData('bom'); renderPlan(); } });
         return [cb, it.category, it.name, it.model, it.maker, it.qtyText, it.tags.join(', ')];
       }), function (i) { return items[i].major ? null : 'minor'; }));
-      box.appendChild(el('p', { cls: 'help', text: '체크한 부품이 입고검사·LOT 추적 대상입니다. 분류는 품명·모델로 자동으로 정했고, 체크로 바꿀 수 있습니다.' }));
+      box.appendChild(el('p', { cls: 'help', text: '체크한 부품이 입고검사(QF-03) 대상입니다. 부품에는 LOT 번호를 매기지 않습니다. 분류는 품명·모델로 자동으로 정했고, 체크로 바꿀 수 있습니다.' }));
     } else if (kind === 'io') {
       var shown = items.slice(0, 12).map(function (x, i) { return [i + 1, x.addr, x.tag, x.desc, x.type, x.expect]; });
       if (items.length > 12) shown.push(['', '', '', '외 ' + (items.length - 12) + '점', '', '']);
@@ -323,8 +323,11 @@
     }
     var nPanels = p.panels.filter(function (x) { return x.tag; }).length;
     item(P.clean(p.pj) && P.clean(p.customer) ? 'ok' : 'off', '프로젝트', P.clean(p.pj) ? P.clean(p.pj) : '번호·고객 입력 필요');
-    item(nPanels ? 'ok' : 'off', '판넬', nPanels ? nPanels + '면' : 'Tag 입력 필요');
-    [['bom', 'BOM', '행', '없으면 QF-03·04 빈 표'], ['io', 'I/O 리스트', '점', '없으면 QF-06-1 빈 표'], ['std', '시험 기준표', '항목', '없으면 기준란 빈칸']].forEach(function (d) {
+    var noLot = p.panels.filter(function (x) { return x.tag && !x.serial; }).length;
+    if (!nPanels) item('off', '판넬', 'Tag 입력 필요');
+    else if (noLot) item('warn', '판넬 LOT', noLot + '면 제조번호 비어 있음 — 명판·QF-04에 쓸 번호를 채우세요');
+    else item('ok', '판넬', nPanels + '면 · LOT(제조번호) 입력됨');
+    [['bom', 'BOM', '행', '없으면 QF-03 빈 표'], ['io', 'I/O 리스트', '점', '없으면 QF-06-1 빈 표'], ['std', '시험 기준표', '항목', '없으면 기준란 빈칸']].forEach(function (d) {
       var data = state[d[0]];
       if (!data) item('off', d[1], d[3]);
       else if (data.sample && !state.sample) item('warn', d[1], '예시 파일 사용 중 — 실제 파일로 바꾸세요');

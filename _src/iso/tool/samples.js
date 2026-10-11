@@ -6,7 +6,7 @@
     pj: 'EX-26-015', customer: '아트라스콥코 (예시)', name: '공기압축기 인버터 제어반 (예시)',
     po: 'PO-EX-0001', spec: 'SPEC-EX-01 Rev.B', due: '2026-11-20', drawRev: 'Rev.1', ioRev: 'Rev.1',
     plc: 'TM241CEC24T', plcVer: 'V1.0', tool: 'EcoStruxure Machine Expert V2.2',
-    laws: 'IEC 60204-1 / 고객 사양서', custReq: 'FAT 입회, 주요 부품 LOT·S/N 목록 제출',
+    laws: 'IEC 60204-1 / 고객 사양서', custReq: 'FAT 입회, 판넬 LOT별 FAT 성적서 제출',
     warranty: '계약서 확인 (예시: 납품 후 12개월)', packing: '목재 팔레트 수직 고정, 방습 포장',
     custSupply: '없음', designer: '', reviewer: '', production: '',
     stdRev: 'TS-INV-01 Rev.0 (예시)',

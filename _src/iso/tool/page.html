@@ -39,10 +39,10 @@
 
       <section class="step" aria-labelledby="h-s2">
         <h2 id="h-s2"><span class="num">2</span>판넬</h2>
-        <p class="help">판넬마다 배선 검사(QF-05), FAT 성적서(QF-06), I/O 점검표(QF-06-1), 공정 이동표(QF-16), LOT 추적표(QF-04), 통전 확인(SF-02)이 따로 만들어집니다.</p>
+        <p class="help">판넬마다 배선 검사(QF-05), FAT 성적서(QF-06), I/O 점검표(QF-06-1), 공정 이동표(QF-16), 통전 확인(SF-02)이 따로 만들어집니다. LOT 번호는 판넬에만 매기며 제조번호가 곧 판넬 LOT입니다(명판 표시, QF-04 판넬 LOT·출하 이력).</p>
         <div class="table-wrap">
           <table class="tbl" id="panelTable">
-            <thead><tr><th>도면 Tag</th><th>설명</th><th>제조번호 (명판)</th><th class="w-act"><span class="sr">삭제</span></th></tr></thead>
+            <thead><tr><th>도면 Tag</th><th>설명</th><th>제조번호 = LOT (명판)</th><th class="w-act"><span class="sr">삭제</span></th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -54,7 +54,7 @@
 
       <section class="step" aria-labelledby="h-s3">
         <h2 id="h-s3"><span class="num">3</span>부품표 (BOM)</h2>
-        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)와 LOT 추적표(QF-04)에 들어갑니다. 판넬 열이 없으면 모든 판넬에 같은 BOM을 씁니다.</p>
+        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)에 들어갑니다. 부품에는 LOT 번호를 따로 매기지 않습니다. 판넬 열이 없으면 모든 판넬에 같은 BOM을 씁니다.</p>
         <div class="drop" data-kind="bom">
           <input type="file" id="fileBom" accept=".xlsx,.xls,.csv">
           <label for="fileBom"><b>BOM 파일 고르기</b> 또는 여기로 끌어다 놓기</label>
@@ -100,8 +100,8 @@
         <div class="progress" id="progress" hidden><span id="progressBar"></span></div>
         <p class="status" id="genStatus" role="status"></p>
         <ul class="rules">
-          <li><b>자동으로 채움</b> 프로젝트·판넬 번호, 도면·PLC Rev, 부품 목록, I/O 점, 기준값, 기록 경로</li>
-          <li><b>직접 적음</b> LOT·시리얼, 실측값, 합격·불합격, 서명·일자</li>
+          <li><b>자동으로 채움</b> 프로젝트 번호·판넬 LOT(제조번호), 도면·PLC Rev, 부품 목록, I/O 점, 기준값, 기록 경로</li>
+          <li><b>직접 적음</b> 실측값, 합격·불합격, 서명·일자</li>
           <li>결과를 미리 채우거나 나중에 몰아서 서명하지 않습니다(매뉴얼 부록 E).</li>
         </ul>
       </div>
