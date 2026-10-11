@@ -30,8 +30,8 @@
       <section class="step" aria-labelledby="h-s1">
         <h2 id="h-s1"><span class="num">1</span>프로젝트 정보</h2>
         <div class="grid" id="fieldsBasic"></div>
-        <details class="more" id="moreReq" open>
-          <summary>고객 요구 · 담당자</summary>
+        <details class="more" id="moreReq">
+          <summary id="moreReqSum">고객 요구 · 담당자</summary>
           <div class="grid" id="fieldsReq"></div>
         </details>
         <div class="checks" id="fieldsOpt"></div>
@@ -58,7 +58,7 @@
         <div class="drop" data-kind="bom">
           <input type="file" id="fileBom" accept=".xlsx,.xls,.csv">
           <label for="fileBom"><b>BOM 파일 고르기</b> 또는 여기로 끌어다 놓기</label>
-          <button type="button" class="btn btn-ghost btn-sm" data-sample="bom">예시 BOM 엑셀 받기</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-sample="bom">예시 BOM 받기</button>
         </div>
         <div class="loaded" id="bomInfo"></div>
       </section>
@@ -69,7 +69,7 @@
         <div class="drop" data-kind="io">
           <input type="file" id="fileIo" accept=".xlsx,.xls,.csv">
           <label for="fileIo"><b>I/O 리스트 고르기</b> 또는 여기로 끌어다 놓기</label>
-          <button type="button" class="btn btn-ghost btn-sm" data-sample="io">예시 I/O 엑셀 받기</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-sample="io">예시 I/O 리스트 받기</button>
         </div>
         <div class="loaded" id="ioInfo"></div>
       </section>
@@ -93,6 +93,7 @@
           <h2 id="h-out">만들어질 문서</h2>
           <p class="count"><b id="docCount">0</b>개 파일 · 판넬 <b id="panelCount">0</b>면</p>
         </div>
+        <ul class="checklist" id="checklist" aria-label="입력 상태"></ul>
         <div class="tree" id="tree"></div>
         <p class="missing" id="missing" role="alert"></p>
         <button type="button" class="btn btn-primary" id="btnGen">문서 묶음 만들기 (.zip)</button>
@@ -106,6 +107,11 @@
       </div>
     </aside>
   </main>
+
+  <div class="mbar" role="region" aria-label="문서 묶음 만들기">
+    <span class="mcount"><b id="mDocCount">0</b>개 파일 · <span id="mWarn"></span></span>
+    <button type="button" class="btn btn-primary" id="btnGenM">묶음 만들기</button>
+  </div>
 
   <footer class="foot">
     <p class="foot-brand">㈜동인엔시스 · 제어하는 곳에서, 데이터가 시작됩니다</p>

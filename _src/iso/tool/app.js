@@ -114,7 +114,7 @@
     var id = 'f-' + key;
     var input = el('input', {
       type: kind === 'date' ? 'date' : 'text', id: id, value: state.project[key] || '', autocomplete: 'off',
-      oninput: function (e) { state.project[key] = e.target.value; e.target.classList.remove('invalid'); renderPlan(); }
+      oninput: function (e) { state.project[key] = e.target.value; state.sample = false; e.target.classList.remove('invalid'); renderPlan(); }
     });
     var lab = el('label', { for: id }, [label, kind === 'req' ? el('span', { cls: 'req', text: '*' }) : null]);
     return el('div', { cls: 'field' }, [lab, input]);
@@ -143,8 +143,9 @@
     clear(tb);
     state.panels.forEach(function (pn, i) {
       function inp(key, ph) {
-        return el('input', { type: 'text', id: 'p-' + i + '-' + key, value: pn[key] || '', placeholder: ph || '', 'aria-label': key,
-          oninput: function (e) { pn[key] = e.target.value; e.target.classList.remove('invalid'); renderPlan(); } });
+        var aria = { tag: '도면 Tag', desc: '설명', serial: '제조번호' }[key] + ' (' + (i + 1) + '번째 판넬)';
+        return el('input', { type: 'text', id: 'p-' + i + '-' + key, value: pn[key] || '', placeholder: ph || '', 'aria-label': aria,
+          oninput: function (e) { pn[key] = e.target.value; state.sample = false; e.target.classList.remove('invalid'); renderPlan(); } });
       }
       tb.appendChild(el('tr', {}, [
         el('td', {}, [inp('tag', '예: LCP-01')]),
@@ -236,7 +237,7 @@
     }
     if (!items.length) chips.push(el('span', { cls: 'chip chip-bad', text: '읽은 행 없음 — 아래 열 연결을 확인하세요' }));
     box.appendChild(el('div', { cls: 'file-line' }, [el('span', { cls: 'file-name', text: data.fileName })].concat(chips).concat([
-      el('button', { type: 'button', cls: 'btn btn-ghost btn-sm', text: '빼기', onclick: function () { state[kind] = null; renderData(kind); renderPlan(); } })
+      el('button', { type: 'button', cls: 'btn btn-ghost btn-sm', text: '파일 빼기', onclick: function () { state[kind] = null; renderData(kind); renderPlan(); } })
     ])));
     var picker = sheetPicker(data);
     var map = mappingBox(data);
@@ -304,6 +305,34 @@
     $('panelCount').textContent = p.panels.filter(function (x) { return x.tag; }).length;
     var miss = missingList();
     $('missing').textContent = miss.length ? '필요한 입력: ' + miss.join(', ') : '';
+    renderChecklist(p, docs.length + 1);
+    var filled = FIELDS_REQ.filter(function (f) { return P.clean(state.project[f[0]]); }).length;
+    $('moreReqSum').textContent = '고객 요구 · 담당자 (' + filled + '/' + FIELDS_REQ.length + ' 입력)';
+  }
+
+  function renderChecklist(p, total) {
+    var list = $('checklist');
+    clear(list);
+    var warns = 0;
+    function item(kind, title, text) {
+      if (kind === 'warn') warns++;
+      list.appendChild(el('li', { cls: kind }, [
+        el('span', { cls: 'ic', 'aria-hidden': 'true', text: kind === 'ok' ? '✓' : (kind === 'warn' ? '!' : '–') }),
+        el('span', { cls: 'txt' }, [el('b', { text: title + ' ' }), text])
+      ]));
+    }
+    var nPanels = p.panels.filter(function (x) { return x.tag; }).length;
+    item(P.clean(p.pj) && P.clean(p.customer) ? 'ok' : 'off', '프로젝트', P.clean(p.pj) ? P.clean(p.pj) : '번호·고객 입력 필요');
+    item(nPanels ? 'ok' : 'off', '판넬', nPanels ? nPanels + '면' : 'Tag 입력 필요');
+    [['bom', 'BOM', '행', '없으면 QF-03·04 빈 표'], ['io', 'I/O 리스트', '점', '없으면 QF-06-1 빈 표'], ['std', '시험 기준표', '항목', '없으면 기준란 빈칸']].forEach(function (d) {
+      var data = state[d[0]];
+      if (!data) item('off', d[1], d[3]);
+      else if (data.sample && !state.sample) item('warn', d[1], '예시 파일 사용 중 — 실제 파일로 바꾸세요');
+      else if (d[0] === 'std' && data.items.some(function (x) { return /\[예시\]/.test(x.value + x.method); })) item('warn', d[1], '[예시] 값 포함 — 승인된 기준표로 바꾸세요');
+      else item('ok', d[1], data.items.length + d[2]);
+    });
+    $('mDocCount').textContent = total;
+    $('mWarn').textContent = warns ? '확인 ' + warns + '건' : (missingList().length ? '입력 필요' : '준비됨');
   }
 
   // ---------------------------------------------------------------- 저장
@@ -361,6 +390,7 @@
     var date = P.today();
     var btn = $('btnGen');
     btn.disabled = true;
+    $('btnGenM').disabled = true;
     $('progress').hidden = false;
     $('progressBar').style.width = '0%';
     setStatus('문서를 만드는 중…', '');
@@ -379,6 +409,7 @@
       setStatus('문서를 만들지 못했습니다: ' + ((e && e.message) || e), 'bad');
     }).then(function () {
       btn.disabled = false;
+      $('btnGenM').disabled = false;
       $('progress').hidden = true;
     });
   }
@@ -452,6 +483,7 @@
       renderPlan();
     });
     $('btnGen').addEventListener('click', generate);
+    $('btnGenM').addEventListener('click', generate);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
