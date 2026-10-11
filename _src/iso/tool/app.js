@@ -477,7 +477,9 @@
     $('bomBasis').addEventListener('change', renderPlan);
     $('btnSaveProject').addEventListener('click', function () {
       var saved = {format: 'DI-ISO-PROJECT', version: 1, savedAt: new Date().toISOString(), bomBasis: $('bomBasis').value, state: state};
-      saveFile((P.clean(state.project.pj) || '프로젝트') + '_입력_' + Date.now() + '.json', new Blob([JSON.stringify(saved, null, 2)], {type: 'application/json'}))
+      var blob = new Blob([JSON.stringify(saved, null, 2)], {type: 'application/json'});
+      if (blob.size > 20 * 1024 * 1024) { setStatus('프로젝트 저장 파일이 20MB를 초과합니다. BOM·I/O·기준표를 필요한 시트만 있는 파일로 바꿔 저장하세요.', 'bad'); return; }
+      saveFile((P.clean(state.project.pj) || '프로젝트') + '_입력_' + Date.now() + '.json', blob)
         .then(function () { setStatus('프로젝트 입력을 저장했습니다. 실제 작성 엑셀도 별도로 보관하세요.', 'ok'); }, function (e) { saveError(e, '프로젝트'); });
     });
     $('fileProject').addEventListener('change', function (event) {

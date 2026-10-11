@@ -32,6 +32,7 @@
 | `build_tool.py` | 위 파일과 `forms_data.py`의 양식 정의를 묶어 한 파일로 만든다 |
 
 - 다시 만들기: `python3 _src/iso/build_tool.py` → `tool/dist/ISO-기록생성기.html`
+- 프로젝트 저장·복원과 판넬 수량별 문서 검증: `node _src/iso/tool/check_project.cjs`
 - 쓰는 법: 이 HTML 파일을 회사 공용 저장소에 두고 크롬·엣지로 엽니다(엑셀 라이브러리를 인터넷에서 불러오므로 인터넷 연결 필요).
 - 회사 BOM·I/O 파일은 브라우저 안에서만 처리되고 밖으로 보내지 않습니다. 실제 프로젝트 파일이나 생성 결과는 이 저장소에 올리지 않습니다.
 - `forms_data.py`의 양식을 고치면 `build_forms.py`와 `build_tool.py`를 둘 다 다시 실행합니다.

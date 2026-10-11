@@ -251,15 +251,25 @@
     if (!saved || saved.format !== 'DI-ISO-PROJECT' || saved.version !== 1 || !saved.state) throw new Error('지원하는 프로젝트 저장 파일이 아닙니다.');
     var data = saved.state;
     if (!data.project || typeof data.project !== 'object' || Array.isArray(data.project) || !Array.isArray(data.panels) || !data.panels.length) throw new Error('프로젝트·판넬 정보가 잘못되었습니다.');
+    if (Object.keys(data.project).some(function (key) { return data.project[key] !== null && ['string', 'boolean', 'number'].indexOf(typeof data.project[key]) < 0; }) || typeof data.sample !== 'boolean') throw new Error('프로젝트 입력값이 잘못되었습니다.');
     data.panels.forEach(function (x) {
       if (!x || ['tag', 'desc', 'serial'].some(function (key) { return typeof x[key] !== 'string'; })) throw new Error('판넬 정보가 잘못되었습니다.');
     });
     ['bom', 'io', 'std'].forEach(function (kind) {
       var value = data[kind];
       if (value !== null && (!value || !Array.isArray(value.items) || !Array.isArray(value.rows) || !value.det)) throw new Error(kind + ' 원본 데이터가 잘못되었습니다.');
-      if (value) value.items.forEach(function (item) {
-        if (!item || typeof item !== 'object' || Array.isArray(item) || (kind === 'bom' && !Array.isArray(item.tags))) throw new Error(kind + ' 항목이 잘못되었습니다.');
-      });
+      if (!value) return;
+      if (value.kind !== kind || typeof value.fileName !== 'string' || typeof value.sample !== 'boolean' || value.rows.some(function (row) { return !Array.isArray(row) || row.some(function (cell) { return cell !== null && ['string', 'number', 'boolean'].indexOf(typeof cell) < 0; }); })) throw new Error(kind + ' 원본 행이 잘못되었습니다.');
+      var det = value.det, header = value.rows[det.headerRow] || [];
+      if (!Number.isInteger(det.headerRow) || det.headerRow < 0 || det.headerRow >= Math.max(1, value.rows.length) || !det.map || typeof det.map !== 'object' || Array.isArray(det.map) || Object.keys(det.map).some(function (key) { return !Object.prototype.hasOwnProperty.call(LABELS[kind], key) || !Number.isInteger(det.map[key]) || det.map[key] < 0 || det.map[key] >= header.length; })) throw new Error(kind + ' 열 연결이 잘못되었습니다.');
+      if (value.wb && (!Array.isArray(value.wb.SheetNames) || !value.wb.Sheets || typeof value.wb.Sheets !== 'object' || value.wb.SheetNames.some(function (name) { return typeof name !== 'string' || !Object.prototype.hasOwnProperty.call(value.wb.Sheets, name) || !value.wb.Sheets[name] || typeof value.wb.Sheets[name] !== 'object'; }) || value.wb.SheetNames.indexOf(value.sheet) < 0)) throw new Error(kind + ' 시트 정보가 잘못되었습니다.');
+      var items = { bom: parseBom, io: parseIo, std: parseStd }[kind](value.rows, det);
+      if (kind === 'bom') {
+        if (value.items.length !== items.length || value.items.some(function (item) { return !item || typeof item.major !== 'boolean'; })) throw new Error('BOM 주요 부품 선택이 잘못되었습니다.');
+        items.forEach(function (item, i) { item.major = value.items[i].major; });
+      }
+      // 저장된 계산값 대신 원본 행으로 다시 읽고, 사용자 주요 부품 선택만 유지한다.
+      value.items = items;
     });
     if (['', 'perPanel', 'allocated'].indexOf(saved.bomBasis) < 0) throw new Error('BOM 수량 기준이 잘못되었습니다.');
     return saved;
