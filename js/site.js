@@ -276,3 +276,44 @@ var TXT = IS_EN ? {
   p.querySelector('.pp-th').addEventListener('click',function(){ close(); });
   setTimeout(function(){ p.classList.add('on'); },1800);
 })();
+
+// 메인 첫 화면: 데이터가 흐르는 빛줄기(캔버스) · 마우스 시차 · 지표 숫자 세기
+(function(){
+  var hero=document.querySelector('.hero'), fx=document.querySelector('.hero-fx');
+  if(!hero||!fx||!fx.getContext) return;
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // 지표 첫 숫자(35) 세기
+  var b=hero.querySelector('.note b'), m=b&&b.textContent.match(/^(\d+)(.*)$/);
+  if(m){var N=+m[1], rest=m[2]; b.textContent='0'+rest; setTimeout(function(){var s=performance.now();(function st(n){var u=Math.min(1,(n-s)/1300);b.textContent=Math.round(N*(1-Math.pow(1-u,4)))+rest;if(u<1)requestAnimationFrame(st);})(s);},1700);}
+  var g=fx.getContext('2d'), W=0, H=0, paths=[], pk=[], vis=true, start=performance.now(), last=0;
+  function size(){var d=Math.min(2,window.devicePixelRatio||1);W=fx.clientWidth;H=fx.clientHeight;fx.width=W*d;fx.height=H*d;g.setTransform(d,0,0,d,0,0);
+    paths=[];var n=W<768?4:7;for(var i=0;i<n;i++){var y0=H*(.18+.66*i/(n-1))+(Math.random()-.5)*H*.08,y1=H*(.12+.76*Math.random());
+      paths.push([-60,y0,W*.35,y0+(Math.random()-.5)*H*.35,W*.68,y1+(Math.random()-.5)*H*.35,W+60,y1]);}}
+  function at(p,s){var u=1-s,a=u*u*u,b2=3*u*u*s,c=3*u*s*s,e=s*s*s;return[a*p[0]+b2*p[2]+c*p[4]+e*p[6],a*p[1]+b2*p[3]+c*p[5]+e*p[7]];}
+  function fade(x){var r=(x/W-.38)/.3;r=r<0?0:r>1?1:r*r*(3-2*r);return W<768?r*.45:r;}   // 휴대폰은 글자가 넓어 더 흐리게   // 글자 쪽(왼쪽)은 흐리게
+  function frame(now){
+    if(!vis){last=0;return;}
+    var dt=last?Math.min(.05,(now-last)/1000):0; last=now; var k=Math.min(1,(now-start-1200)/1800); if(k<0)k=0;
+    g.clearRect(0,0,W,H); g.globalCompositeOperation='lighter';
+    paths.forEach(function(p){g.beginPath();for(var s=0;s<=1.0001;s+=.04){var q=at(p,s);s?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]);}g.strokeStyle='rgba(120,180,255,'+(.11*k*fade(W*.75))+')';g.lineWidth=1;g.stroke();});
+    if(k>0&&Math.random()<dt*(W<768?5:11)) pk.push({p:paths[Math.random()*paths.length|0],s:0,v:.12+Math.random()*.16,len:.05+Math.random()*.05});
+    pk=pk.filter(function(o){o.s+=o.v*dt;return o.s-o.len<1;});
+    pk.forEach(function(o){
+      for(var j=0;j<10;j++){var s=o.s-o.len*j/10;if(s<0||s>1)continue;var q=at(o.p,s),a=(1-j/10)*k*fade(q[0]);if(a<=0)continue;
+        g.beginPath();g.arc(q[0],q[1],j?1.6:2.6,0,6.283);g.fillStyle='rgba(160,215,255,'+a+')';g.fill();}
+      var h=at(o.p,Math.min(1,o.s)),ha=.55*k*fade(h[0]);if(ha>0){var gr=g.createRadialGradient(h[0],h[1],0,h[0],h[1],22);gr.addColorStop(0,'rgba(120,190,255,'+ha+')');gr.addColorStop(1,'rgba(120,190,255,0)');g.fillStyle=gr;g.fillRect(h[0]-22,h[1]-22,44,44);}
+    });
+    g.globalCompositeOperation='source-over'; requestAnimationFrame(frame);
+  }
+  size(); window.addEventListener('resize',size);
+  if('IntersectionObserver' in window) new IntersectionObserver(function(es){var was=vis;vis=es[0].isIntersecting&&!document.hidden;if(vis&&!was)requestAnimationFrame(frame);}).observe(hero);
+  document.addEventListener('visibilitychange',function(){var was=vis;vis=!document.hidden;if(vis&&!was)requestAnimationFrame(frame);});
+  requestAnimationFrame(frame);
+  // 마우스를 움직이면 글자와 빛줄기가 살짝 반대로 움직임(데스크톱)
+  if(window.matchMedia&&matchMedia('(pointer: fine)').matches){
+    var wrap=hero.querySelector('.wrap'), tx=0, ty=0, cx=0, cy=0, on=false;
+    hero.addEventListener('mousemove',function(e){var r=hero.getBoundingClientRect();tx=(e.clientX-r.left)/r.width-.5;ty=(e.clientY-r.top)/r.height-.5;if(!on){on=true;requestAnimationFrame(mv);}});
+    function mv(){cx+=(tx-cx)*.08;cy+=(ty-cy)*.08;wrap.style.transform='translate3d('+(-cx*10).toFixed(2)+'px,'+(-cy*6).toFixed(2)+'px,0)';fx.style.transform='translate3d('+(cx*18).toFixed(2)+'px,'+(cy*12).toFixed(2)+'px,0)';
+      if(Math.abs(tx-cx)+Math.abs(ty-cy)>.001)requestAnimationFrame(mv);else on=false;}
+  }
+})();
