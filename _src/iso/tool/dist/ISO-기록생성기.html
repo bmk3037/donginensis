@@ -3247,6 +3247,9 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   var cur = null;      // 지금 시험 중인 판넬 기록
   var tag = '';        // 선택한 판넬 Tag
   var ioFilter = 'all';
+  var unreadRecord = '';
+  var recordError = '';
+  var saveWarning = '';
 
   function now() {
     var d = new Date();
@@ -3271,7 +3274,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   function fresh(p, t) {
     var tp = template(t), pn = panelsOf(p).filter(function (x) { return x.tag === t; })[0] || {};
     return {
-      format: 'DI-ISO-FAT', version: 1, pj: A.P.clean(p.pj), tag: t, lot: pn.serial || '', desc: pn.desc || '',
+      format: 'DI-ISO-FAT', version: 2, pj: A.P.clean(p.pj), tag: t, lot: pn.serial || '', desc: pn.desc || '',
+      basis: basis(p, t, tp), recordRev: A.P.clean(p.recordRev) || '00', runId: new Date().toISOString(),
       date: todayIso(), kind: KIND[0], tester: p.tester || '', witness: p.witness || '', meters: p.meters || '', place: '당사 공장',
       items: tp.rows06.map(function (r) { return { item: r[0] || '', method: r[1] || '', std: r[2] || '', result: '', judge: '', evidence: '', retest: '', t: '' }; }),
       io: tp.rows061.map(function (r) { return { no: r[0], addr: r[1] || '', desc: r[2] || '', type: r[3] || '', expect: r[4] || '', result: '', judge: '', by: '', note: '', t: '' }; }),
@@ -3279,18 +3283,66 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     };
   }
 
+  function itemDefs(items) { return items.map(function (x) { return [x.item, x.method, x.std]; }); }
+  function ioDefs(io) { return io.map(function (x) { return [x.no, x.addr, x.desc, x.type, x.expect]; }); }
+  function basis(p, t, tp) {
+    tp = tp || template(t);
+    var pn = panelsOf(p).filter(function (x) { return x.tag === t; })[0] || {};
+    var b = { lot: A.P.clean(pn.serial), desc: A.P.clean(pn.desc), formRev: A.FORMS.rev,
+      bom: A.bomItems().filter(function (x) { return !x.panel || A.P.norm(x.panel) === A.P.norm(t); }) };
+    ['customer', 'name', 'po', 'spec', 'drawRev', 'bomRev', 'bomBasis', 'ioRev', 'plc', 'plcVer', 'stdRev', 'stdName'].forEach(function (k) { b[k] = A.P.clean(p[k]); });
+    b.items = tp.rows06.map(function (r) { return [r[0] || '', r[1] || '', r[2] || '']; });
+    b.io = tp.rows061.map(function (r) { return [r[0], r[1] || '', r[2] || '', r[3] || '', r[4] || '']; });
+    return JSON.parse(JSON.stringify(b));
+  }
+  function basisIssues(d, p, t) {
+    if (d.pj !== A.P.clean(p.pj) || d.tag !== t) return ['프로젝트·판넬 불일치'];
+    if (!d.basis) return ['이전 기록에 시험 기준 버전이 없어 현재 기준과 대조할 수 없습니다'];
+    var b = basis(p, t), labels = {lot: '판넬 LOT', desc: '판넬 설명', formRev: '시험 양식 Rev', bom: 'BOM 내용', customer: '고객', name: '프로젝트명', po: '계약·PO', spec: '고객 사양', drawRev: '도면 Rev', bomRev: 'BOM Rev', bomBasis: 'BOM 수량 기준', ioRev: 'I/O Rev', plc: 'PLC 기종', plcVer: 'PLC Ver', stdRev: '시험 기준 Rev', stdName: '시험 기준 이름', items: '시험 항목·방법·기준', io: 'I/O 점·기대 동작'};
+    var issues = Object.keys(b).filter(function (k) { return JSON.stringify(d.basis[k]) !== JSON.stringify(b[k]); }).map(function (k) { return labels[k] + ' 변경'; });
+    if (d.lot !== b.lot || JSON.stringify(itemDefs(d.items)) !== JSON.stringify(b.items) || JSON.stringify(ioDefs(d.io)) !== JSON.stringify(b.io)) issues.push('저장 기록의 판넬 LOT·시험 행이 현재 기준과 다릅니다');
+    return issues;
+  }
+  function readRecord(text, p, t) {
+    var d = JSON.parse(text);
+    if (!d || d.format !== 'DI-ISO-FAT' || [1, 2].indexOf(d.version) < 0) throw new Error('지원하는 FAT 시험 기록 파일이 아닙니다.');
+    var fields = ['pj', 'tag', 'lot', 'desc', 'date', 'kind', 'tester', 'witness', 'meters', 'place', 'started', 'updated'];
+    if (fields.some(function (k) { return typeof d[k] !== 'string'; }) || !Array.isArray(d.items) || !Array.isArray(d.io)) throw new Error('시험 기록의 정보·시험 행 형식이 잘못되었습니다.');
+    function validRows(rows, keys, judges) {
+      return rows.every(function (x) { return x && !Array.isArray(x) && keys.every(function (k) { return typeof x[k] === 'string'; }) && (!x.judge || judges.indexOf(x.judge) >= 0); });
+    }
+    if (!validRows(d.items, ['item', 'method', 'std', 'result', 'judge', 'evidence', 'retest', 't'], JUDGE) ||
+        !validRows(d.io, ['addr', 'desc', 'type', 'expect', 'result', 'judge', 'by', 'note', 't'], IO_JUDGE) ||
+        d.io.some(function (x) { return !Number.isInteger(x.no) || x.no < 1; })) throw new Error('시험 기록의 항목·I/O·판정 형식이 잘못되었습니다.');
+    if (d.version === 2 && (!d.basis || typeof d.basis !== 'object' || Array.isArray(d.basis) || typeof d.runId !== 'string' || typeof d.recordRev !== 'string')) throw new Error('시험 기준 버전 정보가 잘못되었습니다.');
+    if (d.pj !== A.P.clean(p.pj)) throw new Error('수주번호가 다릅니다. 01 탭에서 ' + d.pj + ' 프로젝트를 먼저 불러오세요.');
+    if ((t && d.tag !== t) || !panelsOf(p).some(function (x) { return x.tag === d.tag; })) throw new Error('현재 프로젝트의 판넬과 시험 기록이 다릅니다.');
+    return d;
+  }
+  function requireCurrent() {
+    if (recordError || basisIssues(cur, A.project(), cur.tag).length) throw new Error('시험 기준이 달라 성적서를 출력할 수 없습니다. 이전 기록을 보관한 뒤 현재 기준으로 재시험하세요.');
+  }
+  function archiveLocal(p, t, text) {
+    // 다운로드 시작만으로 파일 보관 성공을 확인할 수 없어 교체 전에 기기에도 원본을 남긴다.
+    try { localStorage.setItem(key(p, t) + ':previous:' + Date.now(), text); }
+    catch (e) { throw new Error('이전 기록을 이 기기에 보관하지 못해 교체를 중단했습니다. 기존 기록은 유지됩니다.'); }
+  }
+
   function load(p, t) {
-    var data = null;
-    try { data = JSON.parse(localStorage.getItem(key(p, t)) || 'null'); } catch (e) { data = null; }
-    cur = data && data.format === 'DI-ISO-FAT' ? data : fresh(p, t);
-    var pn = panelsOf(p).filter(function (x) { return x.tag === t; })[0];
-    if (pn) { cur.lot = pn.serial || cur.lot; cur.desc = pn.desc || cur.desc; }
+    unreadRecord = ''; recordError = ''; saveWarning = '';
+    var text = '';
+    try { text = localStorage.getItem(key(p, t)) || ''; } catch (e) { /* 파일 저장으로 보관 */ }
+    if (!text) { cur = fresh(p, t); return; }
+    try { cur = readRecord(text, p, t); }
+    catch (e) { unreadRecord = text; recordError = e.message; cur = fresh(p, t); }
   }
   function save() {
     cur.updated = now();
-    try { localStorage.setItem(key(A.project(), cur.tag), JSON.stringify(cur)); } catch (e) { /* 이 PC에 못 남겨도 파일 저장으로 보관 */ }
+    saveWarning = '';
+    try { localStorage.setItem(key(cur, cur.tag), JSON.stringify(cur)); }
+    catch (e) { saveWarning = '이 기기에 저장하지 못했습니다. 화면을 닫기 전에 시험 기록 JSON으로 보관하세요.'; setStatus(saveWarning, 'bad'); }
     var s = $('fatSaved');
-    if (s) s.textContent = '이 기기에 자동 저장 ' + cur.updated.slice(11);
+    if (s) s.textContent = saveWarning || '이 기기에 자동 저장 ' + cur.updated.slice(11);
   }
 
   // ---------------------------------------------------------------- 집계
@@ -3305,6 +3357,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       ioPass: cnt(io, '합격'), ioFail: cnt(io, '불합격'), ioNa: cnt(io, '해당없음')
     };
     s.verdict = (s.itemsDone < s.items || s.ioDone < s.io) ? '미완료' : s.fail ? '불합격' : s.hold ? '보류' : '합격';
+    if (basisIssues(d, A.project(), d.tag).length) s.verdict = '재시험 필요';
     s.needNote = it.filter(function (x) { return x.judge === '불합격' && !A.P.clean(x.retest); }).length +
       io.filter(function (x) { return x.judge === '불합격' && !A.P.clean(x.note); }).length;
     return s;
@@ -3313,6 +3366,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
 
   // ---------------------------------------------------------------- 출력: 엑셀
   function workbook() {
+    requireCurrent();
     var p = A.project(), tp = template(cur.tag), s = stats();
     var f06 = JSON.parse(JSON.stringify(A.FORMS.forms['QF-06'])), f061 = JSON.parse(JSON.stringify(A.FORMS.forms['QF-06-1']));
     f06.rows = cur.items.map(function (x) {
@@ -3336,7 +3390,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       signNames: { '작성': cur.tester || p.tester, '검토': p.signReviewer || p.quality, '승인': p.signApprover } });
   }
   function fileBase() {
-    return (cur.pj || '프로젝트') + '_FAT_' + cur.tag.replace(/[\\\/:*?"<>|\s]/g, '') + '_' + cur.date.replace(/-/g, '');
+    return (cur.pj || '프로젝트') + '_FAT_' + cur.tag.replace(/[\\\/:*?"<>|\s]/g, '') + '_' + cur.date.replace(/-/g, '') +
+      '_Rev' + (cur.recordRev || '00').replace(/[\\\/:*?"<>|\s]/g, '') + '_' + (cur.runId || cur.started).replace(/[^0-9]/g, '');
   }
   function saveXlsx() {
     if (!window.ExcelJS) { setStatus('엑셀 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인하세요.', 'bad'); return; }
@@ -3350,6 +3405,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
 
   // ---------------------------------------------------------------- 출력: 고객 제출용 성적서
   function reportHtml() {
+    requireCurrent();
     var p = A.project(), s = stats(), tp = template(cur.tag);
     var td = function (v, cls) { return '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v || '') + '</td>'; };
     var jcls = function (j) { return j === '합격' ? 'j-ok' : j === '불합격' ? 'j-bad' : j === '보류' ? 'j-hold' : 'j-na'; };
@@ -3432,17 +3488,37 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   }
   function loadJson(file) {
     if (!file) return;
-    file.text().then(function (text) {
-      var d = JSON.parse(text);
-      if (!d || d.format !== 'DI-ISO-FAT' || !Array.isArray(d.items) || !Array.isArray(d.io) || typeof d.tag !== 'string') throw new Error('FAT 시험 기록 파일이 아닙니다.');
+    return file.text().then(function (text) {
       var p = A.project();
-      if (!panelsOf(p).some(function (x) { return x.tag === d.tag; })) throw new Error('지금 프로젝트에 ' + d.tag + ' 판넬이 없습니다. 01 탭에서 같은 프로젝트를 먼저 불러오세요.');
-      tag = d.tag;
-      cur = d;
-      save();
-      render();
-      setStatus(d.tag + ' 시험 기록을 불러왔습니다 (마지막 입력 ' + (d.updated || '-') + ').', 'ok');
+      var d = readRecord(text, p);
+      var existing = '';
+      try { existing = localStorage.getItem(key(p, d.tag)) || ''; } catch (e) { /* 파일 저장으로 보관 */ }
+      var keep = existing && existing !== JSON.stringify(d) ? A.saveFile(A.P.clean(p.pj) + '_FAT_' + Date.now() + '_기존기록.json', new Blob([existing], { type: 'application/json' })) : Promise.resolve();
+      return keep.then(function () {
+        if (A.P.clean(A.project().pj) !== A.P.clean(p.pj)) throw new Error('프로젝트가 바뀌었습니다. 시험 기록을 다시 불러오세요.');
+        var latest = '';
+        try { latest = localStorage.getItem(key(p, d.tag)) || ''; } catch (e) { /* 파일 저장으로 보관 */ }
+        if (latest !== existing) throw new Error('보관 중 시험 기록이 바뀌어 불러오기를 중단했습니다. 현재 기록을 먼저 저장하세요.');
+        if (existing && existing !== JSON.stringify(d)) archiveLocal(p, d.tag, existing);
+        tag = d.tag;
+        cur = d;
+        unreadRecord = ''; recordError = '';
+        var updated = d.updated;
+        save(); render();
+        setStatus(saveWarning || d.tag + ' 시험 기록을 불러왔습니다 (파일의 마지막 입력 ' + (updated || '-') + '). 기존 기기 기록이 있으면 JSON으로 먼저 보관했습니다.', saveWarning ? 'bad' : 'ok');
+      });
     }).catch(function (e) { setStatus('불러오기 실패: ' + e.message, 'bad'); });
+  }
+  function restart() {
+    var old = cur, p = A.project(), t = cur.tag;
+    var name = fileBase() + '_이전기록_' + Date.now() + '.json';
+    return A.saveFile(name, new Blob([unreadRecord || JSON.stringify(old, null, 1)], { type: 'application/json' })).then(function () {
+      if (cur !== old || A.P.clean(A.project().pj) !== A.P.clean(p.pj) || !panelsOf(A.project()).some(function (x) { return x.tag === t; })) { setStatus('프로젝트·판넬이 바뀌어 새 시험 시작을 중단했습니다. 이전 기록은 유지됩니다.', 'bad'); return; }
+      p = A.project();
+      archiveLocal(p, t, unreadRecord || JSON.stringify(old));
+      cur = fresh(p, t); unreadRecord = ''; recordError = ''; save(); render();
+      setStatus(saveWarning || '이전 기록을 JSON과 기기에 보관하고 현재 기준의 빈 시험 기록을 시작했습니다. 다운로드 파일을 확인하여 프로젝트 폴더에 보관하세요.', saveWarning ? 'bad' : 'ok');
+    }).catch(function (e) { setStatus(A.saveErrorText(e, name) + ' 이전 기록은 유지됩니다.', 'bad'); });
   }
 
   // ---------------------------------------------------------------- 화면
@@ -3536,11 +3612,13 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
 
   function panelProgress(p, t) {
     try {
-      var d = JSON.parse(localStorage.getItem(key(p, t)) || 'null');
-      if (!d || d.format !== 'DI-ISO-FAT') return '시작 전';
+      var text = localStorage.getItem(key(p, t));
+      if (!text) return '시작 전';
+      var d = readRecord(text, p, t);
+      if (basisIssues(d, p, t).length) return '재시험 필요';
       var s = stats(d), tot = s.items + s.io;
       return tot ? Math.round((s.itemsDone + s.ioDone) / tot * 100) + '% · ' + s.verdict : '시작 전';
-    } catch (e) { return ''; }
+    } catch (e) { return '저장 기록 확인 필요'; }
   }
 
   function render() {
@@ -3566,6 +3644,18 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         onclick: function () { tag = pn.tag; load(A.project(), tag); render(); } }, [el('b', { text: pn.tag }), el('small', { text: (pn.serial || 'LOT 없음') + ' · ' + panelProgress(p, pn.tag) })]));
     });
     root.appendChild(pick);
+
+    var issues = recordError ? [recordError] : basisIssues(cur, p, tag);
+    if (issues.length) {
+      root.appendChild(el('section', { cls: 'step' }, [
+        el('h2', { text: '기준 불일치 · 재시험 필요' }),
+        el('p', { cls: 'note', text: issues.join(' / ') }),
+        el('p', { cls: 'help', text: '이전 결과와 판넬 LOT는 그대로 보존했습니다. 현재 기준으로 성적서를 출력하거나 합격을 이어 쓰지 않습니다. 이전 기록을 먼저 보관한 뒤 새 기준으로 시험하세요. 기준 버전이 없는 구형 기록도 보관할 수 있습니다.' }),
+        el('button', { type: 'button', cls: 'btn btn-primary', text: '이전 기록 JSON 보관 후 새 시험 시작', onclick: restart }),
+        el('p', { cls: 'status', id: 'fatStatus', role: 'status' })
+      ]));
+      return;
+    }
 
     var layout = el('div', { cls: 'layout' }), steps = el('div', { cls: 'steps' });
     layout.appendChild(steps);
@@ -3622,16 +3712,11 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         el('label', { cls: 'btn btn-ghost file-btn', for: 'fatFile' }, ['시험 기록 불러오기', el('input', { type: 'file', id: 'fatFile', accept: '.json', onchange: function (e) { loadJson(e.target.files[0]); e.target.value = ''; } })])
       ]),
       el('p', { cls: 'status', id: 'fatStatus', role: 'status' }),
-      el('p', { cls: 'saved', id: 'fatSaved', text: cur.updated ? '이 기기에 자동 저장 ' + cur.updated.slice(11) : '' }),
+      el('p', { cls: 'saved', id: 'fatSaved', text: saveWarning || (cur.updated ? '이 기기에 자동 저장 ' + cur.updated.slice(11) : '') }),
       el('ul', { cls: 'rules' }, [
         el('li', {}, [el('b', { text: '보관' }), 'QF-06 엑셀은 프로젝트 폴더 05_FAT출하에, 서명한 성적서 PDF는 같은 폴더와 고객 제출본으로 둡니다.']),
         el('li', {}, [el('b', { text: '다른 기기' }), '태블릿과 PC가 다르면 \'시험 기록 저장\' 파일을 옮겨 불러옵니다.']),
-        el('li', {}, [el('button', { type: 'button', cls: 'btn btn-ghost btn-sm', text: '이 판넬 입력 처음부터 다시', onclick: function () {
-          if (!window.confirm(cur.tag + ' 시험 입력을 모두 지우고 처음부터 시작할까요? (저장한 파일은 그대로 있습니다)')) return;
-          try { localStorage.removeItem(key(A.project(), cur.tag)); } catch (e) { /* 무시 */ }
-          cur = fresh(A.project(), cur.tag);
-          render();
-        } })])
+        el('li', {}, [el('button', { type: 'button', cls: 'btn btn-ghost btn-sm', text: '현재 기록 JSON 보관 후 새 시험 시작', onclick: restart })])
       ])
     ])]));
     renderItems();
