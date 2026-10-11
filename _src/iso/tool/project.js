@@ -21,6 +21,7 @@
   var SYN = {
     bom: [
       ['qty', ['수량', 'qty', 'quantity', '개수', 'ea']],
+      ['unit', ['단위', 'unit', 'uom']],
       ['tag', ['tag', '태그', '도면기호', '부품기호', '위치기호', '기호', '심볼', 'symbol', 'device', 'reference', 'ref']],
       ['panel', ['판넬', 'panel', '반명', 'cubicle']],
       ['maker', ['메이커', '제조사', '제작사', '브랜드', 'maker', 'manufacturer', 'brand', 'mfr']],
@@ -44,10 +45,12 @@
     ]
   };
   var LABELS = {
-    bom: { name: '품명', model: '모델·형번', maker: '메이커', qty: '수량', tag: '도면 기호(Tag)', panel: '판넬' },
+    bom: { name: '품명', model: '모델·형번', maker: '메이커', qty: '수량', unit: '단위', tag: '도면 기호(Tag)', panel: '판넬' },
     io: { addr: '주소', tag: 'Tag', desc: '설명', type: '구분', expect: '기대 동작·범위', panel: '판넬' },
     std: { item: '항목', target: '모델·정격·대상', value: '값·단위·허용범위', method: '방법·시험조건', source: '근거자료' }
   };
+  SYN.bomTotal = SYN.bom;
+  LABELS.bomTotal = LABELS.bom;
 
   function classifyHeader(cellText, kind, used) {
     var h = norm(cellText);
@@ -137,11 +140,11 @@
       var get = function (k) { return m[k] === undefined ? '' : clean(row[m[k]]); };
       var name = get('name'), model = get('model');
       if (!name && !model) continue;
-      var qtyRaw = get('qty') || '1';
-      var qtyNum = /^[\d.,]+$/.test(qtyRaw) ? parseFloat(qtyRaw.replace(/,/g, '')) : NaN;
+      var qtyRaw = get('qty');
+      var qtyNum = /^(\d+|\d{1,3}(,\d{3})+)(\.\d+)?$/.test(qtyRaw) ? Number(qtyRaw.replace(/,/g, '')) : NaN;
       var cat = classify(name, model);
       items.push({
-        name: name, model: model, maker: get('maker'), qtyText: qtyRaw,
+        name: name, model: model, maker: get('maker'), unit: get('unit'), qtyText: qtyRaw,
         qty: isFinite(qtyNum) ? qtyNum : null, tags: splitTags(get('tag')), panel: get('panel'),
         category: cat, major: cat !== '기타'
       });
@@ -228,7 +231,30 @@
     return bom.filter(function (it) { return !it.panel || norm(it.panel) === norm(panel.tag); });
   }
 
-  function validateInput(p, bom, basis, io) {
+  function compareBom(bom, total) {
+    if (!total || !total.length) return ['프로젝트 원본 총수량 BOM을 불러오세요'];
+    var errors = [], expected = new Map(), allocated = new Map();
+    [['원본', total, expected], ['배분', bom, allocated]].forEach(function (source) {
+      source[1].forEach(function (it, i) {
+        if (typeof it.qty !== 'number' || !Number.isFinite(it.qty) || it.qty <= 0) { errors.push(source[0] + ' BOM ' + (i + 1) + '행: 대조할 양수 수량과 단위를 분리해 입력'); return; }
+        var key = JSON.stringify([it.name, it.model, it.maker, it.unit].map(function (x) { return clean(x).toLowerCase(); }));
+        var group = source[2].get(key);
+        if (!group) { group = {qty: 0, label: [it.name, it.model, it.maker, it.unit].filter(Boolean).join(' ')}; source[2].set(key, group); }
+        group.qty += it.qty;
+        if (!Number.isFinite(group.qty) || group.qty > Number.MAX_SAFE_INTEGER) errors.push(source[0] + ' BOM: 수량 합계가 계산 가능한 범위를 초과합니다');
+      });
+    });
+    new Set(Array.from(expected.keys()).concat(Array.from(allocated.keys()))).forEach(function (key) {
+      var original = expected.get(key), assigned = allocated.get(key);
+      var want = original ? original.qty : 0, got = assigned ? assigned.qty : 0;
+      // shortcut: 소수 수량은 절대 오차 1e-9 허용; 더 정밀한 단위에는 십진수 연산을 적용한다.
+      var tolerance = Number.isInteger(want) && Number.isInteger(got) ? 0 : 1e-9;
+      if (Math.abs(want - got) > tolerance) errors.push('BOM 수량 대조: ' + (original || assigned).label + ' — 원본 ' + want + ' / 배분 ' + got);
+    });
+    return errors;
+  }
+
+  function validateInput(p, bom, basis, io, total) {
     var errors = [], panels = (p.panels || []).filter(function (x) { return clean(x.tag); });
     var tags = panels.map(function (x) { return norm(x.tag); });
     var serials = panels.map(function (x) { return clean(x.serial); }).filter(Boolean);
@@ -240,10 +266,11 @@
     if (bom.length && basis !== 'perPanel' && basis !== 'allocated') errors.push('BOM 수량 기준 선택');
     bom.forEach(function (it, i) {
       var row = 'BOM ' + (i + 1) + '행: ';
-      if ((it.major || it.qty !== null) && (!Number.isFinite(Number(it.qty)) || Number(it.qty) <= 0)) errors.push(row + '양수 수량 필요');
+      if ((!clean(it.qtyText) && it.qty === null) || ((it.major || it.qty !== null || /^[+-]?[\d.,]+$/.test(clean(it.qtyText))) && (!Number.isFinite(Number(it.qty)) || Number(it.qty) <= 0))) errors.push(row + '양수 수량 필요');
       if (basis === 'allocated' && !clean(it.panel)) errors.push(row + '총수량을 판넬별 배분하고 판넬 열 입력');
       if (clean(it.panel) && tags.indexOf(norm(it.panel)) < 0) errors.push(row + '등록되지 않은 판넬');
     });
+    if (basis === 'allocated') errors = errors.concat(compareBom(bom, total));
     (io || []).forEach(function (point, i) {
       if (clean(point.panel) && tags.indexOf(norm(point.panel)) < 0) errors.push('I/O ' + (i + 1) + '행: 등록되지 않은 판넬');
     });
@@ -254,12 +281,13 @@
     var saved = JSON.parse(text);
     if (!saved || saved.format !== 'DI-ISO-PROJECT' || saved.version !== 1 || !saved.state) throw new Error('지원하는 프로젝트 저장 파일이 아닙니다.');
     var data = saved.state;
+    if (data.bomTotal === undefined) data.bomTotal = null;
     if (!data.project || typeof data.project !== 'object' || Array.isArray(data.project) || !Array.isArray(data.panels) || !data.panels.length) throw new Error('프로젝트·판넬 정보가 잘못되었습니다.');
     if (Object.keys(data.project).some(function (key) { return data.project[key] !== null && ['string', 'boolean', 'number'].indexOf(typeof data.project[key]) < 0; }) || typeof data.sample !== 'boolean') throw new Error('프로젝트 입력값이 잘못되었습니다.');
     data.panels.forEach(function (x) {
       if (!x || ['tag', 'desc', 'serial'].some(function (key) { return typeof x[key] !== 'string'; })) throw new Error('판넬 정보가 잘못되었습니다.');
     });
-    ['bom', 'io', 'std'].forEach(function (kind) {
+    ['bom', 'bomTotal', 'io', 'std'].forEach(function (kind) {
       var value = data[kind];
       if (value !== null && (!value || !Array.isArray(value.items) || !Array.isArray(value.rows) || !value.det)) throw new Error(kind + ' 원본 데이터가 잘못되었습니다.');
       if (!value) return;
@@ -267,7 +295,7 @@
       var det = value.det, header = value.rows[det.headerRow] || [];
       if (!Number.isInteger(det.headerRow) || det.headerRow < 0 || det.headerRow >= Math.max(1, value.rows.length) || !det.map || typeof det.map !== 'object' || Array.isArray(det.map) || Object.keys(det.map).some(function (key) { return !Object.prototype.hasOwnProperty.call(LABELS[kind], key) || !Number.isInteger(det.map[key]) || det.map[key] < 0 || det.map[key] >= header.length; })) throw new Error(kind + ' 열 연결이 잘못되었습니다.');
       if (value.wb && (!Array.isArray(value.wb.SheetNames) || !value.wb.Sheets || typeof value.wb.Sheets !== 'object' || value.wb.SheetNames.some(function (name) { return typeof name !== 'string' || !Object.prototype.hasOwnProperty.call(value.wb.Sheets, name) || !value.wb.Sheets[name] || typeof value.wb.Sheets[name] !== 'object'; }) || value.wb.SheetNames.indexOf(value.sheet) < 0)) throw new Error(kind + ' 시트 정보가 잘못되었습니다.');
-      var items = { bom: parseBom, io: parseIo, std: parseStd }[kind](value.rows, det);
+      var items = { bom: parseBom, bomTotal: parseBom, io: parseIo, std: parseStd }[kind](value.rows, det);
       if (kind === 'bom') {
         if (value.items.length !== items.length || value.items.some(function (item) { return !item || typeof item.major !== 'boolean'; })) throw new Error('BOM 주요 부품 선택이 잘못되었습니다.');
         items.forEach(function (item, i) { item.major = value.items[i].major; });
@@ -364,7 +392,7 @@
     panels.forEach(function (panel) {
       itemsForPanel(bom, panel).forEach(function (it) {
         if (!it.major) return;
-        var key = it.name + '|' + it.model + '|' + it.maker;
+        var key = JSON.stringify([it.name, it.model, it.maker, it.unit || '']);
         var a = agg.filter(function (x) { return x.key === key; })[0];
         if (!a) { a = { key: key, it: it, qty: 0, text: [], lots: [] }; agg.push(a); }
         var lot = clean(panel.serial) || clean(panel.tag);
@@ -375,7 +403,7 @@
     var qf03Rows = agg.map(function (a) {
       var it = a.it;
       var qty = a.text.length ? (a.qty ? a.qty + ' + ' : '') + a.text.join(', ') : String(a.qty);
-      return [clean(it.name + ' ' + it.model) + (it.maker ? ' (' + it.maker + ')' : ''), qty + ' / ', a.lots.join(', '), METHOD[it.category] || METHOD['기타']];
+      return [clean(it.name + ' ' + it.model) + (it.maker ? ' (' + it.maker + ')' : ''), clean(qty + ' ' + (it.unit || '')) + ' / ', a.lots.join(', '), METHOD[it.category] || METHOD['기타']];
     });
     add('03_구매입고', 'QF-03', '', {
       '프로젝트 번호': pj, '검사기준(QF-15 번호)': stdRev || 'QF-15', '고객 지급품 여부': p.custSupply,
@@ -507,7 +535,7 @@
       fields: [[['프로젝트 번호', null], ['고객', null]], [['프로젝트명·현장', null], ['판넬', null]], [['계약·PO 번호', null], ['납기', null]],
         [['판넬 LOT (제조번호)', null]], [['담당 (설계 / 생산 / 품질 / 시험)', null]],
         [['도면 Rev / PLC Ver', null], ['생성일', null]], [['BOM 번호·Rev', null], ['I/O 리스트 Rev', null]],
-        [['프로젝트 원본 보관 경로', null]], [['별도 백업 경로', null]], [['문서관리 담당', null], ['접근권한 관리 담당', null]]],
+        [['BOM 수량 기준', null], ['총수량 BOM 원본파일', null]], [['프로젝트 원본 보관 경로', null]], [['별도 백업 경로', null]], [['문서관리 담당', null], ['접근권한 관리 담당', null]]],
       notes: ['이 묶음의 기록과 별도 증빙 목록입니다. 상태·확인일·확인자를 실제 사실대로 기록합니다. 승인 상태는 승인자·일시·기록 버전을 확인할 수 있는 원본 증거 경로가 필요하며, 이 표의 입력만으로 전자승인이 되지 않습니다.',
         '해당없음은 사유·확인자를 남깁니다. 고객/ERP 대체 기록은 필수 항목·승인·추적성을 확인하고 원본 번호·Rev·경로를 연결합니다. 공통기록참조 시트에서 공급자·교정·자격·안전·환경·경영 기록을 찾습니다.',
         '감사 때는 이 표 순서대로 수주 → 설계 → 입고 → 제작 → FAT → 출하(판넬 LOT, QF-04) → SAT 기록을 보여 줍니다.'],
@@ -579,6 +607,7 @@
         '판넬 LOT (제조번호)': (p.panels || []).filter(function (x) { return x.tag; }).map(function (x) { return clean(x.tag) + ' ' + (clean(x.serial) || '(LOT 없음)'); }).join(', '),
         '담당 (설계 / 생산 / 품질 / 시험)': [p.designer, p.production, p.quality, p.tester].map(function (v) { return clean(v) || '-'; }).join(' / '),
         'BOM 번호·Rev': p.bomRev, 'I/O 리스트 Rev': p.ioRev,
+        'BOM 수량 기준': {perPanel: '판넬 1면당 수량', allocated: '프로젝트 총수량의 판넬별 배분'}[p.bomBasis] || '', '총수량 BOM 원본파일': p.bomTotalFile,
         '프로젝트 원본 보관 경로': p.recordPath, '별도 백업 경로': p.backupPath,
         '문서관리 담당': p.documentOwner, '접근권한 관리 담당': p.accessOwner
       }
@@ -611,7 +640,7 @@
   var api = {
     norm: norm, clean: clean, today: today, detectColumns: detectColumns, LABELS: LABELS, SYN: SYN,
     parseBom: parseBom, parseIo: parseIo, parseStd: parseStd, classify: classify, METHOD: METHOD,
-    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, readProject: readProject
+    splitTags: splitTags, plan: plan, generate: generate, indexSpec: indexSpec, commonSpec: commonSpec, STAGE: STAGE, validateInput: validateInput, compareBom: compareBom, readProject: readProject
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.IsoProject = api;

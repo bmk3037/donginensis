@@ -70,7 +70,7 @@
 
       <section class="step" aria-labelledby="h-s3">
         <h2 id="h-s3"><span class="num">3</span>부품표 (BOM)</h2>
-        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)에 들어갑니다. 부품에는 LOT 번호를 따로 매기지 않습니다. 수량 기준을 선택하세요. 프로젝트 총수량은 판넬별로 배분하고 판넬 열을 채워야 합니다.</p>
+        <p class="help">AutoCAD·ERP에서 뽑은 BOM 엑셀(.xlsx, .xls, .csv)을 넣습니다. 주요 부품은 입고검사(QF-03)에 들어갑니다. 부품에는 LOT 번호를 따로 매기지 않습니다. 수량 기준을 선택하세요. 프로젝트 총수량은 판넬별로 배분하고 판넬 열을 채운 뒤 원본 총수량 BOM과 대조합니다.</p>
         <label for="bomBasis">BOM 수량 기준</label>
         <select id="bomBasis"><option value="">선택하세요</option><option value="perPanel">판넬 1면당 수량 (공통 행은 각 판넬에 적용)</option><option value="allocated">프로젝트 총수량을 판넬별로 배분한 BOM</option></select>
         <div class="drop" data-kind="bom">
@@ -79,6 +79,16 @@
           <button type="button" class="btn btn-ghost btn-sm" data-sample="bom">예시 BOM 받기</button>
         </div>
         <div class="loaded" id="bomInfo"></div>
+        <div id="bomTotalWrap" hidden>
+          <h3>프로젝트 원본 총수량 BOM</h3>
+          <p class="help">배분 전 원본을 별도로 넣습니다. 품명·모델·메이커·단위를 동일하게 쓰고 수량에는 숫자만 입력하세요(예: 수량 1, 단위 식). 원본의 모든 부품과 판넬별 배분 합계를 대조하며 누락·초과·원본에 없는 부품은 생성 전에 안내합니다. 원본 파일의 승인 Rev를 확인해 회사 저장소에도 보관하세요.</p>
+          <div class="drop" data-kind="bomTotal">
+            <input type="file" id="fileBomTotal" accept=".xlsx,.xls,.csv">
+            <label for="fileBomTotal"><b>원본 총수량 BOM 고르기</b> 또는 여기로 끌어다 놓기</label>
+            <button type="button" class="btn btn-ghost btn-sm" data-sample="bomTotal">총수량 BOM 양식 받기</button>
+          </div>
+          <div class="loaded" id="bomTotalInfo"></div>
+        </div>
       </section>
 
       <section class="step" aria-labelledby="h-s4">

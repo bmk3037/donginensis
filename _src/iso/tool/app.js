@@ -36,11 +36,11 @@
   var FIELDS_STD = [['stdRev', '기준표 번호·Rev'], ['stdName', '기준표 이름 (판넬 타입)']];
   var FIELDS_STORAGE = [['recordPath', '프로젝트 원본 보관 경로 (공용폴더/NAS)'], ['backupPath', '별도 저장장치의 백업 경로'], ['documentOwner', '문서관리 담당'], ['accessOwner', '접근권한 관리 담당']];
 
-  var state = { project: {}, panels: [], bom: null, io: null, std: null, sample: false };
+  var state = { project: {}, panels: [], bom: null, bomTotal: null, io: null, std: null, sample: false };
 
   // ---------------------------------------------------------------- 데이터
   function parse(kind, rows, det) {
-    if (kind === 'bom') return P.parseBom(rows, det);
+    if (kind === 'bom' || kind === 'bomTotal') return P.parseBom(rows, det);
     if (kind === 'io') return P.parseIo(rows, det);
     return P.parseStd(rows, det);
   }
@@ -58,6 +58,7 @@
     p.stdName = '인버터 제어반 기준표 (예시)';
     state.project = p;
     state.bom = makeData('bom', '예시_BOM.xlsx', S.bom, { sample: true });
+    state.bomTotal = null;
     state.io = makeData('io', '예시_IO리스트.xlsx', S.io, { sample: true });
     state.std = makeData('std', '인버터_제어반_기준표_예시.xlsx', S.std, { sample: true });
     state.sample = true;
@@ -67,7 +68,7 @@
     $('bomBasis').value = '';
     state.project = { approval: false, sat: true, outsource: false };
     state.panels = [{ tag: '', desc: '', serial: '' }];
-    state.bom = state.io = state.std = null;
+    state.bom = state.bomTotal = state.io = state.std = null;
     state.sample = false;
     $('sampleBar').hidden = true;
     renderAll();
@@ -162,7 +163,7 @@
   }
 
   // ---------------------------------------------------------------- 불러온 파일
-  var KIND_NAME = { bom: 'BOM', io: 'I/O 리스트', std: '기준표' };
+  var KIND_NAME = { bom: 'BOM', bomTotal: '원본 총수량 BOM', io: 'I/O 리스트', std: '기준표' };
 
   function mappingBox(data) {
     var header = data.rows[data.det.headerRow] || [];
@@ -219,6 +220,7 @@
     var data = state[kind];
     if (!data) {
       var empty = { bom: 'BOM이 없으면 입고검사(QF-03)는 빈 표로 만듭니다.',
+        bomTotal: '원본 총수량 BOM으로 부품별 배분의 누락·초과를 대조합니다.',
         io: 'I/O 리스트가 없으면 I/O 점검표(QF-06-1)는 번호만 있는 빈 표로 만듭니다.',
         std: '기준표가 없으면 QF-15와 FAT 성적서(QF-06)의 기준란은 비워서 만듭니다.' }[kind];
       box.appendChild(el('p', { cls: 'help', text: empty }));
@@ -248,11 +250,13 @@
     if (picker) map.insertBefore(picker, map.firstChild);
     box.appendChild(el('details', { cls: 'more' }, [el('summary', { text: '열 연결 (' + KIND_NAME[kind] + '의 어느 열을 쓸지)' }), map]));
 
-    if (kind === 'bom') {
-      box.appendChild(table(['주요', '분류', '품명', '모델·형번', '메이커', '수량', '도면 기호'], items.map(function (it, i) {
+    if (kind === 'bomTotal') {
+      box.appendChild(table(['품명', '모델·형번', '메이커', '총수량', '단위'], items.map(function (it) { return [it.name, it.model, it.maker, it.qtyText, it.unit]; })));
+    } else if (kind === 'bom') {
+      box.appendChild(table(['주요', '판넬', '분류', '품명', '모델·형번', '메이커', '수량·단위', '도면 기호'], items.map(function (it, i) {
         var cb = el('input', { type: 'checkbox', checked: it.major, 'aria-label': it.name + ' 주요 부품',
           onchange: function (e) { it.major = e.target.checked; renderData('bom'); renderPlan(); } });
-        return [cb, it.category, it.name, it.model, it.maker, it.qtyText, it.tags.join(', ')];
+        return [cb, it.panel, it.category, it.name, it.model, it.maker, P.clean(it.qtyText + ' ' + it.unit), it.tags.join(', ')];
       }), function (i) { return items[i].major ? null : 'minor'; }));
       box.appendChild(el('p', { cls: 'help', text: '체크한 부품이 입고검사(QF-03) 대상입니다. 부품에는 LOT 번호를 매기지 않습니다. 분류는 품명·모델로 자동으로 정했고, 체크로 바꿀 수 있습니다.' }));
     } else if (kind === 'io') {
@@ -272,6 +276,8 @@
   // ---------------------------------------------------------------- 문서 계획
   function currentProject() {
     var p = Object.assign({}, state.project);
+    p.bomBasis = $('bomBasis').value;
+    p.bomTotalFile = state.bomTotal ? state.bomTotal.fileName : '';
     p.panels = state.panels.map(function (x) { return { tag: P.clean(x.tag), desc: x.desc, serial: P.clean(x.serial) }; });
     return p;
   }
@@ -287,11 +293,12 @@
     if (!P.clean(state.project.pj)) miss.push('프로젝트 번호');
     if (!P.clean(state.project.customer)) miss.push('고객');
     if (!state.panels.some(function (x) { return P.clean(x.tag); })) miss.push('판넬 Tag 1개 이상');
-    miss = miss.concat(P.validateInput(currentProject(), state.bom ? state.bom.items : [], $('bomBasis').value, state.io ? state.io.items : []));
+    miss = miss.concat(P.validateInput(currentProject(), state.bom ? state.bom.items : [], $('bomBasis').value, state.io ? state.io.items : [], state.bomTotal ? state.bomTotal.items : []));
     return miss;
   }
 
   function renderPlan() {
+    $('bomTotalWrap').hidden = $('bomBasis').value !== 'allocated';
     var r = currentPlan();
     var p = r.p, docs = r.docs;
     var tree = $('tree');
@@ -333,6 +340,10 @@
     if (!nPanels) item('off', '판넬', 'Tag 입력 필요');
     else if (noLot) item('warn', '판넬 LOT', noLot + '면 제조번호 비어 있음 — 명판·QF-04에 쓸 번호를 채우세요');
     else item('ok', '판넬', nPanels + '면 · LOT(제조번호) 입력됨');
+    if (p.bomBasis === 'allocated') {
+      var totalErrors = P.compareBom(state.bom ? state.bom.items : [], state.bomTotal ? state.bomTotal.items : []);
+      item(totalErrors.length ? 'warn' : 'ok', '총수량 대조', totalErrors.length ? '원본·배분 수량 확인 필요' : '업로드한 원본과 배분 합계 일치 — 승인본 여부 별도 확인');
+    }
     [['bom', 'BOM', '행', '없으면 QF-03 빈 표'], ['io', 'I/O 리스트', '점', '없으면 QF-06-1 빈 표'], ['std', '시험 기준표', '항목', '없으면 기준란 빈칸']].forEach(function (d) {
       var data = state[d[0]];
       if (!data) item('off', d[1], d[3]);
@@ -431,7 +442,7 @@
 
   function sampleFile(kind) {
     if (!libsReady()) return;
-    var src = { bom: [S.bom, '예시_BOM.xlsx', 'BOM'], io: [S.io, '예시_IO리스트.xlsx', 'I/O 리스트'],
+    var src = { bom: [S.bom, '예시_BOM.xlsx', 'BOM'], bomTotal: [[['품명', '모델', '메이커', '수량', '단위']], '프로젝트_총수량_BOM_양식.xlsx', '총수량 BOM'], io: [S.io, '예시_IO리스트.xlsx', 'I/O 리스트'],
       std: [S.std, '시험기준표_양식_예시.xlsx', '기준표'] }[kind];
     var wb = new window.ExcelJS.Workbook();
     var ws = wb.addWorksheet(src[2]);
@@ -474,6 +485,7 @@
     renderFields();
     renderPanels();
     renderData('bom');
+    renderData('bomTotal');
     renderData('io');
     renderData('std');
     renderPlan();
@@ -527,7 +539,7 @@
   /** 프로젝트 입력 저장 파일(묶음 zip에도 00_프로젝트정보_*.json으로 들어감). 원본 엑셀 통째(wb)는 빼고 읽은 표만 둔다. */
   function projectJson() {
     function slim(d) { return d ? { kind: d.kind, fileName: d.fileName, rows: d.rows, det: d.det, items: d.items, sample: d.sample } : null; }
-    var st = { project: state.project, panels: state.panels, bom: slim(state.bom), io: slim(state.io), std: slim(state.std), sample: state.sample };
+    var st = { project: state.project, panels: state.panels, bom: slim(state.bom), bomTotal: slim(state.bomTotal), io: slim(state.io), std: slim(state.std), sample: state.sample };
     return JSON.stringify({ format: 'DI-ISO-PROJECT', version: 1, savedAt: new Date().toISOString(), bomBasis: $('bomBasis').value, state: st }, null, 1);
   }
   /** 다른 도구(현황판)에서 저장 파일 내용을 넣어 01 탭을 그 프로젝트로 바꾼다 */

@@ -51,4 +51,34 @@ assert.ok(common.rows.some(row => row[0] === 'QF-13-2'));
 assert.ok(common.rows.some(row => row[0] === 'MF-01'));
 assert.ok(common.rows.every(row => row[4] === '' && row[5] === '미확인' && row[6] === ''));
 assert.ok(P.indexSpec(p, docs, catalog.forms, '20261011').dv['7'].includes('검토대기'));
+const totalRows = [['품명', '모델', '메이커', '수량', '단위'], ['차단기', 'A-B', 'MAKER', 3, 'EA'], ['외함', 'BOX', 'MAKER', 1, 'EA']];
+const assignedRows = [['품명', '모델', '메이커', '수량', '단위', '판넬'], ['차단기', 'A-B', 'MAKER', 1, 'EA', 'P-01'], ['차단기', 'A-B', 'MAKER', 2, 'EA', 'P-02'], ['외함', 'BOX', 'MAKER', 1, 'EA', 'P-01']];
+function parseBom(rows, kind = 'bom') { return P.parseBom(rows, P.detectColumns(rows, kind)); }
+const totals = parseBom(totalRows, 'bomTotal'), assigned = parseBom(assignedRows);
+assert.equal(P.compareBom(assigned, totals).length, 0);
+for (const bad of [
+  assigned.slice(0, 2), [...assigned, {...assigned[0]}],
+  assigned.map((x, i) => i ? x : {...x, model: 'AB'}),
+  assigned.map((x, i) => i ? x : {...x, unit: 'M'}),
+  assigned.map((x, i) => i ? x : {...x, qty: null}), []
+]) assert.ok(P.compareBom(bad, totals).length, 'must reject missing/extra/mismatched allocation');
+assert.ok(P.compareBom(assigned, []).length);
+assert.ok(P.compareBom(assigned, [{...totals[0], qty: null}]).length);
+assert.equal(P.compareBom([{...totals[0], qty: .1}, {...totals[0], qty: .2}], [{...totals[0], qty: .3}]).length, 0);
+assert.ok(P.compareBom([{...totals[0], qty: 1000000001}], [{...totals[0], qty: 1000000000}]).length);
+for (const qty of ['', '1.2.3', '1,2', '-1']) {
+  const item = parseBom([totalRows[0], ['차단기', 'A-B', 'MAKER', qty, 'EA']])[0];
+  assert.equal(item.qty, null);
+  assert.ok(P.validateInput(p, [item], 'perPanel').length);
+}
+assert.equal(parseBom([totalRows[0], ['차단기', 'A-B', 'MAKER', '1,000.5', 'EA']])[0].qty, 1000.5);
+const allocationProject = {...p, panels: [...p.panels, {tag: 'P-02', desc: '', serial: 'A-02'}]};
+assert.equal(P.validateInput(allocationProject, assigned, 'allocated', [], totals).length, 0);
+const quantityDocs = P.plan(allocationProject, assigned, [], [], {forms: catalog.forms, date: '20261011'});
+assert.ok(quantityDocs.find(x => x.code === 'QF-03').rows.some(row => row[1] === '3 EA / '));
+assert.ok(P.validateInput(allocationProject, assigned, 'allocated').length);
+const totalData = {kind: 'bomTotal', fileName: 'ORIGINAL.xlsx', sample: false, rows: totalRows, det: P.detectColumns(totalRows, 'bomTotal'), items: totals};
+assert.equal(restore({...saved, state: {...saved.state, bomTotal: totalData}}).state.bomTotal.items[0].qty, 3);
+assert.equal(restore(saved).state.bomTotal, null);
 console.log('PASS: project restore, variable panel count, revision/LOT mapping, unknown panel blocking, complete form catalog');
+console.log('PASS: original BOM reconciliation, missing/extra parts, units, decimal quantities, strict numeric parsing');
