@@ -67,9 +67,25 @@
     state.sample = true;
   }
 
+  /** 05 탭에 한 번 입력한 회사 담당자·명단을 새 프로젝트의 기본값으로 쓴다(빈 값은 넣지 않음) */
+  function companyDefaults() {
+    var an = window.IsoViews && window.IsoViews.annual, c;
+    try { c = an && an.company ? an.company() : null; } catch (e) { c = null; }
+    if (!c) return {};
+    var pr = c.profile || {}, out = {};
+    function put(k, v) { v = String(v || '').trim(); if (v) out[k] = v; }
+    put('signReviewer', pr.quality); put('signApprover', pr.ceo); put('quality', pr.quality); put('reviewer', pr.tech);
+    put('production', pr.production); put('documentOwner', pr.quality); put('accessOwner', pr.admin);
+    put('recordPath', pr.nas); put('backupPath', pr.backup);
+    put('meters', (c.instruments || []).filter(function (m) { return /계측/.test(m.kind); }).map(function (m) { return m.no + ' ' + m.name; }).join(' · '));
+    var wire = (c.suppliers || []).filter(function (x) { return x.kind === '현장배선'; })[0];
+    if (wire) put('outsourceCo', wire.name);
+    return out;
+  }
+
   function clearAll() {
     $('bomBasis').value = '';
-    state.project = { approval: false, sat: true, outsource: false };
+    state.project = Object.assign({ approval: false, sat: true, outsource: false }, companyDefaults());
     state.panels = [{ tag: '', desc: '', serial: '' }];
     state.bom = state.bomTotal = state.io = state.std = null;
     state.sample = false;

@@ -10,9 +10,10 @@
   var view = { owner: '', show: 'open' };
 
   // 규칙 종류: once(시행일+일수) · monthly · quarterly(3·6·9·12월) · half(6·12월) · yearly(월) · fromStart(시행일+개월)
+  // 계측기 교정 기한(cal)은 명단의 최근 교정일·주기로 따로 만든다(calTasks)
   var RULES = [
     { code: 'QF-13', task: '매뉴얼·양식집 Rev.00 배포 기록, 이전 초안 사용중지 표시', kind: 'once', days: 7 },
-    { code: 'SF-04', task: '안전보건관리담당자 선임(또는 위탁) 증빙 확인', kind: 'once', days: 14 },
+    { code: 'SF-04', task: '안전보건관리담당자 선임(또는 위탁) 증빙·관리감독자 지정', kind: 'once', days: 14 },
     { code: 'SF-01', task: '최초 공정 위험성평가 (시행일부터 1개월 이내, 법정)', kind: 'once', days: 30, legal: true },
     { code: 'EF-01', task: '최초 환경측면 중요도 평가', kind: 'once', days: 30 },
     { code: 'MF-04', task: '최초 조직상황·이해관계자·위험과 기회 검토', kind: 'once', days: 30 },
@@ -20,14 +21,13 @@
     { code: 'QF-11', task: '계측기·시험 설비 등록, 교정 유효기한 확인', kind: 'once', days: 30 },
     { code: 'QF-12', task: '제조·검사 인원 자격(업무범위) 승인 등록', kind: 'once', days: 30 },
     { code: 'QF-10', task: '현재 거래 공급자·외주업체 승인 목록 정리', kind: 'once', days: 30 },
-    { code: 'MF-06', task: '근로자 협의 (월 1회)', kind: 'monthly' },
-    { code: 'QF-13-2', task: '백업 표본 복구 확인 (월 1회)', kind: 'monthly' },
-    { code: 'MF-03', task: '목표 분기 실적 점검', kind: 'quarterly' },
-    { code: 'MF-05', task: '법규 최신성 분기 확인', kind: 'quarterly' },
-    { code: 'SF-07', task: '안전보건 예산 분기 집행 확인', kind: 'quarterly' },
-    { code: 'SF-08', task: '반기 안전보건 이행점검', kind: 'half', legal: true },
-    { code: 'SF-04', task: '안전보건관리담당자 반기 직무 평가', kind: 'half' },
-    { code: 'SF-05', task: '안전보건교육 반기 실적 확인', kind: 'half' },
+    { code: 'MF-06', task: '근로자 협의 (분기 1회, 기존 회의 안건 가능)', kind: 'quarterly' },
+    { code: 'QF-13-2', task: '백업 표본 복구 확인 (분기 1회)', kind: 'quarterly' },
+    // 6·12월 반기 점검 때 한자리에서: 이행점검·담당자/관리감독자 평가·교육·예산·목표 실적·법규 최신성
+    { code: 'SF-08', task: '반기 안전보건 이행점검 (예산 집행·교육 실적 포함)', kind: 'half', legal: true },
+    { code: 'SF-04', task: '안전보건관리담당자·관리감독자 반기 평가', kind: 'half', legal: true },
+    { code: 'MF-03', task: '목표 반기 실적 (반기 점검 때)', kind: 'half' },
+    { code: 'MF-05', task: '법규 최신성 반기 확인 (반기 점검 때)', kind: 'half', key: '최신성' },
     { code: 'SF-05', task: '안전보건교육 연간 계획 수립', kind: 'yearly', month: 1, key: '계획' },
     { code: 'SF-06', task: '건강진단 대상자 확정·수검 계획', kind: 'yearly', month: 1 },
     { code: 'SF-07', task: '안전보건 예산 편성', kind: 'yearly', month: 1, key: '편성' },
@@ -36,6 +36,7 @@
     { code: 'QF-10', task: '공급자·외주 연간 재평가', kind: 'yearly', month: 12 },
     { code: 'SF-09', task: '외주(수급인) 안전보건 역량 연간 평가', kind: 'yearly', month: 12 },
     { code: 'QF-11', task: '계측기 교정 현황 연간 확인', kind: 'yearly', month: 12 },
+    { code: 'QF-12', task: '법정 의무교육: 직장 내 성희롱 예방·장애인 인식개선 (연 1회, 전 직원)', kind: 'yearly', month: 11, key: '의무교육', legal: true },
     { code: 'QF-12', task: '교육·자격 연간 실적 정리', kind: 'yearly', month: 12 },
     { code: 'QF-14', task: '고객 만족 의견 연간 정리', kind: 'yearly', month: 12 },
     { code: 'MF-01', task: '내부심사 (연 1회, 심사 전 완료)', kind: 'audit', before: 42, month: 12, day: 15 },
@@ -87,6 +88,7 @@
         if (r.kind === 'audit' && audit) push(r, addDays(audit, -r.before), '사후심사 대비');
       }
     });
+    calTasks().forEach(function (c) { push(c, c.due, c.period); });
     if (audit && audit >= start && audit <= end) {
       out.push({ code: '인증', task: 'ISO 사후심사 (인증기관)', owner: '품질 / 대표이사', due: audit, period: '', legal: false, file: '', freq: '인증기관 일정', audit: true });
     }
@@ -96,7 +98,7 @@
   }
   function freqText(r) {
     return { once: '최초 1회', monthly: '매월', quarterly: '분기', half: '반기 (6·12월)', yearly: '연 1회 (' + r.month + '월)',
-      fromStart: r.months === 12 ? '연 1회 (시행일 기준)' : '연 1회', audit: '연 1회 (심사 전)' }[r.kind] || '';
+      fromStart: r.months === 12 ? '연 1회 (시행일 기준)' : '연 1회', audit: '연 1회 (심사 전)', cal: '교정 주기 ' + r.months + '개월' }[r.kind] || '';
   }
   function isDone(t) {
     if (!found || !t.file) return null;
@@ -108,6 +110,67 @@
     });
   }
 
+  // ---------------------------------------------------------------- 명단 (한 번 입력)
+  // 엑셀에서 복사한 줄(탭) 또는 쉼표로 나눈 줄. '#'으로 시작하는 줄과 빈 줄은 건너뛴다.
+  var LISTS = [
+    ['staff', '직원 명단', '성명, 고용구분(정규직/기간제/일용직), 업무(사무·설계·영업 / 제조·시험·시운전 등), 관리감독자면 O',
+      '홍길동, 정규직, 제조, O\n김철수, 정규직, 설계\n이영희, 일용직, 제조'],
+    ['suppliers', '공급자·외주 명단', '업체명, 구분(부품/외함/현장배선/기타), 공급 범위',
+      '○○전기, 부품, 차단기·인버터\n○○판넬, 외함, 판넬 외함 제작\n○○전설, 현장배선, 현장 배선공사'],
+    ['instruments', '계측기·시험설비 명단', '관리번호, 명칭·모델, 최근 교정일(YYYY-MM-DD), 주기(개월, 비우면 12), 구분(비우면 계측기)',
+      'M-01, 절연저항계 (모델·SN), 2026-09-15, 12\nM-02, 접지저항계, 2026-03-10, 12\nT-01, 토크렌치, 2026-06-01, 12, 토크렌치·공구']
+  ];
+  function rows(key) {
+    return String((cfg.lists || {})[key] || '').split(/\r?\n/).map(function (l) { return l.trim(); })
+      .filter(function (l) { return l && l.charAt(0) !== '#'; })
+      .map(function (l) { return l.split(/\t|\s*,\s*/).map(function (x) { return x.trim(); }); })
+      .filter(function (c) { return c[0]; });
+  }
+  var OFFICE = /사무|설계|영업|경영|회계|인사|총무|구매|대표/;
+  function staff() {
+    return rows('staff').map(function (c) {
+      var ty = c[1] || '', job = c[2] || '';
+      return { name: c[0], type: /일용/.test(ty) ? '일용직' : /기간|비정규|계약/.test(ty) ? '기간제' : /외주/.test(ty) ? '외주' : '정규직',
+        job: job, office: OFFICE.test(job), sup: /^(o|y|○|v|예|관리)/i.test(c[3] || '') };
+    }).filter(function (x) { return x.type !== '외주'; });
+  }
+  function staffCount() {
+    var st = staff();
+    return { all: st.length, office: st.filter(function (x) { return x.office; }).length,
+      field: st.filter(function (x) { return !x.office && x.type !== '일용직'; }).length,
+      temp: st.filter(function (x) { return x.type !== '정규직'; }).length, daily: st.filter(function (x) { return x.type === '일용직'; }).length,
+      regular: st.filter(function (x) { return x.type === '정규직'; }).length, sups: st.filter(function (x) { return x.sup; }) };
+  }
+  function suppliers() {
+    return rows('suppliers').map(function (c) {
+      var k = c[1] || '';
+      return { name: c[0], kind: /외함/.test(k) ? '외함' : /배선|현장/.test(k) ? '현장배선' : /부품|자재/.test(k) ? '부품' : (k || '기타'), scope: c[2] || '' };
+    });
+  }
+  function instruments() {
+    return rows('instruments').map(function (c) {
+      var last = parse(c[2]), mo = parseInt(c[3], 10) || 12, next = null;
+      if (last) { next = new Date(last); next.setMonth(next.getMonth() + mo); next = addDays(next, -1); }
+      return { no: c[0], name: c[1] || '', last: last, months: mo, next: next, kind: c[4] || '계측기' };
+    });
+  }
+  /** 교정 기한: 차기일이 기간 안에 오는 때마다 할 일 하나 */
+  function calTasks() {
+    var out = [], start = parse(cfg.start) || new Date(2026, 9, 1), end = new Date(start.getFullYear(), start.getMonth() + MONTHS, 0);
+    instruments().forEach(function (m) {
+      if (!m.next) return;
+      var d = new Date(m.next), n = 0;
+      while (d < start && n++ < 50) { d.setMonth(d.getMonth() + m.months); }
+      while (d <= end && n++ < 80) {
+        out.push({ code: 'QF-11', task: m.no + ' ' + m.name + ' 교정 (차기일)', kind: 'cal', months: m.months, key: m.no, due: new Date(d), period: '' });
+        d = new Date(d); d.setMonth(d.getMonth() + m.months);
+      }
+    });
+    return out;
+  }
+  function utc(d) { return d ? new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) : ''; }
+  function sheetName(t) { return String(t).replace(/[\[\]:*?\/\\]/g, '').slice(0, 31); }
+
   // ---------------------------------------------------------------- 내보내기
   // ---------------------------------------------------------------- 양식 채워 만들기
   // 회사 공통 담당자(매뉴얼 3장 조직표 기준, 화면에서 고칠 수 있음)
@@ -116,6 +179,10 @@
     ['sales', '영업관리', ''], ['auditor', '내부심사원 (자기 업무 제외)', ''], ['nas', '공용 저장소 경로 (NAS)', ''], ['backup', '별도 백업 위치', ''],
     ['staff', '인원 (정규직 / 비정규직)', '정규직 20명 / 제조 비정규직 5명']];
   function who(role) { return A.P.clean(cfg.profile[role]) || ''; }
+  function staffText() {
+    var n = staffCount();
+    return n.all ? '총 ' + n.all + '명 (정규직 ' + n.regular + ' · 기간제·일용 ' + n.temp + ')' : (cfg.profile.staff || '');
+  }
   /** 양식 담당 글('품질 / 경영관리', '왕리홍 대리 / 현장 근로자')의 첫 담당을 이름으로 바꾼다 */
   function person(ownerText, nth) {
     var first = (String(ownerText || '').split('/')[nth || 0] || '').trim();
@@ -191,13 +258,29 @@
     if (c === 'MF-03') Object.assign(v, { '승인자·일자': who('ceo') ? who('ceo') + ' / ' : '' });
     if (c === 'MF-04') Object.assign(v, { '검토자': [who('ceo'), who('quality')].filter(Boolean).join(', '), '적용 범위': '제어반 설계·제조·시운전 (본사 공장·고객 현장)' });
     if (c === 'MF-05') Object.assign(v, { '평가자 / 검토자': [who('safety'), who('env')].filter(Boolean).join('·') + (who('quality') ? ' / ' + who('quality') : ''), '대상 사업장·작업': '본사 공장(설계·조립·시험), 고객 현장 시운전' });
-    if (c === 'MF-06') Object.assign(v, { '구분': t.key === '훈련' ? '비상훈련' : '월 협의', '일자·장소': plan + ' · 회의실', '진행자': who('safety'), '참석 인원 (비정규직 포함)': cfg.profile.staff || '' });
+    if (c === 'MF-06') Object.assign(v, { '구분': t.key === '훈련' ? '비상훈련' : '분기 협의', '일자·장소': plan + ' · 회의실', '진행자': who('safety'), '참석 인원 (비정규직 포함)': staffText() });
     if (c === 'QF-10') Object.assign(v, { '평가 기간': y + '.01 ~ ' + y + '.12', '평가자': who('production'), '승인자·일자': who('quality') ? who('quality') + ' / ' : '' });
     if (c === 'QF-11') Object.assign(v, { '관리 책임자 (계측기: 품질 / 설비: 생산관리)': [who('quality'), who('production')].filter(Boolean).join(' / ') });
     if (c === 'QF-12') Object.assign(v, { '교육/평가명': t.task });
-    if (c === 'QF-13') Object.assign(v, { '문서관리 책임자': who('quality'), '접근권한 관리자': who('admin'), '공용 저장소 전체 경로': cfg.profile.nas || '', '별도 백업 경로·매체': cfg.profile.backup || '', '백업 담당·주기': (who('admin') ? who('admin') + ' / ' : '') + '주 1회 확인 · 월 1회 표본 복구 (QF-13-2)' });
+    if (c === 'QF-13') Object.assign(v, { '문서관리 책임자': who('quality'), '접근권한 관리자': who('admin'), '공용 저장소 전체 경로': cfg.profile.nas || '', '별도 백업 경로·매체': cfg.profile.backup || '', '백업 담당·주기': (who('admin') ? who('admin') + ' / ' : '') + '매일 자동 백업·실패 알림 · 분기 1회 표본 복구 (QF-13-2)' });
     if (c === 'QF-13-2') Object.assign(v, { '백업 실행 담당': who('admin'), '원본 경로': cfg.profile.nas || '', '백업 위치 (물리적 분리)': cfg.profile.backup || '' });
     if (c === 'QF-14') Object.assign(v, { '담당자': who('sales') });
+    // 명단(한 번 입력)으로 채우는 행·칸
+    var cnt = staffCount(), st = staff(), sp = suppliers(), ins = instruments(), listed = false;
+    if (c === 'SF-04' && cnt.sups.length) v['관리감독자 (성명 / 지휘하는 작업) — 지정일'] = cnt.sups.map(function (x) { return x.name + ' / ' + (x.job || '작업'); }).join(', ') + ' — 지정일: ';
+    if (c === 'SF-05' && cnt.all) {
+      v['대상 인원: 사무직 ( )명 · 제조·시험·시운전 ( )명 · 일용·기간제 ( )명'] = '사무직 ' + cnt.office + '명 · 제조·시험·시운전 ' + cnt.field + '명 · 일용·기간제 ' + cnt.temp + '명 (총 ' + cnt.all + '명)';
+      spec.rows = spec.rows.map(function (r) {
+        var n = /정기교육 \(사무/.test(r[0]) ? cnt.office : /정기교육 \(제조/.test(r[0]) ? cnt.field : /일용·1주 이하/.test(r[0]) && /채용/.test(r[0]) ? cnt.daily
+          : /관리감독자 정기/.test(r[0]) ? cnt.sups.length : /성희롱|장애인/.test(r[0]) ? cnt.all : /보수교육/.test(r[0]) ? 1 : null;
+        var x = r.slice(); while (x.length < 5) x.push(''); if (n !== null) x[5] = n + ' / '; return x;
+      });
+    }
+    if (c === 'SF-06' && st.length) { listed = true; spec.rows = st.map(function (x) { return [x.name, x.office ? '사무직' : '제조·시험·시운전', '일반(국가검진 갈음)', x.office ? '2년' : '1년']; }); }
+    if (c === 'QF-12' && st.length) { listed = true; spec.rows = st.map(function (x) { return [x.name, x.type, x.job]; }); }
+    if (c === 'QF-12' && t.key === '의무교육') Object.assign(v, { '구분': '교육', '법정 교육 근거·이수조건': '남녀고용평등법 제13조(성희롱 예방) · 장애인고용촉진법 제5조의2(인식개선) — 연 1회, 전 직원', '교육 내용 요약': '직장 내 성희롱 예방(법령·사례·신고 절차) / 장애인 인식개선' });
+    if (c === 'QF-10' && sp.length) { listed = true; spec.rows = sp.map(function (x) { return [x.name, x.kind, x.scope]; }); }
+    if (c === 'QF-11' && ins.length) { listed = true; spec.rows = ins.map(function (x) { return [x.no, x.kind, x.name, '', '', x.months + '개월', utc(x.last), utc(x.next)]; }); }
     // 문서관리: 매뉴얼·양식집·WI-01 승인·시행 사실은 그대로 채운다
     if (c === 'QF-13' && spec.rows) spec.rows = spec.rows.map(function (r) {
       var x = r.slice(); x[3] = (who('ceo') || '대표이사') + ' ' + start.replace(/-/g, '.'); x[4] = start.replace(/-/g, '.'); x[5] = '전 부서 (공용 저장소 읽기전용)';
@@ -207,6 +290,8 @@
     var ex = FORM_EX[c], rowsEx = null;
     if (ex) {
       if (!spec.rows || !spec.rows.length) { spec.rows = [[]]; rowsEx = [ex.one || {}]; }
+      else if (listed && ex.one) rowsEx = [ex.one];
+      if (c === 'QF-12' && t.key === '의무교육') rowsEx = [{ 4: '서명' }];   // 교육만: 평가 3칸은 비워 둔다
       else if (ex.rows) rowsEx = ex.rows;
       else if (ex.each) rowsEx = spec.rows.map(function () { return ex.each; });
       else if (ex.half) {
@@ -225,13 +310,24 @@
       else if (/확인/.test(lab)) sign[lab] = c === 'SF-04' ? who('safety') : reviewer; else if (/작성/.test(lab)) sign[lab] = writer;
     });
     var name = (t.file || t.code) + '_' + (src.title || '').replace(/[\\\/:*?"<>|]/g, '').replace(/\s+/g, '').slice(0, 20) + '.xlsx';
-    return { spec: spec, values: v, sign: sign, name: name };
+    var specs = [spec], valuesList = [v];
+    var outs = sp.filter(function (x) { return x.kind !== '부품'; });
+    if (c === 'SF-09' && outs.length) {
+      specs = []; valuesList = [];
+      outs.forEach(function (x) {
+        var s2 = JSON.parse(JSON.stringify(spec)); s2.sheet = sheetName('SF-09 ' + x.name);
+        specs.push(s2);
+        valuesList.push(Object.assign({}, v, { '업체명': x.name, '작업 내용 (외함 제작·현장 배선·기타)': x.kind + (x.scope ? ' — ' + x.scope : ''),
+          '작업 장소 (당사·고객 현장)': x.kind === '현장배선' ? '고객 현장' : x.kind === '외함' ? '업체 공장 (당사 입고)' : '', '평가일': plan }));
+      });
+    }
+    return { spec: spec, specs: specs, values: v, valuesList: valuesList, sign: sign, name: name };
   }
 
   function buildBuffer(t) {
     var f = formFor(t);
     if (!f) return Promise.resolve(null);
-    var wb = A.E.buildWorkbook(window.ExcelJS, [f.spec], { values: f.values, rev: A.FORMS.rev, date: A.FORMS.date, effective: A.FORMS.effective, logo: window.ISO_LOGO, signNames: f.sign });
+    var wb = A.E.buildWorkbook(window.ExcelJS, f.specs, { valuesList: f.valuesList, rev: A.FORMS.rev, date: A.FORMS.date, effective: A.FORMS.effective, logo: window.ISO_LOGO, signNames: f.sign });
     return wb.xlsx.writeBuffer().then(function (buf) { return { name: f.name, buf: buf }; });
   }
   function makeOne(t) {
@@ -372,11 +468,27 @@
       el('p', { cls: 'help', text: '양식을 받을 때 담당자·평가자·결재란(작성·검토·승인), 저장 경로가 이 값으로 채워집니다. 기본값은 매뉴얼 조직표의 이름입니다.' }),
       prof
     ]));
+    var listBox = el('div', { cls: 'an-lists' });
+    LISTS.forEach(function (L) {
+      var id = 'an-l-' + L[0], info = el('p', { cls: 'help an-lcount', id: id + '-n' });
+      listBox.appendChild(el('div', { cls: 'field an-list' }, [
+        el('label', { for: id, text: L[1] }),
+        el('p', { cls: 'help', text: '한 줄에 하나: ' + L[2] }),
+        el('textarea', { id: id, rows: '5', spellcheck: 'false', placeholder: '예)\n' + L[3], value: (cfg.lists || {})[L[0]] || '',
+          oninput: function (e) { cfg.lists[L[0]] = e.target.value; save(); listInfo(); refresh(); } }),
+        info
+      ]));
+    });
+    steps.appendChild(el('section', { cls: 'step' }, [
+      el('h2', {}, [el('span', { cls: 'num', text: '3' }), '명단 (한 번 입력)']),
+      el('p', { cls: 'help', text: '엑셀 표에서 복사해 붙여 넣어도 됩니다(열 순서만 맞추기). 명단은 이 PC에만 저장되고 어디로도 보내지 않습니다. 양식을 받으면 교육 대상 인원(SF-05), 건강진단 대상·주기(SF-06), 교육·역량 명단(QF-12), 관리감독자(SF-04), 공급자 평가(QF-10), 외주업체별 안전보건 평가(SF-09), 계측기 대장(QF-11)이 채워지고, 계측기 교정 기한이 할 일에 들어갑니다.' }),
+      listBox
+    ]));
     var ownerSel = el('select', { id: 'an-owner', onchange: function (e) { view.owner = e.target.value; refresh(); } });
     var showSel = el('select', { id: 'an-show', onchange: function (e) { view.show = e.target.value; refresh(); } },
       [['open', '남은 일'], ['all', '전체'], ['90', '앞으로 90일']].map(function (o) { var op = el('option', { value: o[0], text: o[1] }); if (o[0] === view.show) op.selected = true; return op; }));
     steps.appendChild(el('section', { cls: 'step' }, [
-      el('h2', {}, [el('span', { cls: 'num', text: '3' }), '할 일과 기한']),
+      el('h2', {}, [el('span', { cls: 'num', text: '4' }), '할 일과 기한']),
       el('p', { cls: 'help', text: '\'양식 받기\'를 누르면 그 기록 양식이 담당자·기간·결재란이 채워지고 직접 판단할 칸에 회색 \'예)\' 예시가 들어간 채로 저장됩니다. 파일 이름이 규칙대로 붙어 회사기록 폴더에 그대로 두면 완료가 확인됩니다.' }),
       el('div', { cls: 'dash-bar' }, [
         el('div', { cls: 'field' }, [el('label', { for: 'an-owner', text: '담당' }), ownerSel]),
@@ -400,7 +512,18 @@
         el('li', {}, [el('b', { text: '양식' }), '각 기록은 통합 기록양식집(DI-IMS-F-01) 엑셀의 해당 시트로 작성합니다.'])
       ])
     ])]));
+    listInfo();
     refresh();
+  }
+
+  function listInfo() {
+    var n = staffCount(), sp = suppliers(), ins = instruments();
+    var txt = {
+      staff: n.all ? n.all + '명 — 사무직 ' + n.office + ' · 제조·시험·시운전 ' + (n.all - n.office) + ' · 기간제·일용 ' + n.temp + ' · 관리감독자 ' + n.sups.length : '',
+      suppliers: sp.length ? sp.length + '곳 — 외주(외함·현장배선 등) ' + sp.filter(function (x) { return x.kind !== '부품'; }).length + '곳은 SF-09 평가 시트가 업체별로 만들어짐' : '',
+      instruments: ins.length ? ins.length + '대 — 교정일 확인 ' + ins.filter(function (x) { return x.next; }).length + '대' + (ins.some(function (x) { return !x.last; }) ? ' · 교정일 형식(YYYY-MM-DD) 확인 필요 ' + ins.filter(function (x) { return !x.last; }).length + '대' : '') : ''
+    };
+    LISTS.forEach(function (L) { var p = $('an-l-' + L[0] + '-n'); if (p) p.textContent = txt[L[0]] ? '읽은 내용: ' + txt[L[0]] : ''; });
   }
 
   function refresh() {
@@ -470,14 +593,20 @@
   window.IsoViews.annual = {
     show: function () {
       A = window.IsoApp; el = A.el; $ = A.$;
-      if (!cfg) {
-        cfg = { start: '2026-10-01', audit: '', profile: {} };
-        try { Object.assign(cfg, JSON.parse(localStorage.getItem('iso-annual') || '{}')); } catch (e) { /* 기본값 */ }
-        cfg.profile = cfg.profile || {};
-        PROFILE.forEach(function (f) { if (cfg.profile[f[0]] === undefined) cfg.profile[f[0]] = f[2]; });
-      }
+      if (!cfg) window.IsoViews.annual._load();
       render();
     },
-    _tasks: function () { return tasks(); }, _form: function (i) { return buildBuffer(tasks()[i]); }, _formFor: function (i) { return formFor(tasks()[i]); }, _ics: function () { return icsText(); }, _setFound: function (l) { found = l; refresh(); }
+    /** 다른 탭(01 묶음)이 회사 담당자·명단을 기본값으로 쓰게 한다 */
+    company: function () {
+      if (!cfg) { this._load(); }
+      return { profile: cfg.profile, staff: staff(), suppliers: suppliers(), instruments: instruments() };
+    },
+    _load: function () {
+      cfg = { start: '2026-10-01', audit: '', profile: {}, lists: {} };
+      try { Object.assign(cfg, JSON.parse(localStorage.getItem('iso-annual') || '{}')); } catch (e) { /* 기본값 */ }
+      cfg.profile = cfg.profile || {}; cfg.lists = cfg.lists || {};
+      PROFILE.forEach(function (f) { if (cfg.profile[f[0]] === undefined) cfg.profile[f[0]] = f[2]; });
+    },
+    _tasks: function () { return tasks(); }, _form: function (i) { return buildBuffer(tasks()[i]); }, _formFor: function (i) { return formFor(tasks()[i]); }, _ics: function () { return icsText(); }, _setFound: function (l) { found = l; refresh(); }, _setLists: function (o) { Object.assign(cfg.lists, o); render(); }
   };
 })();
