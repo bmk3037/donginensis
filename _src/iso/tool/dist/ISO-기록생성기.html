@@ -774,7 +774,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         self.cell(r, le + 1, g[1], val === undefined ? null : val, { size: 10, bg: C.WHITE });
         if ((val === undefined || val === null || val === '') && fex) {
           var fc = ws.getCell(r, le + 1);
-          fc.value = '예) ' + fex;
+          fc.value = fex;   // 예시: 회색 기울임 서식만으로 구분(글자색·기울임을 바꾸면 기록)
           fc.font = { name: C.FONT, size: 9, italic: true, color: { argb: argb(C.EX) } };
           val = fc.value;
         }
@@ -857,7 +857,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     });
     var last = first + data.length - 1;
     this.first = first; this.last = last;
-    // 작성 예시: 지정한 행의 빈칸에 회색 기울임 '예)' 글을 넣는다(실제 기록 아님, 덮어써 작성)
+    // 작성 예시: 지정한 행의 빈칸에 회색 기울임 글을 넣는다(실제 기록 아님). 그대로 쓰려면 글자색·기울임만 바꾼다
     // ex.rows: 행마다 {열: 글} (원래 행 수만큼), ex.cells: ex.row 한 행
     var ex = s.example, exRows = ex ? (ex.rows || (ex.cells ? [] : null)) : null;
     if (ex && ex.cells && !ex.rows) exRows[ex.row || 0] = ex.cells;
@@ -867,7 +867,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       Object.keys(cells).forEach(function (col) {
         var c = ws.getCell(er, +col), t = cells[col];
         if (!t || (c.value !== null && c.value !== undefined && c.value !== '') || (s.formulas || {})[col]) return;
-        c.value = '예) ' + t;
+        c.value = t;
         c.font = { name: C.FONT, size: 9, italic: true, color: { argb: argb(C.EX) } };
         erh = Math.max(erh, textHeight(c.value, self.widths[+col - 1], 9, base, 6));
       });
@@ -1742,7 +1742,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     });
     return { rows: list, fields: e.fields || {} };
   }
-  var EXAMPLE_NOTE = '회색 기울임 \'예)\' 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 실제 내용으로 덮어써 작성하고, 해당 없는 예시는 지웁니다.';
+  var EXAMPLE_NOTE = '회색 기울임 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 그대로 쓸 내용이면 글자색을 검정으로 바꾸고 기울임을 풀면 기록이 됩니다. 아니면 실제 내용으로 덮어쓰고, 해당 없는 예시는 지웁니다.';
 
   function commonSpec(common, date) {
     return {
@@ -2083,7 +2083,47 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         catch (e) { text = new TextDecoder('euc-kr').decode(buf); }
         return XLSX.read(text.replace(/^﻿/, ''), { type: 'string' });
       }
-      return XLSX.read(new Uint8Array(buf), { type: 'array' });
+      var wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+      return markExamples(buf, wb).then(function () { return wb; }, function () { return wb; });
+    });
+  }
+  /** 회색(7A8699) 글자 셀 = 작성 예시. 글자에 '예)'를 붙이지 않으므로 서식(styles.xml)으로 찾아
+      분석용으로만 앞에 '예) '를 붙인다. 글자색을 바꾸면(기울임 해제 포함) 실제 기록으로 본다. */
+  function markExamples(buf, wb) {
+    if (!window.JSZip) return Promise.resolve();
+    return JSZip.loadAsync(buf).then(function (zip) {
+      function txt(p) { var f = zip.file(p); return f ? f.async('string') : Promise.resolve(''); }
+      return Promise.all([txt('xl/styles.xml'), txt('xl/workbook.xml'), txt('xl/_rels/workbook.xml.rels')]).then(function (x) {
+        var fontsXml = (/<fonts[^>]*>([\s\S]*?)<\/fonts>/.exec(x[0]) || [])[1] || '';
+        var fonts = fontsXml.match(/<font\b[\s\S]*?<\/font>|<font\b[^>]*\/>/g) || [];
+        var exFont = {};
+        fonts.forEach(function (f, i) { if (/rgb="[0-9A-Fa-f]{0,2}7A8699"/i.test(f)) exFont[i] = 1; });
+        var xfsXml = (/<cellXfs[^>]*>([\s\S]*?)<\/cellXfs>/.exec(x[0]) || [])[1] || '';
+        var exXf = {};
+        (xfsXml.match(/<xf\b[^>]*>/g) || []).forEach(function (t, i) { var m = /fontId="(\d+)"/.exec(t); if (m && exFont[+m[1]]) exXf[i] = 1; });
+        if (!Object.keys(exXf).length) return;
+        var rels = {};
+        (x[2].match(/<Relationship\b[^>]*>/g) || []).forEach(function (t) {
+          var id = (/Id="([^"]+)"/.exec(t) || [])[1], tg = (/Target="([^"]+)"/.exec(t) || [])[1];
+          if (id && tg) rels[id] = tg.replace(/^\/?(xl\/)?/, 'xl/');
+        });
+        var sheets = (x[1].match(/<sheet\b[^>]*>/g) || []).map(function (t) {
+          return { name: (/name="([^"]+)"/.exec(t) || [])[1], path: rels[(/r:id="([^"]+)"/.exec(t) || [])[1]] };
+        });
+        return Promise.all(sheets.map(function (sh, k) {
+          var nm = wb.SheetNames[k], ws = wb.Sheets[nm];
+          if (!ws || !sh.path) return null;
+          return txt(sh.path).then(function (xml) {
+            (xml.match(/<c\b[^>]*>/g) || []).forEach(function (t) {
+              var s = (/\ss="(\d+)"/.exec(t) || [])[1], r = (/\sr="([A-Z]+\d+)"/.exec(t) || [])[1];
+              var c = r && ws[r];
+              if (s && exXf[+s] && c && c.v !== undefined && c.v !== '' && !/^예\)/.test(String(c.v))) {
+                c.v = '예) ' + c.v; c.w = '예) ' + (c.w !== undefined ? c.w : c.v.slice(3)); c.t = 's';
+              }
+            });
+          });
+        }));
+      });
     });
   }
   function sheetRows(wb, name) {
@@ -4069,7 +4109,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   function recordIssues(r) {
     if (DONE.indexOf(r.status) < 0) return [];
     var issues = [];
-    if (r.auto && r.auto.examples) issues.push("작성 예시 '예)' " + r.auto.examples + '칸이 남아 있음');
+    if (r.auto && r.auto.examples) issues.push('회색 작성 예시 ' + r.auto.examples + '칸이 남아 있음 (실제로 쓸 내용이면 글자색·기울임을 바꿈)');
     if (r.auto && r.auto.planned) issues.push("'예정' 날짜 " + r.auto.planned + '칸이 남아 있음 (실제 날짜로)');
     if (r.auto && r.status !== '해당없음' && r.auto.state === '미작성') issues.push('파일에 입력 내용 없음');
     if (!val(r.done)) issues.push('확인일 없음');
@@ -4375,7 +4415,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       if (r.auto && (r.auto.examples || r.auto.planned) && DONE.indexOf(r.status) >= 0) exDocs++;
       if (r.auto && r.status === '미작성' && /^작성완료/.test(r.auto.state)) writtenNotMarked++;
     }); });
-    k.appendChild(card('예시·예정 남은 승인 문서', String(exDocs), exDocs ? "승인했는데 '예)'·'예정'이 남음" : '없음', exDocs ? 'warn' : ''));
+    k.appendChild(card('예시·예정 남은 승인 문서', String(exDocs), exDocs ? '승인했는데 회색 예시·예정이 남음' : '없음', exDocs ? 'warn' : ''));
     k.appendChild(card('작성됐는데 상태 미작성', String(writtenNotMarked), writtenNotMarked ? '파일은 작성완료 — 기록현황 상태 확인' : '없음', writtenNotMarked ? 'warn' : ''));
     k.appendChild(card('일정 지연', String(lateN), lateN ? '예정일 지났는데 기록 미완료' : '지연 없음', lateN ? 'warn' : ''));
     var vcBad = all.filter(function (p) { return p.vc && p.vc.issues.length; }).length;
@@ -4758,7 +4798,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         rowsEx = spec.rows.map(function () { var o = {}; o[h ? 3 : 5] = '실적·증거 기록 번호'; o[h ? 4 : 6] = '적합'; o[7] = '없음'; o[8] = who('ceo') ? who('ceo') + ' 확인' : '대표 확인'; return o; });
       }
     }
-    if (rowsEx) { spec.example = { rows: rowsEx }; spec.notes = (spec.notes || []).concat(["회색 기울임 '예)' 글은 작성 예시입니다. 실제 내용으로 덮어쓰고, 해당 없는 예시는 지웁니다. '(예정)' 날짜는 실제 한 날로 고칩니다."]); }
+    if (rowsEx) { spec.example = { rows: rowsEx }; spec.notes = (spec.notes || []).concat(["회색 기울임 글은 작성 예시입니다. 그대로 쓸 내용이면 글자색을 검정으로 바꾸고 기울임을 풀면 기록이 됩니다. 아니면 덮어쓰거나 지웁니다. '(예정)' 날짜는 실제 한 날로 고칩니다."]); }
     // 작성·검토·승인이 같은 사람이 되지 않게: 작성이 대표면 두 번째 담당이 작성, 작성이 품질이면 기술팀 총괄이 검토
     var writer = person(src.owner);
     if (writer && writer === who('ceo') && String(src.owner).indexOf('/') > 0) writer = person(src.owner, 1);
@@ -5006,7 +5046,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       [['open', '남은 일'], ['all', '전체'], ['90', '앞으로 90일']].map(function (o) { var op = el('option', { value: o[0], text: o[1] }); if (o[0] === view.show) op.selected = true; return op; }));
     steps.appendChild(el('section', { cls: 'step' }, [
       el('h2', {}, [el('span', { cls: 'num', text: '4' }), '할 일과 기한']),
-      el('p', { cls: 'help', text: '\'양식 받기\'를 누르면 그 기록 양식이 담당자·기간·결재란이 채워지고 직접 판단할 칸에 회색 \'예)\' 예시가 들어간 채로 저장됩니다. 파일 이름이 규칙대로 붙어 회사기록 폴더에 그대로 두면 완료가 확인됩니다.' }),
+      el('p', { cls: 'help', text: '\'양식 받기\'를 누르면 그 기록 양식이 담당자·기간·결재란이 채워지고 직접 판단할 칸에 회색 기울임 예시가 들어간 채로 저장됩니다. 파일 이름이 규칙대로 붙어 회사기록 폴더에 그대로 두면 완료가 확인됩니다.' }),
       el('div', { cls: 'dash-bar' }, [
         el('div', { cls: 'field' }, [el('label', { for: 'an-owner', text: '담당' }), ownerSel]),
         el('div', { cls: 'field' }, [el('label', { for: 'an-show', text: '보기' }), showSel])

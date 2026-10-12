@@ -103,7 +103,47 @@
         catch (e) { text = new TextDecoder('euc-kr').decode(buf); }
         return XLSX.read(text.replace(/^﻿/, ''), { type: 'string' });
       }
-      return XLSX.read(new Uint8Array(buf), { type: 'array' });
+      var wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+      return markExamples(buf, wb).then(function () { return wb; }, function () { return wb; });
+    });
+  }
+  /** 회색(7A8699) 글자 셀 = 작성 예시. 글자에 '예)'를 붙이지 않으므로 서식(styles.xml)으로 찾아
+      분석용으로만 앞에 '예) '를 붙인다. 글자색을 바꾸면(기울임 해제 포함) 실제 기록으로 본다. */
+  function markExamples(buf, wb) {
+    if (!window.JSZip) return Promise.resolve();
+    return JSZip.loadAsync(buf).then(function (zip) {
+      function txt(p) { var f = zip.file(p); return f ? f.async('string') : Promise.resolve(''); }
+      return Promise.all([txt('xl/styles.xml'), txt('xl/workbook.xml'), txt('xl/_rels/workbook.xml.rels')]).then(function (x) {
+        var fontsXml = (/<fonts[^>]*>([\s\S]*?)<\/fonts>/.exec(x[0]) || [])[1] || '';
+        var fonts = fontsXml.match(/<font\b[\s\S]*?<\/font>|<font\b[^>]*\/>/g) || [];
+        var exFont = {};
+        fonts.forEach(function (f, i) { if (/rgb="[0-9A-Fa-f]{0,2}7A8699"/i.test(f)) exFont[i] = 1; });
+        var xfsXml = (/<cellXfs[^>]*>([\s\S]*?)<\/cellXfs>/.exec(x[0]) || [])[1] || '';
+        var exXf = {};
+        (xfsXml.match(/<xf\b[^>]*>/g) || []).forEach(function (t, i) { var m = /fontId="(\d+)"/.exec(t); if (m && exFont[+m[1]]) exXf[i] = 1; });
+        if (!Object.keys(exXf).length) return;
+        var rels = {};
+        (x[2].match(/<Relationship\b[^>]*>/g) || []).forEach(function (t) {
+          var id = (/Id="([^"]+)"/.exec(t) || [])[1], tg = (/Target="([^"]+)"/.exec(t) || [])[1];
+          if (id && tg) rels[id] = tg.replace(/^\/?(xl\/)?/, 'xl/');
+        });
+        var sheets = (x[1].match(/<sheet\b[^>]*>/g) || []).map(function (t) {
+          return { name: (/name="([^"]+)"/.exec(t) || [])[1], path: rels[(/r:id="([^"]+)"/.exec(t) || [])[1]] };
+        });
+        return Promise.all(sheets.map(function (sh, k) {
+          var nm = wb.SheetNames[k], ws = wb.Sheets[nm];
+          if (!ws || !sh.path) return null;
+          return txt(sh.path).then(function (xml) {
+            (xml.match(/<c\b[^>]*>/g) || []).forEach(function (t) {
+              var s = (/\ss="(\d+)"/.exec(t) || [])[1], r = (/\sr="([A-Z]+\d+)"/.exec(t) || [])[1];
+              var c = r && ws[r];
+              if (s && exXf[+s] && c && c.v !== undefined && c.v !== '' && !/^예\)/.test(String(c.v))) {
+                c.v = '예) ' + c.v; c.w = '예) ' + (c.w !== undefined ? c.w : c.v.slice(3)); c.t = 's';
+              }
+            });
+          });
+        }));
+      });
     });
   }
   function sheetRows(wb, name) {
