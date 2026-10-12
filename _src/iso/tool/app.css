@@ -451,4 +451,6 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .inst-or { margin: 8px 0 0; font-weight: 700; color: var(--accent); font-size: var(--fs-sm); border-top: 1px solid var(--line); padding-top: 10px; }
 .inst-how { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
 .inst-card .btn-ghost { justify-self: end; }
+.inst-appbox { display: grid; gap: 6px; }
+.inst-app[disabled] { opacity: 0.6; cursor: wait; }
 
