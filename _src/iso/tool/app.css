@@ -416,6 +416,8 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-mg.low { color: var(--bad); font-weight: 600; }
 .q-inline { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .q-inline label { font-size: var(--fs-sm); color: var(--ink); }
+.q-priceas { flex-basis: 100%; }
+.q-priceas select { width: auto; flex: none; max-width: 100%; font: inherit; font-size: var(--fs-sm); padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); }
 .q-sum { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-variant-numeric: tabular-nums; }
 .q-sum dt { color: var(--muted); font-size: var(--fs-sm); }
 .q-sum dd { margin: 0; text-align: right; font-weight: 600; }

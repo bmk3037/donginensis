@@ -61,6 +61,7 @@
           <input type="file" id="qFile" accept=".xlsx,.xls,.csv">
           <label for="qFile"><b>BOM · 견적서 엑셀 고르기</b> 또는 여기로 끌어다 놓기</label>
           <button type="button" class="btn btn-ghost btn-sm" id="qPasteOpen">엑셀에서 복사해 붙여넣기</button>
+          <span class="q-inline q-priceas"><label for="qPriceAs">파일의 단가는</label><select id="qPriceAs"><option value="cost">원가(매입가) → 단가는 마진으로 계산</option><option value="price">판매 단가 그대로</option></select></span>
         </div>
         <div class="q-paste" id="qPasteBox" hidden>
           <label for="qPaste">엑셀에서 복사한 표 (머리글 줄 포함 권장. 머리글이 없으면 품명 · 규격 · 메이커 · 수량 · 단위 · 단가 순서)</label>
@@ -82,7 +83,7 @@
         </div>
         <div class="row-actions q-tools">
           <button type="button" class="btn" id="qAdd">행 추가</button>
-          <span class="q-inline"><label for="q-mul">단가 = 원가 ÷</label><input type="text" id="q-mul" value="0.8" inputmode="decimal" class="num-in"><span class="sub" id="qMulHint">마진 20%</span><button type="button" class="btn btn-ghost" id="qMarkup">단가 계산</button></span>
+          <span class="q-inline"><label for="q-mul">단가 = 원가 ÷</label><input type="text" id="q-mul" value="0.8" inputmode="decimal" class="num-in"><span class="sub" id="qMulHint">마진 20%</span><button type="button" class="btn btn-ghost" id="qMarkup">단가 계산</button><button type="button" class="btn btn-ghost" id="qToCost" title="원가가 빈 행의 단가를 원가로 옮기고 단가를 다시 계산">단가 → 원가로 옮기기</button></span>
           <button type="button" class="btn btn-ghost" id="qClearItems">품목 모두 지우기</button>
         </div>
         <div class="checks q-tools">
