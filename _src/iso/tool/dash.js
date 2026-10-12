@@ -279,7 +279,7 @@
   function recordIssues(r) {
     if (DONE.indexOf(r.status) < 0) return [];
     var issues = [];
-    if (r.auto && r.auto.examples) issues.push("작성 예시 '예)' " + r.auto.examples + '칸이 남아 있음');
+    if (r.auto && r.auto.examples) issues.push('회색 작성 예시 ' + r.auto.examples + '칸이 남아 있음 (실제로 쓸 내용이면 글자색·기울임을 바꿈)');
     if (r.auto && r.auto.planned) issues.push("'예정' 날짜 " + r.auto.planned + '칸이 남아 있음 (실제 날짜로)');
     if (r.auto && r.status !== '해당없음' && r.auto.state === '미작성') issues.push('파일에 입력 내용 없음');
     if (!val(r.done)) issues.push('확인일 없음');
@@ -585,7 +585,7 @@
       if (r.auto && (r.auto.examples || r.auto.planned) && DONE.indexOf(r.status) >= 0) exDocs++;
       if (r.auto && r.status === '미작성' && /^작성완료/.test(r.auto.state)) writtenNotMarked++;
     }); });
-    k.appendChild(card('예시·예정 남은 승인 문서', String(exDocs), exDocs ? "승인했는데 '예)'·'예정'이 남음" : '없음', exDocs ? 'warn' : ''));
+    k.appendChild(card('예시·예정 남은 승인 문서', String(exDocs), exDocs ? '승인했는데 회색 예시·예정이 남음' : '없음', exDocs ? 'warn' : ''));
     k.appendChild(card('작성됐는데 상태 미작성', String(writtenNotMarked), writtenNotMarked ? '파일은 작성완료 — 기록현황 상태 확인' : '없음', writtenNotMarked ? 'warn' : ''));
     k.appendChild(card('일정 지연', String(lateN), lateN ? '예정일 지났는데 기록 미완료' : '지연 없음', lateN ? 'warn' : ''));
     var vcBad = all.filter(function (p) { return p.vc && p.vc.issues.length; }).length;

@@ -302,7 +302,7 @@
         rowsEx = spec.rows.map(function () { var o = {}; o[h ? 3 : 5] = '실적·증거 기록 번호'; o[h ? 4 : 6] = '적합'; o[7] = '없음'; o[8] = who('ceo') ? who('ceo') + ' 확인' : '대표 확인'; return o; });
       }
     }
-    if (rowsEx) { spec.example = { rows: rowsEx }; spec.notes = (spec.notes || []).concat(["회색 기울임 '예)' 글은 작성 예시입니다. 실제 내용으로 덮어쓰고, 해당 없는 예시는 지웁니다. '(예정)' 날짜는 실제 한 날로 고칩니다."]); }
+    if (rowsEx) { spec.example = { rows: rowsEx }; spec.notes = (spec.notes || []).concat(["회색 기울임 글은 작성 예시입니다. 그대로 쓸 내용이면 글자색을 검정으로 바꾸고 기울임을 풀면 기록이 됩니다. 아니면 덮어쓰거나 지웁니다. '(예정)' 날짜는 실제 한 날로 고칩니다."]); }
     // 작성·검토·승인이 같은 사람이 되지 않게: 작성이 대표면 두 번째 담당이 작성, 작성이 품질이면 기술팀 총괄이 검토
     var writer = person(src.owner);
     if (writer && writer === who('ceo') && String(src.owner).indexOf('/') > 0) writer = person(src.owner, 1);
@@ -550,7 +550,7 @@
       [['open', '남은 일'], ['all', '전체'], ['90', '앞으로 90일']].map(function (o) { var op = el('option', { value: o[0], text: o[1] }); if (o[0] === view.show) op.selected = true; return op; }));
     steps.appendChild(el('section', { cls: 'step' }, [
       el('h2', {}, [el('span', { cls: 'num', text: '4' }), '할 일과 기한']),
-      el('p', { cls: 'help', text: '\'양식 받기\'를 누르면 그 기록 양식이 담당자·기간·결재란이 채워지고 직접 판단할 칸에 회색 \'예)\' 예시가 들어간 채로 저장됩니다. 파일 이름이 규칙대로 붙어 회사기록 폴더에 그대로 두면 완료가 확인됩니다.' }),
+      el('p', { cls: 'help', text: '\'양식 받기\'를 누르면 그 기록 양식이 담당자·기간·결재란이 채워지고 직접 판단할 칸에 회색 기울임 예시가 들어간 채로 저장됩니다. 파일 이름이 규칙대로 붙어 회사기록 폴더에 그대로 두면 완료가 확인됩니다.' }),
       el('div', { cls: 'dash-bar' }, [
         el('div', { cls: 'field' }, [el('label', { for: 'an-owner', text: '담당' }), ownerSel]),
         el('div', { cls: 'field' }, [el('label', { for: 'an-show', text: '보기' }), showSel])

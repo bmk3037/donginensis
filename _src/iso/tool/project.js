@@ -694,7 +694,7 @@
     });
     return { rows: list, fields: e.fields || {} };
   }
-  var EXAMPLE_NOTE = '회색 기울임 \'예)\' 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 실제 내용으로 덮어써 작성하고, 해당 없는 예시는 지웁니다.';
+  var EXAMPLE_NOTE = '회색 기울임 글은 작성 예시입니다(판넬 1면 기준, 실제 기록 아님). 그대로 쓸 내용이면 글자색을 검정으로 바꾸고 기울임을 풀면 기록이 됩니다. 아니면 실제 내용으로 덮어쓰고, 해당 없는 예시는 지웁니다.';
 
   function commonSpec(common, date) {
     return {

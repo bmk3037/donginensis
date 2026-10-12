@@ -220,7 +220,7 @@
         self.cell(r, le + 1, g[1], val === undefined ? null : val, { size: 10, bg: C.WHITE });
         if ((val === undefined || val === null || val === '') && fex) {
           var fc = ws.getCell(r, le + 1);
-          fc.value = '예) ' + fex;
+          fc.value = fex;   // 예시: 회색 기울임 서식만으로 구분(글자색·기울임을 바꾸면 기록)
           fc.font = { name: C.FONT, size: 9, italic: true, color: { argb: argb(C.EX) } };
           val = fc.value;
         }
@@ -303,7 +303,7 @@
     });
     var last = first + data.length - 1;
     this.first = first; this.last = last;
-    // 작성 예시: 지정한 행의 빈칸에 회색 기울임 '예)' 글을 넣는다(실제 기록 아님, 덮어써 작성)
+    // 작성 예시: 지정한 행의 빈칸에 회색 기울임 글을 넣는다(실제 기록 아님). 그대로 쓰려면 글자색·기울임만 바꾼다
     // ex.rows: 행마다 {열: 글} (원래 행 수만큼), ex.cells: ex.row 한 행
     var ex = s.example, exRows = ex ? (ex.rows || (ex.cells ? [] : null)) : null;
     if (ex && ex.cells && !ex.rows) exRows[ex.row || 0] = ex.cells;
@@ -313,7 +313,7 @@
       Object.keys(cells).forEach(function (col) {
         var c = ws.getCell(er, +col), t = cells[col];
         if (!t || (c.value !== null && c.value !== undefined && c.value !== '') || (s.formulas || {})[col]) return;
-        c.value = '예) ' + t;
+        c.value = t;
         c.font = { name: C.FONT, size: 9, italic: true, color: { argb: argb(C.EX) } };
         erh = Math.max(erh, textHeight(c.value, self.widths[+col - 1], 9, base, 6));
       });
