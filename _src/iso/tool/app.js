@@ -83,6 +83,49 @@
     return out;
   }
 
+  // 바탕화면 설치(크롬·엣지 웹 앱): 설치할 수 있을 때만 버튼이 보인다
+  /** 바로 설치가 안 될 때: 어느 브라우저에서나 되는 바탕화면 바로가기 파일(.url)과 브라우저별 설치 방법 */
+  var TOOL_URL = 'https://donginensis.com/files/iso/ISO-record-builder.html';
+  function shortcutFile() {
+    var txt = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
+    saveFile('ISO 기록 도구.url', new Blob([txt], { type: 'application/octet-stream' }));
+  }
+  function showInstallHelp() {
+    var old = document.getElementById('installHelp'); if (old) old.remove();
+    var close = function () { box.remove(); };
+    var box = el('div', { id: 'installHelp', cls: 'inst-overlay', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'instTitle', onclick: function (e) { if (e.target === box) close(); } }, [
+      el('div', { cls: 'inst-card' }, [
+        el('h2', { id: 'instTitle', text: '바탕화면에서 바로 열기' }),
+        el('p', { cls: 'inst-step', text: '① 아래 버튼을 누릅니다.' }),
+        el('button', { type: 'button', cls: 'btn btn-primary inst-dl', text: '바탕화면 바로가기 파일 받기', onclick: function () { shortcutFile(); } }),
+        el('p', { cls: 'inst-step', text: '② 받은 「ISO 기록 도구」 파일(다운로드 폴더)을 바탕화면으로 끌어다 놓습니다.' }),
+        el('p', { cls: 'inst-step', text: '③ 바탕화면 아이콘을 더블클릭하면 도구가 열립니다.' }),
+        el('button', { type: 'button', cls: 'btn btn-ghost', text: '닫기', onclick: close })
+      ])
+    ]);
+    document.body.appendChild(box);
+    box.querySelector('.inst-dl').focus();
+    document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); } });
+  }
+
+  // 버튼은 늘 보이고, 브라우저가 바로 설치를 허락하면 설치 창을, 아니면 직접 설치하는 방법을 보여 준다.
+  var installEvt = null;
+  function standalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+  function hideInstall() { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; }
+  if (standalone()) document.addEventListener('DOMContentLoaded', hideInstall);
+  if (standalone()) hideInstall();
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
+  window.addEventListener('appinstalled', function () { hideInstall(); installEvt = null; });
+  document.addEventListener('click', function (e) {
+    if (!e.target || e.target.id !== 'btnInstall') return;
+    if (installEvt) {
+      installEvt.prompt();
+      installEvt.userChoice.then(function (c) { installEvt = null; if (c && c.outcome === 'accepted') hideInstall(); });
+      return;
+    }
+    showInstallHelp();
+  });
+
   function clearAll() {
     $('bomBasis').value = '';
     state.project = Object.assign({ approval: false, sat: true, outsource: false }, companyDefaults());
