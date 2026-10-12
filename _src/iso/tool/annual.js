@@ -421,6 +421,29 @@
     }, function (e) { setStatus(A.saveErrorText(e, name), 'bad'); });
   }
 
+  // ---------------------------------------------------------------- 회사 설정 파일 (담당자·명단·기준 날짜)
+  // 한 사람이 입력해 공용 저장소(접근권한 관리 폴더)에 두면 다른 PC에서도 불러와 같은 값으로 양식을 만든다.
+  function exportCfg() {
+    var data = { type: 'dongin-iso-company', version: 1, saved: iso(today()), start: cfg.start, audit: cfg.audit, profile: cfg.profile, lists: cfg.lists };
+    var name = '00_회사설정_ISO기록도구_' + iso(today()).replace(/-/g, '') + '.json';
+    A.saveFile(name, new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })).then(function () {
+      setStatus(name + ' 저장 — 직원 명단이 들어 있으니 접근권한이 관리되는 회사 폴더에만 둡니다.', 'ok');
+    }, function (e) { setStatus(A.saveErrorText(e, name), 'bad'); });
+  }
+  function importCfg(file) {
+    if (!file) return;
+    file.text().then(function (txt) {
+      var d = JSON.parse(txt);
+      if (!d || d.type !== 'dongin-iso-company') throw new Error('회사 설정 파일이 아닙니다');
+      if (d.start) cfg.start = d.start;
+      if (d.audit !== undefined) cfg.audit = d.audit;
+      Object.keys(d.profile || {}).forEach(function (k) { cfg.profile[k] = String(d.profile[k] || ''); });
+      Object.keys(d.lists || {}).forEach(function (k) { cfg.lists[k] = String(d.lists[k] || ''); });
+      save(); render();
+      setStatus(file.name + ' 불러옴 — 담당자·명단·기준 날짜를 적용했습니다.', 'ok');
+    }).catch(function (e) { setStatus('불러오지 못했습니다: ' + (e && e.message || e), 'bad'); });
+  }
+
   // ---------------------------------------------------------------- 화면
   function save() { try { localStorage.setItem('iso-annual', JSON.stringify(cfg)); } catch (e) { /* 무시 */ } }
 
@@ -505,6 +528,9 @@
       el('button', { type: 'button', cls: 'btn btn-primary', text: '캘린더에 넣기 (.ics)', onclick: exportIcs }),
       el('button', { type: 'button', cls: 'btn', text: '30일 안에 할 양식 한꺼번에 받기 (zip)', onclick: makeSoon }),
       el('button', { type: 'button', cls: 'btn', text: '연간 계획표 엑셀 받기', onclick: exportXlsx }),
+      el('button', { type: 'button', cls: 'btn', text: '회사 설정 저장 (.json)', onclick: exportCfg }),
+      el('label', { cls: 'btn an-import', for: 'anCfgFile' }, ['회사 설정 불러오기']),
+      el('input', { type: 'file', id: 'anCfgFile', accept: '.json', hidden: true, onchange: function (e) { importCfg(e.target.files[0]); e.target.value = ''; } }),
       el('p', { cls: 'status', id: 'anStatus', role: 'status' }),
       el('ul', { cls: 'rules' }, [
         el('li', {}, [el('b', { text: '★법정' }), '위험성평가·반기 이행점검은 산업안전보건법·중대재해처벌법 의무입니다. 기한을 넘기지 않습니다.']),
