@@ -23,6 +23,8 @@
     { code: 'QF-10', task: '현재 거래 공급자·외주업체 승인 목록 정리', kind: 'once', days: 30 },
     { code: 'MF-06', task: '근로자 협의 (분기 1회, 기존 회의 안건 가능)', kind: 'quarterly' },
     { code: 'QF-13-2', task: '백업 표본 복구 확인 (분기 1회)', kind: 'quarterly' },
+    // 일용직을 쓴 달은 다음 달 15일까지 근로내용확인신고(고용보험·산재보험) — 양식 없이 신고 접수증을 회사기록에 둔다
+    { code: '근로내용', task: '일용직 근로내용확인신고 (일용직 쓴 달만, 다음 달 15일까지)', kind: 'next15', owner: '경영관리', legal: true },
     // 6·12월 반기 점검 때 한자리에서: 이행점검·담당자/관리감독자 평가·교육·예산·목표 실적·법규 최신성
     { code: 'SF-08', task: '반기 안전보건 이행점검 (예산 집행·교육 실적 포함)', kind: 'half', legal: true },
     { code: 'SF-04', task: '안전보건관리담당자·관리감독자 반기 평가', kind: 'half', legal: true },
@@ -67,7 +69,7 @@
     var audit = parse(cfg.audit), out = [];
     function push(r, due, period) {
       if (due < start || due > end) return;
-      out.push({ code: r.code, task: r.task, owner: owner(r.code), due: due, period: period, legal: !!r.legal,
+      out.push({ code: r.code, task: r.task, owner: r.owner || owner(r.code), due: due, period: period, legal: !!r.legal,
         file: r.code + '_' + due.getFullYear() + pad(due.getMonth() + 1) + (r.key ? '_' + r.key : ''), key: r.key || '', freq: freqText(r) });
     }
     RULES.forEach(function (r) {
@@ -80,6 +82,7 @@
           d = endOfMonth(y, m);
           var mm = d.getMonth() + 1;
           if (r.kind === 'monthly') push(r, d, d.getFullYear() + '.' + pad(mm));
+          else if (r.kind === 'next15') push(r, new Date(d.getFullYear(), d.getMonth() + 1, 15), d.getFullYear() + '.' + pad(mm) + ' 사용분');
           else if (r.kind === 'quarterly' && mm % 3 === 0) push(r, d, d.getFullYear() + ' ' + (mm / 3) + '분기');
           else if (r.kind === 'half' && (mm === 6 || mm === 12)) push(r, d, d.getFullYear() + (mm === 6 ? ' 상반기' : ' 하반기'));
           else if (r.kind === 'yearly' && mm === r.month) push(r, d, String(d.getFullYear()));
@@ -98,7 +101,7 @@
   }
   function freqText(r) {
     return { once: '최초 1회', monthly: '매월', quarterly: '분기', half: '반기 (6·12월)', yearly: '연 1회 (' + r.month + '월)',
-      fromStart: r.months === 12 ? '연 1회 (시행일 기준)' : '연 1회', audit: '연 1회 (심사 전)', cal: '교정 주기 ' + r.months + '개월' }[r.kind] || '';
+      fromStart: r.months === 12 ? '연 1회 (시행일 기준)' : '연 1회', audit: '연 1회 (심사 전)', next15: '매월 (다음 달 15일)', cal: '교정 주기 ' + r.months + '개월' }[r.kind] || '';
   }
   function isDone(t) {
     if (!found || !t.file) return null;
@@ -175,7 +178,7 @@
   // ---------------------------------------------------------------- 양식 채워 만들기
   // 회사 공통 담당자(매뉴얼 3장 조직표 기준, 화면에서 고칠 수 있음)
   var PROFILE = [['ceo', '대표이사', '백민기 대표이사'], ['quality', '품질 (관리책임자)', '문선기 차장'], ['tech', '기술팀 총괄', '하희천 이사'],
-    ['safety', '안전 담당', '왕리홍 대리'], ['env', '환경 담당', '성문기 과장'], ['production', '생산관리', ''], ['admin', '경영관리', ''],
+    ['safety', '안전 담당', '왕리홍 대리'], ['env', '환경 담당', '성문기 과장'], ['production', '생산관리 (배선 숙련 확인)', ''], ['test', '시험·시운전 책임', ''], ['admin', '경영관리', ''],
     ['sales', '영업관리', ''], ['auditor', '내부심사원 (자기 업무 제외)', ''], ['nas', '공용 저장소 경로 (NAS)', ''], ['backup', '별도 백업 위치', ''],
     ['staff', '인원 (정규직 / 비정규직)', '정규직 20명 / 제조 비정규직 5명']];
   function who(role) { return A.P.clean(cfg.profile[role]) || ''; }
@@ -186,7 +189,7 @@
   /** 양식 담당 글('품질 / 경영관리', '왕리홍 대리 / 현장 근로자')의 첫 담당을 이름으로 바꾼다 */
   function person(ownerText, nth) {
     var first = (String(ownerText || '').split('/')[nth || 0] || '').trim();
-    var map = [[/대표/, 'ceo'], [/품질/, 'quality'], [/기술/, 'tech'], [/안전/, 'safety'], [/환경/, 'env'], [/생산관리/, 'production'], [/경영관리/, 'admin'], [/영업/, 'sales']];
+    var map = [[/대표/, 'ceo'], [/품질/, 'quality'], [/기술/, 'tech'], [/안전/, 'safety'], [/환경/, 'env'], [/생산관리/, 'production'], [/시험|시운전/, 'test'], [/경영관리/, 'admin'], [/영업/, 'sales']];
     for (var i = 0; i < map.length; i++) if (map[i][0].test(first) && who(map[i][1])) return who(map[i][1]);
     if (/대리|과장|차장|이사/.test(first)) return first.split('·')[0].trim();
     return first;
@@ -421,6 +424,32 @@
     }, function (e) { setStatus(A.saveErrorText(e, name), 'bad'); });
   }
 
+  /** 일용직 투입 당일 채용 시 교육 + 작업 범위 기록(QF-12) */
+  function dailySpec(date, names) {
+    var src = (A.FORMS.company || {})['QF-12'];
+    var spec = JSON.parse(JSON.stringify(src));
+    var boss = who('production') || '생산관리 책임자';
+    spec.rows = names.map(function (n) { return [n, '일용직', '제조 (조립·배선 보조)', '', '', '', '', '', '숙련자(' + boss + ') 지도 아래 작업 · 독립작업·통전 작업 금지']; });
+    spec.example = { rows: [{ 4: '서명' }] };
+    var v = { '교육/평가명': '채용 시 안전보건교육 (일용직, 투입 전)', '구분': '교육', '일자·시간': date + ' 작업 전 · 1시간',
+      '장소': '본사 공장', '강사·평가자': boss + (who('safety') ? ' / ' + who('safety') : ''),
+      '법정 교육 근거·이수조건': '산업안전보건법 제29조, 시행규칙 별표4 — 일용근로자 채용 시 1시간 이상 (투입 전)',
+      '교육 내용 요약': '작업장 위험요인(감전·협착·중량물·베임) · 보호구 착용 · 통전 시험 구역 출입 금지·LOTO 표지 · 정리정돈 · 사고 시 보고·비상연락 · 작업 중지 권리' };
+    var sign = { '작성': boss, '검토': who('safety') || who('quality'), '승인': who('ceo') };
+    return { spec: spec, values: v, sign: sign };
+  }
+  function makeDaily(date, text) {
+    var names = String(text || '').split(/\r?\n|,/).map(function (x) { return x.trim(); }).filter(Boolean);
+    if (!date || !names.length) { setStatus('투입일과 일용직 성명을 한 명 이상 적어 주세요.', 'bad'); return; }
+    var f = dailySpec(date, names);
+    var wb = A.E.buildWorkbook(window.ExcelJS, [f.spec], { values: f.values, rev: A.FORMS.rev, date: A.FORMS.date, effective: A.FORMS.effective, logo: window.ISO_LOGO, signNames: f.sign });
+    var name = 'QF-12_' + date.replace(/-/g, '') + '_일용직투입교육_' + names.length + '명.xlsx';
+    wb.xlsx.writeBuffer().then(function (buf) {
+      return A.saveFile(name, new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    }).then(function () { setStatus(name + ' 저장 — 출력해 교육 후 서명받고 회사기록에 둡니다. 다음 달 15일까지 근로내용확인신고 대상입니다.', 'ok'); },
+      function (e) { setStatus(A.saveErrorText(e, name), 'bad'); });
+  }
+
   // ---------------------------------------------------------------- 회사 설정 파일 (담당자·명단·기준 날짜)
   // 한 사람이 입력해 공용 저장소(접근권한 관리 폴더)에 두면 다른 PC에서도 불러와 같은 값으로 양식을 만든다.
   function exportCfg() {
@@ -502,6 +531,15 @@
         info
       ]));
     });
+    var dayDate = el('input', { type: 'date', id: 'an-day-date', value: iso(today()) });
+    var dayNames = el('textarea', { id: 'an-day-names', rows: '3', spellcheck: 'false', placeholder: '예)\n김일용\n박일용' });
+    listBox.appendChild(el('div', { cls: 'sign-box an-day' }, [
+      el('p', { cls: 'sign-h', text: '일용직 투입 교육 기록 (투입하는 날마다)' }),
+      el('p', { cls: 'help', text: '제조 일용직은 사람이 바뀌므로 투입 당일 작업 전에 채용 시 교육(1시간 이상)을 하고 이 기록을 남깁니다. 이름만 적으면 교육 내용·법정 근거·작업 범위(숙련자 지도 아래 작업)가 채워진 QF-12가 만들어집니다.' }),
+      el('div', { cls: 'grid' }, [el('div', { cls: 'field' }, [el('label', { for: 'an-day-date', text: '투입일' }), dayDate])]),
+      el('div', { cls: 'field an-list' }, [el('label', { for: 'an-day-names', text: '일용직 성명 (한 줄에 한 명)' }), dayNames]),
+      el('button', { type: 'button', cls: 'btn btn-primary', text: '일용직 투입 교육 기록 받기 (QF-12)', onclick: function () { makeDaily(dayDate.value, dayNames.value); } })
+    ]));
     steps.appendChild(el('section', { cls: 'step' }, [
       el('h2', {}, [el('span', { cls: 'num', text: '3' }), '명단 (한 번 입력)']),
       el('p', { cls: 'help', text: '엑셀 표에서 복사해 붙여 넣어도 됩니다(열 순서만 맞추기). 명단은 이 PC에만 저장되고 어디로도 보내지 않습니다. 양식을 받으면 교육 대상 인원(SF-05), 건강진단 대상·주기(SF-06), 교육·역량 명단(QF-12), 관리감독자(SF-04), 공급자 평가(QF-10), 외주업체별 안전보건 평가(SF-09), 계측기 대장(QF-11)이 채워지고, 계측기 교정 기한이 할 일에 들어갑니다.' }),
@@ -633,6 +671,6 @@
       cfg.profile = cfg.profile || {}; cfg.lists = cfg.lists || {};
       PROFILE.forEach(function (f) { if (cfg.profile[f[0]] === undefined) cfg.profile[f[0]] = f[2]; });
     },
-    _tasks: function () { return tasks(); }, _form: function (i) { return buildBuffer(tasks()[i]); }, _formFor: function (i) { return formFor(tasks()[i]); }, _ics: function () { return icsText(); }, _setFound: function (l) { found = l; refresh(); }, _setLists: function (o) { Object.assign(cfg.lists, o); render(); }
+    _tasks: function () { return tasks(); }, _form: function (i) { return buildBuffer(tasks()[i]); }, _formFor: function (i) { return formFor(tasks()[i]); }, _ics: function () { return icsText(); }, _setFound: function (l) { found = l; refresh(); }, _setLists: function (o) { Object.assign(cfg.lists, o); render(); }, _daily: function (d, n) { var f = dailySpec(d, n); return A.E.buildWorkbook(window.ExcelJS, [f.spec], { values: f.values, rev: A.FORMS.rev, date: A.FORMS.date, logo: window.ISO_LOGO, signNames: f.sign }).xlsx.writeBuffer().then(function (b) { return Array.from(new Uint8Array(b)); }); }
   };
 })();

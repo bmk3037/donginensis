@@ -367,4 +367,6 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
   padding: 8px 10px; border: 1px solid var(--line); background: var(--surface, #fff); color: var(--ink); resize: vertical; box-sizing: border-box; }
 .an-list textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; }
 .an-lcount { color: var(--accent); font-weight: 600; }
+.an-day { margin-top: 4px; }
+.an-day .btn-primary { justify-self: start; }
 .an-import { text-align: center; cursor: pointer; }

@@ -75,7 +75,7 @@
     var pr = c.profile || {}, out = {};
     function put(k, v) { v = String(v || '').trim(); if (v) out[k] = v; }
     put('signReviewer', pr.quality); put('signApprover', pr.ceo); put('quality', pr.quality); put('reviewer', pr.tech);
-    put('production', pr.production); put('documentOwner', pr.quality); put('accessOwner', pr.admin);
+    put('production', pr.production); put('tester', pr.test); put('inspector', pr.production); put('documentOwner', pr.quality); put('accessOwner', pr.admin);
     put('recordPath', pr.nas); put('backupPath', pr.backup);
     put('meters', (c.instruments || []).filter(function (m) { return /계측/.test(m.kind); }).map(function (m) { return m.no + ' ' + m.name; }).join(' · '));
     var wire = (c.suppliers || []).filter(function (x) { return x.kind === '현장배선'; })[0];
