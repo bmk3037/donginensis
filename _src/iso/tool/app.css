@@ -443,3 +443,12 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-lock-card input[type="password"] { width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); padding: 9px 10px; }
 .q-lock-card input[type="password"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .q-lock-card .status:empty { display: none; }
+/* 바탕화면 바로가기 안내 */
+.inst-overlay { position: fixed; inset: 0; background: rgba(15, 42, 74, 0.45); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.inst-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; max-width: 460px; width: 100%; display: grid; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+.inst-card h2 { margin: 0 0 4px; color: var(--accent); font-size: 18px; }
+.inst-step { margin: 0; }
+.inst-or { margin: 8px 0 0; font-weight: 700; color: var(--accent); font-size: var(--fs-sm); border-top: 1px solid var(--line); padding-top: 10px; }
+.inst-how { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
+.inst-card .btn-ghost { justify-self: end; }
+
