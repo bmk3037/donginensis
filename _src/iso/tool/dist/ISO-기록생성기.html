@@ -2301,17 +2301,12 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     return out;
   }
 
-  // 바탕화면 아이콘
-  // ① 「동」 아이콘: 크롬·엣지의 앱 설치 창(beforeinstallprompt)으로 바탕화면·시작 메뉴에 회사 아이콘을 만든다.
-  //    크롬은 페이지를 한 번 누르고 잠시(약 30초) 지나야 설치 창을 허락하므로, 그 전에는 안내 창을 띄워 두고 허락되는 순간 버튼을 켠다.
-  // ② 그 밖의 브라우저: 누르면 도구로 바로 넘어가는 작은 HTML 파일(크롬 모양 아이콘)을 바탕화면에 저장한다.
-  //    인터넷 바로가기(.url)는 크롬 저장 창·윈도우 보안에 막혀 열리지 않으므로 쓰지 않는다.
+  // 바탕화면 「동」 아이콘
+  // ① 크롬·엣지가 앱 설치를 허락한 상태면 설치 창(beforeinstallprompt)으로 바탕화면에 회사 아이콘을 바로 만든다.
+  // ② 아니면 회사 아이콘이 붙은 인터넷 바로가기(.url)를 다운로드로 받아 바탕화면으로 옮기게 한다(어느 브라우저든 된다).
+  //    .url을 크롬 저장 창(showSaveFilePicker)으로 바탕화면에 바로 쓰면 열리지 않으므로 반드시 일반 다운로드로 받는다.
   var TOOL_URL = 'https://donginensis.com/files/iso/ISO-record-builder.html';
-  var SHORTCUT_NAME = 'ISO 기록 도구.html';
-  var SHORTCUT = '<!doctype html>\r\n<html lang="ko"><head><meta charset="utf-8"><title>ISO 기록 도구</title>' +
-    '<meta http-equiv="refresh" content="0;url=' + TOOL_URL + '">' +
-    '<script>location.replace("' + TOOL_URL + '")<\/script></head>' +
-    '<body><p><a href="' + TOOL_URL + '">ISO 기록 도구 열기</a></p></body></html>\r\n';
+  var SHORTCUT = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
   var installEvt = null;
   function standalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
   function hideInstall() { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; }
@@ -2352,47 +2347,30 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     var b = document.getElementById('instApp'); if (!b) return;
     var t = document.getElementById('instWait');
     b.disabled = !installEvt;
-    if (t) t.textContent = installEvt ? '버튼을 누르고, 뜨는 창에서 「설치」를 누르세요.' : '크롬이 준비하는 중입니다. 이 창을 연 채로 화면을 한 번 누르고 30초쯤 기다리면 버튼이 켜집니다.';
+    if (t) t.textContent = installEvt ? '누르고, 뜨는 창에서 「설치」를 누르세요.' : '크롬이 준비되면(페이지를 한 번 누르고 30초쯤 뒤) 버튼이 켜집니다.';
   }
+  function shortcutFile() { saveFile('ISO 기록 도구.url', new Blob([SHORTCUT], { type: 'application/octet-stream' })); }
   function iconHelp(installed) {
     var kids = [el('h2', { id: 'instTitle', text: '바탕화면 「동」 아이콘 만들기' })];
-    if (installed) {
-      kids.push(el('p', { cls: 'inst-step', text: '이 PC에는 「동」 아이콘 도구가 이미 설치돼 있습니다. 바탕화면에 없으면 시작 메뉴에서 「ISO 기록 도구」를 찾아 바탕화면으로 끌어다 놓으세요.' }));
-    } else {
+    if (installed) kids.push(el('p', { cls: 'inst-how', text: '이 PC에는 「동」 아이콘 도구가 이미 설치돼 있습니다. 시작 메뉴에서 「ISO 기록 도구」를 찾아 바탕화면으로 끌어다 놓아도 됩니다.' }));
+    kids.push(el('p', { cls: 'inst-step', text: '① 아래 버튼을 누릅니다.' }));
+    kids.push(el('button', { type: 'button', cls: 'btn btn-primary inst-dl', text: '「동」 바로가기 파일 받기', onclick: shortcutFile }));
+    kids.push(el('p', { cls: 'inst-step', text: '② 받은 「ISO 기록 도구」 파일(다운로드 폴더)을 바탕화면으로 끌어다 놓습니다.' }));
+    kids.push(el('p', { cls: 'inst-step', text: '③ 바탕화면 「동」 아이콘을 더블클릭하면 도구가 바로 열립니다.' }));
+    if (!installed) {
+      kids.push(el('p', { cls: 'inst-or', text: '또는 크롬 설치 — 바탕화면에 바로 생김' }));
       kids.push(el('div', { cls: 'inst-appbox' }, [
-        el('button', { type: 'button', id: 'instApp', cls: 'btn btn-primary inst-app', text: '「동」 아이콘 만들기', onclick: promptInstall }),
+        el('button', { type: 'button', id: 'instApp', cls: 'btn btn-ghost inst-app', text: '크롬 앱으로 설치', onclick: promptInstall }),
         el('p', { id: 'instWait', cls: 'inst-how' })
       ]));
-      kids.push(el('p', { cls: 'inst-or', text: '버튼이 계속 안 켜지면 (크롬)' }));
-      kids.push(el('p', { cls: 'inst-how', text: '오른쪽 위 ⋮ → 전송, 저장 및 공유(또는 저장 및 공유) → 「바로가기 만들기」 → 만들기. 엣지는 … → 앱 → 「이 사이트를 앱으로 설치」.' }));
     }
-    kids.push(el('p', { cls: 'inst-or', text: '크롬·엣지가 아닌 브라우저' }));
-    kids.push(el('button', { type: 'button', cls: 'btn btn-ghost', text: '크롬 모양 아이콘 받기', onclick: function () { closeHelp(); makeShortcut(); } }));
     kids.push(el('button', { type: 'button', cls: 'btn btn-ghost', text: '닫기', onclick: closeHelp }));
-    overlay(kids, installed ? '.btn' : '#instApp');
+    overlay(kids, '.inst-dl');
     syncHelp();
-    if (!installed) { var b = document.getElementById('instApp'); if (b && b.disabled) { var c = document.querySelector('#installHelp .btn-ghost'); if (c) c.focus(); } }
-  }
-  function makeShortcut() {
-    var blob = new Blob([SHORTCUT], { type: 'text/html' });
-    var fallback = function () {
-      saveFile(SHORTCUT_NAME, blob);
-      shortcutNote('다운로드 폴더에 「ISO 기록 도구」 파일을 받았습니다. 이 파일을 바탕화면으로 끌어다 놓으면 아이콘이 됩니다. 아이콘을 더블클릭하면 도구가 바로 열립니다.');
-    };
-    if (!window.showSaveFilePicker || location.protocol === 'file:') { fallback(); return; }
-    window.showSaveFilePicker({ suggestedName: SHORTCUT_NAME, startIn: 'desktop', types: [{ description: '바탕화면 아이콘', accept: { 'text/html': ['.html'] } }] }).then(function (h) {
-      return h.createWritable().then(function (w) { return w.write(blob).then(function () { return w.close(); }); });
-    }).then(function () {
-      shortcutNote('바탕화면에 「ISO 기록 도구」 아이콘을 만들었습니다. 더블클릭하면 도구가 바로 열립니다. 아이콘이 안 보이면 바탕화면 빈 곳을 한 번 누르고 F5(새로 고침)를 누르세요.');
-    }, function (e) {
-      if (e && e.name === 'AbortError') return;   // 저장 창에서 취소
-      fallback();
-    });
   }
   document.addEventListener('click', function (e) {
     if (!e.target || e.target.id !== 'btnInstall') return;
     if (installEvt) { promptInstall(); return; }            // 크롬이 허락한 상태: 바로 설치 창
-    if (location.protocol === 'file:') { makeShortcut(); return; }
     var check = navigator.getInstalledRelatedApps ? navigator.getInstalledRelatedApps().catch(function () { return []; }) : Promise.resolve([]);
     check.then(function (apps) { iconHelp(apps && apps.length > 0); });
   });
