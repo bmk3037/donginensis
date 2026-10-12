@@ -4,6 +4,7 @@
 - 비밀번호는 **두 개뿐**이다.
   - **파트너 자료실 비밀번호** (`PRIVATE_PASS`): 파트너·고객사와 공유하는 잠금 파일·폴더(`members.html`·`files/private/`, 자료실 혁신제품 잠금 자료 `files/innov/private/` 등)는 몇 개든 이 하나로 통일한다. 새 파트너용 잠금 폴더도 같은 비밀번호로 암호화하고, 바꿀 때는 모든 파트너용 폴더를 함께 다시 암호화한다.
   - **내부 자료실 비밀번호** (`INTERNAL_PASS`): 대표만 쓰는 `internal.html`·`files/internal/`(사업자등록증·사업계획서 등 내부 서류). 파트너 비밀번호와 반드시 다르게 하고, 사이트맵·검색에는 노출하지 않는다(robots 차단, noindex). 자료실(`resources.html`·영문) 파트너 자료실 아래 잠금 카드로만 연결한다(대표 요청, 2026.10). 파트너용 자료를 여기에 섞지 않는다.
+  - **견적서 전용 비밀번호** (`QUOTE_PASS`, 대표 확인 2026.10.12): ISO 기록 도구 00 견적서 탭의 회사 직인 그림만 암호화한다(`_src/iso/tool/quote.js`의 `SEAL_ENC`, AES-GCM·PBKDF2). 직원은 영업관리 담당에게 받는다. 위 두 비밀번호와 다르게 유지하고, 직인을 다시 암호화할 때만 쓴다. 단가·원가 데이터는 페이지에 넣지 않는다.
 - 비밀번호는 저장소·코드·커밋 메시지·PR에 절대 적지 않는다. 환경변수 `PRIVATE_PASS` / `INTERNAL_PASS`로 받는다(없으면 사용자에게 요청).
 - 암호화: `_src/private/encrypt.js` (`PRIVATE_OUT`으로 폴더 지정, 내부 자료실은 `PRIVATE_PASS="$INTERNAL_PASS" PRIVATE_OUT=files/internal`). 커밋 전 확인: `PRIVATE_PASS='…' INTERNAL_PASS='…' node _src/private/check.js` — 모든 비공개 폴더가 정해진 비밀번호로 열려야 한다.
 - 원본(비공개 문서·docs.json·생성 스크립트)은 저장소 밖에 둔다. 공개 저장소이므로 암호화된 파일만 올린다. 자세한 방법은 `_src/private/README.md`.
