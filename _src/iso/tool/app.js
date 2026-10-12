@@ -84,16 +84,30 @@
   }
 
   // 바탕화면 설치(크롬·엣지 웹 앱): 설치할 수 있을 때만 버튼이 보인다
+  // 버튼은 늘 보이고, 브라우저가 바로 설치를 허락하면 설치 창을, 아니면 직접 설치하는 방법을 보여 준다.
   var installEvt = null;
-  window.addEventListener('beforeinstallprompt', function (e) {
-    e.preventDefault(); installEvt = e;
-    var b = document.getElementById('btnInstall'); if (b) b.hidden = false;
-  });
-  window.addEventListener('appinstalled', function () { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; installEvt = null; });
+  function standalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+  function hideInstall() { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; }
+  if (standalone()) document.addEventListener('DOMContentLoaded', hideInstall);
+  if (standalone()) hideInstall();
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
+  window.addEventListener('appinstalled', function () { hideInstall(); installEvt = null; });
   document.addEventListener('click', function (e) {
-    if (!e.target || e.target.id !== 'btnInstall' || !installEvt) return;
-    installEvt.prompt();
-    installEvt.userChoice.then(function () { installEvt = null; e.target.hidden = true; });
+    if (!e.target || e.target.id !== 'btnInstall') return;
+    if (installEvt) {
+      installEvt.prompt();
+      installEvt.userChoice.then(function (c) { installEvt = null; if (c && c.outcome === 'accepted') hideInstall(); });
+      return;
+    }
+    if (location.protocol === 'file:') {
+      window.alert('바탕화면 설치는 홈페이지에서 연 도구에서만 됩니다.\n\n홈페이지 자료실 → ISO → ISO 기록 도구를 크롬이나 엣지로 연 뒤 다시 눌러 주세요.');
+      return;
+    }
+    window.alert('이 브라우저에서는 직접 설치해 주세요.\n\n'
+      + '■ 크롬: 오른쪽 위 ⋮ → 전송, 저장, 공유(또는 저장 및 공유) → 「페이지를 앱으로 설치」 (또는 주소창 오른쪽 설치 아이콘)\n'
+      + '■ 엣지: 오른쪽 위 … → 앱 → 「이 사이트를 앱으로 설치」\n'
+      + '■ 그 밖의 브라우저(웨일 등): 크롬이나 엣지로 열어 주세요.\n\n'
+      + '설치하면 바탕화면과 시작 메뉴에 「ISO 기록 도구」 아이콘이 생깁니다. 이미 설치했다면 바탕화면 아이콘으로 여세요.');
   });
 
   function clearAll() {
