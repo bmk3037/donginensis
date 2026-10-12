@@ -96,8 +96,12 @@ def build():
     # 홈페이지판: 바탕화면 설치(웹 앱)와 오프라인 캐시. 매니페스트·서비스워커는 files/iso/에 함께 둔다.
     pwa = ('<link rel="manifest" href="iso-tool.webmanifest">\n<meta name="theme-color" content="#0f2a4a">\n'
            '<link rel="apple-touch-icon" href="../../apple-touch-icon.png">\n'
-           '<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) '
-           'window.addEventListener("load", function () { navigator.serviceWorker.register("iso-sw.js").catch(function () {}); });</script>\n')
+           # 새 판이 배포되면: 서비스워커 파일을 캐시 없이 확인(updateViaCache none) → 새 워커가 넘겨받으면 한 번만 새로고침
+           '<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {'
+           'var hadSW = !!navigator.serviceWorker.controller, reloaded = false;'
+           'navigator.serviceWorker.addEventListener("controllerchange", function () { if (hadSW && !reloaded) { reloaded = true; location.reload(); } });'
+           'window.addEventListener("load", function () { navigator.serviceWorker.register("iso-sw.js", { updateViaCache: "none" })'
+           '.then(function (r) { r.update(); }).catch(function () {}); }); }</script>\n')
     full = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
             + pwa + '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
