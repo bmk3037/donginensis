@@ -46,6 +46,10 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .appbar-logo { display: block; height: 26px; width: auto; }
 .appbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.28); }
 .appbar-name { font-weight: 600; font-size: var(--fs-md); letter-spacing: -0.01em; }
+.appbar-install { margin-left: auto; font: inherit; font-size: 13px; font-weight: 600; color: #fff; background: transparent; border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+.appbar-install:hover, .appbar-install:focus-visible { background: rgba(255,255,255,0.14); outline: none; }
+.appbar-install:not([hidden]) + .appbar-code { margin-left: 10px; }
 .appbar-code { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.75); padding: 2px 8px;
   border: 1px solid rgba(255,255,255,0.25); border-radius: 4px; }
 @media (max-width: 720px) { .appbar-sep, .appbar-code, .appbar-name { display: none; } }
@@ -440,4 +444,11 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-lock-card input[type="password"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .q-lock-card .status:empty { display: none; }
 /* 바탕화면 바로가기 안내 */
+.inst-overlay { position: fixed; inset: 0; background: rgba(15, 42, 74, 0.45); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.inst-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; max-width: 460px; width: 100%; display: grid; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+.inst-card h2 { margin: 0 0 4px; color: var(--accent); font-size: 18px; }
+.inst-step { margin: 0; }
+.inst-or { margin: 8px 0 0; font-weight: 700; color: var(--accent); font-size: var(--fs-sm); border-top: 1px solid var(--line); padding-top: 10px; }
+.inst-how { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
+.inst-card .btn-ghost { justify-self: end; }
 
