@@ -400,13 +400,12 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-items .c-bom { width: 40px; text-align: center; }
 .q-items .c-bom input { width: 18px; height: 18px; accent-color: var(--accent); }
 .q-items .c-name { width: 14%; }
-.q-items .c-spec { width: 19%; }
+.q-items .c-spec { width: 18%; }
 .q-items .c-maker { width: 9%; }
 .q-items .c-qty { width: 6%; }
 .q-items .c-unit { width: 6%; }
 .q-items .c-money { width: 10%; }
 .q-items .c-amt { width: 10%; }
-.q-items .c-mg { width: 6%; }
 .q-items .c-act { width: 72px; white-space: nowrap; }
 .q-items .c-act .btn-icon { min-width: 28px; padding: 2px 6px; }
 .q-items input.q-n { text-align: right; font-variant-numeric: tabular-nums; }
@@ -414,6 +413,12 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-items tr.q-nonbom td input[type="text"] { color: var(--muted); }
 .q-amt, .q-mg { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .q-mg.low { color: var(--bad); font-weight: 600; }
+.q-items .c-mg { width: 8%; }
+.q-items td.q-mg input.q-mg-in { padding-right: 16px; padding-left: 3px; }
+.q-items td.q-mg { position: relative; }
+.q-items td.q-mg::after { content: '%'; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: var(--fs-sm); color: var(--muted); pointer-events: none; }
+.q-mg.low input.q-mg-in { color: var(--bad); font-weight: 600; }
+.q-items td.q-mg input.q-mg-in:disabled { background: var(--sunken); color: var(--muted); }
 .q-inline { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .q-inline label { font-size: var(--fs-sm); color: var(--ink); }
 .q-priceas { flex-basis: 100%; }

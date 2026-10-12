@@ -415,13 +415,12 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-items .c-bom { width: 40px; text-align: center; }
 .q-items .c-bom input { width: 18px; height: 18px; accent-color: var(--accent); }
 .q-items .c-name { width: 14%; }
-.q-items .c-spec { width: 19%; }
+.q-items .c-spec { width: 18%; }
 .q-items .c-maker { width: 9%; }
 .q-items .c-qty { width: 6%; }
 .q-items .c-unit { width: 6%; }
 .q-items .c-money { width: 10%; }
 .q-items .c-amt { width: 10%; }
-.q-items .c-mg { width: 6%; }
 .q-items .c-act { width: 72px; white-space: nowrap; }
 .q-items .c-act .btn-icon { min-width: 28px; padding: 2px 6px; }
 .q-items input.q-n { text-align: right; font-variant-numeric: tabular-nums; }
@@ -429,6 +428,12 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-items tr.q-nonbom td input[type="text"] { color: var(--muted); }
 .q-amt, .q-mg { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .q-mg.low { color: var(--bad); font-weight: 600; }
+.q-items .c-mg { width: 8%; }
+.q-items td.q-mg input.q-mg-in { padding-right: 16px; padding-left: 3px; }
+.q-items td.q-mg { position: relative; }
+.q-items td.q-mg::after { content: '%'; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: var(--fs-sm); color: var(--muted); pointer-events: none; }
+.q-mg.low input.q-mg-in { color: var(--bad); font-weight: 600; }
+.q-items td.q-mg input.q-mg-in:disabled { background: var(--sunken); color: var(--muted); }
 .q-inline { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .q-inline label { font-size: var(--fs-sm); color: var(--ink); }
 .q-priceas { flex-basis: 100%; }
@@ -542,7 +547,7 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
           <table class="tbl" id="qTable">
             <thead><tr>
               <th class="c-no">No</th><th class="c-bom">BOM</th><th class="c-name">품명</th><th class="c-spec">규격 · 모델</th><th class="c-maker">메이커</th>
-              <th class="c-qty">수량</th><th class="c-unit">단위</th><th class="c-money">원가</th><th class="c-money">단가</th><th class="c-amt">금액</th><th class="c-mg">마진</th>
+              <th class="c-qty">수량</th><th class="c-unit">단위</th><th class="c-money">원가</th><th class="c-money">단가</th><th class="c-amt">금액</th><th class="c-mg" title="행마다 마진 %를 적으면 단가가 계산됩니다">마진 %</th>
               <th class="c-act"><span class="sr">순서 · 삭제</span></th>
             </tr></thead>
             <tbody></tbody>
@@ -5733,9 +5738,22 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   }
 
   function cellInput(it, k, cls, label) {
-    var inp = el('input', { type: 'text', value: it[k] || '', cls: cls || null, 'aria-label': label, inputmode: cls === 'q-n' ? 'decimal' : null,
+    var inp = el('input', { type: 'text', value: it[k] || '', cls: cls || null, 'aria-label': label, inputmode: /q-n/.test(cls || '') ? 'decimal' : null,
       oninput: function () { it[k] = inp.value; updateRow(it); changed(); } });
     return el('td', {}, [inp]);
+  }
+  /** 마진 칸: 행마다 마진 %를 적으면 그 행의 단가를 원가 ÷ (1 − 마진/100)으로 계산한다(100원 단위). 원가가 없으면 적을 수 없다. */
+  function marginCell(it, i) {
+    var inp = el('input', { type: 'text', cls: 'q-n q-mg-in', inputmode: 'decimal', 'aria-label': (i + 1) + '행 마진 %',
+      oninput: function () {
+        var c = num(it.cost), m = num(inp.value);
+        if (c === null || c <= 0 || m === null || m >= 100) return;
+        it.price = priceFromCost(c, 1 - m / 100);
+        var pin = it._tr && it._tr.querySelector('.q-price'); if (pin) pin.value = it.price;
+        updateRow(it, true); changed();
+      },
+      onblur: function () { updateRow(it); } });
+    return el('td', { cls: 'q-mg' }, [inp]);
   }
   function renderItems() {
     var tb = $('qTable').querySelector('tbody');
@@ -5753,9 +5771,9 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
         cellInput(it, 'qty', 'q-n', (i + 1) + '행 수량'),
         cellInput(it, 'unit', null, (i + 1) + '행 단위'),
         cellInput(it, 'cost', 'q-n', (i + 1) + '행 원가'),
-        cellInput(it, 'price', 'q-n', (i + 1) + '행 단가'),
+        cellInput(it, 'price', 'q-n q-price', (i + 1) + '행 단가'),
         el('td', { cls: 'q-amt' }),
-        el('td', { cls: 'q-mg' }),
+        marginCell(it, i),
         el('td', { cls: 'c-act' }, [
           el('button', { type: 'button', cls: 'btn btn-icon', text: '↑', 'aria-label': (i + 1) + '행 위로', disabled: i === 0,
             onclick: function () { var t = q.items[i - 1]; q.items[i - 1] = it; q.items[i] = t; renderItems(); changed(); } }),
@@ -5767,13 +5785,15 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       updateRow(it);
     });
   }
-  function updateRow(it) {
+  function updateRow(it, typing) {
     if (!it._tr) return;
     var a = amount(it), c = num(it.cost), p = num(it.price);
     it._tr.querySelector('.q-amt').textContent = won(a);
-    var mg = it._tr.querySelector('.q-mg');
-    if (c !== null && p) { var r = (p - c) / p * 100; mg.textContent = r.toFixed(1) + '%'; mg.className = 'q-mg' + (r < 10 ? ' low' : ''); }
-    else { mg.textContent = ''; mg.className = 'q-mg'; }
+    var mg = it._tr.querySelector('.q-mg'), mi = mg.querySelector('.q-mg-in');
+    mi.disabled = !(c !== null && c > 0);
+    mi.title = mi.disabled ? '원가를 적으면 마진 %를 바꿀 수 있습니다' : '';
+    if (c !== null && c > 0 && p) { var r = (p - c) / p * 100; if (!typing) mi.value = r.toFixed(1); mg.className = 'q-mg' + (r < 10 ? ' low' : ''); }
+    else { if (!typing) mi.value = ''; mg.className = 'q-mg'; }
   }
 
   function renderSummary() {
