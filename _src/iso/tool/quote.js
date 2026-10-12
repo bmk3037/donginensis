@@ -253,9 +253,22 @@
   }
 
   function cellInput(it, k, cls, label) {
-    var inp = el('input', { type: 'text', value: it[k] || '', cls: cls || null, 'aria-label': label, inputmode: cls === 'q-n' ? 'decimal' : null,
+    var inp = el('input', { type: 'text', value: it[k] || '', cls: cls || null, 'aria-label': label, inputmode: /q-n/.test(cls || '') ? 'decimal' : null,
       oninput: function () { it[k] = inp.value; updateRow(it); changed(); } });
     return el('td', {}, [inp]);
+  }
+  /** 마진 칸: 행마다 마진 %를 적으면 그 행의 단가를 원가 ÷ (1 − 마진/100)으로 계산한다(100원 단위). 원가가 없으면 적을 수 없다. */
+  function marginCell(it, i) {
+    var inp = el('input', { type: 'text', cls: 'q-n q-mg-in', inputmode: 'decimal', 'aria-label': (i + 1) + '행 마진 %',
+      oninput: function () {
+        var c = num(it.cost), m = num(inp.value);
+        if (c === null || c <= 0 || m === null || m >= 100) return;
+        it.price = priceFromCost(c, 1 - m / 100);
+        var pin = it._tr && it._tr.querySelector('.q-price'); if (pin) pin.value = it.price;
+        updateRow(it, true); changed();
+      },
+      onblur: function () { updateRow(it); } });
+    return el('td', { cls: 'q-mg' }, [inp]);
   }
   function renderItems() {
     var tb = $('qTable').querySelector('tbody');
@@ -273,9 +286,9 @@
         cellInput(it, 'qty', 'q-n', (i + 1) + '행 수량'),
         cellInput(it, 'unit', null, (i + 1) + '행 단위'),
         cellInput(it, 'cost', 'q-n', (i + 1) + '행 원가'),
-        cellInput(it, 'price', 'q-n', (i + 1) + '행 단가'),
+        cellInput(it, 'price', 'q-n q-price', (i + 1) + '행 단가'),
         el('td', { cls: 'q-amt' }),
-        el('td', { cls: 'q-mg' }),
+        marginCell(it, i),
         el('td', { cls: 'c-act' }, [
           el('button', { type: 'button', cls: 'btn btn-icon', text: '↑', 'aria-label': (i + 1) + '행 위로', disabled: i === 0,
             onclick: function () { var t = q.items[i - 1]; q.items[i - 1] = it; q.items[i] = t; renderItems(); changed(); } }),
@@ -287,13 +300,15 @@
       updateRow(it);
     });
   }
-  function updateRow(it) {
+  function updateRow(it, typing) {
     if (!it._tr) return;
     var a = amount(it), c = num(it.cost), p = num(it.price);
     it._tr.querySelector('.q-amt').textContent = won(a);
-    var mg = it._tr.querySelector('.q-mg');
-    if (c !== null && p) { var r = (p - c) / p * 100; mg.textContent = r.toFixed(1) + '%'; mg.className = 'q-mg' + (r < 10 ? ' low' : ''); }
-    else { mg.textContent = ''; mg.className = 'q-mg'; }
+    var mg = it._tr.querySelector('.q-mg'), mi = mg.querySelector('.q-mg-in');
+    mi.disabled = !(c !== null && c > 0);
+    mi.title = mi.disabled ? '원가를 적으면 마진 %를 바꿀 수 있습니다' : '';
+    if (c !== null && c > 0 && p) { var r = (p - c) / p * 100; if (!typing) mi.value = r.toFixed(1); mg.className = 'q-mg' + (r < 10 ? ' low' : ''); }
+    else { if (!typing) mi.value = ''; mg.className = 'q-mg'; }
   }
 
   function renderSummary() {
