@@ -81,6 +81,21 @@
       });
       if (hits > best.hits) best = { headerRow: r, map: used, hits: hits };
     }
+    // 해외식 BOM: TYPE(부품 종류) + DESCRIPTION(모델·사양) → TYPE을 품명, DESCRIPTION을 모델·형번으로
+    if ((kind === 'bom' || kind === 'bomTotal') && best.map.model === undefined && best.map.name !== undefined) {
+      var hdr = rows[best.headerRow] || [];
+      for (var c = 0; c < hdr.length; c++) {
+        var h = norm(hdr[c]);
+        if ((h === 'type' || h === '종류' || h === '부품종류' || h === '품목구분') && c !== best.map.name) {
+          best.map.model = best.map.name; best.map.name = c; best.hits++; break;
+        }
+      }
+    }
+    // 수량 머리글에 '1면당·per panel'이 있으면 수량 기준을 알려 준다
+    if (kind === 'bom' && best.map.qty !== undefined) {
+      var qh = norm((rows[best.headerRow] || [])[best.map.qty]);
+      if (/per1panel|perpanel|1면당|판넬당|1panel/.test(qh)) best.basis = 'perPanel';
+    }
     return best;
   }
 
@@ -88,13 +103,14 @@
   // 분류 규칙: 품명+모델을 소문자로 붙인 글에서 차례로 찾는다(먼저 맞는 분류가 우선).
   var CATS = [
     ['외함', [/외함|함체|enclosure|cabinet/]],
-    ['인버터', [/인버터|inverter|\bvfd\b|\bvsd\b|드라이브|\batv\d|\bacs\d{3}|\bfr-[af]\d|\bsv\d{4}/]],
+    ['인버터', [/인버터|inverter|\bvfd\b|\bvsd\b|드라이브|\batv\d|\bacs\d{3}|\bfr-[af]\d|\bfrn\d|\bsv\d{4}/]],
     ['차단기', [/차단기|누전|breaker|\bmccb\b|\belcb?\b|\bmcb\b|\bmpcb\b|\bezc\d|\bnsx\d|\bgv[23]\w|\bic60|acti9|\babn\d|\bsbn\d/]],
     ['HMI', [/\bhmi|터치\s*패널|touch\s*panel|\bgp-\d/]],
     ['PLC', [/\bplc\b|\bcpu\b|\bm2[2-6]\d\b|\btm2\d{2}[a-z]|\btm3[a-z]|modicon|입출력\s*모듈|통신\s*모듈|아날로그\s*모듈/]],
-    ['안전부품', [/비상\s*정지|emergency|e-stop|안전\s*릴레이|safety|\bxps|preventa/]],
+    ['안전부품', [/비상\s*정지|emergency|em'?cy|e-stop|안전\s*릴레이|safety|\bxps|preventa/]],
     ['접촉기·보호계전기', [/eocr|접촉기|contactor|\blc1[df]\w|열동|overload|\blrd\d|(^|\s)mc(\s|$)/]],
-    ['전원장치', [/smps|power\s*supply|파워\s*서플라이|\babl8|전원\s*장치|정류기/]]
+    ['전원장치', [/smps|power\s*supply|파워\s*서플라이|\babl8|전원\s*장치|정류기/]],
+    ['모터', [/모터|전동기|\bmotor\b|\btefc\b/]]
   ];
   var METHOD = {
     '외함': '도면 치수·가공·도장·접지점',
@@ -105,11 +121,14 @@
     '차단기': '모델·정격(AF/AT) 대조, 외관',
     '접촉기·보호계전기': '모델·코일전압·정격 대조, 외관',
     '전원장치': '모델·출력전압·용량 대조, 외관',
+    '모터': '모델·출력·전압·극수 명판 대조, 외관',
     '기타': '모델·수량 대조, 외관'
   };
 
   function classify(name, model) {
     var s = (' ' + String(name) + ' ' + String(model) + ' ').toLowerCase();
+    if (/s\.w\b|software|소프트웨어|라이선스|license/.test(s)) return '기타';   // 프로그램 라이선스는 입고검사 대상 부품이 아님
+    if (/\bcable\b|케이블|extension|커플링|coupling|\bcover\b|커버/.test(s)) return '기타';   // 케이블·커버 등 부속품
     for (var i = 0; i < CATS.length; i++) {
       var ks = CATS[i][1];
       for (var j = 0; j < ks.length; j++) if (ks[j].test(s)) return CATS[i][0];

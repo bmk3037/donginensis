@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="iso-tool.webmanifest">
+<meta name="theme-color" content="#0f2a4a">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) window.addEventListener("load", function () { navigator.serviceWorker.register("iso-sw.js").catch(function () {}); });</script>
 </head>
 <body>
 <title>ISO 기록 도구</title>
@@ -57,6 +61,10 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .appbar-logo { display: block; height: 26px; width: auto; }
 .appbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.28); }
 .appbar-name { font-weight: 600; font-size: var(--fs-md); letter-spacing: -0.01em; }
+.appbar-install { margin-left: auto; font: inherit; font-size: 13px; font-weight: 600; color: #fff; background: transparent; border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+.appbar-install:hover, .appbar-install:focus-visible { background: rgba(255,255,255,0.14); outline: none; }
+.appbar-install:not([hidden]) + .appbar-code { margin-left: 10px; }
 .appbar-code { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.75); padding: 2px 8px;
   border: 1px solid rgba(255,255,255,0.25); border-radius: 4px; }
 @media (max-width: 720px) { .appbar-sep, .appbar-code, .appbar-name { display: none; } }
@@ -392,6 +400,7 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
     <img class="appbar-logo" src="data:image/png;base64,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" alt="동인엔시스" width="150" height="28">
     <span class="appbar-sep" aria-hidden="true"></span>
     <span class="appbar-name">통합경영 기록 시스템</span>
+    <button type="button" class="appbar-install" id="btnInstall" hidden>바탕화면에 설치</button>
     <span class="appbar-code">DI-IMS-F-01 Rev.00</span>
     </div>
 </header>
@@ -1133,6 +1142,21 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       });
       if (hits > best.hits) best = { headerRow: r, map: used, hits: hits };
     }
+    // 해외식 BOM: TYPE(부품 종류) + DESCRIPTION(모델·사양) → TYPE을 품명, DESCRIPTION을 모델·형번으로
+    if ((kind === 'bom' || kind === 'bomTotal') && best.map.model === undefined && best.map.name !== undefined) {
+      var hdr = rows[best.headerRow] || [];
+      for (var c = 0; c < hdr.length; c++) {
+        var h = norm(hdr[c]);
+        if ((h === 'type' || h === '종류' || h === '부품종류' || h === '품목구분') && c !== best.map.name) {
+          best.map.model = best.map.name; best.map.name = c; best.hits++; break;
+        }
+      }
+    }
+    // 수량 머리글에 '1면당·per panel'이 있으면 수량 기준을 알려 준다
+    if (kind === 'bom' && best.map.qty !== undefined) {
+      var qh = norm((rows[best.headerRow] || [])[best.map.qty]);
+      if (/per1panel|perpanel|1면당|판넬당|1panel/.test(qh)) best.basis = 'perPanel';
+    }
     return best;
   }
 
@@ -1140,13 +1164,14 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   // 분류 규칙: 품명+모델을 소문자로 붙인 글에서 차례로 찾는다(먼저 맞는 분류가 우선).
   var CATS = [
     ['외함', [/외함|함체|enclosure|cabinet/]],
-    ['인버터', [/인버터|inverter|\bvfd\b|\bvsd\b|드라이브|\batv\d|\bacs\d{3}|\bfr-[af]\d|\bsv\d{4}/]],
+    ['인버터', [/인버터|inverter|\bvfd\b|\bvsd\b|드라이브|\batv\d|\bacs\d{3}|\bfr-[af]\d|\bfrn\d|\bsv\d{4}/]],
     ['차단기', [/차단기|누전|breaker|\bmccb\b|\belcb?\b|\bmcb\b|\bmpcb\b|\bezc\d|\bnsx\d|\bgv[23]\w|\bic60|acti9|\babn\d|\bsbn\d/]],
     ['HMI', [/\bhmi|터치\s*패널|touch\s*panel|\bgp-\d/]],
     ['PLC', [/\bplc\b|\bcpu\b|\bm2[2-6]\d\b|\btm2\d{2}[a-z]|\btm3[a-z]|modicon|입출력\s*모듈|통신\s*모듈|아날로그\s*모듈/]],
-    ['안전부품', [/비상\s*정지|emergency|e-stop|안전\s*릴레이|safety|\bxps|preventa/]],
+    ['안전부품', [/비상\s*정지|emergency|em'?cy|e-stop|안전\s*릴레이|safety|\bxps|preventa/]],
     ['접촉기·보호계전기', [/eocr|접촉기|contactor|\blc1[df]\w|열동|overload|\blrd\d|(^|\s)mc(\s|$)/]],
-    ['전원장치', [/smps|power\s*supply|파워\s*서플라이|\babl8|전원\s*장치|정류기/]]
+    ['전원장치', [/smps|power\s*supply|파워\s*서플라이|\babl8|전원\s*장치|정류기/]],
+    ['모터', [/모터|전동기|\bmotor\b|\btefc\b/]]
   ];
   var METHOD = {
     '외함': '도면 치수·가공·도장·접지점',
@@ -1157,11 +1182,14 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     '차단기': '모델·정격(AF/AT) 대조, 외관',
     '접촉기·보호계전기': '모델·코일전압·정격 대조, 외관',
     '전원장치': '모델·출력전압·용량 대조, 외관',
+    '모터': '모델·출력·전압·극수 명판 대조, 외관',
     '기타': '모델·수량 대조, 외관'
   };
 
   function classify(name, model) {
     var s = (' ' + String(name) + ' ' + String(model) + ' ').toLowerCase();
+    if (/s\.w\b|software|소프트웨어|라이선스|license/.test(s)) return '기타';   // 프로그램 라이선스는 입고검사 대상 부품이 아님
+    if (/\bcable\b|케이블|extension|커플링|coupling|\bcover\b|커버/.test(s)) return '기타';   // 케이블·커버 등 부속품
     for (var i = 0; i < CATS.length; i++) {
       var ks = CATS[i][1];
       for (var j = 0; j < ks.length; j++) if (ks[j].test(s)) return CATS[i][0];
@@ -2067,6 +2095,19 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     return out;
   }
 
+  // 바탕화면 설치(크롬·엣지 웹 앱): 설치할 수 있을 때만 버튼이 보인다
+  var installEvt = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); installEvt = e;
+    var b = document.getElementById('btnInstall'); if (b) b.hidden = false;
+  });
+  window.addEventListener('appinstalled', function () { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; installEvt = null; });
+  document.addEventListener('click', function (e) {
+    if (!e.target || e.target.id !== 'btnInstall' || !installEvt) return;
+    installEvt.prompt();
+    installEvt.userChoice.then(function () { installEvt = null; e.target.hidden = true; });
+  });
+
   function clearAll() {
     $('bomBasis').value = '';
     state.project = Object.assign({ approval: false, sat: true, outsource: false }, companyDefaults());
@@ -2149,6 +2190,8 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       var sheet = bestSheet(wb, kind);
       state[kind] = makeData(kind, file.name, sheetRows(wb, sheet), { wb: wb, sheet: sheet });
       if (kind === 'std' && !state.project.stdName) state.project.stdName = file.name.replace(/\.[^.]+$/, '');
+      // 수량 머리글이 '1면당(per 1 panel)'이면 수량 기준을 미리 고른다
+      if (kind === 'bom' && state.bom.det.basis && !$('bomBasis').value) { $('bomBasis').value = state.bom.det.basis; $('bomBasis').classList.remove('invalid'); }
       renderData(kind);
       if (kind === 'std') renderFields();
       renderPlan();
