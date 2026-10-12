@@ -466,6 +466,8 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .inst-or { margin: 8px 0 0; font-weight: 700; color: var(--accent); font-size: var(--fs-sm); border-top: 1px solid var(--line); padding-top: 10px; }
 .inst-how { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
 .inst-card .btn-ghost { justify-self: end; }
+.inst-appbox { display: grid; gap: 6px; }
+.inst-app[disabled] { opacity: 0.6; cursor: wait; }
 
 </style>
 
@@ -474,7 +476,7 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
     <img class="appbar-logo" src="data:image/png;base64,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" alt="동인엔시스" width="150" height="28">
     <span class="appbar-sep" aria-hidden="true"></span>
     <span class="appbar-name">통합경영 기록 시스템</span>
-    <button type="button" class="appbar-install" id="btnInstall">바탕화면에 설치</button>
+    <button type="button" class="appbar-install" id="btnInstall">바탕화면 아이콘 만들기</button>
     <span class="appbar-code">DI-IMS-F-01 Rev.00</span>
     </div>
 </header>
@@ -2299,47 +2301,42 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     return out;
   }
 
-  // 바탕화면 설치(크롬·엣지 웹 앱): 설치할 수 있을 때만 버튼이 보인다
-  /** 바로 설치가 안 될 때: 어느 브라우저에서나 되는 바탕화면 바로가기 파일(.url)과 브라우저별 설치 방법 */
+  // 바탕화면 아이콘: 설치 없이, 누르면 홈페이지 도구로 바로 접속하는 인터넷 바로가기(.url)를 바탕화면에 만든다.
+  // 크롬·엣지는 저장 창이 바탕화면에서 열리고, 안 되는 브라우저는 다운로드 폴더에 받아 바탕화면으로 옮기게 안내한다.
   var TOOL_URL = 'https://donginensis.com/files/iso/ISO-record-builder.html';
-  function shortcutFile() {
-    var txt = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
-    saveFile('ISO 기록 도구.url', new Blob([txt], { type: 'application/octet-stream' }));
-  }
-  function showInstallHelp() {
+  var SHORTCUT = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
+  function shortcutNote(msg) {
     var old = document.getElementById('installHelp'); if (old) old.remove();
     var close = function () { box.remove(); };
     var box = el('div', { id: 'installHelp', cls: 'inst-overlay', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'instTitle', onclick: function (e) { if (e.target === box) close(); } }, [
       el('div', { cls: 'inst-card' }, [
-        el('h2', { id: 'instTitle', text: '바탕화면에서 바로 열기' }),
-        el('p', { cls: 'inst-step', text: '① 아래 버튼을 누릅니다.' }),
-        el('button', { type: 'button', cls: 'btn btn-primary inst-dl', text: '바탕화면 바로가기 파일 받기', onclick: function () { shortcutFile(); } }),
-        el('p', { cls: 'inst-step', text: '② 받은 「ISO 기록 도구」 파일(다운로드 폴더)을 바탕화면으로 끌어다 놓습니다.' }),
-        el('p', { cls: 'inst-step', text: '③ 바탕화면 아이콘을 더블클릭하면 도구가 열립니다.' }),
-        el('button', { type: 'button', cls: 'btn btn-ghost', text: '닫기', onclick: close })
+        el('h2', { id: 'instTitle', text: '바탕화면 아이콘' }),
+        el('p', { cls: 'inst-step', text: msg }),
+        el('button', { type: 'button', cls: 'btn btn-primary', text: '확인', onclick: close })
       ])
     ]);
     document.body.appendChild(box);
-    box.querySelector('.inst-dl').focus();
+    box.querySelector('.btn').focus();
     document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); } });
   }
-
-  // 버튼은 늘 보이고, 브라우저가 바로 설치를 허락하면 설치 창을, 아니면 직접 설치하는 방법을 보여 준다.
-  var installEvt = null;
-  function standalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
-  function hideInstall() { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; }
-  if (standalone()) document.addEventListener('DOMContentLoaded', hideInstall);
-  if (standalone()) hideInstall();
-  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
-  window.addEventListener('appinstalled', function () { hideInstall(); installEvt = null; });
+  function makeShortcut() {
+    var blob = new Blob([SHORTCUT], { type: 'application/octet-stream' });
+    var fallback = function () {
+      saveFile('ISO 기록 도구.url', blob);
+      shortcutNote('다운로드 폴더에 「ISO 기록 도구」 파일을 받았습니다. 이 파일을 바탕화면으로 끌어다 놓으면 아이콘이 됩니다. 아이콘을 더블클릭하면 도구가 바로 열립니다.');
+    };
+    if (!window.showSaveFilePicker || location.protocol === 'file:') { fallback(); return; }
+    window.showSaveFilePicker({ suggestedName: 'ISO 기록 도구.url', startIn: 'desktop' }).then(function (h) {
+      return h.createWritable().then(function (w) { return w.write(blob).then(function () { return w.close(); }); });
+    }).then(function () {
+      shortcutNote('바탕화면에 「ISO 기록 도구」 아이콘을 만들었습니다. 더블클릭하면 도구가 바로 열립니다.');
+    }, function (e) {
+      if (e && e.name === 'AbortError') return;   // 저장 창에서 취소
+      fallback();
+    });
+  }
   document.addEventListener('click', function (e) {
-    if (!e.target || e.target.id !== 'btnInstall') return;
-    if (installEvt) {
-      installEvt.prompt();
-      installEvt.userChoice.then(function (c) { installEvt = null; if (c && c.outcome === 'accepted') hideInstall(); });
-      return;
-    }
-    showInstallHelp();
+    if (e.target && e.target.id === 'btnInstall') makeShortcut();
   });
 
   function clearAll() {
