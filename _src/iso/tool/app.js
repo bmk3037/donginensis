@@ -83,28 +83,77 @@
     return out;
   }
 
-  // 바탕화면 아이콘: 설치 없이, 누르면 홈페이지 도구로 바로 접속하는 작은 HTML 파일을 바탕화면에 만든다.
-  // 인터넷 바로가기(.url)는 크롬 저장 창이 위험 확장자로 막거나 윈도우 보안 경고에 걸려 열리지 않으므로 쓰지 않는다.
-  // 크롬·엣지는 저장 창이 바탕화면에서 열리고, 안 되는 브라우저는 다운로드 폴더에 받아 바탕화면으로 옮기게 안내한다.
+  // 바탕화면 아이콘
+  // ① 「동」 아이콘: 크롬·엣지의 앱 설치 창(beforeinstallprompt)으로 바탕화면·시작 메뉴에 회사 아이콘을 만든다.
+  //    크롬은 페이지를 한 번 누르고 잠시(약 30초) 지나야 설치 창을 허락하므로, 그 전에는 안내 창을 띄워 두고 허락되는 순간 버튼을 켠다.
+  // ② 그 밖의 브라우저: 누르면 도구로 바로 넘어가는 작은 HTML 파일(크롬 모양 아이콘)을 바탕화면에 저장한다.
+  //    인터넷 바로가기(.url)는 크롬 저장 창·윈도우 보안에 막혀 열리지 않으므로 쓰지 않는다.
   var TOOL_URL = 'https://donginensis.com/files/iso/ISO-record-builder.html';
   var SHORTCUT_NAME = 'ISO 기록 도구.html';
   var SHORTCUT = '<!doctype html>\r\n<html lang="ko"><head><meta charset="utf-8"><title>ISO 기록 도구</title>' +
     '<meta http-equiv="refresh" content="0;url=' + TOOL_URL + '">' +
     '<script>location.replace("' + TOOL_URL + '")</script></head>' +
     '<body><p><a href="' + TOOL_URL + '">ISO 기록 도구 열기</a></p></body></html>\r\n';
-  function shortcutNote(msg) {
-    var old = document.getElementById('installHelp'); if (old) old.remove();
-    var close = function () { box.remove(); };
-    var box = el('div', { id: 'installHelp', cls: 'inst-overlay', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'instTitle', onclick: function (e) { if (e.target === box) close(); } }, [
-      el('div', { cls: 'inst-card' }, [
-        el('h2', { id: 'instTitle', text: '바탕화면 아이콘' }),
-        el('p', { cls: 'inst-step', text: msg }),
-        el('button', { type: 'button', cls: 'btn btn-primary', text: '확인', onclick: close })
-      ])
-    ]);
+  var installEvt = null;
+  function standalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+  function hideInstall() { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; }
+  if (standalone()) { hideInstall(); document.addEventListener('DOMContentLoaded', hideInstall); }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; syncHelp(); });
+  window.addEventListener('appinstalled', function () { installEvt = null; doneNote(); });
+
+  function closeHelp() { var old = document.getElementById('installHelp'); if (old) old.remove(); }
+  function overlay(children, focusSel) {
+    closeHelp();
+    var box = el('div', { id: 'installHelp', cls: 'inst-overlay', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'instTitle', onclick: function (e) { if (e.target === box) closeHelp(); } }, [el('div', { cls: 'inst-card' }, children)]);
     document.body.appendChild(box);
-    box.querySelector('.btn').focus();
-    document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); } });
+    var f = box.querySelector(focusSel || '.btn'); if (f) f.focus();
+    document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { closeHelp(); document.removeEventListener('keydown', esc); } });
+    return box;
+  }
+  function shortcutNote(msg) {
+    overlay([
+      el('h2', { id: 'instTitle', text: '바탕화면 아이콘' }),
+      el('p', { cls: 'inst-step', text: msg }),
+      el('button', { type: 'button', cls: 'btn btn-primary', text: '확인', onclick: closeHelp })
+    ]);
+  }
+  function doneNote() {
+    shortcutNote('바탕화면에 「동」 아이콘(ISO 기록 도구)을 만들었습니다. 아이콘을 더블클릭하면 도구가 바로 열립니다. 전에 만든 크롬 모양 아이콘은 지워도 됩니다. 아이콘이 안 보이면 바탕화면 빈 곳을 한 번 누르고 F5를 누르세요.');
+  }
+  function promptInstall() {
+    if (!installEvt) return;
+    var ev = installEvt;
+    ev.prompt();
+    ev.userChoice.then(function (c) {
+      installEvt = null;
+      if (c && c.outcome === 'accepted') doneNote(); else syncHelp();
+    });
+  }
+  // 안내 창이 열려 있는 동안 크롬이 설치를 허락하면 버튼을 켠다.
+  function syncHelp() {
+    var b = document.getElementById('instApp'); if (!b) return;
+    var t = document.getElementById('instWait');
+    b.disabled = !installEvt;
+    if (t) t.textContent = installEvt ? '버튼을 누르고, 뜨는 창에서 「설치」를 누르세요.' : '크롬이 준비하는 중입니다. 이 창을 연 채로 화면을 한 번 누르고 30초쯤 기다리면 버튼이 켜집니다.';
+  }
+  function iconHelp(installed) {
+    var kids = [el('h2', { id: 'instTitle', text: '바탕화면 「동」 아이콘 만들기' })];
+    if (installed) {
+      kids.push(el('p', { cls: 'inst-step', text: '이 PC에는 「동」 아이콘 도구가 이미 설치돼 있습니다. 바탕화면에 없으면 시작 메뉴에서 「ISO 기록 도구」를 찾아 바탕화면으로 끌어다 놓으세요.' }));
+    } else {
+      kids.push(el('div', { cls: 'inst-appbox' }, [
+        el('button', { type: 'button', id: 'instApp', cls: 'btn btn-primary inst-app', text: '「동」 아이콘 만들기', onclick: promptInstall }),
+        el('p', { id: 'instWait', cls: 'inst-how' })
+      ]));
+      kids.push(el('p', { cls: 'inst-or', text: '버튼이 계속 안 켜지면 (크롬)' }));
+      kids.push(el('p', { cls: 'inst-how', text: '오른쪽 위 ⋮ → 전송, 저장 및 공유(또는 저장 및 공유) → 「바로가기 만들기」 → 만들기. 엣지는 … → 앱 → 「이 사이트를 앱으로 설치」.' }));
+    }
+    kids.push(el('p', { cls: 'inst-or', text: '크롬·엣지가 아닌 브라우저' }));
+    kids.push(el('button', { type: 'button', cls: 'btn btn-ghost', text: '크롬 모양 아이콘 받기', onclick: function () { closeHelp(); makeShortcut(); } }));
+    kids.push(el('button', { type: 'button', cls: 'btn btn-ghost', text: '닫기', onclick: closeHelp }));
+    overlay(kids, installed ? '.btn' : '#instApp');
+    syncHelp();
+    if (!installed) { var b = document.getElementById('instApp'); if (b && b.disabled) { var c = document.querySelector('#installHelp .btn-ghost'); if (c) c.focus(); } }
   }
   function makeShortcut() {
     var blob = new Blob([SHORTCUT], { type: 'text/html' });
@@ -123,7 +172,11 @@
     });
   }
   document.addEventListener('click', function (e) {
-    if (e.target && e.target.id === 'btnInstall') makeShortcut();
+    if (!e.target || e.target.id !== 'btnInstall') return;
+    if (installEvt) { promptInstall(); return; }            // 크롬이 허락한 상태: 바로 설치 창
+    if (location.protocol === 'file:') { makeShortcut(); return; }
+    var check = navigator.getInstalledRelatedApps ? navigator.getInstalledRelatedApps().catch(function () { return []; }) : Promise.resolve([]);
+    check.then(function (apps) { iconHelp(apps && apps.length > 0); });
   });
 
   function clearAll() {
