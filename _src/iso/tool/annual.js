@@ -565,6 +565,7 @@
       el('div', { cls: 'out-head' }, [el('h2', { text: '요약' }), el('p', { cls: 'count' }, [el('b', { id: 'anTotal', text: '0' }), '건 / 15개월'])]),
       el('ul', { cls: 'checklist', id: 'anSum' }),
       el('div', { cls: 'an-quicks', id: 'anQuick' }),
+      el('div', { id: 'anDoneBar' }),
       el('button', { type: 'button', cls: 'btn btn-primary', text: '캘린더에 넣기 (.ics)', onclick: exportIcs }),
       el('button', { type: 'button', cls: 'btn', text: '30일 안에 할 양식 한꺼번에 받기 (zip)', onclick: makeSoon }),
       el('button', { type: 'button', cls: 'btn', text: '연간 계획표 엑셀 받기', onclick: exportXlsx }),
@@ -631,7 +632,7 @@
           t.done === true ? el('span', { cls: 'chip chip-ok', text: '파일 있음' }) : null,
           t.done !== true ? el('button', { type: 'button', cls: 'btn btn-sm an-mark', text: '완료', 'aria-label': t.code + ' ' + t.task + ' 완료 표시', onclick: function () {
             cfg.done = cfg.done || {}; cfg.done[t.file] = iso(today()); save(); refresh();
-            setStatus(t.code + ' 완료로 표시했습니다. 작성한 기록은 회사기록 폴더에 \'' + t.file + '\'로 시작하는 이름으로 두세요.', 'ok');
+            setStatus(t.code + ' 완료로 표시해 \'남은 일\'에서 뺐습니다. 다시 보거나 취소하려면 보기를 \'전체\'로 바꾸세요. 작성한 기록은 회사기록 폴더에 \'' + t.file + '\'로 시작하는 이름으로 둡니다.', 'ok');
           } }) : null
         ])
       ]));
@@ -662,6 +663,17 @@
         el('small', { text: (dd < 0 ? (-dd) + '일 지남' : 'D-' + dd) + ' · ' + iso(t.due) + (t.legal ? ' · ★법정' : '') })]));
     });
     $('anTotal').textContent = real.length;
+    // 완료 표시 모아 보기·한 번에 취소 (실수로 누른 경우)
+    var bar = $('anDoneBar'), nDone = Object.keys(cfg.done || {}).length;
+    A.clear(bar);
+    if (nDone) bar.appendChild(el('div', { cls: 'an-donebar' }, [
+      el('span', { text: '완료 표시 ' + nDone + '건' }),
+      el('button', { type: 'button', cls: 'btn btn-ghost btn-sm', text: '완료한 것 보기', onclick: function () { view.show = 'all'; $('an-show').value = 'all'; refresh(); var b = $('anBody'); if (b) b.scrollIntoView({ block: 'start' }); } }),
+      el('button', { type: 'button', cls: 'btn btn-ghost btn-sm', text: '완료 표시 모두 취소', onclick: function () {
+        if (!window.confirm('완료 표시 ' + nDone + '건을 모두 취소할까요? (작성한 파일은 지워지지 않습니다)')) return;
+        cfg.done = {}; save(); refresh(); setStatus('완료 표시를 모두 취소했습니다.', 'ok');
+      } })
+    ]));
   }
 
   window.IsoViews = window.IsoViews || {};
