@@ -358,6 +358,9 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .an-late td { background: var(--bad-soft); }
 .an-done td { color: var(--muted); }
 .an-legal { margin-left: 6px; }
+.an-done-cell { white-space: nowrap; }
+.an-done-cell .chip { margin-right: 4px; }
+.an-mark { border-color: var(--ok, #1d6b45); color: var(--ok, #1d6b45); font-weight: 600; }
 
 .an-table .tbl { min-width: 0; }
 .an-task { line-height: 1.45; }
@@ -4600,6 +4603,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       fromStart: r.months === 12 ? '연 1회 (시행일 기준)' : '연 1회', audit: '연 1회 (심사 전)', next15: '매월 (다음 달 15일)', cal: '교정 주기 ' + r.months + '개월' }[r.kind] || '';
   }
   function isDone(t) {
+    if (t.file && (cfg.done || {})[t.file]) return true;   // 화면에서 '완료' 누른 것
     if (!found || !t.file) return null;
     var ym = t.file.slice(t.code.length + 1, t.code.length + 7), y = ym.slice(0, 4), m = ym.slice(4);
     return found.some(function (n) {
@@ -4949,7 +4953,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
   // ---------------------------------------------------------------- 회사 설정 파일 (담당자·명단·기준 날짜)
   // 한 사람이 입력해 공용 저장소(접근권한 관리 폴더)에 두면 다른 PC에서도 불러와 같은 값으로 양식을 만든다.
   function exportCfg() {
-    var data = { type: 'dongin-iso-company', version: 1, saved: iso(today()), start: cfg.start, audit: cfg.audit, profile: cfg.profile, lists: cfg.lists };
+    var data = { type: 'dongin-iso-company', version: 1, saved: iso(today()), start: cfg.start, audit: cfg.audit, profile: cfg.profile, lists: cfg.lists, done: cfg.done || {} };
     var name = '00_회사설정_ISO기록도구_' + iso(today()).replace(/-/g, '') + '.json';
     A.saveFile(name, new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })).then(function () {
       setStatus(name + ' 저장 — 직원 명단이 들어 있으니 접근권한이 관리되는 회사 폴더에만 둡니다.', 'ok');
@@ -4964,6 +4968,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       if (d.audit !== undefined) cfg.audit = d.audit;
       Object.keys(d.profile || {}).forEach(function (k) { cfg.profile[k] = String(d.profile[k] || ''); });
       Object.keys(d.lists || {}).forEach(function (k) { cfg.lists[k] = String(d.lists[k] || ''); });
+      cfg.done = Object.assign(cfg.done || {}, d.done || {});
       save(); render();
       setStatus(file.name + ' 불러옴 — 담당자·명단·기준 날짜를 적용했습니다.', 'ok');
     }).catch(function (e) { setStatus('불러오지 못했습니다: ' + (e && e.message || e), 'bad'); });
@@ -5046,13 +5051,13 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
       [['open', '남은 일'], ['all', '전체'], ['90', '앞으로 90일']].map(function (o) { var op = el('option', { value: o[0], text: o[1] }); if (o[0] === view.show) op.selected = true; return op; }));
     steps.appendChild(el('section', { cls: 'step' }, [
       el('h2', {}, [el('span', { cls: 'num', text: '4' }), '할 일과 기한']),
-      el('p', { cls: 'help', text: '\'양식 받기\'를 누르면 그 기록 양식이 담당자·기간·결재란이 채워지고 직접 판단할 칸에 회색 기울임 예시가 들어간 채로 저장됩니다. 파일 이름이 규칙대로 붙어 회사기록 폴더에 그대로 두면 완료가 확인됩니다.' }),
+      el('p', { cls: 'help', text: '\'양식 받기\'를 누르면 그 기록 양식이 담당자·기간·결재란이 채워지고 직접 판단할 칸에 회색 기울임 예시가 들어간 채로 저장됩니다. 기록을 작성·서명해 회사기록 폴더에 저장했으면 줄 끝의 \'완료\'를 누릅니다(잘못 누르면 \'취소\'). 회사기록 폴더를 고르면 파일 이름으로도 확인됩니다.' }),
       el('div', { cls: 'dash-bar' }, [
         el('div', { cls: 'field' }, [el('label', { for: 'an-owner', text: '담당' }), ownerSel]),
         el('div', { cls: 'field' }, [el('label', { for: 'an-show', text: '보기' }), showSel])
       ]),
       el('div', { cls: 'table-wrap an-table' }, [el('table', { cls: 'tbl' }, [
-        el('thead', {}, [el('tr', {}, ['기한', '', '할 일 · 양식 받기', '담당', '완료 확인'].map(function (h) { return el('th', { text: h }); }))]),
+        el('thead', {}, [el('tr', {}, ['기한', '', '할 일 · 양식 받기', '담당', '완료'].map(function (h) { return el('th', { text: h }); }))]),
         el('tbody', { id: 'anBody' })])])
     ]));
     layout.appendChild(el('aside', { cls: 'out' }, [el('div', { cls: 'out-card' }, [
@@ -5118,7 +5123,16 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
             el('span', { cls: 'sub', text: t.freq + (t.period ? ' · ' + t.period : '') + (t.file ? ' · 파일명 ' + t.file + '…' : '') })])
         ]),
         el('td', { text: t.owner }),
-        el('td', { text: t.done === true ? '파일 있음' : t.done === false ? '파일 없음' : '—' })
+        el('td', { cls: 'an-done-cell' }, t.audit || !t.file ? [el('span', { text: '—' })] : (cfg.done || {})[t.file] ? [
+          el('span', { cls: 'chip chip-ok', text: '완료 ' + String(cfg.done[t.file]).slice(5).replace('-', '/') }),
+          el('button', { type: 'button', cls: 'btn btn-ghost btn-sm', text: '취소', 'aria-label': t.code + ' 완료 취소', onclick: function () { delete cfg.done[t.file]; save(); refresh(); } })
+        ] : [
+          t.done === true ? el('span', { cls: 'chip chip-ok', text: '파일 있음' }) : null,
+          t.done !== true ? el('button', { type: 'button', cls: 'btn btn-sm an-mark', text: '완료', 'aria-label': t.code + ' ' + t.task + ' 완료 표시', onclick: function () {
+            cfg.done = cfg.done || {}; cfg.done[t.file] = iso(today()); save(); refresh();
+            setStatus(t.code + ' 완료로 표시했습니다. 작성한 기록은 회사기록 폴더에 \'' + t.file + '\'로 시작하는 이름으로 두세요.', 'ok');
+          } }) : null
+        ])
       ]));
     });
     if (!shown.length) tb.appendChild(el('tr', {}, [el('td', { colspan: '5', cls: 'empty', text: '해당하는 할 일이 없습니다.' })]));
@@ -5133,7 +5147,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     li(late.length ? 'warn' : 'ok', '기한 지남', late.length ? late.length + '건 — ' + late.slice(0, 2).map(function (t) { return t.code; }).join(', ') + (late.length > 2 ? ' 외' : '') : '없음');
     li(soon.length ? 'warn' : 'ok', '30일 이내', soon.length + '건');
     if (nextLegal) li('warn', '다음 법정 기한', nextLegal.code + ' ' + iso(nextLegal.due) + ' (D-' + dday(nextLegal.due) + ')');
-    li(found ? 'ok' : 'off', '완료 확인', found ? real.filter(function (t) { return t.done; }).length + '건 파일 확인' : '회사기록 폴더를 고르면 확인');
+    li('ok', '완료', real.filter(function (t) { return t.done; }).length + '건 (\'완료\' 버튼' + (found ? ' + 회사기록 폴더 파일' : '') + ')');
     // 지금 받아야 할 양식: 기한 지남 + 다음 법정 + 14일 이내 (최대 6개)
     var urgent = late.concat(nextLegal ? [nextLegal] : []).concat(real.filter(function (t) { return t.done !== true && dday(t.due) >= 0 && dday(t.due) <= 14; }));
     var seen = {}, quick = $('anQuick');
@@ -5164,7 +5178,7 @@ window.ISO_LOGO_SVG = {"viewBox": "0 0 6000.000000 1168.000000", "inner": "<g tr
     _load: function () {
       cfg = { start: '2026-10-01', audit: '', profile: {}, lists: {} };
       try { Object.assign(cfg, JSON.parse(localStorage.getItem('iso-annual') || '{}')); } catch (e) { /* 기본값 */ }
-      cfg.profile = cfg.profile || {}; cfg.lists = cfg.lists || {};
+      cfg.profile = cfg.profile || {}; cfg.lists = cfg.lists || {}; cfg.done = cfg.done || {};
       PROFILE.forEach(function (f) { if (cfg.profile[f[0]] === undefined) cfg.profile[f[0]] = f[2]; });
     },
     _tasks: function () { return tasks(); }, _form: function (i) { return buildBuffer(tasks()[i]); }, _formFor: function (i) { return formFor(tasks()[i]); }, _ics: function () { return icsText(); }, _setFound: function (l) { found = l; refresh(); }, _setLists: function (o) { Object.assign(cfg.lists, o); render(); }, _daily: function (d, n) { var f = dailySpec(d, n); return A.E.buildWorkbook(window.ExcelJS, [f.spec], { values: f.values, rev: A.FORMS.rev, date: A.FORMS.date, logo: window.ISO_LOGO, signNames: f.sign }).xlsx.writeBuffer().then(function (b) { return Array.from(new Uint8Array(b)); }); }
