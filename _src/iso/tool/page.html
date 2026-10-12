@@ -16,6 +16,7 @@
 
 <div class="wrap">
   <nav class="tabs" role="tablist" aria-label="도구 고르기">
+    <button type="button" role="tab" class="tab" id="tab-quote" data-view="quote" aria-controls="view-quote" aria-selected="false" tabindex="-1"><span class="tab-no">00</span>견적서</button>
     <button type="button" role="tab" class="tab" id="tab-pack" data-view="pack" aria-controls="view-pack" aria-selected="true"><span class="tab-no">01</span>기록 묶음 생성</button>
     <button type="button" role="tab" class="tab" id="tab-labels" data-view="labels" aria-controls="view-labels" aria-selected="false" tabindex="-1"><span class="tab-no">02</span>명판 · 라벨</button>
     <button type="button" role="tab" class="tab" id="tab-fat" data-view="fat" aria-controls="view-fat" aria-selected="false" tabindex="-1"><span class="tab-no">03</span>FAT 시험 입력</button>
@@ -23,6 +24,135 @@
     <button type="button" role="tab" class="tab" id="tab-annual" data-view="annual" aria-controls="view-annual" aria-selected="false" tabindex="-1"><span class="tab-no">05</span>회사 연간 기록</button>
   </nav>
 
+
+  <section class="view" id="view-quote" role="tabpanel" aria-labelledby="tab-quote" hidden>
+  <div class="q-lock" id="qLock" hidden>
+    <form class="q-lock-card" id="qLockForm">
+      <p class="eyebrow">사내 전용 · 견적서</p>
+      <h1>견적서 작성은 비밀번호가 필요합니다</h1>
+      <p class="help">회사 직인이 찍히는 화면이라 잠가 두었습니다. 비밀번호는 영업관리 담당에게 받으세요. 한 번 열면 이 브라우저에서는 다시 묻지 않습니다.</p>
+      <div class="field"><label for="qPw">비밀번호</label><input type="password" id="qPw" autocomplete="current-password"></div>
+      <button type="submit" class="btn btn-primary" id="qLockGo">열기</button>
+      <p class="status bad" id="qLockMsg" role="alert"></p>
+    </form>
+  </div>
+  <header class="top">
+    <p class="eyebrow">영업 · 견적 → 수주 → 기록 묶음</p>
+    <h1>견적서 작성</h1>
+    <p class="lead">회사 견적서 엑셀을 양식으로 한 번 넣어 두면 품목만 채워 같은 양식으로 견적서를 만듭니다. 수주되면 부품 행이 BOM으로 01 기록 묶음 생성기에 바로 넘어갑니다. 원가·단가는 ISO 쪽으로 넘어가지 않습니다.</p>
+  </header>
+
+  <main class="layout">
+    <div class="steps">
+      <section class="step" aria-labelledby="h-q1">
+        <h2 id="h-q1"><span class="num">1</span>견적 정보</h2>
+        <div class="grid" id="qFields"></div>
+        <div class="grid" id="qTerms"></div>
+        <div class="field wide">
+          <label for="q-notes">비고 (한 줄에 한 항목, 견적서에 ☞로 찍힘)</label>
+          <textarea id="q-notes" rows="3"></textarea>
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="h-q2">
+        <h2 id="h-q2"><span class="num">2</span>품목</h2>
+        <p class="help">BOM 엑셀이나 예전 견적서 엑셀을 넣으면 품명·규격·메이커·수량·단가를 찾아 채웁니다. 엑셀에서 표를 복사해 붙여 넣어도 됩니다. <b>BOM</b> 칸이 켜진 행만 부품으로 ISO 기록 묶음에 넘어가며, 인건비·이윤·시운전 같은 행은 자동으로 꺼집니다.</p>
+        <div class="q-drop">
+          <input type="file" id="qFile" accept=".xlsx,.xls,.csv">
+          <label for="qFile"><b>BOM · 견적서 엑셀 고르기</b> 또는 여기로 끌어다 놓기</label>
+          <button type="button" class="btn btn-ghost btn-sm" id="qPasteOpen">엑셀에서 복사해 붙여넣기</button>
+        </div>
+        <div class="q-paste" id="qPasteBox" hidden>
+          <label for="qPaste">엑셀에서 복사한 표 (머리글 줄 포함 권장. 머리글이 없으면 품명 · 규격 · 메이커 · 수량 · 단위 · 단가 순서)</label>
+          <textarea id="qPaste" rows="5"></textarea>
+          <div class="row-actions">
+            <button type="button" class="btn" id="qPasteGo">품목에 넣기</button>
+            <button type="button" class="btn btn-ghost" id="qPasteClose">닫기</button>
+          </div>
+        </div>
+        <div class="table-wrap q-items">
+          <table class="tbl" id="qTable">
+            <thead><tr>
+              <th class="c-no">No</th><th class="c-bom">BOM</th><th class="c-name">품명</th><th class="c-spec">규격 · 모델</th><th class="c-maker">메이커</th>
+              <th class="c-qty">수량</th><th class="c-unit">단위</th><th class="c-money">원가</th><th class="c-money">단가</th><th class="c-amt">금액</th><th class="c-mg">마진</th>
+              <th class="c-act"><span class="sr">순서 · 삭제</span></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="row-actions q-tools">
+          <button type="button" class="btn" id="qAdd">행 추가</button>
+          <span class="q-inline"><label for="q-mul">단가 = 원가 ÷</label><input type="text" id="q-mul" value="0.8" inputmode="decimal" class="num-in"><span class="sub" id="qMulHint">마진 20%</span><button type="button" class="btn btn-ghost" id="qMarkup">단가 계산</button></span>
+          <button type="button" class="btn btn-ghost" id="qClearItems">품목 모두 지우기</button>
+        </div>
+        <div class="checks q-tools">
+          <span class="q-inline"><label for="q-profit">기업이윤 및 공과잡비</label><input type="text" id="q-profit" inputmode="decimal" class="num-in" placeholder="0"> %<span class="sub">(품목 합계에 곱해 마지막 행으로 추가)</span></span>
+          <label class="check"><input type="checkbox" id="q-floor"> 공급가 천원 미만 절사</label>
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="h-q3">
+        <h2 id="h-q3"><span class="num">3</span>수주 → ISO 기록 묶음</h2>
+        <p class="help">수주가 확정되면 누릅니다. 01 기록 묶음 생성기에 고객·제목·판넬·BOM(가격 없음)이 들어가고 그 탭으로 이동합니다. 같은 프로젝트 번호가 이미 01 탭에 있으면 BOM만 바꾸고 나머지 입력은 그대로 둡니다.</p>
+        <div class="grid">
+          <div class="field"><label for="q-pj">프로젝트 번호 (수주 시)</label><input type="text" id="q-pj" autocomplete="off"></div>
+          <div class="field"><label for="q-panels">판넬 도면 Tag (쉼표로 구분, 1면이면 비워도 됨)</label><input type="text" id="q-panels" placeholder="예: LCP-01, LCP-02" autocomplete="off"></div>
+          <div class="field"><label for="q-basis">견적 수량 기준</label>
+            <select id="q-basis"><option value="total">프로젝트 전체 수량 (판넬별로 나눔)</option><option value="per">판넬 1면당 수량</option></select></div>
+        </div>
+        <div class="row-actions">
+          <button type="button" class="btn btn-go" id="qToIso">ISO 기록 묶음으로 보내기 →</button>
+          <button type="button" class="btn btn-ghost" id="qBomXlsx">가격 없는 BOM 엑셀 받기</button>
+        </div>
+        <p class="status" id="qIsoMsg" role="status"></p>
+      </section>
+    </div>
+
+    <aside class="out" aria-labelledby="h-qout">
+      <div class="out-card">
+        <div class="out-head">
+          <h2 id="h-qout">견적 금액</h2>
+          <p class="count">품목 <b id="qCount">0</b> · BOM <b id="qBomCount">0</b></p>
+        </div>
+        <dl class="q-sum" id="qSum"></dl>
+        <p class="missing" id="qMissing"></p>
+        <div class="q-margin" id="qMargin" hidden></div>
+        <div class="sign-box">
+          <p class="sign-h">견적서 양식</p>
+          <div class="q-forms" role="radiogroup" aria-label="견적서 양식">
+            <label class="check"><input type="radio" name="q-form" value="std" id="q-form-std"> 동인엔시스 표준 양식 <span class="sub">(공급자란 · 직인 · CI 색상)</span></label>
+            <label class="check"><input type="radio" name="q-form" value="tpl" id="q-form-tpl"> 등록한 엑셀 양식 그대로</label>
+          </div>
+          <p class="q-tpl" id="qTplInfo"></p>
+          <div class="row-actions">
+            <span class="btn btn-sm file-btn">회사 견적서 엑셀 등록<input type="file" id="qTplFile" accept=".xlsx" aria-label="회사 견적서 엑셀 등록"></span>
+            <button type="button" class="btn btn-ghost btn-sm" id="qTplClear">등록 지우기</button>
+          </div>
+          <div class="q-seal" id="qSealBox"></div>
+          <details class="more q-co">
+            <summary>공급자 정보 (견적서에 찍히는 회사 정보)</summary>
+            <div class="grid" id="qCoFields"></div>
+            <div class="row-actions"><button type="button" class="btn btn-ghost btn-sm" id="qCoReset">기본값으로</button></div>
+          </details>
+        </div>
+        <label class="check"><input type="checkbox" id="q-costCols"> 엑셀 인쇄 영역 밖에 원가·마진 적기 (내부용)</label>
+        <button type="button" class="btn btn-primary" id="qMake">견적서 엑셀 만들기</button>
+        <div class="row-actions">
+          <button type="button" class="btn" id="qSave">견적 저장 (.json)</button>
+          <span class="btn file-btn">견적 불러오기<input type="file" id="qOpen" accept=".json" aria-label="견적 저장 파일 불러오기"></span>
+          <button type="button" class="btn btn-ghost" id="qNew">새 견적</button>
+        </div>
+        <p class="status" id="qStatus" role="status"></p>
+        <ul class="rules">
+          <li><b>견적서 엑셀</b> 회사 양식 그대로, 금액·한글 금액은 엑셀 수식으로 다시 계산</li>
+          <li><b>ISO로 넘김</b> 품명·모델·메이커·수량·단위 (가격 제외)</li>
+          <li>입력 중인 견적은 이 브라우저에 자동 보관됩니다. 다른 PC로 옮길 때는 견적 저장(.json)을 쓰세요.</li>
+        </ul>
+        <button type="button" class="btn btn-ghost btn-sm" id="qRelock">이 브라우저에서 견적서 잠그기</button>
+      </div>
+    </aside>
+  </main>
+  </section>
   <section class="view" id="view-pack" role="tabpanel" aria-labelledby="tab-pack">
   <header class="top">
     <p class="eyebrow">품질 ISO 9001 · 환경 ISO 14001 · 안전보건 ISO 45001</p>

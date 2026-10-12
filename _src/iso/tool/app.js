@@ -658,7 +658,7 @@
     });
   }
 
-  var VIEWS = ['pack', 'labels', 'fat', 'dash', 'annual'];
+  var VIEWS = ['quote', 'pack', 'labels', 'fat', 'dash', 'annual'];
   function showView(name) {
     if (VIEWS.indexOf(name) < 0) name = 'pack';
     VIEWS.forEach(function (v) {
