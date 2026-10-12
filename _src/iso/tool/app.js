@@ -83,6 +83,19 @@
     return out;
   }
 
+  // 바탕화면 설치(크롬·엣지 웹 앱): 설치할 수 있을 때만 버튼이 보인다
+  var installEvt = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); installEvt = e;
+    var b = document.getElementById('btnInstall'); if (b) b.hidden = false;
+  });
+  window.addEventListener('appinstalled', function () { var b = document.getElementById('btnInstall'); if (b) b.hidden = true; installEvt = null; });
+  document.addEventListener('click', function (e) {
+    if (!e.target || e.target.id !== 'btnInstall' || !installEvt) return;
+    installEvt.prompt();
+    installEvt.userChoice.then(function () { installEvt = null; e.target.hidden = true; });
+  });
+
   function clearAll() {
     $('bomBasis').value = '';
     state.project = Object.assign({ approval: false, sat: true, outsource: false }, companyDefaults());
@@ -165,6 +178,8 @@
       var sheet = bestSheet(wb, kind);
       state[kind] = makeData(kind, file.name, sheetRows(wb, sheet), { wb: wb, sheet: sheet });
       if (kind === 'std' && !state.project.stdName) state.project.stdName = file.name.replace(/\.[^.]+$/, '');
+      // 수량 머리글이 '1면당(per 1 panel)'이면 수량 기준을 미리 고른다
+      if (kind === 'bom' && state.bom.det.basis && !$('bomBasis').value) { $('bomBasis').value = state.bom.det.basis; $('bomBasis').classList.remove('invalid'); }
       renderData(kind);
       if (kind === 'std') renderFields();
       renderPlan();

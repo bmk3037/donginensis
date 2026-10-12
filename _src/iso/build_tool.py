@@ -93,13 +93,25 @@ def build():
     page = page.replace('/*@SCRIPT@*/', script.replace('</script', '<\\/script'))
     with open(os.path.join(DIST, 'artifact.html'), 'w', encoding='utf-8') as f:
         f.write(page)
+    # 홈페이지판: 바탕화면 설치(웹 앱)와 오프라인 캐시. 매니페스트·서비스워커는 files/iso/에 함께 둔다.
+    pwa = ('<link rel="manifest" href="iso-tool.webmanifest">\n<meta name="theme-color" content="#0f2a4a">\n'
+           '<link rel="apple-touch-icon" href="../../apple-touch-icon.png">\n'
+           '<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) '
+           'window.addEventListener("load", function () { navigator.serviceWorker.register("iso-sw.js").catch(function () {}); });</script>\n')
     full = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
-            '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
+            + pwa + '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
     with open(os.path.join(DIST, 'ISO-기록생성기.html'), 'w', encoding='utf-8') as f:
         f.write(full)
     with open(os.path.join(HERE, '..', '..', 'files', 'iso', 'ISO-record-builder.html'), 'w', encoding='utf-8') as f:
         f.write(full)
+    # 서비스워커 캐시 이름: 도구 내용이 바뀌면 바뀐다(이전 캐시 정리)
+    import hashlib
+    sw_src = os.path.join(HERE, 'tool', 'sw.js')
+    with open(sw_src, encoding='utf-8') as f:
+        sw = f.read().replace('@VERSION@', hashlib.sha1(full.encode('utf-8')).hexdigest()[:10])
+    with open(os.path.join(HERE, '..', '..', 'files', 'iso', 'iso-sw.js'), 'w', encoding='utf-8') as f:
+        f.write(sw)
     print('built', DIST)
 
 
