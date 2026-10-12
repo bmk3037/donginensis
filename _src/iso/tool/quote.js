@@ -164,13 +164,38 @@
     }
     return out;
   }
+  // 파일의 단가를 원가로 볼지(기본) 판매 단가로 볼지. 원가로 보면 단가는 「단가 = 원가 ÷」 값으로 바로 계산한다.
+  var PRICE_AS_KEY = 'dongin-quote-priceas';
+  function priceAs() { return $('qPriceAs') ? $('qPriceAs').value : 'cost'; }
+  function priceFromCost(c, d) { return String(Math.round(c / d / 100) * 100); }
+  /** 원가가 빈 행의 단가를 원가로 옮기고, 단가는 마진으로 다시 계산한다. 옮긴 행 수를 돌려준다. */
+  function moveToCost(list, d) {
+    var n = 0;
+    list.forEach(function (it) {
+      var p = num(it.price);
+      if (num(it.cost) !== null || p === null || p <= 0) return;
+      it.cost = String(Math.round(p)); it.price = d ? priceFromCost(p, d) : ''; n++;
+    });
+    return n;
+  }
+  // 단가 = 원가 ÷ 0.8 (마진 20%). 20처럼 1 이상을 적으면 마진 %로 보고 1 − 20/100으로 나눈다.
+  function divisor() {
+    var d = num($('q-mul').value);
+    if (d === null || d <= 0 || d >= 100) return null;
+    return d < 1 ? d : 1 - d / 100;
+  }
   function importItems(list, from) {
     if (!list.length) { setStatus(from + '에서 품목을 찾지 못했습니다. 품명·모델(규격)·수량 머리글이 있는지 확인하세요.', 'bad'); return; }
+    var hasCost = list.some(function (it) { return num(it.cost) !== null; });
+    var moved = 0, d = divisor();
+    if (!hasCost && priceAs() === 'cost') moved = moveToCost(list, d);
     q.items = q.items.filter(hasText).concat(list);
     renderItems();
     changed();
     var off = list.filter(function (it) { return !it.bom; }).length;
-    setStatus(from + '에서 ' + list.length + '개 품목을 넣었습니다' + (off ? ' (인건비·이윤 등 ' + off + '행은 BOM 제외로 표시)' : '') + '. 단가·수량을 확인하세요.', 'ok');
+    var tail = moved ? ' 단가 ' + moved + '행을 원가로 넣고 단가는 원가 ÷ ' + (d ? +d.toFixed(4) + '(마진 ' + +((1 - d) * 100).toFixed(1) + '%)' : '?') + '로 계산했습니다. 마진을 바꾸려면 「단가 = 원가 ÷」 값을 고치고 「단가 계산」을 누르세요.'
+      : (hasCost ? ' 원가·단가를 확인하세요.' : ' 단가·수량을 확인하세요. 파일의 단가가 매입가라면 「단가 → 원가로 옮기기」를 누르세요.');
+    setStatus(from + '에서 ' + list.length + '개 품목을 넣었습니다' + (off ? ' (인건비·이윤 등 ' + off + '행은 BOM 제외로 표시)' : '') + '.' + tail, 'ok');
   }
   function onImportFile(file) {
     if (!file) return;
@@ -374,12 +399,6 @@
       $('qClearItems').dataset.arm = ''; $('qClearItems').textContent = '품목 모두 지우기';
       q.items = []; renderItems(); changed();
     });
-    // 단가 = 원가 ÷ 0.8 (마진 20%). 20처럼 1 이상을 적으면 마진 %로 보고 1 − 20/100으로 나눈다.
-    function divisor() {
-      var d = num($('q-mul').value);
-      if (d === null || d <= 0 || d >= 100) return null;
-      return d < 1 ? d : 1 - d / 100;
-    }
     function mulHint() { var d = divisor(); $('qMulHint').textContent = d ? '마진 ' + +((1 - d) * 100).toFixed(1) + '%' : '0.8 또는 20처럼'; }
     $('q-mul').addEventListener('input', mulHint);
     $('qMarkup').addEventListener('click', function () {
@@ -387,10 +406,20 @@
       if (!d) { $('q-mul').classList.add('invalid'); setStatus('나눌 값을 적으세요: 0.8(= 마진 20%) 또는 마진 % 숫자 20.', 'bad'); return; }
       $('q-mul').classList.remove('invalid');
       var n = 0;
-      q.items.forEach(function (it) { var c = num(it.cost); if (c !== null && c > 0) { it.price = String(Math.round(c / d / 100) * 100); n++; } });
+      q.items.forEach(function (it) { var c = num(it.cost); if (c !== null && c > 0) { it.price = priceFromCost(c, d); n++; } });
       renderItems(); changed();
       setStatus(n ? n + '개 행의 단가를 원가 ÷ ' + +d.toFixed(4) + '(마진 ' + +((1 - d) * 100).toFixed(1) + '%, 100원 단위 반올림)로 계산했습니다. 원가가 없는 행은 그대로입니다.' : '원가를 적은 행이 없습니다. 원가 칸을 먼저 채우세요.', n ? 'ok' : '');
     });
+    $('qToCost').addEventListener('click', function () {
+      var d = divisor();
+      if (!d) { $('q-mul').classList.add('invalid'); setStatus('나눌 값을 적으세요: 0.8(= 마진 20%) 또는 마진 % 숫자 20.', 'bad'); return; }
+      $('q-mul').classList.remove('invalid');
+      var n = moveToCost(q.items, d);
+      renderItems(); changed();
+      setStatus(n ? n + '개 행의 단가를 원가로 옮기고, 단가는 원가 ÷ ' + +d.toFixed(4) + '(마진 ' + +((1 - d) * 100).toFixed(1) + '%)로 다시 계산했습니다.' : '옮길 행이 없습니다. 원가가 비어 있고 단가가 적힌 행만 옮깁니다.', n ? 'ok' : '');
+    });
+    var pa = load(PRICE_AS_KEY); if (pa === 'cost' || pa === 'price') $('qPriceAs').value = pa;
+    $('qPriceAs').addEventListener('change', function () { store(PRICE_AS_KEY, this.value); });
     $('q-notes').addEventListener('input', function () { q.notes = this.value; changed(); });
     $('q-profit').addEventListener('input', function () { q.profitPct = this.value; changed(); });
     $('q-floor').addEventListener('change', function () { q.floor1000 = this.checked; changed(); });
