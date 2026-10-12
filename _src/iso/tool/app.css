@@ -348,6 +348,7 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .an-done td { color: var(--muted); }
 .an-legal { margin-left: 6px; }
 .an-done-cell { white-space: nowrap; }
+.an-donebar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--muted); }
 .an-done-cell .chip { margin-right: 4px; }
 .an-mark { border-color: var(--ok, #1d6b45); color: var(--ok, #1d6b45); font-weight: 600; }
 
