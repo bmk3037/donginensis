@@ -116,6 +116,17 @@ def build():
         sw = f.read().replace('@VERSION@', hashlib.sha1(full.encode('utf-8')).hexdigest()[:10])
     with open(os.path.join(HERE, '..', '..', 'files', 'iso', 'iso-sw.js'), 'w', encoding='utf-8') as f:
         f.write(sw)
+    # 자료실 링크에 판 번호(?v=)를 붙여, 자료실에서 열어도 브라우저에 남은 예전 사본(최대 10분) 대신 새 판이 열리게 한다
+    import re
+    ver = hashlib.sha1(full.encode('utf-8')).hexdigest()[:10]
+    for page_name in ('resources.html', os.path.join('en', 'resources.html')):
+        rp = os.path.join(HERE, '..', '..', page_name)
+        with open(rp, 'rb') as f:
+            html = f.read().decode('utf-8')
+        new = re.sub(r'(files/iso/ISO-record-builder\.html)(\?v=[0-9a-f]+)?"', r'\1?v=' + ver + '"', html)
+        if new != html:
+            with open(rp, 'wb') as f:
+                f.write(new.encode('utf-8'))
     print('built', DIST)
 
 
