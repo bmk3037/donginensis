@@ -34,7 +34,8 @@ self.addEventListener('fetch', function (e) {
     return;
   }
   if (url.origin === self.location.origin && /ISO-record-builder\.html$/.test(url.pathname)) {
-    e.respondWith(fetch(req).then(function (res) {
+    // 브라우저 HTTP 캐시(최대 10분)를 건너뛰고 서버에 새 판이 있는지 확인한다
+    e.respondWith(fetch(req, { cache: 'no-cache' }).then(function (res) {
       var cp = res.clone(); caches.open(CACHE).then(function (c) { c.put('./ISO-record-builder.html', cp); });
       return res;
     }).catch(function () { return caches.match('./ISO-record-builder.html'); }));
