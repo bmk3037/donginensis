@@ -360,3 +360,10 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .an-quick small { font-size: var(--fs-xs); color: var(--muted); }
 .an-quick.legal { border-color: var(--bad); background: var(--bad-soft); }
 .an-quick.legal b { color: var(--bad); }
+.an-lists { display: grid; gap: 12px; }
+.an-list { display: grid; gap: 4px; }
+.an-list .help { margin: 0; }
+.an-list textarea { width: 100%; min-height: 96px; font: inherit; font-family: var(--mono, ui-monospace, Consolas, monospace); font-size: var(--fs-sm); line-height: 1.5;
+  padding: 8px 10px; border: 1px solid var(--line); background: var(--surface, #fff); color: var(--ink); resize: vertical; box-sizing: border-box; }
+.an-list textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+.an-lcount { color: var(--accent); font-weight: 600; }

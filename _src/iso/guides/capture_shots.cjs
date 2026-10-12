@@ -24,6 +24,7 @@ function exe() {
   const shot = async (sel, name, maxH) => {
     const el = await page.$(sel); await el.scrollIntoViewIfNeeded();
     const b = await el.boundingBox();
+    b.y += await page.evaluate(() => window.scrollY); b.x += await page.evaluate(() => window.scrollX);   // fullPage 좌표
     await page.screenshot({ path: path.join(OUT, name + '.png'), clip: { x: b.x, y: b.y, width: b.width, height: Math.min(b.height, maxH || b.height) }, fullPage: true });
     console.log(name, Math.round(b.width), Math.round(Math.min(b.height, maxH || b.height)));
   };
