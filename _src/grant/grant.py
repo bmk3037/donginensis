@@ -11,6 +11,7 @@
   python3 grant.py photos <프로젝트>       증빙 사진대지 → output/사진대지.docx, .pdf
   python3 grant.py check <프로젝트>        제출 전 점검
   python3 grant.py pack <프로젝트>         output/ 전체를 zip 으로 묶기
+  python3 grant.py export <프로젝트>       브라우저 도구(지원사업 서류 도구)에서 불러올 JSON 만들기
 
 자세한 설명: README.md
 """
@@ -138,12 +139,26 @@ def cmd_pack(a):
     print(f'  ✓ {out.relative_to(p.dir)}')
 
 
+def cmd_export(a):
+    import datetime as dt
+    import json
+    p = Project(a.project)
+    data = p.data()
+    data['_type'] = 'dongin-grant'
+    out = p.path('output', f'{p.dir.name}.json')
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(data, ensure_ascii=False, indent=1,
+                              default=lambda v: v.isoformat() if isinstance(v, (dt.date, dt.datetime)) else str(v)),
+                   encoding='utf-8')
+    print(f'  ✓ {out.relative_to(p.dir)} — 브라우저 도구 01 탭 "불러오기"로 엽니다')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd', required=True)
     for name, fn in [('new', cmd_new), ('extract', cmd_extract), ('scan', cmd_scan), ('checklist', cmd_checklist),
                      ('status', cmd_status), ('fill', cmd_fill), ('build', cmd_build), ('photos', cmd_photos),
-                     ('check', cmd_check), ('pack', cmd_pack)]:
+                     ('check', cmd_check), ('pack', cmd_pack), ('export', cmd_export)]:
         s = sub.add_parser(name)
         s.add_argument('project')
         if name in ('fill', 'build'):

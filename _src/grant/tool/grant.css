@@ -1,0 +1,40 @@
+/* 지원사업 서류 도구 — ISO 기록 도구(app.css) 위에 얹는 추가 부분 */
+textarea { font: inherit; width: 100%; padding: 7px 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); resize: vertical; min-height: 64px; }
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+input[type="text"].num { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl td textarea { min-width: 220px; min-height: 52px; }
+.tbl td input[type="text"].w-s { min-width: 64px; width: 72px; }
+.g-howto { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: var(--fs-sm); }
+.g-prompt { font-size: var(--fs-sm); padding: 10px 12px; background: var(--sunken); border: 1px dashed var(--line); user-select: all; }
+.g-hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; width: 100%; }
+
+/* 증빙 자료 카드 */
+.g-evlist { display: grid; gap: 12px; }
+.g-ev { border: 1px solid var(--line); background: var(--surface); padding: 12px; display: grid; gap: 10px; }
+.g-ev.done { border-left: 4px solid var(--ok); }
+.g-ev.todo { border-left: 4px solid var(--brand-red); }
+.g-ev-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.g-ev-id { font-family: var(--font-mono); font-weight: 600; color: var(--accent); border: 1px solid var(--accent); padding: 0 6px; }
+.g-ev-head .grow { flex: 1 1 200px; min-width: 0; }
+.g-ev .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.g-thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
+.g-thumb { position: relative; width: 132px; border: 1px solid var(--line); background: var(--sunken); font-size: var(--fs-xs); }
+.g-thumb img { display: block; width: 100%; height: 92px; object-fit: cover; background: #fff; }
+.g-thumb .doc { height: 92px; display: grid; place-items: center; font-family: var(--font-mono); color: var(--muted); }
+.g-thumb .cap { padding: 3px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.g-thumb .cap.warn { color: var(--warn); }
+.g-thumb button { position: absolute; top: 2px; right: 2px; min-height: 24px; min-width: 24px; padding: 0 6px; font-size: 12px; }
+.g-ev .drop { padding: 10px 12px; }
+.g-sum { display: grid; gap: 4px; font-size: var(--fs-sm); }
+.g-sum .row { display: flex; justify-content: space-between; gap: 8px; }
+
+/* 기관 양식 */
+.g-forms { display: grid; gap: 14px; }
+.g-form { border: 1px solid var(--line); padding: 12px; display: grid; gap: 10px; background: var(--surface); }
+.g-form-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.g-form-head b { flex: 1 1 200px; min-width: 0; overflow-wrap: anywhere; }
+.g-form .tbl { min-width: 520px; }
+.g-form .tbl select, .g-form .tbl input[type="text"] { width: 100%; min-width: 140px; }
+.g-outlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: var(--fs-sm); }
+.g-outlist li { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.g-outlist .mono { overflow-wrap: anywhere; }
