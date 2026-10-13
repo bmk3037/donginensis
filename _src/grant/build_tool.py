@@ -6,6 +6,7 @@
   _src/grant/tool/dist/지원사업-서류도구.html   공용 저장소에 두고 크롬·엣지로 여는 파일
   _src/grant/tool/dist/artifact.html            claude.ai 아티팩트 게시용(문서 머리 없음)
   files/grant/grant-docs-builder.html          홈페이지 게시본(위 HTML 과 같음, 자료실에는 링크하지 않음)
+  files/grant/grant-sw.js                      오프라인 캐시(서비스워커). 바탕화면 설치 정보는 files/grant/grant-tool.webmanifest
 
 화면 서식은 ISO 기록 도구(_src/iso/tool/app.css)를 그대로 쓰고 grant.css 를 덧붙인다.
 회사 문서 서식 틀(grantkit/assets/dongin_template.docx)을 base64 로 넣어 브라우저에서 워드를 만든다.
@@ -45,10 +46,19 @@ def build():
     page = page.replace('/*@SCRIPT@*/', script.replace('</script', '<\\/script'))
     with open(os.path.join(DIST, 'artifact.html'), 'w', encoding='utf-8') as f:
         f.write(page)
+    # 홈페이지판: 바탕화면 설치(웹 앱)와 오프라인 캐시 — ISO 기록 도구와 같은 방식, 아이콘도 회사 「동」 파비콘
+    pwa = ('<link rel="manifest" href="grant-tool.webmanifest">\n<meta name="theme-color" content="#0f2a4a">\n'
+           '<link rel="icon" href="../../favicon-192.png" sizes="192x192">\n'
+           '<link rel="apple-touch-icon" href="../../apple-touch-icon.png">\n'
+           '<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {'
+           'var hadSW = !!navigator.serviceWorker.controller, reloaded = false;'
+           'navigator.serviceWorker.addEventListener("controllerchange", function () { if (hadSW && !reloaded) { reloaded = true; location.reload(); } });'
+           'window.addEventListener("load", function () { navigator.serviceWorker.register("grant-sw.js", { updateViaCache: "none" })'
+           '.then(function (r) { r.update(); }).catch(function () {}); }); }</script>\n')
     full = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
             '<meta name="robots" content="noindex">\n'
-            '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
+            + pwa + '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
     out = os.path.join(DIST, '지원사업-서류도구.html')
     with open(out, 'w', encoding='utf-8') as f:
         f.write(full)
@@ -56,6 +66,11 @@ def build():
     os.makedirs(pub, exist_ok=True)
     with open(os.path.join(pub, 'grant-docs-builder.html'), 'w', encoding='utf-8') as f:
         f.write(full)
+    # 서비스워커 캐시 이름: 도구 내용이 바뀌면 바뀐다(이전 캐시 정리)
+    import hashlib
+    sw = read(os.path.join(TOOL, 'sw.js')).replace('@VERSION@', hashlib.sha1(full.encode('utf-8')).hexdigest()[:10])
+    with open(os.path.join(pub, 'grant-sw.js'), 'w', encoding='utf-8') as f:
+        f.write(sw)
     print('wrote', out, f'({len(full.encode()) // 1024} KB)')
 
 

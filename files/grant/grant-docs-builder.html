@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
+<link rel="manifest" href="grant-tool.webmanifest">
+<meta name="theme-color" content="#0f2a4a">
+<link rel="icon" href="../../favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {var hadSW = !!navigator.serviceWorker.controller, reloaded = false;navigator.serviceWorker.addEventListener("controllerchange", function () { if (hadSW && !reloaded) { reloaded = true; location.reload(); } });window.addEventListener("load", function () { navigator.serviceWorker.register("grant-sw.js", { updateViaCache: "none" }).then(function (r) { r.update(); }).catch(function () {}); }); }</script>
 </head>
 <body>
 <title>지원사업 서류 도구</title>
@@ -519,6 +524,7 @@ input[type="text"].num { text-align: right; font-variant-numeric: tabular-nums; 
     <img class="appbar-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAA3CAMAAACBxYerAAAAYFBMVEXrVkvtWiS/Px//pZnoPjDoRDfrWUb/2rYAAAD////////////////////////////////oPS/wQDH/AADoRDXpUUXUf3/nQDP/VQB/AADnPzLnRTXzWE3/f39///+qAACdjUcKAAAAIHRSTlNiGwQHuasoBwD9BKzPMHBRkPz8AY1wBnADAo5cBwYCA7iQb00AAAicSURBVHja7VvZlt0oDHSSWbjCAvUy2TPz/385XkEbGCePHT30SbsxhkKUSoJM4S3bu/DudbOvXz+Fl8vm01vG6kv4/sfzak/PT+9+g9U1ePnw5/PTZs9/DWD1lsF6+RxeT6ym8D78Bqtj/4XXp8O+hc/hN1gdex8+nVh9GsPq7YL1JXy7i9WbBevl3+npCISv4eXlN1j9UDhN/+z2dxjE6m3rrLvGwILd7q6Q9xqMWOsN93Hri7JDv29/3B9+fFzsx8fvLz8BFvzabH9tTygwhlreHMCt5v4cp4oV7gbh1iDct3DEgE8DMFNcLGWsC7eMKR929L/+wJyItnbLiyA6RNm6O+7acxc1DywI+bFZXOGEdG2UYB0tHa/VbpfH8+PaIhRIAhJ7I5a5AsTj2bw/WkcWa7s66s0Azn9lPpocd8vuEGcL7PKEjkmi+ONU1vB4Gbf1Gpjs9hnxXtB9dY1ORJahaRzxhKY8OR6gWIYUQuLjQQcAqE0yG2LtGRxvwocL5XRu0Xh+H27Odq4vKiftWzo3VrZ+OG9osXGQ+r1MP/LxnN+dAweL1BeD7VmDlR+OjxawTvj3TcjX62K2zj5kw+tZPpwl+V67jSPzxs4aRr7hU/lugxPIW8/kgUUdsADEZroz2/LZ6rDAl7ttKF73VoKNY21cGYx1MntulgRYD8+zkouGBQstWOdnDuxhaLYgtwZWDiozmNsWobvhd0KMD86kDq7cLbF8V1A5PjzOIjELze9zm7PqMHCL4uP8zntOBSxkAa+r0pafPArGqPxWBMPqWBELbOTxO3cHBjH3/W4wrB15YIFwrHWQ3AfYeLjRGc2jjm6MPC+kHyMsWvUVRrFnkAXDOsFlAnXDIVai8oMhuWA9LL15o5q1zmI7qUgf5gBZEInR72U0FSzOBz3P4o5Fu3KvDwRYiYsUYuyFVTxQ+RdXAwysOMbvUp8ggAKLGlF0/ZUH9hlt1sAC6akFinvMsc1ZYv57FBZAJ416mWCqO3INmmSCIfnB0OX3ZOcsGJv4hCfmkxXFsvZZUT2hTrjLh2cL1oVKszEJQMyCBL+n0raAHENgrB49fgeX35Mb7RzdK9CchMaSWScmJ2054LIK7iZYmeVKZZ2UWBD8Xv4Ege3IChZcBUOeY0Sf372Qy3qbpHivaT/kltjaqBigDVYalVnV4VFHx5VZyy+G33N1snwRDNONYAjBG3vtbjJCqe1UItU94XLAGsqjJVh76AjVsUilJHU/ReZkjN8jg208GJLECjwHmQtaU92F1Uvz5UaaU5Oz1lnGIZUmlfL6pkwzshsMUxWrM/BgWDUEL0vNVgX4wRAMXRm0JrULQZZLOrMllMkdX7kF77OQw/DllnUSSSkzb46a/lkwDNzJoLI6eclOfnhguYWINn2caE01FkqNKXed5ysKrHjSjigwMtVpZEmnPIGS/jl0c9Wh6/acO8mOyBD4YpLmI9DbIUaH5SdFOYaeFw/a+kPyo0RbpW1GvPjUScJs37LyBz71Vl7zKn/yJfZc8zuLGcU7yQbvSZVYVGq7UflBviBIP5b0jqU7tSx5GkNd/iF1Kl97yUGkJF7TyJ56lT+V5Cab6e9CGjSzz9KxC29OSjjw1Y4J6vmB1qio26uiymVVeXMeN/xkp/LnZffI/I1sMARFKTP4lT8Iqv64Zb1mbLQS/Cyd9JxvTKhOWoSmILNMmxYYE6S1dOigVWrKWYFHPV5zKn9m5xblm5ULS7fKe55ndj7BZMtRiSFlDvc2tTqvFKFrDBBgUGLxQum6cb2hcnDygWt0ItTcrPzZWhkZ1ZztmAmKgtRbP01aUgJgQapZh8poli/CcPFeS2BMR8JNGSGUuUYddiEJnQecM0wwBFtYnUEH/G238XZlrZxEMcKUmkWwy2KUCYaDRxVqcYBl7qGTkuzybYkNiySDoHitBkM8XZZaZCh75iucQJ33siRjCQYTqbOmOGik+P04Usg5DRm2zoFtBlxJCNT5cl0cU/lzpUZUYEWlFDE4BRuqgXMiWSRNw65hKetnDu4x70fDqC80iMpfHbq86OBV/oJ/alYo3vR8SNdtBzpl073nbQ00WPeimanvbPPYN0vDElYPkjuiVdutcXrpdic31NUgVfkTrM0iyM4VyR5dcmI3VyQW4tr99QQrmW8MRTPnuALyRR/EVCO2auE2JQFJzJJRchl4CiDJPXEn25bJSXYoh+bOWLfi3vKnwdqP/QCNRh2pOBjdYcq7y5T4mVmjClWuhSzTPTwXVYCjIJFjpx2COjqXbOCMO2Ib3gj950GY2YUjaDtnG87BgTkZAZVqtW67cOaN6swFDOYwagasdAssGQvHT+4fEKCR/vekilOFsvfYTF0GlGt1rzlcXGaTYLXz4GjzYFMlHfZMQ9Dz9Z057oa91sKR7B0BVJjDuFWd5d63Y0m1r4t0Fl6LuGS1VTSlMKZ4BkRwEmXVawd0FoWLjD3ZwXnQVlEqFbzCElkIc7KeMq7z96YSUMUt1I4455YlsPlPardG71YHj7rYqCmOlEmmjqhs3lPSJ0pkamEuWDXRAl1YGNmyQ7FjLTtR+yJIUvx+Q1gSA+vO1RuNZdGY7EZFNNcq40OJqqFlZYdGw/KPzPHhEaUzj9fxHljLu6WelTypHztg1c+2iyIXgnYkds73Ll9uMmtbhCRPufJeKTMHbHeE5dQuoYuiKbQJN1aNOfZpR2aNNIZhRbNCk/RRc9wLoI0DtiG5M9mbe97Rd/QumzjH4iN0GR0Bf5WDiqvL3b5PZM1szqqOf8A2tAz1KCxbsPKjfdnE3MsKoVVTb6WGQ+BmlkjOd/zQ/18DqvIn7tH3bT+Rjs0LR1WiogUrOQJtLWj0Z0SoSpF0UTbjfgvponFk0Dau/5ckku4Xlda7DrRZuvm/O9L+GmpugHz8xVpidyRUjjpem/3VJrLtDf0ewv9k8lDTjd5IlQAAAABJRU5ErkJggg==" alt="동인엔시스" width="150" height="28">
     <span class="appbar-sep" aria-hidden="true"></span>
     <span class="appbar-name">지원사업 서류 도구</span>
+    <button type="button" class="appbar-install" id="btnInstall">바탕화면에 설치</button>
     <span class="appbar-code">대금청구 · 결과보고서</span>
   </div>
 </header>
@@ -1901,6 +1907,52 @@ input[type="text"].num { text-align: right; font-variant-numeric: tabular-nums; 
     save(); renderAll();
   }
 
+  /* ---------------------------------------------------------------- 바탕화면 설치 (ISO 기록 도구와 같은 방식)
+     크롬·엣지가 웹 앱 설치를 허락하면 설치 창을, 아니면 바탕화면 바로가기 파일(.url)과 방법을 보여 준다. */
+
+  var TOOL_URL = 'https://donginensis.com/files/grant/grant-docs-builder.html';
+  var installEvt = null;
+  function standalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+  function hideInstall() { var b = $('btnInstall'); if (b) b.hidden = true; }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
+  window.addEventListener('appinstalled', function () { hideInstall(); installEvt = null; });
+  function showInstallHelp() {
+    var old = $('installHelp'); if (old) old.remove();
+    var box = document.createElement('div');
+    box.id = 'installHelp'; box.className = 'inst-overlay';
+    box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'instTitle');
+    box.innerHTML = '<div class="inst-card"><h2 id="instTitle">바탕화면에서 바로 열기</h2>'
+      + '<p class="inst-step">① 아래 버튼을 누릅니다.</p>'
+      + '<button type="button" class="btn btn-primary inst-dl">바탕화면 바로가기 파일 받기</button>'
+      + '<p class="inst-step">② 받은 「지원사업 서류 도구」 파일(다운로드 폴더)을 바탕화면으로 끌어다 놓습니다.</p>'
+      + '<p class="inst-step">③ 바탕화면 아이콘을 더블클릭하면 도구가 열립니다.</p>'
+      + '<p class="inst-or">또는 크롬·엣지에서 직접 설치</p>'
+      + '<p class="inst-how">주소창 오른쪽 끝의 설치 아이콘(⊕) 또는 메뉴(⋮) → 「앱 설치」를 누르면 회사 「동」 아이콘으로 설치됩니다. 홈페이지 주소로 열었을 때만 됩니다.</p>'
+      + '<button type="button" class="btn btn-ghost inst-close">닫기</button></div>';
+    function close() { box.remove(); document.removeEventListener('keydown', esc); }
+    function esc(e) { if (e.key === 'Escape') close(); }
+    box.addEventListener('click', function (e) { if (e.target === box) close(); });
+    box.querySelector('.inst-close').addEventListener('click', close);
+    box.querySelector('.inst-dl').addEventListener('click', function () {
+      var txt = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
+      download(new Blob([txt], { type: 'application/octet-stream' }), '지원사업 서류 도구.url');
+    });
+    document.addEventListener('keydown', esc);
+    document.body.appendChild(box);
+    box.querySelector('.inst-dl').focus();
+  }
+  function wireInstall() {
+    if (standalone()) { hideInstall(); return; }
+    $('btnInstall').addEventListener('click', function () {
+      if (installEvt) {
+        installEvt.prompt();
+        installEvt.userChoice.then(function (c) { installEvt = null; if (c && c.outcome === 'accepted') hideInstall(); });
+        return;
+      }
+      showInstallHelp();
+    });
+  }
+
   /* ---------------------------------------------------------------- 탭·시작 */
 
   var VIEWS = ['info', 'ev', 'make'];
@@ -1933,6 +1985,7 @@ input[type="text"].num { text-align: right; font-variant-numeric: tabular-nums; 
 
   function wire() {
     wireTabs();
+    wireInstall();
     $('btnAddTask').addEventListener('click', function () {
       state.과제목록.push({ id: 'T' + (state.과제목록.length + 1), 이름: '', 내용: '', 지표: '', 목표: '', 실적: '', 단위: '' });
       save(); renderTasks(); renderEv(); refresh();

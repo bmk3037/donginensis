@@ -737,6 +737,52 @@
     save(); renderAll();
   }
 
+  /* ---------------------------------------------------------------- 바탕화면 설치 (ISO 기록 도구와 같은 방식)
+     크롬·엣지가 웹 앱 설치를 허락하면 설치 창을, 아니면 바탕화면 바로가기 파일(.url)과 방법을 보여 준다. */
+
+  var TOOL_URL = 'https://donginensis.com/files/grant/grant-docs-builder.html';
+  var installEvt = null;
+  function standalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+  function hideInstall() { var b = $('btnInstall'); if (b) b.hidden = true; }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
+  window.addEventListener('appinstalled', function () { hideInstall(); installEvt = null; });
+  function showInstallHelp() {
+    var old = $('installHelp'); if (old) old.remove();
+    var box = document.createElement('div');
+    box.id = 'installHelp'; box.className = 'inst-overlay';
+    box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'instTitle');
+    box.innerHTML = '<div class="inst-card"><h2 id="instTitle">바탕화면에서 바로 열기</h2>'
+      + '<p class="inst-step">① 아래 버튼을 누릅니다.</p>'
+      + '<button type="button" class="btn btn-primary inst-dl">바탕화면 바로가기 파일 받기</button>'
+      + '<p class="inst-step">② 받은 「지원사업 서류 도구」 파일(다운로드 폴더)을 바탕화면으로 끌어다 놓습니다.</p>'
+      + '<p class="inst-step">③ 바탕화면 아이콘을 더블클릭하면 도구가 열립니다.</p>'
+      + '<p class="inst-or">또는 크롬·엣지에서 직접 설치</p>'
+      + '<p class="inst-how">주소창 오른쪽 끝의 설치 아이콘(⊕) 또는 메뉴(⋮) → 「앱 설치」를 누르면 회사 「동」 아이콘으로 설치됩니다. 홈페이지 주소로 열었을 때만 됩니다.</p>'
+      + '<button type="button" class="btn btn-ghost inst-close">닫기</button></div>';
+    function close() { box.remove(); document.removeEventListener('keydown', esc); }
+    function esc(e) { if (e.key === 'Escape') close(); }
+    box.addEventListener('click', function (e) { if (e.target === box) close(); });
+    box.querySelector('.inst-close').addEventListener('click', close);
+    box.querySelector('.inst-dl').addEventListener('click', function () {
+      var txt = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
+      download(new Blob([txt], { type: 'application/octet-stream' }), '지원사업 서류 도구.url');
+    });
+    document.addEventListener('keydown', esc);
+    document.body.appendChild(box);
+    box.querySelector('.inst-dl').focus();
+  }
+  function wireInstall() {
+    if (standalone()) { hideInstall(); return; }
+    $('btnInstall').addEventListener('click', function () {
+      if (installEvt) {
+        installEvt.prompt();
+        installEvt.userChoice.then(function (c) { installEvt = null; if (c && c.outcome === 'accepted') hideInstall(); });
+        return;
+      }
+      showInstallHelp();
+    });
+  }
+
   /* ---------------------------------------------------------------- 탭·시작 */
 
   var VIEWS = ['info', 'ev', 'make'];
@@ -769,6 +815,7 @@
 
   function wire() {
     wireTabs();
+    wireInstall();
     $('btnAddTask').addEventListener('click', function () {
       state.과제목록.push({ id: 'T' + (state.과제목록.length + 1), 이름: '', 내용: '', 지표: '', 목표: '', 실적: '', 단위: '' });
       save(); renderTasks(); renderEv(); refresh();
