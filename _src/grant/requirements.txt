@@ -1,0 +1,8 @@
+python-hwpx>=6.8
+pyhwp
+python-docx
+openpyxl
+pymupdf
+pyyaml
+pillow
+pillow-heif
