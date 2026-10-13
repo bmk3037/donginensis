@@ -46,10 +46,11 @@ def build():
     page = page.replace('/*@SCRIPT@*/', script.replace('</script', '<\\/script'))
     with open(os.path.join(DIST, 'artifact.html'), 'w', encoding='utf-8') as f:
         f.write(page)
-    # 홈페이지판: 바탕화면 설치(웹 앱)와 오프라인 캐시 — ISO 기록 도구와 같은 방식, 아이콘도 회사 「동」 파비콘
+    # 홈페이지판: 바탕화면 설치(웹 앱)와 오프라인 캐시 — ISO 기록 도구와 같은 방식.
+    # 아이콘은 「동」 파비콘과 구분되는 서류·확인 표시 그림(tool/icon.svg → files/grant/icon-*.png, icon.ico)
     pwa = ('<link rel="manifest" href="grant-tool.webmanifest">\n<meta name="theme-color" content="#0f2a4a">\n'
-           '<link rel="icon" href="../../favicon-192.png" sizes="192x192">\n'
-           '<link rel="apple-touch-icon" href="../../apple-touch-icon.png">\n'
+           '<link rel="icon" href="icon-192.png" sizes="192x192">\n<link rel="icon" href="icon.ico" sizes="16x16 32x32 48x48">\n'
+           '<link rel="apple-touch-icon" href="icon-180.png">\n'
            '<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {'
            'var hadSW = !!navigator.serviceWorker.controller, reloaded = false;'
            'navigator.serviceWorker.addEventListener("controllerchange", function () { if (hadSW && !reloaded) { reloaded = true; location.reload(); } });'

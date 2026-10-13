@@ -757,14 +757,14 @@
       + '<p class="inst-step">② 받은 「지원사업 서류 도구」 파일(다운로드 폴더)을 바탕화면으로 끌어다 놓습니다.</p>'
       + '<p class="inst-step">③ 바탕화면 아이콘을 더블클릭하면 도구가 열립니다.</p>'
       + '<p class="inst-or">또는 크롬·엣지에서 직접 설치</p>'
-      + '<p class="inst-how">주소창 오른쪽 끝의 설치 아이콘(⊕) 또는 메뉴(⋮) → 「앱 설치」를 누르면 회사 「동」 아이콘으로 설치됩니다. 홈페이지 주소로 열었을 때만 됩니다.</p>'
+      + '<p class="inst-how">주소창 오른쪽 끝의 설치 아이콘(⊕) 또는 메뉴(⋮) → 「앱 설치」를 누르면 서류 모양 아이콘으로 설치됩니다. 홈페이지 주소로 열었을 때만 됩니다.</p>'
       + '<button type="button" class="btn btn-ghost inst-close">닫기</button></div>';
     function close() { box.remove(); document.removeEventListener('keydown', esc); }
     function esc(e) { if (e.key === 'Escape') close(); }
     box.addEventListener('click', function (e) { if (e.target === box) close(); });
     box.querySelector('.inst-close').addEventListener('click', close);
     box.querySelector('.inst-dl').addEventListener('click', function () {
-      var txt = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
+      var txt = '[InternetShortcut]\r\nURL=' + TOOL_URL + '\r\nIconFile=https://donginensis.com/files/grant/icon.ico\r\nIconIndex=0\r\n';
       download(new Blob([txt], { type: 'application/octet-stream' }), '지원사업 서류 도구.url');
     });
     document.addEventListener('keydown', esc);

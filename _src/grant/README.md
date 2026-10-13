@@ -8,7 +8,7 @@ ISO 기록 도구와 같은 방식의 **한 파일짜리 HTML**입니다. 크롬
 - **01 사업 정보**: 사업·기업·청구, 과제·성과지표, 보고서 문장, 결재란. 사업계획서 읽기는 Claude 에게 맡기고 받은 JSON 을 "불러오기".
 - **02 증빙 자료**: 요청자료 목록(담당·마감·요청 내용), 자료마다 사진·파일 끌어놓기, 촬영일(EXIF) 읽기, 요청자료 체크리스트 엑셀.
 - **03 서류 만들기**: 결과보고서·사진대지(회사 서식 워드), 기관 양식(.docx) 빈칸 자동 채우기, 제출 전 점검, 묶음 zip(서류 + `증빙/E01_…` 원본 파일 + 사업 저장 JSON).
-- **바탕화면 아이콘**: 상단 바의 「바탕화면에 설치」 — ISO 기록 도구와 같은 방식(크롬·엣지 웹 앱 설치, 안 되면 바로가기 `.url` 파일). 아이콘은 회사 「동」 파비콘, 이름은 「지원사업 서류 도구」. 설치는 홈페이지 주소(`https://donginensis.com/files/grant/grant-docs-builder.html`)로 열었을 때만 됩니다. 웹 앱 정보 `files/grant/grant-tool.webmanifest`, 오프라인 캐시 `files/grant/grant-sw.js`(빌드 때 판 번호 자동 갱신).
+- **바탕화면 아이콘**: 상단 바의 「바탕화면에 설치」 — ISO 기록 도구와 같은 방식(크롬·엣지 웹 앱 설치, 안 되면 바로가기 `.url` 파일). 아이콘은 ISO 도구의 「동」과 구분되는 파란 바탕 서류·빨간 확인 표시(원본 `tool/icon.svg`, 게시 `files/grant/icon-192·512·180.png`, `icon.ico`), 이름은 「지원사업 서류 도구」. 설치는 홈페이지 주소(`https://donginensis.com/files/grant/grant-docs-builder.html`)로 열었을 때만 됩니다. 웹 앱 정보 `files/grant/grant-tool.webmanifest`, 오프라인 캐시 `files/grant/grant-sw.js`(빌드 때 판 번호 자동 갱신).
 - 입력과 사진은 그 브라우저에 자동 저장되고, 밖으로 보내지 않습니다. 다른 PC 로 옮길 때는 묶음 zip 을 "불러오기"로 엽니다.
 - 한글 양식은 한글에서 "다른 이름으로 저장 → 워드(.docx)"로 바꿔 넣습니다.
 - 다시 만들기: `python3 _src/grant/build_tool.py` (화면: `tool/page.html`, `tool/app.js`, `tool/docx.js`, `tool/media.js`, `tool/samples.js`, `tool/grant.css`; 화면 서식은 `_src/iso/tool/app.css` 를 함께 씀)
