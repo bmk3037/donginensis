@@ -1,0 +1,184 @@
+<title>지원사업 서류 도구</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>/*@CSS@*/</style>
+
+<header class="appbar">
+  <div class="appbar-in">
+    <img class="appbar-logo" src="@LOGO_WHITE@" alt="동인엔시스" width="150" height="28">
+    <span class="appbar-sep" aria-hidden="true"></span>
+    <span class="appbar-name">지원사업 서류 도구</span>
+    <button type="button" class="appbar-install" id="btnInstall">바탕화면에 설치</button>
+    <span class="appbar-code">대금청구 · 결과보고서</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" role="tablist" aria-label="단계 고르기">
+    <button type="button" role="tab" class="tab" id="tab-info" data-view="info" aria-controls="view-info" aria-selected="true"><span class="tab-no">01</span>사업 정보</button>
+    <button type="button" role="tab" class="tab" id="tab-ev" data-view="ev" aria-controls="view-ev" aria-selected="false" tabindex="-1"><span class="tab-no">02</span>증빙 자료</button>
+    <button type="button" role="tab" class="tab" id="tab-make" data-view="make" aria-controls="view-make" aria-selected="false" tabindex="-1"><span class="tab-no">03</span>서류 만들기</button>
+  </nav>
+
+  <!-- 01 사업 정보 -->
+  <section class="view" id="view-info" role="tabpanel" aria-labelledby="tab-info">
+    <header class="top">
+      <p class="eyebrow">정부·지자체 지원사업 · 대금청구 · 결과보고</p>
+      <h1>지원사업 서류 도구</h1>
+      <p class="lead">사업 정보와 과제·성과지표를 한 번 적고 증빙 사진을 넣으면, 결과보고서·사진대지·요청자료 체크리스트를 회사 문서 서식(워드)으로 만들고 기관 양식(워드)의 빈칸을 채웁니다.</p>
+      <div class="sample-bar" id="sampleBar">
+        <span class="chip chip-warn">예시 데이터</span>
+        <span>가상의 지원사업이 채워져 있습니다. 실제 사업·금액이 아닙니다.</span>
+        <button type="button" class="btn btn-ghost" id="btnClear">비우고 내 사업 입력</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <div class="steps">
+        <section class="step" aria-labelledby="h-i1">
+          <h2 id="h-i1"><span class="num">1</span>사업</h2>
+          <div class="grid" id="fBiz"></div>
+          <p class="help">사업계획서·협약서에 적힌 그대로 씁니다. 사업비는 숫자만 넣으면 쉼표가 붙습니다.</p>
+        </section>
+
+        <section class="step" aria-labelledby="h-i2">
+          <h2 id="h-i2"><span class="num">2</span>기업 · 청구</h2>
+          <div class="grid" id="fCo"></div>
+          <div class="sign-box">
+            <p class="sign-h">청구</p>
+            <div class="grid" id="fClaim"></div>
+          </div>
+          <div class="row-actions">
+            <button type="button" class="btn btn-ghost" id="btnCoSave">기업 정보를 이 브라우저 기본값으로 저장</button>
+          </div>
+        </section>
+
+        <section class="step" aria-labelledby="h-i3">
+          <h2 id="h-i3"><span class="num">3</span>과제 · 성과지표</h2>
+          <p class="help">계획서의 세부과제마다 한 줄. 추진 내용은 한 줄에 한 항목으로 쓰면 보고서에 글머리표로 들어갑니다. 실적을 적으면 달성률이 계산됩니다.</p>
+          <div class="table-wrap">
+            <table class="tbl" id="taskTable">
+              <thead><tr><th>ID</th><th>과제명</th><th>추진 내용 (한 줄에 하나)</th><th>성과지표</th><th>목표</th><th>실적</th><th>단위</th><th class="w-act"><span class="sr">삭제</span></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="row-actions"><button type="button" class="btn" id="btnAddTask">과제 추가</button></div>
+        </section>
+
+        <section class="step" aria-labelledby="h-i4">
+          <h2 id="h-i4"><span class="num">4</span>보고서 문장 · 결재</h2>
+          <div class="grid grid-2" id="fText"></div>
+          <div class="sign-box">
+            <p class="sign-h">결재란 (결과보고서 표지)</p>
+            <div class="grid" id="fSign"></div>
+            <p class="help">비워 두면 결재란을 넣지 않습니다. 서명·일자는 출력 후 직접 적습니다.</p>
+          </div>
+        </section>
+      </div>
+
+      <aside class="out" aria-labelledby="h-iout">
+        <div class="out-card">
+          <div class="out-head"><h2 id="h-iout">사업계획서 읽기</h2></div>
+          <p class="help">계획서에서 사업 정보·과제·성과지표·증빙 목록을 뽑아 채우는 일은 Claude에게 맡기면 빠릅니다.</p>
+          <ol class="g-howto">
+            <li>Claude Code 대화에 사업계획서(과 공고문)를 올립니다.</li>
+            <li>아래 문장을 붙여 보냅니다.</li>
+            <li>받은 <span class="mono">.json</span> 파일을 아래 <b>불러오기</b>로 엽니다.</li>
+          </ol>
+          <div class="g-prompt" id="claudePrompt">이 사업계획서를 읽고 지원사업 서류 도구에서 불러올 프로젝트 JSON 파일을 만들어줘. 문서에 없는 값은 【확인필요】로 남겨줘.</div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnCopyPrompt">문장 복사</button>
+          <hr class="g-hr">
+          <div class="row-actions">
+            <button type="button" class="btn" id="btnSave">사업 저장 (.json)</button>
+            <span class="btn file-btn">불러오기 (.json · .zip)<input type="file" id="fileOpen" accept=".json,.zip" aria-label="저장한 사업 불러오기"></span>
+          </div>
+          <p class="status" id="infoStatus" role="status"></p>
+          <p class="help">입력 내용과 사진은 이 브라우저에 자동 저장됩니다. 다른 PC로 옮기거나 보관하려면 03 탭의 묶음(zip)을 받아 두세요.</p>
+        </div>
+      </aside>
+    </main>
+  </section>
+
+  <!-- 02 증빙 자료 -->
+  <section class="view" id="view-ev" role="tabpanel" aria-labelledby="tab-ev" hidden>
+    <header class="top">
+      <p class="eyebrow">요청자료 · 증빙 사진</p>
+      <h1>증빙 자료</h1>
+      <p class="lead">무엇을 누구에게 받을지 정하고, 받은 사진·파일을 자료마다 끌어다 놓습니다. 사진의 촬영일(원본 파일 정보)을 읽어 사업기간 밖 사진을 알려 줍니다.</p>
+    </header>
+    <main class="layout">
+      <div class="steps">
+        <section class="step" aria-labelledby="h-e1">
+          <h2 id="h-e1"><span class="num">1</span>요청자료 목록</h2>
+          <p class="help">증빙은 <b>실제 결과물</b>이어야 합니다. 현장·설비는 실물 사진, 소프트웨어(디지털트윈 등)는 실제 실행 화면 캡처·시연 영상, 문서는 발급본을 넣습니다. AI로 그린 그림·3D 렌더링·홍보 이미지는 증빙이 아닙니다.</p>
+          <div id="evList" class="g-evlist"></div>
+          <div class="row-actions">
+            <button type="button" class="btn" id="btnAddEv">자료 추가</button>
+            <button type="button" class="btn btn-ghost" id="btnEvFromTasks">과제별 사진 항목 자동 추가</button>
+          </div>
+        </section>
+      </div>
+      <aside class="out" aria-labelledby="h-eout">
+        <div class="out-card">
+          <div class="out-head"><h2 id="h-eout">받은 자료</h2><span class="count"><b id="evDone">0</b> / <span id="evAll">0</span></span></div>
+          <div id="evSummary" class="g-sum"></div>
+          <button type="button" class="btn" id="btnChecklist">요청자료 체크리스트 엑셀 받기</button>
+          <p class="help">담당자에게 보낼 표입니다. 메신저로 받은 사진은 촬영일이 지워지므로 <b>원본 파일</b>로 받으세요.</p>
+          <p class="status" id="evStatus" role="status"></p>
+        </div>
+      </aside>
+    </main>
+  </section>
+
+  <!-- 03 서류 만들기 -->
+  <section class="view" id="view-make" role="tabpanel" aria-labelledby="tab-make" hidden>
+    <header class="top">
+      <p class="eyebrow">워드 · 엑셀 · 묶음(zip)</p>
+      <h1>서류 만들기</h1>
+      <p class="lead">결과보고서와 사진대지는 회사 문서 서식(통합경영 매뉴얼과 같은 표지·표·머리말)으로, 기관 양식은 기관 배치 그대로 빈칸만 채워 워드로 만듭니다.</p>
+    </header>
+    <main class="layout">
+      <div class="steps">
+        <section class="step" aria-labelledby="h-m1">
+          <h2 id="h-m1"><span class="num">1</span>회사 서식 문서</h2>
+          <div class="checks" id="docChecks"></div>
+        </section>
+
+        <section class="step" aria-labelledby="h-m2">
+          <h2 id="h-m2"><span class="num">2</span>기관 양식 채우기</h2>
+          <p class="help">대금청구서·확인서 같은 기관 양식(워드 .docx)을 넣으면 표의 빈칸을 찾아 사업 정보로 채웁니다. 한글(.hwp) 양식은 한글에서 <b>다른 이름으로 저장 → 워드(.docx)</b>로 바꿔 넣습니다.</p>
+          <div class="drop" id="formDrop">
+            <label for="formFile"><b>양식 파일 선택</b> 또는 여기로 끌어다 놓기 (.docx, 여러 개 가능)</label>
+            <input type="file" id="formFile" accept=".docx" multiple>
+          </div>
+          <div id="formList" class="g-forms"></div>
+        </section>
+
+        <section class="step" aria-labelledby="h-m3">
+          <h2 id="h-m3"><span class="num">3</span>제출 전 점검</h2>
+          <ul class="checklist" id="checkList"></ul>
+        </section>
+      </div>
+      <aside class="out" aria-labelledby="h-mout">
+        <div class="out-card">
+          <div class="out-head"><h2 id="h-mout">만들 파일</h2><span class="count"><b id="outCount">0</b>개</span></div>
+          <ul class="g-outlist" id="outList"></ul>
+          <button type="button" class="btn btn-primary" id="btnMake">묶음 만들기 (zip)</button>
+          <div class="progress" id="progress" hidden><span id="pbarI"></span></div>
+          <p class="status" id="makeStatus" role="status"></p>
+          <p class="help">묶음에는 만든 서류, 이름을 정리한 증빙 파일(<span class="mono">증빙/E01_…</span>), 사업 저장 파일(<span class="mono">.json</span>)이 들어갑니다. PDF가 필요하면 워드에서 <b>PDF로 저장</b>합니다.</p>
+        </div>
+      </aside>
+    </main>
+  </section>
+
+  <footer class="foot">
+    <p class="foot-brand">㈜동인엔시스 · 제어하는 곳에서, 데이터가 시작됩니다</p>
+    <p>파일은 이 화면 안에서만 처리되고 밖으로 보내지 않습니다(인터넷은 엑셀·압축 라이브러리를 불러올 때만 씁니다). 금액·날짜·실적은 계획서·협약서·실제 자료에 있는 값만 쓰고, 증빙은 실물로 넣습니다.</p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>/*@SCRIPT@*/</script>
