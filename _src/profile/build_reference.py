@@ -79,8 +79,9 @@ def plant(L):
     ]
     f = ''.join(f'<div class="feat"><img class="ph" src="{ph}"><div class="b"><img class="lg" src="{lg}"><h3>{t}</h3><p>{d}</p></div></div>' for ph,lg,t,d in feats)
     lis = ''.join(f'<li>{x}</li>' for x in L['others'])
-    logos = ['p20_04_logo.jpg','logo_bobst.jpg','logo_atlas.jpg','p21_06_logo.jpg','logo_hyundai.jpg','p18_04_logo.jpg','p19_05_logo.jpg','p19_06_logo.jpg','p22_04_logo.jpg','p29_08_logo.jpg','p33_05_logo.jpg']
-    strip = '<div class="strip"><img class="w" src="%s">' % I('p16_32_logo.jpg') + ''.join(f'<img src="{I(x)}">' for x in logos) + '</div>'
+    # 고객사 로고 띠 — logos/ 폴더의 벡터 로고 (파일명, 표시 높이 px)
+    logos = [('skens.svg', 30), ('bobst.svg', 22), ('atlas.svg', 26), ('skecoplant.svg', 28), ('hhitm.svg', 20), ('hiair.svg', 26), ('kiswire.svg', 32), ('sunbo.png', 22), ('ksb.svg', 24), ('gsi.png', 22), ('kte.svg', 30), ('wilo.svg', 28)]
+    strip = '<div class="strip">' + ''.join(f'<img src="{ROOT}/logos/{x}" style="height:{h}px">' for x, h in logos) + '</div>'
     return f'<div class="grid">{f}<div class="list"><h3>{L["oh"]}</h3><ul>{lis}</ul></div></div>{strip}'
 
 KR = dict(
@@ -102,7 +103,7 @@ KR = dict(
         ('SB선보','LNG 운반선용 BOG 압축기','BOG 압축기 제어시스템 설계 · 공급 · 시운전')],
   f_note='※ LNG 연료 선박의 가스 공급·안전 제어 경험이 수소 설비 제어의 기반입니다.',
   p_eye='Major Reference · Energy & Plant', p_title='수소충전소에서 해외 공장까지,<br><b>에너지·산업 플랜트 제어 실적</b>',
-  f1t='SK E&amp;S 액화수소충전소', f1d='VFD · 배전 · PLC 제어시스템 공급 · 상용 충전소 운영 실증',
+  f1t='SK E&amp;S 액화수소충전소', f1d='VFD · PLC · UPS 제어시스템 공급 · 상용 충전소 운영 실증',
   f2t='한국남부발전 연료전지 발전소 CCUS BOP 제어', f2d='탄소 포집·활용·저장(CCUS) 설비 BOP 제어시스템 · SK에코플랜트',
   f3t='밥스트코리아(BOBST) 포장기계', f3d='특수 기계 제어시스템 엔지니어링·공급 (서보·모션 제어)',
   oh='그 외 주요 실적',
@@ -127,7 +128,7 @@ EN = dict(
         ('SB Sunbo','BOG compressors for LNG carriers','Design, supply and commissioning of BOG compressor control')],
   f_note='※ Gas supply and safety control on LNG-fuelled vessels is the foundation of our hydrogen facility control.',
   p_eye='Major Reference · Energy & Plant', p_title='From hydrogen stations to overseas plants,<br><b>energy and industrial references</b>',
-  f1t='SK E&amp;S liquid hydrogen refueling station', f1d='VFD, power distribution and PLC control system · in commercial operation',
+  f1t='SK E&amp;S liquid hydrogen refueling station', f1d='VFD, PLC and UPS control system · in commercial operation',
   f2t='KOSPO fuel cell power plant CCUS BOP control', f2d='BOP control system for carbon capture, utilization and storage · SK ecoplant',
   f3t='BOBST Korea packaging machinery', f3d='Engineering and supply of specialized machine control (servo/motion)',
   oh='Other major references',

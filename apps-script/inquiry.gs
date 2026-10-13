@@ -20,7 +20,13 @@ var BASE_COLUMNS = ['submitted_at', 'form_type', 'lang', 'company', 'name', 'pos
   'message', 'page', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign'];
 
 // 저장하지 않을 항목 (스팸 차단용 숨은 칸, 동의 체크박스)
-var SKIP = ['website', 'agree'];
+var SKIP = ['website', 'agree', 'elapsed_ms'];
+
+// 스팸 차단 기준
+var MIN_ELAPSED_MS = 3000;   // 폼을 연 뒤 3초 안에 제출하면 자동 입력으로 봄
+var MAX_LINKS = 2;          // 문의 내용에 링크가 3개 이상이면 차단
+var MAX_PER_10MIN = 20;     // 10분 동안 전체 접수 20건 초과 시 차단 (대량 공격 방지)
+var DUP_WINDOW_SEC = 600;   // 같은 이메일·내용은 10분 안에 한 번만 접수
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -28,6 +34,8 @@ function doPost(e) {
   try {
     var p = (e && e.parameter) || {};
     if (p.website) return ok_(); // 봇이 숨은 칸을 채운 경우 무시
+    var blocked = spamReason_(p);
+    if (blocked) { logBlocked_(p, blocked); return ok_(); } // 스팸으로 판단되면 저장·알림 없이 종료
 
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
     var headers = sheet.getLastRow() ? sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0] : [];
@@ -64,6 +72,38 @@ function doPost(e) {
     return ok_();
   } finally {
     lock.releaseLock();
+  }
+}
+
+// 스팸 여부 판단. 문제가 없으면 빈 문자열을 돌려준다.
+function spamReason_(p) {
+  var ms = parseInt(p.elapsed_ms, 10);
+  if (!(ms >= MIN_ELAPSED_MS)) return '제출 시간 이상(' + (p.elapsed_ms || '없음') + ')';
+  if (!p.company || !p.name || !(p.email || p.phone)) return '필수 항목 누락';
+  var links = ((p.message || '') + ' ' + (p.company || '')).match(/https?:\/\/|www\./gi);
+  if (links && links.length > MAX_LINKS) return '링크 과다';
+  var cache = CacheService.getScriptCache();
+  var bucket = 'cnt_' + Math.floor(Date.now() / 600000);
+  var cnt = parseInt(cache.get(bucket) || '0', 10) + 1;
+  cache.put(bucket, String(cnt), 900);
+  if (cnt > MAX_PER_10MIN) return '단시간 대량 접수';
+  var key = 'dup_' + Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5,
+    (p.email || '') + '|' + (p.phone || '') + '|' + (p.message || '')));
+  if (cache.get(key)) return '중복 접수';
+  cache.put(key, '1', DUP_WINDOW_SEC);
+  return '';
+}
+
+// 차단된 접수는 '차단 기록' 시트에 간단히 남긴다 (알림 메일 없음)
+function logBlocked_(p, reason) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName('차단 기록') || ss.insertSheet('차단 기록');
+    if (!sh.getLastRow()) sh.appendRow(['blocked_at', 'reason', 'company', 'name', 'email', 'page']);
+    if (sh.getLastRow() > 5000) return; // 기록이 너무 많아지면 더 쌓지 않음
+    sh.appendRow([new Date().toISOString(), reason, (p.company || '').slice(0, 80), (p.name || '').slice(0, 40), (p.email || '').slice(0, 80), p.page || '']);
+  } catch (err) {
+    console.error('차단 기록 실패: ' + err);
   }
 }
 

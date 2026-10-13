@@ -5,11 +5,22 @@
 | 결과물 | 원본 | 생성 명령 |
 |---|---|---|
 | `files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf` (수소전문기업 사업분야, 20장) | `build_hydrogen.py` | `python3 build_hydrogen.py` → `out/h2_profile.pdf` |
-| 회사소개서 12~14쪽 Major Reference (국문·영문) | `build_reference.py` | `python3 build_reference.py` → `out/ref_KR.pdf`, `out/ref_EN.pdf` |
+| (예전) 회사소개서 Major Reference 3장 (국문·영문) | `build_reference.py` | `python3 build_reference.py` → `out/ref_KR.pdf`, `out/ref_EN.pdf`. 지금 통합본에는 쓰지 않음(국문·영문 모두 실적 7장으로 교체) |
+| `files/DONG-IN-ENSIS_Company-Profile_KR.pdf` (회사소개서 국문, 23장) | `build_profile_refs.py` | `python3 build_profile_refs.py` → `base/profile_base_KR.pdf`(원본 없는 16장) 사이에 실적 7장을 끼워 `files/`에 저장 |
+| `files/DONG-IN-ENSIS_Company-Profile_EN.pdf` (회사소개서 영문, 23장 · 국문과 같은 구성) | `build_profile_refs_en.py` | `python3 build_profile_refs_en.py` → `base/profile_base_EN.pdf` 사이에 영문 실적 7장을 끼워 `files/`에 저장(무손실 압축 저장) |
+| `files/DONG-IN-ENSIS_Sales-Profile_KR.pdf` (영업용 회사소개서 · 전기제어시스템 설계·제작, 18장) | `build_sales.py` | `python3 build_sales.py [base\|marine\|plant\|machine] [--to "OOO 귀중"] [--contact "담당자 줄"]` → `out/sales_<변형>.pdf`. 자료실에는 `base`를 복사해 올림. 제출처별 변형(marine · plant · machine)은 홈페이지에 올리지 않고 직접 보냄 |
+| `files/DONG-IN-ENSIS_IT-Partner-Proposal_KR.pdf` (IT 파트너 제안서 · MES·AI·디지털트윈 솔루션 기업용, 8장) | `build_partner.py` | `python3 build_partner.py` → `out/partner_KR.pdf`. 디자인은 `build_sales.py`의 CSS·헬퍼를 그대로 씀 |
+| 영업용 레퍼런스 사례집 (1사례 1쪽 · 익명판 2쪽+양식 1쪽 / 실명판 2쪽) | `build_cases.py` | `python3 build_cases.py` → `out/cases_KR_anon.pdf`, `python3 build_cases.py --named` → `out/cases_KR_named.pdf`. 홈페이지에 올리지 않고 영업 담당자가 직접 보냄. 실명판은 고객 동의 후 사용. `□` 표시 숫자는 확인 후 `CASES`에 기입 |
+| `files/partner/DONG-IN-ENSIS_Data-Integration-Overview_KR.pdf` (데이터 연동 개요, A4 2쪽) | `build_overview.py` | `python3 build_overview.py` → `out/overview_KR.pdf` |
+| 영업용 브리핑 대본 (6쪽, 파트너 자료실 `members.html` 잠금 자료) | 저장소 밖 (내부 영업 자료 — 원본 `briefing_script.md`와 생성 스크립트는 비공개 원본 폴더에 보관) | `_src/private/README.md` 절차로 암호화해 `files/private/`에 올림 |
 
 - 필요한 것: Python 3, Playwright(Chromium).
 - 서체는 `fonts/`(Pretendard, OFL 라이선스)를 씁니다.
-- 사진·로고는 `crops/`(기존 회사소개서에서 추출), 홈페이지 이미지는 `img/`를 씁니다.
-- 회사소개서 본문(1~11쪽, 15~19쪽)은 별도 원본 없이 PDF로만 관리합니다.
-- Major Reference 3장은 기존 16장 PDF의 11쪽 뒤에 끼워 넣고, 그 뒤 쪽번호를 +3 한 것입니다.
+- 사진·로고는 `crops/`(기존 회사소개서에서 추출), 홈페이지 이미지는 `img/`를 씁니다. 영업용 소개서 사진·고객 로고는 `sales/`(원본 49쪽 회사소개서에서 추출)를 씁니다.
+- 회사소개서 국문·영문 4쪽 회사 개요의 "인증·선정" 행은 2026.10에 `patch_overview_certs.py`로 세 줄(스마트공장 공급기업 · 혁신기업 국가대표 1000 · 부산 전략산업 선도기업 · 레전드 50+ · 서비스 강소기업 추가)로 바꿨습니다. base PDF에 원본이 없어 PyMuPDF로 글자를 지우고 Chromium이 그린 PDF를 그 행에 겹쳐 넣는 방식입니다(PyMuPDF insert_text는 Pretendard OTF의 괄호·+ 글리프가 깨짐).
+- 영업용 회사소개서 16쪽 회사 개요: 슬로건 행, 연구소(엔에스타워) 사진(건물 전체 · WHAT WE DO 반투명 겹침), 인증·선정 행 확장(2026.10). 고객사 로고 SB선보는 공식 CI(`logos/sunbo.png`, sbsunbo.com CI 페이지)로 교체.
+- 회사소개서 국문 5쪽 연혁의 "지능형 제어반 사업 본격화"는 2026.10에 PyMuPDF로 "지능형 제어반 출시 · 데이터 사업 진출"로 고쳤습니다(글자 치환 후 글꼴 서브셋). 홈페이지 연혁과 맞춥니다.
+- 회사소개서 본문(1~11쪽, 19~23쪽)은 별도 원본 없이 `base/profile_base_KR.pdf`(국문) · `base/profile_base_EN.pdf`(영문)로만 관리합니다. 실적 7장(12~18쪽)은 `build_sales.py`의 실적 페이지를 재사용합니다. 본문 문구를 PDF에서 직접 고칠 때는 `files/` 배포본과 `base/` 원본을 **둘 다** 고칩니다(배포본만 고치면 다시 만들 때 사라짐).
+- **영문은 항상 국문과 맞춥니다.** 영문 회사소개서(23장)는 국문과 같은 쪽 구성 · 같은 사진입니다. 실적 7장은 `build_profile_refs_en.py`(영문 글), 고객사 로고 15종은 `build_profile_refs.py`의 `CUSTOMER_LOGOS`를 국문·영문이 함께 씁니다. 국문 실적 쪽(`build_sales.py`의 ref_* · STATS6)을 고치면 영문 생성기도 같은 작업에서 고칩니다.
+- 영문 본문 4·5·6쪽은 2026.10에 `patch_en_body.py`로 국문과 맞췄습니다(옛 이름 Dongin Gijeon 삭제, 2026 데이터 사업 진출, 양산 공장 2023 준공). 글자를 지우고 Chromium이 그린 글을 겹쳐 넣는 방식이며 `base/profile_base_EN.pdf`에 반영돼 있습니다.
 - 이 폴더(`_src`)는 홈페이지에 공개되지 않습니다.
