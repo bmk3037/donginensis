@@ -120,4 +120,11 @@ assert.equal(ti.items[0].cost, '60000');
 assert.ok(!ti.skipped.some(r => r.how === 'port'));
 // LP 시트
 assert.deepEqual(X.parseLp([['슈나이더 모델', 'LP'], ['TM3AQ2', '120,000'], ['', 5]]), {TM3AQ2: '120000'});
+// 머리글 없이 회사 표 줄을 그대로 붙여 넣기: 'PLC(AI8)' 같은 품명을 형번으로, LP를 수량으로 잡지 않는다
+const plain = X.parseInput(X.parseTsv('1\tPLC(AI8)\t6ES7231-4HF32-0XB0\tSIEMENS\tEA\t67\t\t\tTM3AI8\t331,000\n' +
+  '3\tPLC(CPU1214C)\t6ES7214-1AG40-0XB0\tSIEMENS\tEA\t112\t"DC전원\n14 D/I"\t\tTM221CE24T\t512,000\n17\tSOFTSTARTER\t3RW4028-1BB14\tSIEMENS\tEA\t12\n' +
+  '6ES7 231-4HD32-0XB0 2\n6ES7232-4HD32-0XB0, 96'));
+assert.deepEqual(plain.map(x => [x.name, x.code, x.qty]), [['PLC(AI8)', '6ES7231-4HF32-0XB0', 67], ['PLC(CPU1214C)', '6ES7214-1AG40-0XB0', 112],
+  ['SOFTSTARTER', '3RW4028-1BB14', 12], ['', '6ES7 231-4HD32-0XB0', 2], ['', '6ES7232-4HD32-0XB0', 96]]);
+assert.ok(X.convert(plain, []).every(r => r.how === 'auto'));
 console.log('xref ok');

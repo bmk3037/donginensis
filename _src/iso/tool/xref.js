@@ -160,8 +160,24 @@
     ['name', ['품목명', '품명', '품목', '명칭', 'item', 'name']]
   ];
   function looksCode(s) { var t = clean(s); return t.length >= 5 && /\d/.test(t) && /[a-z]/i.test(t) && !/\s{2,}/.test(t) && t.split(' ').length <= 2; }
-  /** 붙여 넣은 표·엑셀 시트 → [{name, maker, code, qty}]. 머리글이 없으면 형번처럼 생긴 칸과 마지막 숫자 칸을 쓴다. */
-  function parseInput(rows) {
+  /** 형번 칸 점수: 찾을 수 있는 형번이면 크게, 'PLC(AI8)' 같은 품명(괄호·쉼표)은 낮게 */
+  function codeScore(s, known) {
+    var t = clean(s);
+    if (!t) return 0;
+    if (known && known(t)) return 100;
+    if (!looksCode(t)) return 0;
+    var sc = 10;
+    if (/[(),]/.test(t)) sc -= 9;
+    if (/-/.test(t)) sc += 4;
+    if (/^\d/.test(t)) sc += 2;
+    if (/^[a-z0-9\-\.\/ ]+$/i.test(t)) sc += 2;
+    if (t.length >= 10) sc += 2;
+    return sc;
+  }
+  /** 붙여 넣은 표·엑셀 시트 → [{name, maker, code, qty}]. 머리글이 없으면 형번 칸(모든 줄에서 점수가 가장 높은 열)과
+      그 오른쪽 첫 숫자 칸(수량)을 쓴다. known(형번)은 대응표·기본 대응에서 찾을 수 있는지 알려 준다. */
+  function parseInput(rows, known) {
+    known = known || function (c) { return !!builtin(c); };
     var det = detect(rows, ISYN, function (u) { return u.code !== undefined; }), out = [];
     if (det && det.hits >= 2) {
       var m = det.map;
@@ -174,12 +190,24 @@
       }
       return out;
     }
+    var width = rows.reduce(function (w, r) { return Math.max(w, (r || []).length); }, 0), best = -1, bestSc = 0;
+    for (var c = 0; c < width; c++) {
+      var sc = rows.reduce(function (a, r) { return a + codeScore((r || [])[c], known); }, 0);
+      if (sc > bestSc) { bestSc = sc; best = c; }
+    }
     rows.forEach(function (row) {
-      var cells = (row || []).map(clean), ci = -1, qty = null;
-      for (var i = 0; i < cells.length; i++) if (looksCode(cells[i])) { ci = i; break; }
+      var cells = (row || []).map(clean);
+      if (cells.length === 1) { // 손으로 친 「형번 수량」 한 줄(형번 안의 띄어쓰기는 그대로)
+        var hm = /^(.+?)[\s,]+(\d+(?:\.\d+)?)\s*(?:ea|개)?$/i.exec(cells[0]);
+        cells = hm && codeScore(hm[1], known) ? [hm[1], hm[2]] : cells[0].split(/[\s,]+/);
+      }
+      var ci = -1, top = 0; // 줄마다 점수가 가장 높은 칸, 같으면 전체에서 고른 열
+      cells.forEach(function (v, c) { var sc = codeScore(v, known); if (sc && c === best) sc += 3; if (sc > top) { top = sc; ci = c; } });
       if (ci < 0) return;
-      for (var j = cells.length - 1; j > ci; j--) { var n = num(cells[j]); if (n !== null && n > 0) { qty = n; break; } }
-      out.push({ name: ci > 0 && !/^\d+$/.test(cells[ci - 1]) ? cells[ci - 1] : '', maker: '', code: cells[ci], qty: qty === null ? 1 : qty });
+      var qty = null, name = '';
+      for (var j = ci + 1; j < cells.length; j++) { var n = num(cells[j]); if (n !== null) { if (n > 0) qty = n; break; } }
+      for (var i = ci - 1; i >= 0; i--) if (cells[i] && num(cells[i]) === null) { name = cells[i]; break; }
+      out.push({ name: name, maker: '', code: cells[ci], qty: qty === null ? 1 : qty });
     });
     return out;
   }
@@ -526,6 +554,11 @@
       else msg('대응표를 등록했습니다: ' + best.entries.length + '개 형번' + (ok ? ' (이 브라우저에 기억).' : ' (이번 화면에서만 — 브라우저 저장 공간 없음).') + (lost ? ' 이전에 이 브라우저에서 고친 ' + lost + '줄은 새 표로 바뀌었습니다.' : '') + ' 분류별 할인율을 적으세요.', 'ok');
     }).catch(function (e) { msg('대응표를 읽지 못했습니다: ' + ((e && e.message) || e), 'bad'); });
   }
+  /** 대응표나 기본 대응에서 찾을 수 있는 형번인지 */
+  function known() {
+    var idx = indexTable(table ? table.entries : []);
+    return function (c) { return lookup(c, idx).entries.length > 0 || !!builtin(c); };
+  }
   function refillLp() { rows.forEach(function (r) { if (r.to && !num(r.lp) && lps[key(r.to)]) { r.lp = lps[key(r.to)]; if (r._tr) r._tr.querySelector('.x-lp').value = r.lp; } updateRow(r); }); renderSum(); }
   function saveTable() {
     if (!window.XLSX) { msg('엑셀 라이브러리를 불러오지 못했습니다.', 'bad'); return; }
@@ -562,13 +595,13 @@
     $('xOrig').addEventListener('change', function () { store(ORIG_KEY, this.checked ? '1' : '0'); });
     $('xTableFile').addEventListener('change', function () { onTableFile(this.files[0]); this.value = ''; });
     $('xTableSave').addEventListener('click', saveTable);
-    $('xGo').addEventListener('click', function () { run(parseInput(parseTsv($('xPaste').value)), '붙여 넣은 표'); });
+    $('xGo').addEventListener('click', function () { run(parseInput(parseTsv($('xPaste').value), known()), '붙여 넣은 표'); });
     $('xFile').addEventListener('change', function () {
       var f = this.files[0]; this.value = '';
       if (!f) return;
       A.readWorkbook(f).then(function (wb) {
         var best = [];
-        wb.SheetNames.forEach(function (n) { var l = parseInput(XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, defval: '', raw: true, blankrows: false })); if (l.length > best.length) best = l; });
+        wb.SheetNames.forEach(function (n) { var l = parseInput(XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, defval: '', raw: true, blankrows: false }), known()); if (l.length > best.length) best = l; });
         run(best, f.name);
       }).catch(function (e) { msg('엑셀을 읽지 못했습니다: ' + ((e && e.message) || e), 'bad'); });
     });
