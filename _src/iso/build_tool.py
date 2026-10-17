@@ -89,7 +89,7 @@ def build():
               + 'window.ISO_LOGO = "' + logo + '";\n'
               + 'window.ISO_LOGO_SVG = ' + json.dumps(logo_svg()) + ';\n'
               + read('engine.js') + '\n' + read('project.js') + '\n' + read('samples.js') + '\n' + read('app.js')
-              + '\n' + read('labels.js') + '\n' + read('fat.js') + '\n' + read('dash.js') + '\n' + read('annual.js') + '\n' + read('quote.js'))
+              + '\n' + read('labels.js') + '\n' + read('fat.js') + '\n' + read('dash.js') + '\n' + read('annual.js') + '\n' + read('quote.js') + '\n' + read('xref.js'))
     page = page.replace('/*@SCRIPT@*/', script.replace('</script', '<\\/script'))
     with open(os.path.join(DIST, 'artifact.html'), 'w', encoding='utf-8') as f:
         f.write(page)

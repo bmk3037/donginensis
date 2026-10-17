@@ -71,6 +71,42 @@
             <button type="button" class="btn btn-ghost" id="qPasteClose">닫기</button>
           </div>
         </div>
+        <details class="q-xref" id="qXref">
+          <summary>타사 제품(지멘스 등) → 슈나이더 대체품으로 바꾸기 <span class="sub">대응표의 LP × 분류별 할인율로 원가 계산</span></summary>
+          <div class="q-xref-in">
+            <p class="help">타사 형번·수량 목록을 넣으면 대응표에서 슈나이더 대체 모델과 LP를 찾고, 할인율로 원가를 계산해 아래 품목에 넣습니다. 단가는 「단가 = 원가 ÷」 마진으로 바로 계산됩니다. 대응표(LP)와 할인율은 이 브라우저에만 보관됩니다.</p>
+            <div class="q-tpl" id="xTableInfo"></div>
+            <div class="row-actions">
+              <span class="btn btn-sm file-btn">대응표 엑셀 등록<input type="file" id="xTableFile" accept=".xlsx,.xls,.csv" aria-label="대응표 엑셀 등록"></span>
+              <button type="button" class="btn btn-ghost btn-sm" id="xTableSave">대응표 엑셀 받기</button>
+            </div>
+            <div class="x-rates" id="xRates"></div>
+            <label for="xPaste">타사 품목 — 엑셀에서 형번(규격)·수량 열을 머리글 줄과 함께 복사해 붙여 넣기</label>
+            <textarea id="xPaste" rows="4" placeholder="품목명&#9;규격&#9;수량&#10;PLC(AI8)&#9;6ES7231-4HF32-0XB0&#9;67"></textarea>
+            <div class="row-actions">
+              <button type="button" class="btn" id="xGo">대체품 찾기</button>
+              <span class="btn btn-ghost file-btn">타사 품목 엑셀 고르기<input type="file" id="xFile" accept=".xlsx,.xls,.csv" aria-label="타사 품목 엑셀 고르기"></span>
+            </div>
+            <div class="x-result" id="xResult" hidden>
+              <div class="table-wrap x-table">
+                <table class="tbl" id="xTable">
+                  <thead><tr>
+                    <th class="c-no">No</th><th class="x-c-from">기존 (타사)</th><th class="x-c-qty">수량</th><th class="x-c-how">찾음</th><th class="x-c-to">슈나이더 모델</th><th class="x-c-qty">대체 수량</th>
+                    <th class="x-c-grp">분류</th><th class="x-c-money">LP</th><th class="x-c-rate">할인</th><th class="x-c-money">원가 단가</th><th class="x-c-money">원가 금액</th><th class="x-c-note">비고</th>
+                  </tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <p class="x-sum" id="xSum"></p>
+              <div class="row-actions">
+                <button type="button" class="btn btn-go" id="xAdd">견적서 품목에 넣기</button>
+                <label class="check"><input type="checkbox" id="xOrig" checked> 품명에 기존 형번 적기</label>
+                <button type="button" class="btn btn-ghost" id="xClear">결과 지우기</button>
+              </div>
+            </div>
+            <p class="status" id="xMsg" role="status"></p>
+          </div>
+        </details>
         <div class="table-wrap q-items">
           <table class="tbl" id="qTable">
             <thead><tr>

@@ -197,6 +197,15 @@
       : (hasCost ? ' 원가·단가를 확인하세요.' : ' 단가·수량을 확인하세요. 파일의 단가가 매입가라면 「단가 → 원가로 옮기기」를 누르세요.');
     setStatus(from + '에서 ' + list.length + '개 품목을 넣었습니다' + (off ? ' (인건비·이윤 등 ' + off + '행은 BOM 제외로 표시)' : '') + '.' + tail, 'ok');
   }
+  /** 타사 대체(xref.js)에서 원가를 채워 넘긴 품목: 단가는 지금 「단가 = 원가 ÷」 값으로 계산한다. */
+  function addCosted(list, from) {
+    var d = divisor();
+    list.forEach(function (it) { var c = num(it.cost); if (d && c !== null && c > 0) it.price = priceFromCost(c, d); });
+    q.items = q.items.filter(hasText).concat(list);
+    renderItems();
+    changed();
+    setStatus(from + ': 품목 ' + list.length + '행을 넣었습니다. ' + (d ? '단가는 원가 ÷ ' + +d.toFixed(4) + '(마진 ' + +((1 - d) * 100).toFixed(1) + '%)로 계산했습니다. 행마다 마진 %를 고칠 수 있습니다.' : '「단가 = 원가 ÷」 값을 적고 「단가 계산」을 누르세요.'), 'ok');
+  }
   function onImportFile(file) {
     if (!file) return;
     if (!window.XLSX) { setStatus('엑셀 읽기 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인하고 새로고침하세요.', 'bad'); return; }
@@ -456,6 +465,7 @@
     });
     $('qToIso').addEventListener('click', sendToIso);
     $('qBomXlsx').addEventListener('click', saveBomXlsx);
+    if (window.IsoXref) window.IsoXref.mount();
     built = true;
   }
   function renderAll() { renderFields(); renderItems(); renderSummary(); renderTpl(); renderCompany(); }
@@ -1237,6 +1247,7 @@
 
       }
     },
+    addCosted: function (list, from) { addCosted(list, from); },
     _q: function () { return q; }, _hangul: hangul, _detect: detectCols, _rows: itemsFromRows, _fill: fill, _default: defaultTemplate, _locate: locate, _bom: buildBom, _tpl: function (t) { if (t !== undefined) tpl = t; return tpl; }, _std: function () { return standardQuote(totals()); }, _seal: function () { return seal; }
   };
 })();
