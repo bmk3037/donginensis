@@ -15,6 +15,13 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://donginensis.com/digital-twin.html</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/digital-twin.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/digital-twin.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://donginensis.com/manufacturing.html</loc>
     <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/manufacturing.html"/>
@@ -55,6 +62,13 @@
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/company.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/company.html"/>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/digital-twin.html</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/digital-twin.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/digital-twin.html"/>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://donginensis.com/en/manufacturing.html</loc>
