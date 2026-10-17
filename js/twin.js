@@ -19,7 +19,7 @@ const T = EN ? {
   wind: 'Winding temp', brg: 'Bearing temp', amp: 'Avg current', load: 'Load', pf: 'Power factor',
   gWind: 'Motor winding temp (max)', gBrg: 'Bearing temp (max)', gLoad: 'Load', gRpm: 'Speed',
   subAmp: (a, w, x) => `Avg current ${a} A (warning ${w} · alarm ${x})`, subPf: (p, w, x) => `Power factor ${p} (warning ${w} · alarm ${x} or lower)`,
-  doorOpen: u => `Open ${u} door`, doorClose: u => `Close ${u} door`, all: 'All readings', allClose: 'Close readings',
+  doorOpen: u => `Open ${u} door`, doorClose: u => `Close ${u} door`, all: 'All readings', allClose: 'Close readings', soundOn: 'Alarm sound on', soundOff: 'Alarm sound off',
   fail: 'Could not load the 3D model. Please refresh the page.',
   dPlc: 'PLC cards', dDi: 'Digital inputs', dMb: 'Modbus TCP', dMbSub: 'EOCR · Samhwa DSP-PRM', dJudge: 'Judgement indicators',
   rWU: 'Winding temp U', rWV: 'Winding temp V', rWW: 'Winding temp W', rDE: 'Bearing temp DE', rNDE: 'Bearing temp NDE', rRpm: 'Speed',
@@ -42,7 +42,7 @@ const T = EN ? {
   wind: '권선온도', brg: '베어링온도', amp: '평균전류', load: '부하율', pf: '역률',
   gWind: '모터 권선온도 (최고)', gBrg: '베어링 온도 (최고)', gLoad: '부하율', gRpm: '회전속도',
   subAmp: (a, w, x) => `평균전류 ${a} A (경고 ${w} · 위험 ${x})`, subPf: (p, w, x) => `역률 ${p} (경고 ${w} · 위험 ${x} 이하)`,
-  doorOpen: u => `${u} 문 열기`, doorClose: u => `${u} 문 닫기`, all: '전체 계측', allClose: '전체 계측 닫기',
+  doorOpen: u => `${u} 문 열기`, doorClose: u => `${u} 문 닫기`, all: '전체 계측', allClose: '전체 계측 닫기', soundOn: '경보음 켬', soundOff: '경보음 끔',
   fail: '3D 모델을 불러오지 못했습니다. 새로고침해 주세요.',
   dPlc: 'PLC 카드', dDi: '디지털 입력', dMb: 'Modbus TCP', dMbSub: 'EOCR · 삼화 DSP-PRM', dJudge: '판정 지표',
   rWU: '권선 온도 U', rWV: '권선 온도 V', rWW: '권선 온도 W', rDE: '베어링 온도 DE', rNDE: '베어링 온도 NDE', rRpm: '회전속도',
@@ -580,6 +580,37 @@ renderer.setAnimationLoop(() => {
 });
 render();
 document.fonts?.ready.then(() => { drawHmi(0); drawHmi(1); });
+
+// ---------------------------------------------------------------- alarm sound (generated in the browser, no audio files)
+// alarm: high-low siren while any unit is in ALARM; warning: a short double beep every 3 s.
+// Browsers only allow sound after the visitor has clicked or typed on the page, so the audio starts on the first interaction.
+const sound = { on: store.get('dongin-twin-sound') !== false, ctx: null, next: 0, level: 0 };
+function unlockSound() {
+  if (!sound.ctx) { try { sound.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; } }
+  if (sound.ctx.state === 'suspended') sound.ctx.resume();
+}
+['pointerdown', 'keydown', 'change'].forEach(t => document.addEventListener(t, unlockSound, true));
+document.addEventListener('visibilitychange', () => { if (sound.ctx) document.hidden ? sound.ctx.suspend() : sound.ctx.resume(); });
+function beep(freq, at, dur, vol) {
+  const c = sound.ctx, o = c.createOscillator(), g = c.createGain();
+  o.type = 'square'; o.frequency.value = freq;
+  g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(vol, at + 0.01);
+  g.gain.setValueAtTime(vol, at + dur - 0.03); g.gain.linearRampToValueAtTime(0, at + dur);
+  o.connect(g); g.connect(c.destination); o.start(at); o.stop(at + dur + 0.02);
+}
+function alarmSound() {
+  const level = !sound.on ? 0 : units.some(u => u.state === 'ALARM') ? 2 : units.some(u => u.state === 'WARNING') ? 1 : 0;
+  if (level !== sound.level) { sound.level = level; sound.next = 0; }
+  if (!level || !sound.ctx || sound.ctx.state !== 'running') return;
+  const t = sound.ctx.currentTime;
+  if (t < sound.next) return;
+  if (level === 2) { beep(988, t, 0.22, 0.09); beep(740, t + 0.25, 0.22, 0.09); sound.next = t + 0.5; }
+  else { beep(880, t, 0.12, 0.06); beep(880, t + 0.2, 0.12, 0.06); sound.next = t + 3; }
+}
+setInterval(alarmSound, 100);
+function renderSound() { $('bSound').setAttribute('aria-pressed', String(sound.on)); $('bSound').textContent = sound.on ? T.soundOn : T.soundOff; }
+$('bSound').onclick = () => { sound.on = !sound.on; store.set('dongin-twin-sound', sound.on); renderSound(); };
+renderSound();
 
 // ---------------------------------------------------------------- settings dialogs
 const thKeys = ['wind', 'brg', 'amp', 'load', 'pf'];
