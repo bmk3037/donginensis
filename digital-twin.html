@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#1857A5">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>디지털트윈 시연 | (주)동인엔시스 지능형제어반 TestBench #1</title>
+<meta name="description" content="지능형제어반 TestBench #1(제어반 2면 · 모터 2대)을 HVAC·ESS 실증 기계실 안에 3D로 재현한 디지털트윈 시연 화면입니다. 권선·베어링 온도, 회전속도, 전압·전류·전력량을 5단계 상태로 판정해 보여 줍니다. 시연용 모의 데이터로 동작합니다.">
+<link rel="canonical" href="https://donginensis.com/digital-twin.html">
+<link rel="alternate" hreflang="ko" href="https://donginensis.com/digital-twin.html">
+<link rel="alternate" hreflang="en" href="https://donginensis.com/en/digital-twin.html">
+<link rel="alternate" hreflang="x-default" href="https://donginensis.com/digital-twin.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="(주)동인엔시스">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="지능형제어반 디지털트윈 시연 | (주)동인엔시스">
+<meta property="og:description" content="HVAC·ESS 팬·펌프 지능형제어반 실시간 디지털트윈 — 3D 시연 화면">
+<meta property="og:url" content="https://donginensis.com/digital-twin.html">
+<meta property="og:image" content="https://donginensis.com/img/og_image_v4.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="css/twin.css?v=20261017a">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V7LTK4943Q');
+</script>
+</head>
+<body>
+<!-- 디지털트윈 시연 화면. 3D·동작은 js/twin.js (영문 en/digital-twin.html 과 같은 구성), 3D 모델은 files/twin/ -->
+<div class="app">
+  <header class="top">
+    <a class="brand" href="index.html" aria-label="(주)동인엔시스 홈으로"><img src="img/logo_white.png" alt="(주)동인엔시스" height="24"></a>
+    <span class="title"><b>TestBench #1</b> 디지털트윈</span>
+    <span class="demo-tag" title="실제 계측값이 아닌 시연용 모의 데이터입니다">시연 · 모의 데이터</span>
+    <div class="units" role="group" aria-label="호기 선택">
+      <button type="button" class="unit" data-u="0" aria-pressed="true"><span class="nm">1호기</span><span class="pill" data-s="OFFLINE" id="p0">—</span><span class="vals" id="v0">MTR-A-001</span></button>
+      <button type="button" class="unit" data-u="1" aria-pressed="false"><span class="nm">2호기</span><span class="pill" data-s="OFFLINE" id="p1">—</span><span class="vals" id="v1">—</span></button>
+    </div>
+    <button type="button" class="tbtn" id="bTh">임계값 설정</button>
+    <button type="button" class="tbtn" id="bConn">연결 설정</button>
+    <span class="clock" id="clock">--:--:--</span>
+  </header>
+
+  <div class="stage-wrap">
+    <section class="hud" id="hud" aria-label="선택한 호기 상태">
+      <div class="hud-head" id="head" data-s="OFFLINE">
+        <div class="who"><b id="hName">1호기</b><span id="hId">MTR-A-001</span></div>
+        <div class="big"><span class="lamp" aria-hidden="true"></span><div><div class="lbl" id="hState">—</div><div class="ko" id="hDesc">데이터 기다리는 중</div></div></div>
+        <div class="reason" id="hReason" hidden></div>
+      </div>
+      <div class="gauges" id="gauges"></div>
+      <p class="legend"><i class="ok"></i>정상 <i class="warn"></i>경고 <i class="alarm"></i>위험 · 「임계값 설정」 기준</p>
+    </section>
+    <div class="stage" id="stage">
+      <aside class="drawer" id="drawer" hidden aria-label="전체 계측"></aside>
+      <div class="tag3d" id="tagA" hidden></div>
+      <div class="tag3d" id="tagB" hidden></div>
+      <div class="loading" id="loading"><div id="loadText">HVAC·ESS 실증 기계실과 3D 모델 불러오는 중</div><div class="bar"><i id="loadbar"></i></div></div>
+      <div class="hint">시연용 모의 데이터 · 드래그 회전 · 휠/핀치 확대 · 제어반 문을 누르면 열림</div>
+    </div>
+  </div>
+
+  <footer class="bottom">
+    <div class="seg" role="group" aria-label="시점">
+      <button type="button" data-view="all" aria-pressed="true">전체</button>
+      <button type="button" data-view="panel" aria-pressed="false">제어반</button>
+      <button type="button" data-view="motor" aria-pressed="false">모터</button>
+    </div>
+    <button type="button" class="btn" id="bDoor">문 열기</button>
+    <div class="env">
+      <span>DI<span class="dis" id="di"></span></span>
+      <span>대기 <b id="amb">—</b> ℃</span>
+      <span>습도 <b id="hum">—</b> %</span>
+      <span>누적전력 <b id="kwh">—</b> kWh</span>
+    </div>
+    <span class="sp"></span>
+    <label class="demo" for="mode">시연
+      <select id="mode">
+        <option value="normal">정상가동</option>
+        <option value="overload">과부하주의</option>
+        <option value="danger">위험경보</option>
+        <option value="stop">정지상태</option>
+        <option value="offline">통신끊김</option>
+      </select>
+    </label>
+    <button type="button" class="btn" id="bAll" aria-expanded="false" aria-controls="drawer">전체 계측</button>
+  </footer>
+</div>
+
+<dialog id="dlgTh" aria-labelledby="thTitle">
+  <form method="dialog" id="formTh" novalidate>
+    <div class="dlg-head"><h2 id="thTitle">상태 판정 임계값 설정</h2><p>두 호기 공통 · 앱 설정과 같은 항목</p></div>
+    <div class="dlg-body">
+      <table class="thr">
+        <thead><tr><th>항목</th><th><span class="w">경고</span> WARNING</th><th><span class="a">위험</span> ALARM</th></tr></thead>
+        <tbody>
+          <tr><td>권선온도 (℃, 이상)</td><td><input class="num" id="t_wind0" type="number" step="0.1" inputmode="decimal" aria-label="권선온도 경고"></td><td><input class="num" id="t_wind1" type="number" step="0.1" inputmode="decimal" aria-label="권선온도 위험"></td></tr>
+          <tr><td>베어링온도 (℃, 이상)</td><td><input class="num" id="t_brg0" type="number" step="0.1" inputmode="decimal" aria-label="베어링온도 경고"></td><td><input class="num" id="t_brg1" type="number" step="0.1" inputmode="decimal" aria-label="베어링온도 위험"></td></tr>
+          <tr><td>평균전류 (A, 이상)</td><td><input class="num" id="t_amp0" type="number" step="0.1" inputmode="decimal" aria-label="평균전류 경고"></td><td><input class="num" id="t_amp1" type="number" step="0.1" inputmode="decimal" aria-label="평균전류 위험"></td></tr>
+          <tr><td>부하율 (%, 이상)</td><td><input class="num" id="t_load0" type="number" step="1" inputmode="decimal" aria-label="부하율 경고"></td><td><input class="num" id="t_load1" type="number" step="1" inputmode="decimal" aria-label="부하율 위험"></td></tr>
+          <tr><td>역률 (이하)</td><td><input class="num" id="t_pf0" type="number" step="0.01" inputmode="decimal" aria-label="역률 경고"></td><td><input class="num" id="t_pf1" type="number" step="0.01" inputmode="decimal" aria-label="역률 위험"></td></tr>
+        </tbody>
+      </table>
+      <h3>판정 조건</h3>
+      <div class="row"><label for="t_pfMinLoad">역률 판정 최소 부하율 (%)</label><input class="num" id="t_pfMinLoad" type="number" step="1" inputmode="decimal"><small>0 = 회전 중이면 항상 적용</small></div>
+      <div class="row"><label for="t_pubSec">발행 주기 (초)</label><input class="num" id="t_pubSec" type="number" step="1" min="1" inputmode="decimal"><small>장치가 데이터를 보내는 간격</small></div>
+      <div class="row"><label for="t_offlineMul">OFFLINE 배수</label><input class="num" id="t_offlineMul" type="number" step="1" min="1" inputmode="decimal"><small>발행 주기 × 배수 동안 받지 못하면 통신 끊김</small></div>
+      <div class="msg" id="thMsg" hidden></div>
+      <p class="path">저장 위치: 이 브라우저 (홈페이지 시연). 앱에서는 threshold-settings.json</p>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn left" id="thReset">기본값 복원</button>
+      <button type="button" class="btn" id="thClose">닫기</button>
+      <button type="button" class="btn primary" id="thSave">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgConn" aria-labelledby="connTitle">
+  <form method="dialog" id="formConn" novalidate>
+    <div class="dlg-head"><h2 id="connTitle">연결 설정</h2><p id="connNow">현재: 시뮬레이션 데이터</p></div>
+    <div class="dlg-body">
+      <div class="form2">
+        <label class="wide">데이터 소스
+          <select class="sel" id="c_src">
+            <option value="sim">시뮬레이션 (홈페이지 시연)</option>
+            <option value="supabase">Supabase · Realtime(WebSocket) + REST 폴백</option>
+            <option value="mqtt">MQTT over WebSocket</option>
+          </select>
+        </label>
+        <label class="wide">서버 주소<input class="txt" id="c_url" type="url" placeholder="https://프로젝트.supabase.co" autocomplete="off"></label>
+        <label class="wide">API 키 (anon)<input class="txt" id="c_key" type="password" placeholder="저장·전송하지 않음 · 창을 닫으면 지워짐" autocomplete="off"></label>
+        <label>테이블 / 토픽<input class="txt" id="c_table" type="text" autocomplete="off"></label>
+        <label>REST 폴백 주기 (초)<input class="txt" id="c_poll" type="number" min="1" step="1" inputmode="decimal"></label>
+        <label>1호기 장비 ID<input class="txt" id="c_id0" type="text" autocomplete="off"></label>
+        <label>2호기 장비 ID<input class="txt" id="c_id1" type="text" placeholder="장비 ID 확인 후 입력" autocomplete="off"></label>
+        <label>재연결 간격 (초)<input class="txt" id="c_retry" type="number" min="1" step="1" inputmode="decimal"></label>
+        <label>자동 재연결
+          <select class="sel" id="c_auto"><option value="on">켬 (통신 두절 시 알림 후 재시도)</option><option value="off">끔</option></select>
+        </label>
+      </div>
+      <div class="msg" id="connMsg" hidden></div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn left" id="connTest">연결 시험</button>
+      <button type="button" class="btn" id="connClose">닫기</button>
+      <button type="button" class="btn primary" id="connSave">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="js/twin.js?v=20261017a"></script>
+</body>
+</html>

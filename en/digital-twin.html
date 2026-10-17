@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#1857A5">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="../favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<title>Digital Twin Demo | DONG-IN ENSIS Intelligent Control Panel TestBench #1</title>
+<meta name="description" content="A digital twin demo of the Intelligent Control Panel TestBench #1 (two panel sections, two motors) recreated in 3D inside an HVAC·ESS pilot plant room. Winding and bearing temperature, speed, voltage, current and energy are judged into five states. Runs on simulated demo data.">
+<link rel="canonical" href="https://donginensis.com/en/digital-twin.html">
+<link rel="alternate" hreflang="ko" href="https://donginensis.com/digital-twin.html">
+<link rel="alternate" hreflang="en" href="https://donginensis.com/en/digital-twin.html">
+<link rel="alternate" hreflang="x-default" href="https://donginensis.com/digital-twin.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DONG-IN ENSIS">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Intelligent Control Panel Digital Twin Demo | DONG-IN ENSIS">
+<meta property="og:description" content="Real-time digital twin of intelligent fan · pump control panels for HVAC · ESS — 3D demo">
+<meta property="og:url" content="https://donginensis.com/en/digital-twin.html">
+<meta property="og:image" content="https://donginensis.com/img/og_image_v4.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="../css/twin.css?v=20261017a">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V7LTK4943Q');
+</script>
+</head>
+<body>
+<!-- Digital twin demo. 3D and behaviour in ../js/twin.js (same layout as the Korean digital-twin.html), 3D models in ../files/twin/ -->
+<div class="app">
+  <header class="top">
+    <a class="brand" href="index.html" aria-label="DONG-IN ENSIS home"><img src="../img/logo_white.png" alt="DONG-IN ENSIS" height="24"></a>
+    <span class="title"><b>TestBench #1</b> Digital Twin</span>
+    <span class="demo-tag" title="Simulated demo data, not live measurements">Demo · simulated data</span>
+    <div class="units" role="group" aria-label="Select unit">
+      <button type="button" class="unit" data-u="0" aria-pressed="true"><span class="nm">Unit 1</span><span class="pill" data-s="OFFLINE" id="p0">—</span><span class="vals" id="v0">MTR-A-001</span></button>
+      <button type="button" class="unit" data-u="1" aria-pressed="false"><span class="nm">Unit 2</span><span class="pill" data-s="OFFLINE" id="p1">—</span><span class="vals" id="v1">—</span></button>
+    </div>
+    <button type="button" class="tbtn" id="bTh">Thresholds</button>
+    <button type="button" class="tbtn" id="bConn">Connection</button>
+    <span class="clock" id="clock">--:--:--</span>
+  </header>
+
+  <div class="stage-wrap">
+    <section class="hud" id="hud" aria-label="Selected unit status">
+      <div class="hud-head" id="head" data-s="OFFLINE">
+        <div class="who"><b id="hName">Unit 1</b><span id="hId">MTR-A-001</span></div>
+        <div class="big"><span class="lamp" aria-hidden="true"></span><div><div class="lbl" id="hState">—</div><div class="ko" id="hDesc">Waiting for data</div></div></div>
+        <div class="reason" id="hReason" hidden></div>
+      </div>
+      <div class="gauges" id="gauges"></div>
+      <p class="legend"><i class="ok"></i>Normal <i class="warn"></i>Warning <i class="alarm"></i>Alarm · per “Thresholds”</p>
+    </section>
+    <div class="stage" id="stage">
+      <aside class="drawer" id="drawer" hidden aria-label="All readings"></aside>
+      <div class="tag3d" id="tagA" hidden></div>
+      <div class="tag3d" id="tagB" hidden></div>
+      <div class="loading" id="loading"><div id="loadText">Loading the HVAC·ESS pilot plant room and 3D models</div><div class="bar"><i id="loadbar"></i></div></div>
+      <div class="hint">Simulated demo data · drag to rotate · wheel/pinch to zoom · click a panel door to open it</div>
+    </div>
+  </div>
+
+  <footer class="bottom">
+    <div class="seg" role="group" aria-label="View">
+      <button type="button" data-view="all" aria-pressed="true">All</button>
+      <button type="button" data-view="panel" aria-pressed="false">Panel</button>
+      <button type="button" data-view="motor" aria-pressed="false">Motor</button>
+    </div>
+    <button type="button" class="btn" id="bDoor">Open door</button>
+    <div class="env">
+      <span>DI<span class="dis" id="di"></span></span>
+      <span>Ambient <b id="amb">—</b> ℃</span>
+      <span>Humidity <b id="hum">—</b> %</span>
+      <span>Energy <b id="kwh">—</b> kWh</span>
+    </div>
+    <span class="sp"></span>
+    <label class="demo" for="mode">Demo
+      <select id="mode">
+        <option value="normal">Normal run</option>
+        <option value="overload">Overload caution</option>
+        <option value="danger">Danger alarm</option>
+        <option value="stop">Stopped</option>
+        <option value="offline">Comms lost</option>
+      </select>
+    </label>
+    <button type="button" class="btn" id="bAll" aria-expanded="false" aria-controls="drawer">All readings</button>
+  </footer>
+</div>
+
+<dialog id="dlgTh" aria-labelledby="thTitle">
+  <form method="dialog" id="formTh" novalidate>
+    <div class="dlg-head"><h2 id="thTitle">State judgement thresholds</h2><p>Shared by both units · same items as the app settings</p></div>
+    <div class="dlg-body">
+      <table class="thr">
+        <thead><tr><th>Item</th><th><span class="w">Warning</span></th><th><span class="a">Alarm</span></th></tr></thead>
+        <tbody>
+          <tr><td>Winding temp (℃, at or above)</td><td><input class="num" id="t_wind0" type="number" step="0.1" inputmode="decimal" aria-label="Winding temp warning"></td><td><input class="num" id="t_wind1" type="number" step="0.1" inputmode="decimal" aria-label="Winding temp alarm"></td></tr>
+          <tr><td>Bearing temp (℃, at or above)</td><td><input class="num" id="t_brg0" type="number" step="0.1" inputmode="decimal" aria-label="Bearing temp warning"></td><td><input class="num" id="t_brg1" type="number" step="0.1" inputmode="decimal" aria-label="Bearing temp alarm"></td></tr>
+          <tr><td>Avg current (A, at or above)</td><td><input class="num" id="t_amp0" type="number" step="0.1" inputmode="decimal" aria-label="Avg current warning"></td><td><input class="num" id="t_amp1" type="number" step="0.1" inputmode="decimal" aria-label="Avg current alarm"></td></tr>
+          <tr><td>Load (%, at or above)</td><td><input class="num" id="t_load0" type="number" step="1" inputmode="decimal" aria-label="Load warning"></td><td><input class="num" id="t_load1" type="number" step="1" inputmode="decimal" aria-label="Load alarm"></td></tr>
+          <tr><td>Power factor (at or below)</td><td><input class="num" id="t_pf0" type="number" step="0.01" inputmode="decimal" aria-label="Power factor warning"></td><td><input class="num" id="t_pf1" type="number" step="0.01" inputmode="decimal" aria-label="Power factor alarm"></td></tr>
+        </tbody>
+      </table>
+      <h3>Judgement conditions</h3>
+      <div class="row"><label for="t_pfMinLoad">Minimum load for power factor check (%)</label><input class="num" id="t_pfMinLoad" type="number" step="1" inputmode="decimal"><small>0 = always applied while rotating</small></div>
+      <div class="row"><label for="t_pubSec">Publish period (s)</label><input class="num" id="t_pubSec" type="number" step="1" min="1" inputmode="decimal"><small>How often the device sends data</small></div>
+      <div class="row"><label for="t_offlineMul">OFFLINE multiplier</label><input class="num" id="t_offlineMul" type="number" step="1" min="1" inputmode="decimal"><small>No data for publish period × multiplier means comms lost</small></div>
+      <div class="msg" id="thMsg" hidden></div>
+      <p class="path">Saved in: this browser (homepage demo). In the app: threshold-settings.json</p>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn left" id="thReset">Restore defaults</button>
+      <button type="button" class="btn" id="thClose">Close</button>
+      <button type="button" class="btn primary" id="thSave">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgConn" aria-labelledby="connTitle">
+  <form method="dialog" id="formConn" novalidate>
+    <div class="dlg-head"><h2 id="connTitle">Connection settings</h2><p id="connNow">Now: simulated data</p></div>
+    <div class="dlg-body">
+      <div class="form2">
+        <label class="wide">Data source
+          <select class="sel" id="c_src">
+            <option value="sim">Simulation (homepage demo)</option>
+            <option value="supabase">Supabase · Realtime (WebSocket) + REST fallback</option>
+            <option value="mqtt">MQTT over WebSocket</option>
+          </select>
+        </label>
+        <label class="wide">Server address<input class="txt" id="c_url" type="url" placeholder="https://project.supabase.co" autocomplete="off"></label>
+        <label class="wide">API key (anon)<input class="txt" id="c_key" type="password" placeholder="Never saved or sent · cleared when closed" autocomplete="off"></label>
+        <label>Table / topic<input class="txt" id="c_table" type="text" autocomplete="off"></label>
+        <label>REST fallback period (s)<input class="txt" id="c_poll" type="number" min="1" step="1" inputmode="decimal"></label>
+        <label>Unit 1 device ID<input class="txt" id="c_id0" type="text" autocomplete="off"></label>
+        <label>Unit 2 device ID<input class="txt" id="c_id1" type="text" placeholder="Enter once the device ID is confirmed" autocomplete="off"></label>
+        <label>Reconnect interval (s)<input class="txt" id="c_retry" type="number" min="1" step="1" inputmode="decimal"></label>
+        <label>Auto reconnect
+          <select class="sel" id="c_auto"><option value="on">On (notify and retry when comms drop)</option><option value="off">Off</option></select>
+        </label>
+      </div>
+      <div class="msg" id="connMsg" hidden></div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn left" id="connTest">Test connection</button>
+      <button type="button" class="btn" id="connClose">Close</button>
+      <button type="button" class="btn primary" id="connSave">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="../js/twin.js?v=20261017a"></script>
+</body>
+</html>
