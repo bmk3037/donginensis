@@ -105,6 +105,7 @@
       var v = get(path);
       el.value = f[3] === 'money' ? (v === '' || v == null ? '' : comma(v)) : (f[3] === 'date' ? iso(v) : (v || ''));
       el.addEventListener('input', function () {
+        el.classList.remove('auto');
         set(path, f[3] === 'money' ? (el.value.trim() ? toInt(el.value) : '') : el.value);
         save(); refresh();
       });
@@ -737,6 +738,66 @@
     save(); renderAll();
   }
 
+  /* ---------------------------------------------------------------- 사업계획서 읽기 (plan.js, AI 없이 이 브라우저 안에서)
+     찾은 값은 빈칸에만 넣는다. 이미 적은 칸은 그대로 두고 알려 준다. 예시 데이터가 떠 있으면 먼저 비운다. */
+
+  var autoFilled = {};   // 방금 계획서에서 채운 칸 (화면에 표시, 고치면 표시 지움)
+  function fieldLabel(path) {
+    var all = [].concat.apply([], Object.keys(FIELDS).map(function (k) { return FIELDS[k]; }));
+    var f = all.filter(function (x) { return x[0] === path; })[0];
+    return f ? f[1].replace(/\s*\(.*\)$/, '') : path;
+  }
+  async function readPlan(file) {
+    setStatus('planStatus', file.name + ' 읽는 중…');
+    $('planResult').hidden = true;
+    var r;
+    try { r = await window.GrantPlan.parse(file); }
+    catch (e) { setStatus('planStatus', '읽지 못했습니다: ' + e.message, true); return; }
+    if (state.sample) {
+      state = blank();
+      try {
+        var co = JSON.parse(localStorage.getItem(CO_KEY) || 'null');
+        if (co) { state.기업 = deepMerge(state.기업, co.기업); state.청구.계좌 = deepMerge(state.청구.계좌, co.계좌); state.결재 = deepMerge(state.결재, co.결재); }
+      } catch (e) { /* 기본값 없음 */ }
+      blobs = {}; forms = []; await M.store.clear();
+    }
+    var filled = [], kept = [];
+    autoFilled = {};
+    Object.keys(r.found).forEach(function (path) {
+      var v = r.found[path], cur = get(path);
+      if (/^사업\.사업비\./.test(path)) v = Number(v);
+      if (cur === '' || cur == null) { set(path, v); filled.push(path); autoFilled[path] = true; }
+      else if (String(cur) !== String(v)) kept.push(path);
+    });
+    var tasksIn = normalize({ 과제목록: r.project.과제목록 }).과제목록, keptTasks = false;
+    var tasksEmpty = !state.과제목록.length || state.과제목록.every(function (t) { return !t.이름 && !t.지표; });
+    if (tasksIn.length) { if (tasksEmpty) state.과제목록 = tasksIn; else keptTasks = true; }
+    save(); renderAll();
+    Object.keys(autoFilled).forEach(function (path) { var el = $('f-' + path.replace(/\./g, '-')); if (el) el.classList.add('auto'); });
+
+    // 결과: 채운 칸 · 이미 적혀 있어 둔 칸 · 아직 빈 칸
+    var important = ['사업.사업명', '사업.과제명', '사업.주관기관', '사업.협약번호', '사업.사업기간.시작', '사업.사업기간.종료', '사업.사업비.정부지원금',
+      '사업.사업비.자부담_현금', '사업.사업비.총사업비', '기업.기업명', '기업.대표자', '기업.사업자등록번호', '기업.주소', '기업.담당자', '기업.연락처',
+      '문장.추진목적', '문장.기대효과', '문장.향후계획'];
+    var empty = important.filter(function (p) { var v = get(p); return v === '' || v == null; });
+    var list = function (ps) { return ps.map(function (p) { return '<li>' + esc(fieldLabel(p)) + '</li>'; }).join(''); };
+    var nk = r.project.과제목록.reduce(function (n, t) { return n + t.성과지표.length; }, 0);
+    $('planResult').innerHTML =
+      '<p><b>' + esc(file.name) + '</b> (' + r.kind + ')' +
+      (filled.length ? '에서 ' + filled.length + '칸을 채웠습니다' : '에서 새로 채울 빈칸이 없었습니다') +
+      (tasksIn.length && !keptTasks ? ', 과제 ' + r.project.과제목록.length + '개 · 성과지표 ' + nk + '개를 넣었습니다' : '') +
+      (filled.length ? '. 채운 칸은 색으로 표시했습니다.' : '.') + '</p>' +
+      (filled.length ? '<p class="g-plan-h">채운 칸</p><ul class="g-chips ok">' + list(filled) + '</ul>' : '') +
+      (empty.length ? '<p class="g-plan-h">찾지 못한 칸 — 직접 적어 주세요</p><ul class="g-chips">' + list(empty) + '</ul>' : '') +
+      (kept.length ? '<p class="g-plan-h">이미 적혀 있어 그대로 둔 칸 (계획서 값과 다름)</p><ul class="g-chips">' + list(kept) + '</ul>' : '') +
+      (keptTasks ? '<p class="help">과제·성과지표 표가 이미 적혀 있어 바꾸지 않았습니다. 새로 넣으려면 표의 줄을 지우고 다시 읽으세요.</p>' : '') +
+      (!tasksIn.length ? '<p class="help">세부과제·성과지표 표를 찾지 못했습니다. 3번 표에 직접 적어 주세요.</p>' : '') +
+      '<p class="help">계획서 양식마다 칸 이름이 달라 잘못 읽을 수 있습니다. 채운 값을 계획서와 한 번 대조해 주세요.</p>';
+    $('planResult').hidden = false;
+    setStatus('planStatus', '');
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
   /* ---------------------------------------------------------------- 바탕화면 설치 (ISO 기록 도구와 같은 방식)
      크롬·엣지가 웹 앱 설치를 허락하면 설치 창을, 아니면 바탕화면 바로가기 파일(.url)과 방법을 보여 준다. */
 
@@ -844,6 +905,8 @@
       setStatus('infoStatus', '저장 파일을 받았습니다. 사진은 들어 있지 않으니 사진까지 옮기려면 03 탭 묶음(zip)을 쓰세요.', false, true);
     });
     $('fileOpen').addEventListener('change', function (e) { if (e.target.files[0]) openFile(e.target.files[0]); e.target.value = ''; });
+    $('planFile').addEventListener('change', function (e) { var f = e.target.files[0]; e.target.value = ''; if (f) readPlan(f); });
+    wireDrop($('planDrop'), function (fs) { if (fs[0]) readPlan(fs[0]); });
     $('btnCopyPrompt').addEventListener('click', function () {
       var t = $('claudePrompt').textContent;
       (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () {
@@ -888,7 +951,7 @@
     renderAll();
   }
 
-  window.GrantApp = { state: function () { return state; }, checks: checks, buildReport: buildReport, buildForm: buildForm,
+  window.GrantApp = { readPlan: readPlan, state: function () { return state; }, checks: checks, buildReport: buildReport, buildForm: buildForm,
                       addForms: addForms, forms: function () { return forms; }, makeAll: makeAll };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
