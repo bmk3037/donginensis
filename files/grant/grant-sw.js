@@ -1,7 +1,7 @@
 /* 지원사업 서류 도구 오프라인 캐시 (files/grant/ 범위) — ISO 기록 도구의 sw.js 와 같은 방식.
    도구 화면은 인터넷이 되면 항상 최신을 받고(실패하면 저장본), 엑셀·압축 라이브러리와 글꼴은 한 번 받은 것을 쓴다.
    도구를 고치면 build_tool.py 가 VERSION 을 바꿔 이전 캐시를 지운다. */
-var VERSION = '7397a8ccc5';
+var VERSION = '6cbb3d23a7';
 var CACHE = 'grant-tool-' + VERSION;
 var PRECACHE = ['./grant-docs-builder.html',
   'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js',

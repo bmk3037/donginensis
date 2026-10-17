@@ -26,7 +26,7 @@
     <header class="top">
       <p class="eyebrow">정부·지자체 지원사업 · 대금청구 · 결과보고</p>
       <h1>지원사업 서류 도구</h1>
-      <p class="lead">사업 정보와 과제·성과지표를 한 번 적고 증빙 사진을 넣으면, 결과보고서·사진대지·요청자료 체크리스트를 회사 문서 서식(워드)으로 만들고 기관 양식(워드)의 빈칸을 채웁니다.</p>
+      <p class="lead">사업계획서를 넣거나 사업 정보와 과제·성과지표를 한 번 적고 증빙 사진을 넣으면, 결과보고서·사진대지·요청자료 체크리스트를 회사 문서 서식(워드)으로 만들고 기관 양식(워드)의 빈칸을 채웁니다.</p>
       <div class="sample-bar" id="sampleBar">
         <span class="chip chip-warn">예시 데이터</span>
         <span>가상의 지원사업이 채워져 있습니다. 실제 사업·금액이 아닙니다.</span>
@@ -80,14 +80,23 @@
       <aside class="out" aria-labelledby="h-iout">
         <div class="out-card">
           <div class="out-head"><h2 id="h-iout">사업계획서 읽기</h2></div>
-          <p class="help">계획서에서 사업 정보·과제·성과지표·증빙 목록을 뽑아 채우는 일은 Claude에게 맡기면 빠릅니다.</p>
-          <ol class="g-howto">
-            <li>Claude Code 대화에 사업계획서(과 공고문)를 올립니다.</li>
-            <li>아래 문장을 붙여 보냅니다.</li>
-            <li>받은 <span class="mono">.json</span> 파일을 아래 <b>불러오기</b>로 엽니다.</li>
-          </ol>
-          <div class="g-prompt" id="claudePrompt">이 사업계획서를 읽고 지원사업 서류 도구에서 불러올 프로젝트 JSON 파일을 만들어줘. 문서에 없는 값은 【확인필요】로 남겨줘.</div>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnCopyPrompt">문장 복사</button>
+          <p class="help">사업계획서를 넣으면 사업명·기간·사업비·기업 정보·세부과제·성과지표·목적·기대효과를 찾아 빈칸에 채웁니다. 파일은 이 PC 밖으로 나가지 않습니다.</p>
+          <div class="drop" id="planDrop">
+            <label for="planFile"><b>사업계획서 선택</b> 또는 여기로 끌어다 놓기 (.hwp · .hwpx · .docx · .pdf)</label>
+            <input type="file" id="planFile" accept=".hwp,.hwpx,.docx,.pdf">
+          </div>
+          <p class="status" id="planStatus" role="status"></p>
+          <div class="g-plan" id="planResult" hidden></div>
+          <details class="g-more">
+            <summary>더 정확하게: Claude 에게 맡기기</summary>
+            <ol class="g-howto">
+              <li>Claude Code 대화에 사업계획서(과 공고문)를 올립니다.</li>
+              <li>아래 문장을 붙여 보냅니다.</li>
+              <li>받은 <span class="mono">.json</span> 파일을 아래 <b>불러오기</b>로 엽니다.</li>
+            </ol>
+            <div class="g-prompt" id="claudePrompt">이 사업계획서를 읽고 지원사업 서류 도구에서 불러올 프로젝트 JSON 파일을 만들어줘. 문서에 없는 값은 【확인필요】로 남겨줘.</div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnCopyPrompt">문장 복사</button>
+          </details>
           <hr class="g-hr">
           <div class="row-actions">
             <button type="button" class="btn" id="btnSave">사업 저장 (.json)</button>

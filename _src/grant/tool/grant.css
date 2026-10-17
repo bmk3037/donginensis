@@ -38,3 +38,16 @@ input[type="text"].num { text-align: right; font-variant-numeric: tabular-nums; 
 .g-outlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: var(--fs-sm); }
 .g-outlist li { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .g-outlist .mono { overflow-wrap: anywhere; }
+
+/* 사업계획서 읽기 결과 */
+.g-plan { display: grid; gap: 6px; font-size: var(--fs-sm); padding: 10px 12px; background: var(--sunken); border: 1px solid var(--line); }
+.g-plan p { margin: 0; }
+.g-plan-h { font-weight: 600; margin-top: 4px !important; }
+.g-chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.g-chips li { padding: 1px 8px; border: 1px solid var(--line); background: var(--surface, #fff); }
+.g-chips.ok li { border-color: var(--accent); }
+.g-more summary { cursor: pointer; font-size: var(--fs-sm); color: var(--muted); }
+.g-more[open] { display: grid; gap: 8px; }
+.field input.auto, .field textarea.auto { background: var(--accent-soft); border-color: var(--accent); }
+/* hidden 속성이 display 지정에 밀리지 않게 */
+.sample-bar[hidden], .g-plan[hidden] { display: none; }

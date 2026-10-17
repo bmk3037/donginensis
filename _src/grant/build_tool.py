@@ -42,7 +42,7 @@ def build():
     page = page.replace('/*@CSS@*/', read(os.path.join(ISO_TOOL, 'app.css')) + '\n' + read(os.path.join(TOOL, 'grant.css')))
     page = page.replace('@LOGO_WHITE@', 'data:image/png;base64,' + b64(os.path.join(ISO_TOOL, 'logo_white.png')))
     script = ('window.GRANT_TEMPLATE = "' + b64(str(TEMPLATE)) + '";\n'
-              + '\n'.join(read(os.path.join(TOOL, n)) for n in ('docx.js', 'media.js', 'samples.js', 'app.js')))
+              + '\n'.join(read(os.path.join(TOOL, n)) for n in ('docx.js', 'media.js', 'samples.js', 'plan.js', 'app.js')))
     page = page.replace('/*@SCRIPT@*/', script.replace('</script', '<\\/script'))
     with open(os.path.join(DIST, 'artifact.html'), 'w', encoding='utf-8') as f:
         f.write(page)
