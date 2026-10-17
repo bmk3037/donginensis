@@ -306,6 +306,7 @@ function onTestbed(gltf) {
   m.updateMatrixWorld(true);
   twin.sections = ['LeftSection', 'RightSection'].map(n => m.getObjectByName(n)).map(sec => sec && makeStatus(sec));
   // each motor gets its own copy of its materials so it can glow with winding temperature
+  twin.base = twin.motors.map(mo => mo && mo.position.clone());
   twin.heat = twin.motors.map(mo => {
     const mats = [];
     mo?.traverse(o => {
@@ -315,6 +316,8 @@ function onTestbed(gltf) {
     });
     return mats;
   });
+  // after the material copies above, so the arrows keep their own materials
+  twin.arrows = [['Motor_A_Rotor', 1], ['Motor_B_Rotor', -1]].map(([n, sg]) => { const o = m.getObjectByName(n); return o && makeSpinArrow(o, sg); });
 }
 // status outline around one panel section (world space), coloured by state; hidden while running normally
 function makeStatus(sec) {
@@ -339,6 +342,27 @@ function setStatus(i, s, blink) {
   st.frame.visible = s !== 'RUN' && !(s === 'ALARM' && !blink);
   st.lineMat.color.setHex(STATE_COL[s]);
   st.lineMat.opacity = s === 'OFFLINE' || s === 'STOP' ? 0.55 : 0.95;
+}
+// a glowing arrow ring just outside the fan cowl, fixed to the rotor so it turns with the shaft and shows the direction
+function makeSpinArrow(rotor, sign) {
+  rotor.updateWorldMatrix(true, true);
+  const inv = rotor.matrixWorld.clone().invert();
+  const stator = rotor.parent.getObjectByName(rotor.name.replace('Rotor', 'Stator')), fan = rotor.getObjectByName(rotor.name + '_Fan');
+  if (!stator || !fan) return null;
+  const sb = new THREE.Box3().setFromObject(stator).applyMatrix4(inv), fb = new THREE.Box3().setFromObject(fan).applyMatrix4(inv);   // shaft axis = local X
+  const out = (fb.min.x + fb.max.x) > (sb.min.x + sb.max.x) ? 1 : -1;
+  const r = Math.max(fb.max.y - fb.min.y, fb.max.z - fb.min.z) / 2 * 1.12, arc = Math.PI * 1.45;
+  const mat = new THREE.MeshBasicMaterial({ color: 0x22C55E, transparent: true, opacity: 0, toneMapped: false, depthWrite: false });
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(new THREE.TorusGeometry(r, r * 0.07, 8, 56, arc), mat));
+  const head = new THREE.Mesh(new THREE.ConeGeometry(r * 0.2, r * 0.42, 16), mat);
+  head.position.set(r * Math.cos(arc), r * Math.sin(arc), 0);
+  head.rotation.z = arc;                                     // cone (+Y) along the tangent at the arc end
+  g.add(head);
+  g.rotation.y = sign > 0 ? Math.PI / 2 : -Math.PI / 2;     // ring plane ⟂ shaft; arc runs the way the rotor turns
+  g.position.x = (out > 0 ? sb.max.x : sb.min.x) + out * 0.035;
+  rotor.add(g);
+  return mat;
 }
 // motor body glows from just below the warning level up to the alarm level (normal running stays unlit)
 function setHeat(i, u) {
@@ -510,10 +534,21 @@ renderer.setAnimationLoop(() => {
   units.forEach(u => { u.state = judge(u, now); });
   if (now - lastUi >= 250) { lastUi = now; render(); drawHmi(0); drawHmi(1); }
 
-  // coupled shaft, shown at a readable speed (1800 rpm → 1.2 rev/s)
+  // coupled shaft, shown at a readable speed (1800 rpm → 2 rev/s); spins up in ~1 s, coasts down over ~2.5 s
   const rpm = Math.max(...units.map(u => (u.state === 'OFFLINE' || !u.d ? 0 : u.d.rpm)));
-  twin.spin += (rpm / 1800 * 1.2 * Math.PI * 2 - twin.spin) * (1 - Math.exp(-dt / 0.8));
+  const target = rpm / 1800 * 2 * Math.PI * 2;
+  twin.spin += (target - twin.spin) * (1 - Math.exp(-dt / (target > twin.spin ? 0.7 : 1.6)));
   twin.rotors.forEach(r => r.o.rotateX(r.s * twin.spin * dt));
+  const run = Math.min(1, twin.spin / (Math.PI * 2));          // 0 stopped … 1 at half speed and above
+  units.forEach((u, i) => {
+    const a = twin.arrows?.[i];
+    if (a) { a.color.setHex(STATE_COL[u.state === 'OFFLINE' ? 'STOP' : u.state]); a.opacity = 0.9 * run; }
+    // a running motor in warning / alarm visibly shakes (exaggerated so it reads on screen)
+    const mo = twin.motors[i], base = twin.base?.[i];
+    if (!mo || !base) return;
+    const amp = reduceMotion ? 0 : (u.state === 'ALARM' ? 0.004 : u.state === 'WARNING' ? 0.0018 : 0) * run;
+    mo.position.set(base.x, base.y + Math.sin(now * 0.09) * amp, base.z + Math.sin(now * 0.067 + 1) * amp * 0.7);
+  });
   if (!reduceMotion) loads.forEach(o => o.rotateX(Math.PI * 2 * dt));
   twin.doors.forEach(d => {
     if (!d.hinge) return;
