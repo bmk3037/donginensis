@@ -105,7 +105,7 @@ const env = { amb: 27.0, hum: 59.9 };
 function publish(u, dt, now) {
   if (u.mode === 'offline') return;            // nothing arrives → OFFLINE after publish period × 3
   const tgt = MODES[u.mode];
-  const k = 1 - Math.exp(-dt / (u.mode === 'stop' ? 6 : 3));
+  const k = 1 - Math.exp(-dt / (u.mode === 'stop' ? 2 : 1.2));
   for (const key in tgt) u.x[key] += (tgt[key] - u.x[key]) * k;
   const n = a => (Math.random() - 0.5) * a;
   const spin = u.x.rpm > TH.rotRpm;
@@ -228,12 +228,27 @@ function makeLamp(node, color) {
   lens.scale.set(d, d, d * 0.35);
   lens.position.z = d * 0.1;
   face.add(lens);
-  return { mat, color: new THREE.Color(color) };
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), color, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, transparent: true }));
+  halo.scale.setScalar(d * 4.2);
+  halo.position.z = d * 0.4;
+  halo.visible = false;
+  face.add(halo);
+  return { mat, halo, color: new THREE.Color(color) };
 }
 function setLamp(l, on) {
   if (!l) return;
   l.mat.emissiveIntensity = on ? 3.2 : 0;
   l.mat.color.copy(l.color).multiplyScalar(on ? 1 : 0.28);
+  l.halo.visible = on;
+}
+let glow = null;
+function glowTex() {
+  if (glow) return glow;
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.25, 'rgba(255,255,255,.55)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 64, 64);
+  return (glow = new THREE.CanvasTexture(c));
 }
 function makeHmi(node) {
   node.geometry.computeBoundingBox();
@@ -249,23 +264,27 @@ function makeHmi(node) {
   return { canvas, ctx: canvas.getContext('2d'), tex };
 }
 const HMI_COL = { RUN: '#3CFF6E', STOP: '#9FB3CC', WARNING: '#FFC83C', ALARM: '#FF4A3D', OFFLINE: '#B9A6DF' };
+const HMI_BG = { RUN: '#06101E', STOP: '#0B1220', WARNING: '#1E1606', ALARM: '#2A0806', OFFLINE: '#120E1E' };
 function drawHmi(i) {
   const h = twin.hmi[i], u = units[i];
   if (!h) return;
   const { canvas: c, ctx, tex } = h;
   const W = c.width, H = c.height, d = u.d;
-  ctx.fillStyle = '#06101E'; ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = '#0E2340'; ctx.fillRect(0, 0, W, 64);
+  // the state band fills the top third of the screen in the state colour (alarm flashes), so a change reads from a distance
+  const flash = u.state === 'ALARM' && (performance.now() / 500 | 0) % 2 === 0;
+  ctx.fillStyle = HMI_BG[u.state]; ctx.fillRect(0, 0, W, H);
+  const band = Math.round(H * 0.34);
+  ctx.fillStyle = flash ? '#FFFFFF' : HMI_COL[u.state]; ctx.fillRect(0, 0, W, band);
   ctx.textBaseline = 'middle';
-  ctx.font = '600 30px "IBM Plex Mono", monospace';
-  ctx.fillStyle = '#DCEBFF'; ctx.textAlign = 'left'; ctx.fillText(`UNIT ${i + 1}`, 22, 33);
-  ctx.fillStyle = HMI_COL[u.state]; ctx.textAlign = 'right'; ctx.fillText(u.state, W - 22, 33);
+  ctx.fillStyle = '#06101E'; ctx.textAlign = 'left'; ctx.font = '600 28px "IBM Plex Mono", monospace'; ctx.fillText(`UNIT ${i + 1}`, 22, 30);
+  ctx.textAlign = 'center'; ctx.font = `700 ${Math.round(band * 0.5)}px "IBM Plex Mono", monospace`;
+  ctx.fillStyle = flash ? HMI_COL.ALARM : '#06101E'; ctx.fillText(u.state === 'OFFLINE' ? 'NO DATA' : u.state, W / 2, band * 0.62);
   const rows = d ? [['WIND', f1(d.windMax), '°C'], ['BRG', f1(d.brgMax), '°C'], ['LOAD', f1(d.load), '%'], ['CURR', f1(d.amp), 'A'], ['SPEED', d.rpm.toFixed(0), 'rpm']] : [];
-  const top = 90, lh = (H - top - 16) / 5;
+  const top = band + 8, lh = (H - top - 12) / 5;
   rows.forEach(([k, v, un], r) => {
     const y = top + lh * r + lh / 2;
-    ctx.textAlign = 'left'; ctx.font = '500 26px "IBM Plex Mono", monospace'; ctx.fillStyle = '#7F95B4'; ctx.fillText(k, 24, y);
-    ctx.textAlign = 'right'; ctx.font = '600 34px "IBM Plex Mono", monospace'; ctx.fillStyle = u.state === 'OFFLINE' ? '#6F7E93' : '#EAF3FF'; ctx.fillText(v, W - 110, y);
+    ctx.textAlign = 'left'; ctx.font = '500 24px "IBM Plex Mono", monospace'; ctx.fillStyle = '#7F95B4'; ctx.fillText(k, 24, y);
+    ctx.textAlign = 'right'; ctx.font = '600 30px "IBM Plex Mono", monospace'; ctx.fillStyle = u.state === 'OFFLINE' ? '#6F7E93' : '#EAF3FF'; ctx.fillText(v, W - 110, y);
     ctx.textAlign = 'left'; ctx.font = '500 24px "IBM Plex Mono", monospace'; ctx.fillStyle = '#7F95B4'; ctx.fillText(un, W - 98, y);
   });
   tex.needsUpdate = true;
@@ -284,6 +303,50 @@ function onTestbed(gltf) {
     if (s) twin.hmi[i] = makeHmi(s);
   });
   twin.motors = [m.getObjectByName('Motor_A'), m.getObjectByName('Motor_B')];
+  m.updateMatrixWorld(true);
+  twin.sections = ['LeftSection', 'RightSection'].map(n => m.getObjectByName(n)).map(sec => sec && makeStatus(sec));
+  // each motor gets its own copy of its materials so it can glow with winding temperature
+  twin.heat = twin.motors.map(mo => {
+    const mats = [];
+    mo?.traverse(o => {
+      if (!o.isMesh || /Rotor|Fan|Shaft/.test(o.name) || /Rotor/.test(o.parent?.name || '')) return;
+      o.material = o.material.clone();
+      if (o.material.emissive) mats.push(o.material);
+    });
+    return mats;
+  });
+}
+// status outline around one panel section (world space), coloured by state; hidden while running normally
+function makeStatus(sec) {
+  const box = new THREE.Box3().setFromObject(sec);
+  const t = 0.012, e = 0.015, lineMat = new THREE.MeshBasicMaterial({ transparent: true, toneMapped: false, depthWrite: false });
+  const frame = new THREE.Group(), x0 = box.min.x - e, x1 = box.max.x + e, y0 = box.min.y, y1 = box.max.y + e, z0 = box.min.z - e, z1 = box.max.z + e;
+  const bar = (a, b) => {
+    const len = a.distanceTo(b), mesh = new THREE.Mesh(new THREE.BoxGeometry(t, t, len), lineMat);
+    mesh.position.copy(a).add(b).multiplyScalar(0.5); mesh.lookAt(b); frame.add(mesh);
+  };
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  [[x0, x1].map(x => [V(x, y0, z1), V(x, y1, z1)]), [[V(x0, y1, z1), V(x1, y1, z1)]], [[V(x0, y1, z0), V(x1, y1, z0)]],
+   [x0, x1].map(x => [V(x, y1, z0), V(x, y1, z1)]), [x0, x1].map(x => [V(x, y0, z0), V(x, y1, z0)])].flat().forEach(([a, b]) => bar(a, b));
+  frame.visible = false;
+  scene.add(frame);
+  return { frame, lineMat };
+}
+const STATE_COL = { RUN: 0x22C55E, STOP: 0x94A3B8, WARNING: 0xF59E0B, ALARM: 0xEF4444, OFFLINE: 0x8B5CF6 };
+function setStatus(i, s, blink) {
+  const st = twin.sections?.[i];
+  if (!st) return;
+  st.frame.visible = s !== 'RUN' && !(s === 'ALARM' && !blink);
+  st.lineMat.color.setHex(STATE_COL[s]);
+  st.lineMat.opacity = s === 'OFFLINE' || s === 'STOP' ? 0.55 : 0.95;
+}
+// motor body glows from just below the warning level up to the alarm level (normal running stays unlit)
+function setHeat(i, u) {
+  const mats = twin.heat?.[i];
+  if (!mats) return;
+  const w = u.d && u.state !== 'OFFLINE' ? u.d.windMax : 0;
+  const k = Math.min(1, Math.max(0, (w - (TH.wind[0] - 3)) / (TH.wind[1] - TH.wind[0] + 3)));
+  mats.forEach(mt => { mt.emissive.setRGB(1, 0.28, 0.05); mt.emissiveIntensity = k * 0.55; });
 }
 const loads = [];   // rotating loads in the background plant room (Load_*_Rotor)
 function onPlant(gltf) {
@@ -332,7 +395,7 @@ function selectUnit(i) {
   render();
 }
 document.querySelectorAll('.unit').forEach(b => b.onclick = () => selectUnit(+b.dataset.u));
-$('mode').onchange = e => { units[sel].mode = e.target.value; render(); };
+$('mode').onchange = e => { units[sel].mode = e.target.value; lastPub = -1e9; render(); };   // publish on the next frame
 $('bDoor').onclick = () => { const d = twin.doors[sel]; if (d) { d.open = !d.open; render(); } };
 let drawerOpen = false;
 $('bAll').onclick = () => {
@@ -463,6 +526,8 @@ renderer.setAnimationLoop(() => {
     const [g, r] = twin.lamps[i], s = u.state;
     setLamp(g, s === 'RUN' || s === 'WARNING' || s === 'ALARM');
     setLamp(r, s === 'STOP' || (s === 'WARNING' && blink) || s === 'ALARM');
+    setStatus(i, s, blink);
+    setHeat(i, u);
   });
 
   if (tween) {
