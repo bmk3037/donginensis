@@ -97,4 +97,27 @@ assert.equal(entries[0].from, '6ES7231-4HF32-0XB0');
 const bare = X.parseInput(X.parseTsv('6ES7231-4HF32-0XB0\t5\nPLC(CPU)\t6ES7215-1AG40-0XB0\t2'));
 assert.deepEqual(bare.map(x => [x.code, x.qty]), [['6ES7231-4HF32-0XB0', 5], ['6ES7215-1AG40-0XB0', 2]]);
 assert.equal(bare[1].name, 'PLC(CPU)');
+// 대응표 없이 기본 대응으로 찾기(모델명만, LP는 브라우저에 기억한 값)
+const auto = X.convert(X.parseInput(X.parseTsv('6ES7214-1AG40-0XB0\t2\n6ES7214-1HG40-0XB0\t1\n6ES7231-5PF32-0XB0\t3\n6ES7241-1CH32-0XB0\t2\n' +
+  '6SL3210-5BE21-5UV0\t1\n6SL3210-5BE31-8UV0\t1\n6SL3210-1KE22-6UF1\t1\n3RW4028-1BB14\t1\n6AV2123-2GB03-0AX0\t1\n6SL3210-5BB23-0UV1\t1\nABC-12345\t1')), [], {TM221CE24T: '100000'});
+assert.deepEqual(auto.map(r => [r.how, r.to, r.qty]), [
+  ['auto', 'TM221CE24T', '2'], ['auto', 'TM221ME16R', '1'], ['auto', 'TM3DM24R', '1'], ['auto', 'TM3TI4', '6'], ['port', '', '0'],
+  ['auto', 'ATV320U15N4B', '1'], ['auto', 'ATV630D18N4', '1'], ['auto', 'ATV320D11N4B', '1'], ['auto', 'ATS22D47Q', '1'], ['auto', 'PFXET6400WAD', '1'],
+  ['none', '', '1'], ['none', '', '1']]);
+assert.equal(auto[0].lp, '100000'); // 기억한 LP
+assert.equal(auto[0].group, 'PLC');
+assert.equal(auto[5].group, '인버터');
+assert.equal(auto[8].group, '소프트스타터');
+assert.ok(auto[6].desc.includes('18.5kW'));
+assert.ok(!X.changedFromTable(auto[0]));
+assert.ok(X.changedFromTable({...auto[0], to: 'TM221CE40T'}));
+// 대응표가 있으면 대응표가 먼저
+assert.equal(X.convert([{code: '6ES7231-4HF32-0XB0', qty: 1, name: ''}], t.entries)[0].how, 'exact');
+// 내장 포트 행은 견적에 넣지 않고 건너뜀 목록에도 없음
+const ti = X.toItems(auto, {PLC: '40'}, false);
+assert.equal(ti.items.length, 1);
+assert.equal(ti.items[0].cost, '60000');
+assert.ok(!ti.skipped.some(r => r.how === 'port'));
+// LP 시트
+assert.deepEqual(X.parseLp([['슈나이더 모델', 'LP'], ['TM3AQ2', '120,000'], ['', 5]]), {TM3AQ2: '120000'});
 console.log('xref ok');

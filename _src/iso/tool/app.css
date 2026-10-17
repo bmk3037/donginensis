@@ -447,13 +447,15 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .x-rates { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
 .x-rates:empty { display: none; }
 .x-rates-h { flex-basis: 100%; font-size: var(--fs-xs); font-weight: 600; color: var(--accent); }
-#view-quote .x-rates input.num-in { width: 60px; flex: none; padding: 5px 7px; text-align: right; }
+#view-quote .x-rates input.num-in { width: 64px; flex: none; padding: 5px 7px; text-align: right; }
 .x-result { display: grid; gap: 8px; }
 .x-table { max-height: 50vh; }
-.x-table .tbl { min-width: 960px; table-layout: fixed; }
+.x-table .tbl { min-width: 1000px; table-layout: fixed; }
 .x-table th, .x-table td { padding: 4px 4px; vertical-align: top; }
 .x-table td input[type="text"] { width: 100%; min-width: 0; padding: 5px 5px; }
 .x-table .c-no { width: 32px; text-align: center; color: var(--muted); }
+.x-table .c-act { width: 40px; text-align: center; }
+.x-table .c-act .btn-icon { min-width: 28px; padding: 2px 6px; }
 .x-c-from { width: 17%; } .x-c-qty { width: 6%; } .x-c-how { width: 9%; } .x-c-to { width: 13%; } .x-c-grp { width: 7%; }
 .x-c-money { width: 8.5%; } .x-c-rate { width: 5%; } .x-c-note { width: 16%; }
 .x-from b { display: block; font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-xs); overflow-wrap: anywhere; }
