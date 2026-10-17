@@ -215,7 +215,7 @@ new ResizeObserver(resize).observe(stage);
 resize();
 
 // ---------------------------------------------------------------- twin bindings (node names = Unity)
-const twin = { rotors: [], doors: [], lamps: [[], []], hmi: [null, null], motors: [null, null], spin: 0 };
+const twin = { rotors: [], doors: [], lamps: [[], []], hmi: [null, null], motors: [null, null], spin: [0, 0] };
 const DOOR_OPEN = [THREE.MathUtils.degToRad(95), THREE.MathUtils.degToRad(110)], DOOR_SPEED = THREE.MathUtils.degToRad(120);
 
 function makeLamp(node, color) {
@@ -295,7 +295,8 @@ function onTestbed(gltf) {
   m.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   scene.add(m);
   // coupled shaft: Motor B is mounted 180° about Y, so its local +X points the other way
-  [['Motor_A_Rotor', 1], ['Motor_B_Rotor', -1], ['Coupling_Rotor', 1]].forEach(([n, s]) => { const o = m.getObjectByName(n); if (o) twin.rotors.push({ o, s }); });
+  // each motor's rotor follows its own unit; the coupling spacer between them turns with the faster one
+  [['Motor_A_Rotor', 1, 0], ['Motor_B_Rotor', -1, 1], ['Coupling_Rotor', 1, -1]].forEach(([n, s, u]) => { const o = m.getObjectByName(n); if (o) twin.rotors.push({ o, s, u }); });
   twin.doors = ['LeftDoor', 'RightDoor'].map((n, i) => ({ hinge: m.getObjectByName(n + '_Hinge'), door: m.getObjectByName(n), angle: 0, open: false, max: DOOR_OPEN[i] }));
   ['', '_2'].forEach((sfx, i) => {
     const g = m.getObjectByName('Lamp_Green' + sfx), r = m.getObjectByName('Lamp_Red' + sfx), s = m.getObjectByName('HMI_Screen' + sfx);
@@ -534,13 +535,14 @@ renderer.setAnimationLoop(() => {
   units.forEach(u => { u.state = judge(u, now); });
   if (now - lastUi >= 250) { lastUi = now; render(); drawHmi(0); drawHmi(1); }
 
-  // coupled shaft, shown at a readable speed (1800 rpm → 2 rev/s); spins up in ~1 s, coasts down over ~2.5 s
-  const rpm = Math.max(...units.map(u => (u.state === 'OFFLINE' || !u.d ? 0 : u.d.rpm)));
-  const target = rpm / 1800 * 2 * Math.PI * 2;
-  twin.spin += (target - twin.spin) * (1 - Math.exp(-dt / (target > twin.spin ? 0.7 : 1.6)));
-  twin.rotors.forEach(r => r.o.rotateX(r.s * twin.spin * dt));
-  const run = Math.min(1, twin.spin / (Math.PI * 2));          // 0 stopped … 1 at half speed and above
+  // each motor at its own unit's speed, shown readable (1800 rpm → 2 rev/s); spins up in ~1 s, coasts down over ~2.5 s
   units.forEach((u, i) => {
+    const target = (u.state === 'OFFLINE' || !u.d ? 0 : u.d.rpm) / 1800 * 2 * Math.PI * 2;
+    twin.spin[i] += (target - twin.spin[i]) * (1 - Math.exp(-dt / (target > twin.spin[i] ? 0.7 : 1.6)));
+  });
+  twin.rotors.forEach(r => r.o.rotateX(r.s * (r.u < 0 ? Math.max(...twin.spin) : twin.spin[r.u]) * dt));
+  units.forEach((u, i) => {
+    const run = Math.min(1, twin.spin[i] / (Math.PI * 2));     // 0 stopped … 1 at half speed and above
     const a = twin.arrows?.[i];
     if (a) { a.color.setHex(STATE_COL[u.state === 'OFFLINE' ? 'STOP' : u.state]); a.opacity = 0.9 * run; }
     // a running motor in warning / alarm visibly shakes (exaggerated so it reads on screen)
