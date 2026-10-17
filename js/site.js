@@ -254,6 +254,13 @@ var TXT = IS_EN ? {
   });
 })();
 
+// 메인 미니 팝업(회사소개서 · 디지털트윈 시연)을 오른쪽 아래에 위아래로 쌓는 자리
+function popStack(){
+  var st=document.querySelector('.pop-stack');
+  if(!st){ st=document.createElement('div'); st.className='pop-stack'; document.body.appendChild(st); }
+  return st;
+}
+
 // 회사소개서 미니 팝업: 메인 페이지를 열 때마다 잠시 뒤 오른쪽 아래에 작게 띄움
 (function(){
   var sec=document.getElementById('profile'); if(!sec) return;
@@ -270,11 +277,27 @@ var TXT = IS_EN ? {
     '<div class="pp-btns"><a href="'+links[0].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'English':'국문')+'</a>'+
     '<a href="'+links[1].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Korean':'영문')+'</a>'+
     (links[2]?'<a href="'+links[2].getAttribute('href')+'" target="_blank" rel="noopener">'+(en?'Hydrogen':'수소전문기업')+'</a>':'')+'</div></div>';
-  document.body.appendChild(p);
+  popStack().appendChild(p);
   function close(){ p.classList.remove('on'); setTimeout(function(){ p.remove(); },400); }
   p.querySelector('.pp-x').addEventListener('click',close);
   p.querySelector('.pp-th').addEventListener('click',function(){ close(); });
   setTimeout(function(){ p.classList.add('on'); },1800);
+})();
+
+// 디지털트윈 시연 미니 팝업: 회사소개서 팝업 위에 같은 모양으로 (메인의 「디지털트윈 시연 보기」 버튼에서 주소·그림을 읽음)
+(function(){
+  var a=document.querySelector('a[data-pop-thumb]'); if(!a) return;
+  var en=document.documentElement.lang==='en';
+  var p=document.createElement('aside');
+  p.className='prof-pop'; p.setAttribute('aria-label',en?'Digital twin demo':'디지털트윈 시연');
+  p.innerHTML='<button type="button" class="pp-x" aria-label="'+(en?'Close':'닫기')+'">×</button>'+
+    '<a class="pp-th" href="'+a.getAttribute('href')+'"><img src="'+a.getAttribute('data-pop-thumb')+'" alt=""></a>'+
+    '<div class="pp-tx"><small>DIGITAL TWIN DEMO</small><b>'+(en?'Digital twin demo':'디지털트윈 시연')+'</b><span>'+(en?'3D control panel · simulated data':'3D 지능형제어반 · 모의 데이터')+'</span>'+
+    '<div class="pp-btns"><a href="'+a.getAttribute('href')+'">'+(en?'Open 3D view':'3D로 보기')+'</a></div></div>';
+  popStack().insertBefore(p,popStack().firstChild);
+  function close(){ p.classList.remove('on'); setTimeout(function(){ p.remove(); },400); }
+  p.querySelector('.pp-x').addEventListener('click',close);
+  setTimeout(function(){ p.classList.add('on'); },2400);
 })();
 
 // 메인 첫 화면: 데이터가 흐르는 빛줄기(캔버스) · 마우스 시차 · 지표 숫자 세기
