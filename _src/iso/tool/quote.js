@@ -860,8 +860,8 @@
   }
 
   // ---------------------------------------------------------------- 표준 견적서(동인엔시스 CI)
-  // 기록양식집(DI-IMS-F-01)과 같은 색: 머리 #1857A5 · 항목칸 #E8EEF6 · 미리 적힌 칸 #F4F6F9 · 선 #8A9BB0 · 글자 #263445 · 로고 빨강 #E83E30
-  var CI = { head: 'FF1857A5', label: 'FFE8EEF6', sunken: 'FFF4F6F9', line: 'FF8A9BB0', ink: 'FF263445', red: 'FFE83E30', muted: 'FF55657A', white: 'FFFFFFFF' };
+  // 기록양식집(DI-IMS-F-01)과 같은 색: 머리 남색 #0A2A55 · 항목칸 #E8EEF6 · 미리 적힌 칸 #F4F6F9 · 선 #8A9BB0 · 글자 #263445 · 로고 빨강 #E83E30
+  var CI = { head: 'FF0A2A55', label: 'FFE8EEF6', sunken: 'FFF4F6F9', line: 'FF8A9BB0', ink: 'FF263445', red: 'FFE83E30', muted: 'FF55657A', white: 'FFFFFFFF' };
   var CO_KEY = 'iso-quote-company', SEAL_KEY = 'iso-quote-seal';
   // 사업자등록증(605-81-27818) 기준. 대표자는 현재 견적서 표기를 따름 — 화면에서 고칠 수 있다.
   var CO_FIELDS = [['bizNo', '등록번호', '605-81-27818'], ['name', '상호', '㈜동인엔시스'], ['ceo', '대표자', '백민기'],
@@ -1035,7 +1035,7 @@
     height(H, 22);
     heads.forEach(function (h, i) {
       area('ABCDEFGH'[i] + H, h, { font: { bold: true, color: { argb: CI.white } }, fill: CI.head, align: { horizontal: 'center' },
-        border: { left: i ? { style: 'thin', color: { argb: 'FF5B86C0' } } : undefined, top: strong, bottom: strong } });
+        border: { left: i ? { style: 'thin', color: { argb: 'FF4A6A96' } } : undefined, top: strong, bottom: strong } });
     });
     var lines = t.lines, n = Math.max(lines.length, 10), first = H + 1, lastItem = H + n;
     for (var i = 0; i < n; i++) {

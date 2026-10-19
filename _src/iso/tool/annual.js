@@ -369,11 +369,11 @@
     list.forEach(function (t) {
       ws.addRow([t.due, t.code, t.task + (t.legal ? ' ★법정' : ''), t.owner, t.freq, t.period, t.file, t.done ? '완료' : t.audit ? '' : '미완료', '', '']);
     });
-    ws.getRow(1).font = { bold: true, size: 14, color: { argb: 'FF1857A5' } };
+    ws.getRow(1).font = { bold: true, size: 14, color: { argb: 'FF0A2A55' } };
     ws.getRow(2).font = { size: 9, color: { argb: 'FF55657A' } };
     var hr = ws.getRow(4);
     hr.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    hr.eachCell(function (c) { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1857A5' } }; });
+    hr.eachCell(function (c) { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0A2A55' } }; });
     [12, 9, 46, 22, 16, 13, 22, 9, 11, 11].forEach(function (w, i) { ws.getColumn(i + 1).width = w; });
     ws.getColumn(1).numFmt = 'yyyy-mm-dd';
     var last = 4 + list.length;

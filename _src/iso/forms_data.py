@@ -781,9 +781,9 @@ def _doc_control_extra(sh):
     sh.set_h(r, 10)
     r += 1
     sh.set_h(r, 26)
-    sh.cell(r, 1, 3, '시행 전 확인 항목 (매뉴얼 부록 D)', size=9.5, bold=True, color='FFFFFF', bg='1857A5', h='center')
-    sh.cell(r, 4, None, '확인 결과', size=9.5, bold=True, color='FFFFFF', bg='1857A5', h='center')
-    sh.cell(r, 5, None, '확인자·일자', size=9.5, bold=True, color='FFFFFF', bg='1857A5', h='center')
+    sh.cell(r, 1, 3, '시행 전 확인 항목 (매뉴얼 부록 D)', size=9.5, bold=True, color='FFFFFF', bg='0A2A55', h='center')
+    sh.cell(r, 4, None, '확인 결과', size=9.5, bold=True, color='FFFFFF', bg='0A2A55', h='center')
+    sh.cell(r, 5, None, '확인자·일자', size=9.5, bold=True, color='FFFFFF', bg='0A2A55', h='center')
     first = r + 1
     for i, t in enumerate(checks):
         rr = first + i

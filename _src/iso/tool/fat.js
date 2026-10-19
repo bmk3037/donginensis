@@ -213,18 +213,18 @@
       '</div><footer class="pf">동인엔시스 | DI-QF-06 Rev.' + esc(A.FORMS.rev) + ' | ㈜동인엔시스 부산광역시 부산진구 진연로9번길 47 · TEL 051-862-3668</footer>';
     var css = '@page{size:A4 portrait;margin:12mm 12mm 16mm}' +
       '.rep{font-size:9.5pt;line-height:1.45;color:#263445}.rh{position:relative;margin-bottom:4mm}' +
-      '.logo{height:7mm;display:block}.rh h1{margin:3.5mm 0 1mm;font-size:17pt;color:#1857a5;font-weight:800;letter-spacing:-0.02em}.rh h1 small{font-size:9pt;color:#55657a;font-weight:400;margin-left:2mm}' +
+      '.logo{height:7mm;display:block}.rh h1{margin:3.5mm 0 1mm;font-size:17pt;color:#0a2a55;font-weight:800;letter-spacing:-0.02em}.rh h1 small{font-size:9pt;color:#55657a;font-weight:400;margin-left:2mm}' +
       '.docline{margin:0;font-size:8.2pt;color:#55657a}.rno{position:absolute;top:0;right:0;font-size:7.5pt;color:#55657a}' +
       'table{width:100%;border-collapse:collapse;margin-bottom:3mm}th,td{border:0.25mm solid #8a9bb0;padding:1.2mm 2mm;vertical-align:middle;word-break:keep-all;overflow-wrap:anywhere}' +
       '.info th{background:#e8eef6;color:#263445;text-align:left;font-weight:600;width:20%;font-size:8.5pt}.info td{width:30%}' +
-      '.grid thead th{background:#1857a5;color:#fff;font-weight:600;font-size:8.5pt}.grid td{font-size:8.5pt}.grid.io td{font-size:7.8pt;padding:0.8mm 1.5mm}' +
+      '.grid thead th{background:#0a2a55;color:#fff;font-weight:600;font-size:8.5pt}.grid td{font-size:8.5pt}.grid.io td{font-size:7.8pt;padding:0.8mm 1.5mm}' +
       '.grid thead{display:table-header-group}.grid tr{break-inside:avoid}' +
       '.c{text-align:center}.b{font-weight:600}.mono{font-family:Consolas,monospace}.w-no{width:9mm}.w-j{width:17mm}' +
       '.j-ok{color:#1d6b45;font-weight:700}.j-bad{color:#c0321f;font-weight:700;background:#fde7e4}.j-hold{color:#8a5a00;font-weight:700;background:#fbf0d6}.j-na{color:#55657a}' +
       '.verdict{display:flex;align-items:center;gap:5mm;border:0.6mm solid;padding:3mm 4mm;margin:2mm 0 4mm}.verdict span{font-size:9pt;font-weight:600}' +
       '.verdict b{font-size:18pt}.verdict em{font-style:normal;color:#55657a;font-size:8.5pt;margin-left:auto}' +
       '.v-ok{border-color:#1d6b45}.v-ok b{color:#1d6b45}.v-bad{border-color:#c0321f}.v-bad b{color:#c0321f}.v-na{border-color:#8a9bb0}.v-na b{color:#55657a}' +
-      'h2{font-size:10.5pt;color:#263445;margin:4.5mm 0 1.8mm;font-weight:700;break-after:avoid}h2::before{content:"■ ";color:#1857a5}' +
+      'h2{font-size:10.5pt;color:#263445;margin:4.5mm 0 1.8mm;font-weight:700;break-after:avoid}h2::before{content:"■ ";color:#0a2a55}' +
       '.fails{margin:0 0 3mm;padding-left:5mm;font-size:8.5pt}.sign{break-inside:avoid}.sign th{background:#e8eef6;width:33.3%}.sign td{text-align:center;height:8mm}.sign .sg td{height:16mm;vertical-align:bottom;color:#8a9bb0;font-size:7.5pt}' +
       '.fine{font-size:7.5pt;color:#55657a}.pf{position:fixed;bottom:-10mm;left:0;right:0;text-align:center;font-size:7.5pt;color:#55657a}' +
       '@media screen{.rep{max-width:186mm;margin:8mm auto;background:#fff;padding:12mm;box-shadow:0 1px 6px rgba(0,0,0,.2)}.pf{position:static;margin-bottom:8mm}}';
