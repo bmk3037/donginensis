@@ -25,7 +25,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 OUT = os.path.join(ROOT, '_src', 'iso', 'source', 'DI-IMS-F-01_Rev00.xlsx')
 
 FONT = 'Malgun Gothic'
-BLUE = '1857A5'
+BLUE = '0A2A55'  # 제목·표 머리: 동인엔시스 메인 컬러 남색
 INK = '263445'
 LINE = '8A9BB0'        # 흑백 인쇄에서도 보이는 테두리
 LABEL_FILL = 'E8EEF6'  # 머리 입력란 항목명

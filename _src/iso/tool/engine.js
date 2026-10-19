@@ -5,7 +5,7 @@
   'use strict';
 
   var C = {
-    FONT: 'Malgun Gothic', BLUE: '1857A5', INK: '263445', LINE: '8A9BB0',
+    FONT: 'Malgun Gothic', BLUE: '0A2A55', INK: '263445', LINE: '8A9BB0',
     LABEL: 'E8EEF6', PRE: 'F4F6F9', WHITE: 'FFFFFF', EX: '7A8699', NEG: 'F8D7DA', WARN: 'FFF3CD'
   };
   var NEGATIVE = ['불합격', '보류', '부적합', '미흡', '미준수', '미확인', '실패', '사용금지', '중지·개선',

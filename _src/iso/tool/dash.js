@@ -418,7 +418,7 @@
       ws.addRow(head);
       rows.forEach(function (r) { ws.addRow(r); });
       ws.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      ws.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1857A5' } };
+      ws.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0A2A55' } };
       widths.forEach(function (w, i) { ws.getColumn(i + 1).width = w; });
       ws.views = [{ state: 'frozen', ySplit: 1 }];
       ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: head.length } };
