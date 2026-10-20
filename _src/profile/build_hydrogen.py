@@ -56,6 +56,7 @@ td{{padding:9px 14px;border-bottom:1px solid #E2E7EE;line-height:1.45;vertical-a
 """
 
 def page(eye,title,body,num,note=None):
+    num=len(P)+1                 # 쪽 번호는 넣는 순서대로 (중간에 쪽을 끼워도 뒤 번호가 맞게)
     n=f'<div class="note">{note}</div>' if note else ''
     return f'<div class="page"><img class="logo" src="{LOGO}"><div class="eyebrow">{eye}</div><h1>{title}</h1>{body}{n}<div class="foot"><span>{FOOT}</span><span>{num:02d}</span></div></div>'
 def lis(items): return '<ul>'+''.join(f'<li>{x}</li>' for x in items)+'</ul>'
@@ -166,7 +167,16 @@ ben=[('안전 데이터 24시간 기록','수소 설비의 온도·압력·전�
 P.append(page('Intelligent Control Panel','현장 제어와 데이터를<br><b>같은 방식으로 연결합니다</b>',f'<div class="flow">{fl}</div><div class="row">'+''.join(f'<div class="box" style="flex:1;background:#EAF1FA"><h3 class="s" style="font-size:17px;color:#0F3F7E">{a}</h3><p style="font-size:13px;color:#4A5568;line-height:1.5">{b}</p></div>' for a,b in ben)
  +f'</div><div class="row"><img class="ph" src="{A("h2-lh2-control.jpg")}" style="flex:1;height:150px"><img class="ph" src="{A("h2-vessel-system.jpg")}" style="flex:1;height:150px"><img class="ph" src="{A("h2-machinery.jpg")}" style="flex:1;height:150px"></div>',11,'※ 하단 이미지는 이해를 돕기 위한 연출 이미지입니다.'))
 
-# 12 ip
+# 12 digital twin (2026.10 추가 · 그림: 홈페이지 디지털트윈 시연 화면을 액화수소충전소 3D 배경으로 찍은 것, 원본 twin_lh2.jpg)
+P.append(page('Digital Twin · Liquid Hydrogen Station','지능형 제어반 데이터로<br><b>충전소 설비를 3D 디지털트윈으로 봅니다</b>',
+ f'<div class="row top"><div style="width:720px"><img class="ph" src="{ROOT}/twin_lh2.jpg" style="width:720px;height:405px;border:1px solid #E2E7EE"><div class="cap">디지털트윈 시연 화면 · 액화수소충전소 3D 재현 배경 · 동인엔시스 TestBench #1 (제어반 2면 · 모터 2대)</div></div>'
+ '<div class="col" style="flex:1;gap:16px">'
+ +blk('실시간 3D 상태 표시',['지능형 제어반의 운전 데이터를 설비 3D 모델에 연결','운전 · 정지 · 경고 · 위험 · 통신끊김 5단계 판정 — 제어반·모터 색, 경보음, 판정 원인을 함께 표시','웹(PC · 태블릿 · 휴대폰)으로 시연 중, 현장 앱(Unity) 연동 개발 중'])
+ +blk('수집 항목 (호기별)',['PLC: 권선 온도 3점 · 베어링 온도 2점(PT100), 회전속도(엔코더), 대기 온·습도(4~20mA), 디지털 입력 8점','Modbus TCP: 전압 · 전류 · 전력량 (EOCR · 전력계)'])
+ +blk('충전소 적용 방향',['테스트베드에서 화면·판정 검증 → 펌프 · 기화기 · 열매체유 순환 설비로 확대','이상감지 · 예지보전 결과를 같은 화면에서 확인 (DataHub 연동)'])+'</div></div>',0,
+ '※ 3D 배경은 액화수소충전소를 재현한 화면이며, 화면의 수치는 시연용 모의 데이터입니다.'))
+
+# 13 ip
 P.append(page('Intellectual Property','지식재산권,<br><b>특허 등록 2건 · 출원 3건 · 상표 2건</b>','<div class="row top"><div style="flex:1">'+table(['상태','번호','명칭','일자'],[
  ('등록','제10-2964558호','수소연료전지 하이브리드 추진선박의 부하 프로파일 기반 자동제어방법','출원 2025.12.01 · 등록 2026.05.08'),('등록','제10-2964564호','수소충전용 모듈러 인출식 VFD 판넬','출원 2025.12.01 · 등록 2026.05.08'),
  ('출원','제10-2025-0187312호','수소충전용 지능형 EOCR 기반 예측보호시스템','출원 2025.12'),('출원','제10-2025-0187314호','수소충전용 데이터 허브형 UPS 및 PDP 통합 전원관리 시스템','출원 2025.12'),('출원','제10-2025-0187315호','수소추진선박용 AI 기반 ESS 위험 예측 및 제어 시스템','출원 2025.12'),
@@ -174,14 +184,14 @@ P.append(page('Intellectual Property','지식재산권,<br><b>특허 등록 2건
  +'<p style="font-size:12.5px;color:#5A6577;line-height:1.5;margin-top:12px">등록 2건은 2026.05.08 특허증 기준이며 출원 3건과 구분합니다. 안전기반 소형 수소추진선박 과제의 실증 성과를 제어·전력·안전 기술로 권리화했습니다.</p></div>'
  f'<div style="width:380px"><div style="display:flex;gap:14px"><img src="{ROOT}/patent_10-2964558.png" style="width:183px;border:1px solid #E2E7EE;border-radius:6px"><img src="{ROOT}/patent_10-2964564.png" style="width:183px;border:1px solid #E2E7EE;border-radius:6px"></div><div class="cap">특허증 제10-2964558호 · 제10-2964564호 (지식재산처, 2026.05.08)</div></div></div>',12))
 
-# 13 rnd
+# 14 rnd
 P.append(page('R&amp;D Capability','연구개발 역량','<div class="row">'
  +'<div class="card"><div class="b" style="padding:22px 24px"><h3>친환경기술연구소</h3>'+lis(['2020년 설립 · 기업부설연구소 인정','수소·친환경 선박 전력제어, 예측제어, 운전 데이터 분석','전장설계 · PLC · 인버터 기술인력 확충 추진'])+'</div></div>'
  +'<div class="card"><div class="b" style="padding:22px 24px"><h3>국가 R&amp;D 수행</h3>'+lis(['해양수산부·KIMST 「전기복합 추진어선 핵심 기자재 기술개발」 (2021.04 ~ 2025.12)','해양수산부·KIMST 「안전기반 소형 수소추진선박 기술개발 및 실증」 (2022.04 ~ 2026.12)','과제 성과를 특허 5건으로 체계화 (등록 2 · 출원 3)'])+'</div></div>'
  +'<div class="card"><div class="b" style="padding:22px 24px"><h3>산학협력 · 네트워크</h3>'+lis(['국립한국해양대학교 MOU (2014) · 산학협력 가족회사 (2024) · 공동연구·기술이전','부산광역시 수소동맹 참여기업 (2022) · 국내 학술회의 발표 4건 (2025)','Schneider Electric 공식 SI 파트너'])+'</div></div></div>'
  '<div class="row">'+stat('7.54<sup>억원</sup>','2025년 수소사업 투자액','인건비 1.95억 · 안전기반 과제 4.85억 · 예비수소 사업 0.75억')+stat('12.88<sup>%</sup>','3개년 평균매출액 대비','2023 ~ 2025 평균매출액 대비 수소사업 투자 비율')+stat('21<sup>명</sup> / 6<sup>명</sup>','임직원 / 연구인력','수소추진선박 과제 참여 연구인력 6명')+'</div>',13))
 
-# 14 rnd-projects
+# 15 rnd-projects
 def proj(im,title,period,lead,co,role,memo):
     return (f'<div class="card"><img class="ph" src="{im}" style="height:170px"><div class="b"><div class="own"><img src="{I("p36_10_logo.jpg")}"><img src="{I("p42_07_logo.jpg")}">해양수산부 · 한국해양과학기술진흥원</div><h3 style="font-size:19px">{title}</h3>'
             f'<div class="kv"><div><b>사업기간</b>{period}</div><div><b>주관기관</b>{lead}</div><div><b>공동연구</b>{co}</div><div><b>당사 역할</b>{role}</div></div><p style="font-size:12.5px;color:#8A94A6;margin-top:8px">{memo}</p></div></div>')
@@ -189,30 +199,30 @@ P.append(page('National R&amp;D Projects','국가 연구개발 과제 수행 현
  +proj(I('p43_04_photo.jpg'),'전기복합 추진어선 핵심 기자재 기술개발','2021.04.01 ~ 2025.12.31','한국선급(KR)','동인엔시스 · Electrine · 효성 · Korea R&amp;D · 한국전자기술연구원 · 국립한국해양대학교','추진모터 드라이브 시스템 · 통합 자동제어시스템','디젤엔진 + 전기모터 하이브리드 추진 · 사진은 추진시스템 테스트베드')
  +proj(I('p45_06_photo.jpg'),'안전기반 소형 수소추진선박 기술개발 및 실증','2022.04.01 ~ 2026.12.31','국립한국해양대학교','동인엔시스 · LS일렉트릭 · KOMERI · 한국기계연구원 · KMC · 호서대 · 부산대 · 목포해양대 · KOMSA · FOEx 등','통합제어·감시시스템 · 시스템통합 엔지니어링','2025년 MASTC 시제품 연동·성능 시험 환경 구축 · 과제 성과를 특허 5건으로 체계화')+'</div>',14))
 
-# 15 academic
+# 16 academic
 P.append(page('Academic &amp; Pre-Hydrogen Program','학술활동과<br><b>예비 수소전문기업 지원사업</b>','<div class="row top"><div style="flex:1"><h3 class="s" style="margin-bottom:10px">국내 학술회의 발표 (2025) · 발표자 김인수</h3>'
  +table(['학술대회','발표일','장소'],[('한국마린엔지니어링학회 2025년도 공동학술대회','2025.04.24','목포해양대학교'),('스마트 전기선박 연구회 2025년도 하계 학술발표회','2025.08.29','창원대학교'),('한국마린엔지니어링학회 2025년도 후기학술대회','2025.10.24','부산 BEXCO'),('한국해군과학기술학회 2025년 동계학술대회','2025.12.08','여수 베네치아호텔&amp;스위트')],[52,20,28])+'</div>'
  '<div class="box" style="width:480px;padding:24px 26px"><div class="tag">예비 수소전문기업 지원사업 (2025 · 산업통상자원부 · 부산광역시)</div><h3>액화수소충전소 디지털전환 과제</h3>'+lis(['인버터 국산화용 부품 · 외함 확보 및 테스트베드 구축','D-Hub 클라우드 · PWA 웹 앱 개발 — 운전 데이터 수집·모니터링','시험·인증 연계 추진 · 이상감지 기능 검증','충전소 구축 시 공급한 설비를 유지관리·진단 사업의 기반으로 활용'])+'</div></div>',15))
 
-# 16 infra
+# 17 infra
 P.append(page('Manufacturing · Quality','직접 설계하고,<br><b>직접 제작합니다</b>','<div class="row top"><div class="col" style="flex:1;gap:18px">'
  +blk('제작 거점',['양산 1공장 · 양산 2공장 (2023년 준공) · 기장공장','본사·친환경기술연구소 부산 (양정동 엔에스타워)'])+blk('품질 체계',['FAT 전용 테스트 라인 · 공장검사 후 현장 설치','CE · UL 기준 설계·제작 체계 · ISO 9001 · 14001 · 45001','친환경 추진시스템 시험: MASTC 해양 실증 기술센터(한국해양대·KR·KOMERI) — 400kW급 추진모터 드라이브 · PMS · HiL'])
  +blk('일괄 수행 범위',['설계 → 제작·배선 → PLC 프로그램 → 공장검사 → 현장 시운전 → 유지관리','Schneider Electric 공식 SI 파트너 · ABB · Fuji Electric · Eaton · Danfoss'])+'</div>'
  f'<div style="width:560px"><img class="ph" src="{I("p40_04_photo.jpg")}" style="width:560px;height:360px"><div class="cap">충남병원선 하이브리드 추진 통합제어반 · 공장검사(FAT) 현장</div></div></div>',16))
 
-# 17 certs
+# 18 certs
 Cs=[('예비 수소전문기업','산업통상자원부 · 부산광역시 · 2025',1),('혁신프리미어 1000','산업통상자원부 · 2026',1),('특허 등록 2건 · 출원 3건','수소 제어·전력·안전 기술 · 2026',1),('부산 수소동맹 참여기업','부산광역시 · 2022',1),
  ('국가대표 혁신기업','해양수산부 · 2022',0),('기업부설연구소','친환경기술연구소 · 2020',0),('우수기술기업 T-4','기술신용평가(TCB) · 2022',0),('벤처 · 이노비즈 · 메인비즈','중소벤처기업부 · 2025',0),
  ('히든챔피언 · 서비스 강소기업','부산광역시 · 2023',0),('전략산업선도기업 · 레전드50+','부산광역시 · 2024',0),('ISO 9001 · 14001 · 45001','품질 · 환경 · 안전보건 경영시스템',0),('Schneider Electric SI 파트너','ABB · Fuji Electric · Eaton · Danfoss',0)]
 P.append(page('Certifications','인증 · 선정','<div class="grid4">'+''.join(f'<div class="gc{" dark" if d else ""}"><h3>{a}</h3><p>{b}</p></div>' for a,b,d in Cs)+'</div>',17))
 
-# 18 status
+# 19 status
 P.append(page('Hydrogen Business Share','2025년 수소사업 투자,<br><b>증빙 기준으로 정리했습니다</b>','<div class="row top"><div class="col" style="flex:1;gap:18px"><div style="display:flex;gap:16px">'
  +stat('754,219,503<sup>원</sup>','2025년 수소사업 투자액','예비수소 사업 포함 원장 집계')+stat('12.88<sup>%</sup>','2023~2025 평균매출액 대비','집계안의 산술 비율')+stat('21<sup>명</sup> / 6<sup>명</sup>','전체 인력 / 과제 참여 연구인력','2025년 기준')+'</div>'
  +table(['투자 구분','금액 (원)','근거'],[('연구개발 인건비','195,000,000','연구개발비 명세서'),('안전기반 소형 수소추진선박 과제','484,598,003','과제 원장'),('예비 수소전문기업 지원사업','74,621,500','사업 원장'),('<b>합계</b>','<b>754,219,503</b>','회계 검토의견서 첨부')],[46,24,30],['','r',''])+'</div>'
  '<div class="box navy" style="width:400px;padding:24px 26px"><div class="tag">수소사업 범위 (당사 기준)</div><div style="margin-top:10px">'+lis(['해상 — 수소추진선박 전력·통합제어 (국가 R&amp;D)','육상 — 액화수소충전소 전기제어·전원설비 공급','수소 설비용 지능형 제어반 · VFD 판넬 · UPS·PDP 전원관리','수소 설비 운전 데이터 수집·모니터링 (DataHub)'])+'</div><p style="font-size:12.5px;color:#BFD3EC;line-height:1.5;margin-top:10px">수소법에 따른 수소전문기업은 수소사업 매출액 비중 또는 수소 관련 연구개발 투자 비중 중 하나를 충족하면 확인받을 수 있습니다. 투자액은 날인된 회계 검토의견서와 명세서를 함께 제출합니다.</p></div></div>',18))
 
-# 19 roadmap
+# 20 roadmap
 P.append(page('Roadmap 2026 H2 – 2028','각 단계의 검증 결과를<br><b>다음 단계의 제품·서비스 공급에 연결합니다</b>','<div style="margin-top:28px">'+table(['구분','2026년 하반기 · 기반·시험 정리','2027년 · 현장 검증·제품화','2028년 · 적용 확대·서비스화'],[
  ('<b>해상</b> 수소추진선박','연동시험 · 설계 산출물 정리 · 선박 탑재·시운전 연계 준비','건조 일정과 연계한 실증 · 전력·통합제어 패키지 정리','후속 선박·시험설비 제안 · 정비·진단 서비스 확대'),
  ('<b>육상</b> 액화수소충전소','테스트베드 · 데이터 연동 · 이상감지 개념 검증','실제 운영 데이터 확보 · 진단 기능·현장 적용 검증','신규·기존 충전소 적용 · 전원관리·유지관리 확대'),
@@ -220,7 +230,7 @@ P.append(page('Roadmap 2026 H2 – 2028','각 단계의 검증 결과를<br><b>�
  ('<b>단계 산출물</b>','시험기록 · 연동 목록 · 데이터 수집·검증 계획','현장 검증 보고서 · 제품 사양 · 고객 공급 제안','후속 공급 실적 · 유지관리·서비스 계약'),
  ('<b>권리·지정</b>','수소전문기업 확인 · 출원 특허 3건 심사 대응','지능형 제어반 핵심특허 추가 출원 → 혁신제품 지정 추진','조달 시장 진입 · 중동·동남아 수출 검토')],[16,28,28,28])+'</div>',19,'※ 본 표는 사업계획입니다. 선박 건조 · 현장 접근 · 시험 결과 · 고객 수요에 따라 실행 시기를 조정합니다.'))
 
-# 20 end
+# 21 end
 P.append(f'''<div class="page" style="background:#0F3F7E;color:#fff;padding:0">
 <img src="{LOGOW}" style="position:absolute;left:82px;top:72px;height:30px">
 <div style="position:absolute;left:82px;top:230px;width:900px"><div style="font-size:48px;font-weight:800;line-height:1.22">제어에서 데이터로,<br><span style="color:#8FC1FF">데이터에서 지능으로.</span></div>
@@ -230,7 +240,6 @@ P.append(f'''<div class="page" style="background:#0F3F7E;color:#fff;padding:0">
 <div style="width:420px"><div class="tag" style="color:#8FC1FF">CONTACT</div><p style="font-size:13.5px;line-height:1.7;color:#D6E4F5;margin-top:6px">대표이사 백민기<br>TEL 051-862-3668 · FAX 051-862-3325<br>E-mail plan@donginmne.com · dongin@donginmne.com<br>Web donginensis.com</p></div></div></div>''')
 
 html=f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>{"".join(P)}</body></html>'
-open(f'{ROOT}/out/h2_profile.html','w').write(html)
 
 async def main():
     async with async_playwright() as pw:
@@ -242,4 +251,7 @@ async def main():
         print('max-bottom per page:',ov)
         await pg.pdf(path=f'{ROOT}/out/h2_profile.pdf', width='20in', height='11.25in', scale=1.3333, print_background=True, margin={'top':'0','bottom':'0','left':'0','right':'0'})
         await b.close()
-asyncio.run(main()); print('done', len(P))
+if __name__ == '__main__':          # patch_hydrogen_twin.py 가 CSS·page()·P 만 가져다 쓸 수 있게
+    os.makedirs(f'{ROOT}/out', exist_ok=True)
+    open(f'{ROOT}/out/h2_profile.html','w').write(html)
+    asyncio.run(main()); print('done', len(P))
