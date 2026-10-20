@@ -9,7 +9,12 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 const EN = document.documentElement.lang === 'en';
 const LOCALE = EN ? 'en-US' : 'ko-KR';
 const MODEL_TESTBED = new URL('../files/twin/testbench_01.glb', import.meta.url).href;
-const MODEL_PLANT = new URL(EN ? '../files/twin/energy_room_en.glb' : '../files/twin/energy_room.glb', import.meta.url).href;
+// backgrounds: HVAC·ESS pilot plant room (default) or liquid hydrogen station — chosen with ?bg=lh2 or the 배경 buttons
+const PLANTS = {
+  room: new URL(EN ? '../files/twin/energy_room_en.glb' : '../files/twin/energy_room.glb', import.meta.url).href,
+  lh2: new URL(EN ? '../files/twin/lh2_site_en.glb' : '../files/twin/lh2_site.glb', import.meta.url).href,
+};
+let bg = new URLSearchParams(location.search).get('bg') === 'lh2' ? 'lh2' : 'room';
 
 const T = EN ? {
   unit: ['Unit 1', 'Unit 2'], id1: 'ID pending',
@@ -20,6 +25,7 @@ const T = EN ? {
   gWind: 'Motor winding temp (max)', gBrg: 'Bearing temp (max)', gLoad: 'Load', gRpm: 'Speed',
   subAmp: (a, w, x) => `Avg current ${a} A (warning ${w} · alarm ${x})`, subPf: (p, w, x) => `Power factor ${p} (warning ${w} · alarm ${x} or lower)`,
   doorOpen: u => `Open ${u} door`, doorClose: u => `Close ${u} door`, all: 'All readings', allClose: 'Close readings', soundOn: 'Alarm sound on', soundOff: 'Alarm sound off',
+  loadBg: { room: 'Loading the HVAC·ESS pilot plant room and 3D models', lh2: 'Loading the liquid hydrogen station and 3D models' },
   fail: 'Could not load the 3D model. Please refresh the page.',
   dPlc: 'PLC cards', dDi: 'Digital inputs', dMb: 'Modbus TCP', dMbSub: 'EOCR · Samhwa DSP-PRM', dJudge: 'Judgement indicators',
   rWU: 'Winding temp U', rWV: 'Winding temp V', rWW: 'Winding temp W', rDE: 'Bearing temp DE', rNDE: 'Bearing temp NDE', rRpm: 'Speed',
@@ -43,6 +49,7 @@ const T = EN ? {
   gWind: '모터 권선온도 (최고)', gBrg: '베어링 온도 (최고)', gLoad: '부하율', gRpm: '회전속도',
   subAmp: (a, w, x) => `평균전류 ${a} A (경고 ${w} · 위험 ${x})`, subPf: (p, w, x) => `역률 ${p} (경고 ${w} · 위험 ${x} 이하)`,
   doorOpen: u => `${u} 문 열기`, doorClose: u => `${u} 문 닫기`, all: '전체 계측', allClose: '전체 계측 닫기', soundOn: '경보음 켬', soundOff: '경보음 끔',
+  loadBg: { room: 'HVAC·ESS 실증 기계실과 3D 모델 불러오는 중', lh2: '액화수소충전소와 3D 모델 불러오는 중' },
   fail: '3D 모델을 불러오지 못했습니다. 새로고침해 주세요.',
   dPlc: 'PLC 카드', dDi: '디지털 입력', dMb: 'Modbus TCP', dMbSub: 'EOCR · 삼화 DSP-PRM', dJudge: '판정 지표',
   rWU: '권선 온도 U', rWV: '권선 온도 V', rWW: '권선 온도 W', rDE: '베어링 온도 DE', rNDE: '베어링 온도 NDE', rRpm: '회전속도',
@@ -183,13 +190,15 @@ controls.maxPolarAngle = Math.PI * 0.48;
 // views are framed so the HUD on the left never covers the equipment
 const VIEWS = {
   all:   { target: [-0.6, 1.9, -3.0], pos: [3.6, 2.5, 7.6] },
+  allLh2: { target: [-0.5, 2.2, -5.0], pos: [5.5, 3.2, 9.5] },   // H₂ tank and the station building behind the panels
   panel: { target: [-0.35, 1.15, 0.2], pos: [0.9, 1.45, 3.4] },
   motor: { target: [-0.3, 0.42, 1.0], pos: [1.2, 1.05, 3.0] },
 };
 let tween = null, userMoved = false, curView = 'all';
 const narrow = () => stage.clientWidth < 900;
 function viewOf(name) {
-  const v = VIEWS[name];
+  controls.maxDistance = bg === 'lh2' ? 22 : 12;            // the plant room has walls; the station is open ground
+  const v = VIEWS[name === 'all' && bg === 'lh2' ? 'allLh2' : name];
   const t = new THREE.Vector3(...v.target);
   if (narrow()) t.x = 0;                       // no side HUD on phones
   const p = new THREE.Vector3(...v.pos).sub(new THREE.Vector3(...v.target)).multiplyScalar(Math.max(1, 1.25 / camera.aspect)).add(t);
@@ -198,11 +207,11 @@ function viewOf(name) {
 function setView(name, instant) {
   curView = name;
   const { t, p } = viewOf(name);
-  document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === name)));
+  document.querySelectorAll('.seg button[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === name)));
   if (instant) { controls.target.copy(t); camera.position.copy(p); controls.update(); return; }
   tween = { k: 0, p0: camera.position.clone(), t0: controls.target.clone(), p1: p, t1: t };
 }
-document.querySelectorAll('.seg button').forEach(b => b.onclick = () => { userMoved = false; setView(b.dataset.view); });
+document.querySelectorAll('.seg button[data-view]').forEach(b => b.onclick = () => { userMoved = false; setView(b.dataset.view); });
 controls.addEventListener('start', () => { userMoved = true; tween = null; });
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
@@ -373,21 +382,49 @@ function setHeat(i, u) {
   const k = Math.min(1, Math.max(0, (w - (TH.wind[0] - 3)) / (TH.wind[1] - TH.wind[0] + 3)));
   mats.forEach(mt => { mt.emissive.setRGB(1, 0.28, 0.05); mt.emissiveIntensity = k * 0.55; });
 }
-const loads = [];   // rotating loads in the background plant room (Load_*_Rotor)
-function onPlant(gltf) {
+let loads = [];     // rotating loads in the background (Load_*_Rotor)
+const plants = {}, plantLoads = {};
+function onPlant(gltf, key) {
   const f = gltf.scene;
+  plantLoads[key] = [];
   f.traverse(o => {
-    if (o.isMesh) o.receiveShadow = true;
-    if (/^Load_.*_Rotor$/.test(o.name)) loads.push(o);
+    if (o.isMesh && o.name !== 'Sky_Dome') o.receiveShadow = true;
+    if (o.name === 'Sky_Dome') o.material.toneMapped = false;      // the station's sky is a picture, not lit
+    if (/^Load_.*_Rotor$/.test(o.name)) plantLoads[key].push(o);
   });
+  plants[key] = f;
   scene.add(f);
+  showPlant(key);
 }
+function showPlant(key) {
+  Object.keys(plants).forEach(k => { plants[k].visible = k === key; });
+  loads = plantLoads[key] || [];
+  document.querySelectorAll('[data-bg]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.bg === key)));
+}
+// switching background: load it once, keep both, and put the choice in the address so it can be shared
+async function setBg(key) {
+  if (key === bg && plants[key]) return;
+  bg = key;
+  const u = new URL(location.href);
+  if (key === 'lh2') u.searchParams.set('bg', 'lh2'); else u.searchParams.delete('bg');
+  history.replaceState(null, '', u);
+  document.querySelectorAll('[data-bg]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.bg === key)));
+  if (!plants[key]) {
+    $('loadText').textContent = T.loadBg[key]; $('loadbar').style.width = '5%'; $('loading').hidden = false;
+    got[1] = 0;
+    try { onPlant(await load(PLANTS[key], 1), key); } catch (err) { $('loadText').textContent = T.fail; console.error(err); return; }
+    $('loading').hidden = true;
+  } else showPlant(key);
+  userMoved = false; setView(curView);
+}
+document.querySelectorAll('[data-bg]').forEach(b => b.onclick = () => setBg(b.dataset.bg));
 // both models stream with one progress bar
 const got = [0, 0], size = [0, 0];
 const progress = () => { const t = size[0] + size[1]; if (t) $('loadbar').style.width = (5 + 90 * (got[0] + got[1]) / t) + '%'; };
 const load = (url, i) => new Promise((ok, ng) => new GLTFLoader().load(url, ok, e => { got[i] = e.loaded; size[i] = e.total || size[i]; progress(); }, ng));
 $('loadbar').style.width = '5%';
-Promise.all([load(MODEL_TESTBED, 0).then(onTestbed), load(MODEL_PLANT, 1).then(onPlant)])
+$('loadText').textContent = T.loadBg[bg];
+Promise.all([load(MODEL_TESTBED, 0).then(onTestbed), load(PLANTS[bg], 1).then(g => onPlant(g, bg))])
   .then(() => { $('loading').hidden = true; window.twinReady = true; })
   .catch(err => { $('loadText').textContent = T.fail; console.error(err); });
 

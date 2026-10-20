@@ -169,7 +169,7 @@ P.append(page('Intelligent Control Panel','현장 제어와 데이터를<br><b>�
 
 # 12 digital twin (2026.10 추가 · 그림: 홈페이지 디지털트윈 시연 화면을 액화수소충전소 3D 배경으로 찍은 것, 원본 twin_lh2.jpg)
 P.append(page('Digital Twin · Liquid Hydrogen Station','지능형 제어반 데이터로<br><b>충전소 설비를 3D 디지털트윈으로 봅니다</b>',
- f'<div class="row top"><div style="width:720px"><img class="ph" src="{ROOT}/twin_lh2.jpg" style="width:720px;height:405px;border:1px solid #E2E7EE"><div class="cap">디지털트윈 시연 화면 · 액화수소충전소 3D 재현 배경 · 동인엔시스 TestBench #1 (제어반 2면 · 모터 2대)</div></div>'
+ f'<div class="row top"><div style="width:720px"><img class="ph" src="{ROOT}/twin_lh2.jpg" style="width:720px;height:405px;border:1px solid #E2E7EE"><div class="cap">디지털트윈 시연 화면 · 액화수소충전소 3D 재현 배경 · 직접 보기 <a href="https://donginensis.com/digital-twin.html?bg=lh2" style="color:#1857A5;font-weight:600;text-decoration:none">donginensis.com/digital-twin.html?bg=lh2</a></div></div>'
  '<div class="col" style="flex:1;gap:16px">'
  +blk('실시간 3D 상태 표시',['지능형 제어반의 운전 데이터를 설비 3D 모델에 연결','운전 · 정지 · 경고 · 위험 · 통신끊김 5단계 판정 — 제어반·모터 색, 경보음, 판정 원인을 함께 표시','웹(PC · 태블릿 · 휴대폰)으로 시연 중, 현장 앱(Unity) 연동 개발 중'])
  +blk('수집 항목 (호기별)',['PLC: 권선 온도 3점 · 베어링 온도 2점(PT100), 회전속도(엔코더), 대기 온·습도(4~20mA), 디지털 입력 8점','Modbus TCP: 전압 · 전류 · 전력량 (EOCR · 전력계)'])
