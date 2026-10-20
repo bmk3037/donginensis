@@ -5,7 +5,7 @@
 결과: video/company-intro_kr.mp4 + .jpg (25MB 이하)
 
 나레이션 대본·자막·배경음악·장면 시간표는 build_intro.py(SCENES['kr'])를 그대로 쓰고 화면만 새로 그린다.
-  - 나레이션: edge-tts에서 단어 시각(WordBoundary)까지 받아, 자막과 화면 움직임을 실제 읽는 시각에 맞춘다
+  - 나레이션: narration.py (edge-tts 또는 타입캐스트, TTS_ENGINE)에서 단어 시각까지 받아, 자막과 화면 움직임을 실제 읽는 시각에 맞춘다
   - 화면: 쪽을 1920×1080으로 그린 뒤 요소마다 떼어 내고(위 요소부터 지워 가며 바탕 판을 만듦) 프레임마다 다시 합성한다
       글자(잉크)는 바탕색으로 나눈 값을 곱해 합성 → 다 그려진 화면은 원본 쪽과 같다
       카드·원·배지는 불투명 합성, 사진은 원본 이미지를 꺼내 확대·노출 효과 후 둥근 모서리로 자른다
@@ -39,38 +39,9 @@ def e_back(u, k=1.6): u = cl(u); return 1 + (k + 1) * (u - 1) ** 3 + k * (u - 1)
 
 
 # ── 나레이션: 단어 시각까지 받는 TTS
-async def tts_words(sc, voice, rate, base):
-    import edge_tts
-    lines = [B.TTS_TEXT.get(l, l) for l in sc['lines']]; text = ' '.join(lines)
-    mp3, wav, meta = f'{base}.mp3', f'{base}.wav', f'{base}.json'
-    ok = os.path.exists(meta) and json.load(open(meta)).get('text') == text and json.load(open(meta)).get('rate') == rate
-    if not ok:
-        words = []
-        with open(mp3, 'wb') as f:
-            async for ch in edge_tts.Communicate(text, voice, rate=rate, boundary='WordBoundary').stream():
-                if ch['type'] == 'audio': f.write(ch['data'])
-                elif ch['type'] == 'WordBoundary': words.append([ch['offset'] / 1e7, (ch['offset'] + ch['duration']) / 1e7, ch['text']])
-        B.run([B.FF, '-v', 'error', '-y', '-i', mp3, '-ac', '1', '-ar', '48000', wav + '.raw.wav'])
-        sr, x = B.read_wav(wav + '.raw.wav')
-        idx = np.where(np.abs(x) > 0.012)[0]; a = max(0, int(idx[0] - 0.08 * sr)); b = min(len(x), int(idx[-1] + 0.12 * sr))
-        B.run([B.FF, '-v', 'error', '-y', '-i', wav + '.raw.wav', '-af', f'atrim={a / sr:.3f}:{b / sr:.3f},asetpts=PTS-STARTPTS', wav]); os.remove(wav + '.raw.wav')
-        words = [[max(0.0, s - a / sr), e - a / sr, w] for s, e, w in words]
-        json.dump(dict(text=text, rate=rate, words=words, dur=(b - a) / sr), open(meta, 'w'), ensure_ascii=False)
-    m = json.load(open(meta)); sr, x = B.read_wav(wav)
-    starts, p = [], 0
-    for l in lines: starts.append(p); p += len(l) + 1
-    pos, tagged = 0, []
-    for s, e, w in m['words']:                      # 단어 → 몇 번째 문장인지(글자 위치로)
-        i = text.find(w, pos); i = pos if i < 0 else i; pos = i + len(w)
-        tagged.append((s, e, w, max(k for k in range(len(starts)) if starts[k] <= i)))
-    cues = []
-    for li in range(len(lines)):
-        ws = [t for t in tagged if t[3] == li]
-        cues.append((ws[0][0], ws[-1][1]) if ws else (0.0, m['dur']))
-    y, rem, cut = B.compress_pauses(sr, x, cues + [(s, e) for s, e, _, _ in tagged])
-    B.write_wav(f'{base}_c.wav', sr, y)
-    sc['wav'] = f'{base}_c.wav'; sc['ndur'] = len(y) / sr; sc['rel_cues'] = rem[:len(cues)]; sc['cut'] = round(cut, 2)
-    sc['words'] = [(a, b, t[2]) for (a, b), t in zip(rem[len(cues):], tagged)]
+async def tts_words(sc, voice, rate, base, lang='kr'):
+    import narration
+    await narration.tts_words(sc, voice, rate, base, lang)
 
 
 # ── 그리기 도우미 (화면 좌표, float 배열 0~1)
@@ -678,7 +649,7 @@ def prepare(lang, n=0):
     scenes = [dict(s) for s in (B.SCENES[lang][:n] if n else B.SCENES[lang])]
     work = f'{B.OUT}/motion_{lang}'; os.makedirs(f'{work}/tts', exist_ok=True); os.makedirs(f'{work}/seg', exist_ok=True)
     async def tts_all():
-        for si, sc in enumerate(scenes): await tts_words(sc, B.VOICE[lang], B.RATE[lang], f'{work}/tts/s{si:02d}')
+        for si, sc in enumerate(scenes): await tts_words(sc, B.VOICE[lang], B.RATE[lang], f'{work}/tts/s{si:02d}', lang)
     asyncio.run(tts_all())
     return scenes, B.timeline(scenes), work
 
