@@ -4,7 +4,7 @@
 
 | 결과물 | 원본 | 생성 명령 |
 |---|---|---|
-| `files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf` (수소전문기업 사업분야, 20장) | `build_hydrogen.py` | `python3 build_hydrogen.py` → `out/h2_profile.pdf` |
+| `files/DONG-IN-ENSIS_Hydrogen-Profile_KR.pdf` (수소전문기업 사업분야, 21장) | `build_hydrogen.py` | `python3 build_hydrogen.py` → `out/h2_profile.pdf`. 배포본은 글자를 직접 고친 부분이 있어 2026.10 디지털트윈 쪽(12쪽)은 `patch_hydrogen_twin.py`로 끼워 넣음(뒤쪽 번호만 고침). 그림 `twin_lh2.jpg` = 홈페이지 디지털트윈 시연 화면을 액화수소충전소 3D 배경으로 찍은 것 |
 | (예전) 회사소개서 Major Reference 3장 (국문·영문) | `build_reference.py` | `python3 build_reference.py` → `out/ref_KR.pdf`, `out/ref_EN.pdf`. 지금 통합본에는 쓰지 않음(국문·영문 모두 실적 7장으로 교체) |
 | `files/DONG-IN-ENSIS_Company-Profile_KR.pdf` (회사소개서 국문, 23장) | `build_profile_refs.py` | `python3 build_profile_refs.py` → `base/profile_base_KR.pdf`(원본 없는 16장) 사이에 실적 7장을 끼워 `files/`에 저장 |
 | `files/DONG-IN-ENSIS_Company-Profile_EN.pdf` (회사소개서 영문, 23장 · 국문과 같은 구성) | `build_profile_refs_en.py` | `python3 build_profile_refs_en.py` → `base/profile_base_EN.pdf` 사이에 영문 실적 7장을 끼워 `files/`에 저장(무손실 압축 저장) |
