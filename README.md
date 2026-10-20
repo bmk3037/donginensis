@@ -29,6 +29,7 @@
 ## 디지털트윈 시연 화면
 - `digital-twin.html` · `en/digital-twin.html` (메인 '데이터 연결 구조' 아래 버튼에서 연결). 화면 꾸밈은 `css/twin.css`, 3D·동작은 `js/twin.js`(국문·영문 문구가 한 파일에 함께 있음), 3D 모델은 `files/twin/`.
 - 시연용 모의 데이터로만 동작하고 외부 서버에 연결하지 않습니다. 실제 계측 연결은 현장 앱(Unity)에서 합니다.
+- 배경 두 가지: HVAC·ESS 실증 기계실(기본) · 액화수소충전소(`?bg=lh2`, 화면 아래 「배경」 버튼으로도 전환). 수소전문기업 PDF 12쪽이 `digital-twin.html?bg=lh2` 를 가리킵니다. 영문판 충전소는 벽 글씨만 「LH2 Station」(`lh2_site_en.glb`).
 - `files/twin/*.glb`는 홈페이지용으로 그림을 JPEG로 줄인 판입니다(각 약 0.8MB). 원본 3D·Unity 작업 파일은 저장소 밖(구글 드라이브)에 둡니다. 영문판 기계실(`energy_room_en.glb`)은 바닥·벽 글씨만 영문입니다.
 
 ## 업데이트가 바로 안 보일 때

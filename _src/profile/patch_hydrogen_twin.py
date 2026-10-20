@@ -36,8 +36,13 @@ def doc(body, extra_css=''):
 async def main():
     os.makedirs(OUT, exist_ok=True)
     src = fitz.open(PDF)
-    assert src.page_count == 20, f'배포본이 이미 {src.page_count}쪽입니다 (이미 끼웠으면 다시 돌리지 마세요)'
     await render(doc(NEW), os.path.join(OUT, '_twin_page.pdf'))
+    if src.page_count == 21 and 'Digital Twin' in src[AT].get_text():
+        # 이미 끼운 배포본: 12쪽만 새로 그린 것으로 바꾼다 (쪽 번호는 이미 맞음)
+        src.delete_page(AT)
+        src.insert_pdf(fitz.open(os.path.join(OUT, '_twin_page.pdf')), start_at=AT)
+        return save(src)
+    assert src.page_count == 20, f'배포본이 {src.page_count}쪽입니다 (20쪽 원본 또는 디지털트윈을 끼운 21쪽이어야 함)'
     # 새 쪽 번호 13~20 (배경 없이 번호만, 원래 .foot 자리)
     nums = ''.join(f'<div class="page" style="background:transparent"><div class="foot"><span></span><span>{n:02d}</span></div></div>' for n in range(13, 21))
     # 배경 없이 그리면 크롬이 옅은 글자를 진하게 바꾸므로 색을 그대로 쓰게 한다
@@ -54,6 +59,9 @@ async def main():
         p.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE, graphics=fitz.PDF_REDACT_LINE_ART_NONE)
         p.show_pdf_page(p.rect, numdoc, k, overlay=True)
     src.insert_pdf(fitz.open(os.path.join(OUT, '_twin_page.pdf')), start_at=AT)
+    save(src)
+
+def save(src):
     tmp = os.path.join(OUT, 'h2_profile_patched.pdf')
     src.subset_fonts()
     src.save(tmp, garbage=4, deflate=True)
