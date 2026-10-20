@@ -185,9 +185,10 @@ async def tts_scene(sc, voice, rate, base):
     sc['wav'] = f'{base}_c.wav'; sc['ndur'] = len(y) / sr; sc['rel_cues'] = cues; sc['cut'] = round(cut, 2)
 
 
-async def tts_all(scenes, voice, rate, tdir):
+async def tts_all(scenes, voice, rate, tdir, lang='kr'):
+    import narration   # 엔진(edge·타입캐스트)과 단어 시각 처리는 narration.py
     os.makedirs(tdir, exist_ok=True)
-    for si, sc in enumerate(scenes): await tts_scene(sc, voice, rate, f'{tdir}/s{si:02d}')
+    for si, sc in enumerate(scenes): await narration.tts_words(sc, voice, rate, f'{tdir}/s{si:02d}', lang)
 
 
 def timeline(scenes):
@@ -324,7 +325,7 @@ def main():
     scenes = [dict(s) for s in (SCENES[lang][:a.sample] if a.sample else SCENES[lang])]
     work = f'{OUT}/work_{lang}'; os.makedirs(work, exist_ok=True)
     bgm = ensure_bgm()
-    asyncio.run(tts_all(scenes, VOICE[lang], RATE[lang], f'{work}/tts'))
+    asyncio.run(tts_all(scenes, VOICE[lang], RATE[lang], f'{work}/tts', lang))
     total = timeline(scenes)
     json.dump(scenes, open(f'{work}/timeline.json', 'w'), ensure_ascii=False, indent=1, default=list)
     print(f'[{lang}] scenes {len(scenes)} | total {total:.1f}s | narration {sum(sc["ndur"] for sc in scenes):.1f}s (쉼 {sum(sc["cut"] for sc in scenes):.1f}s 줄임) | per scene', [round(sc['dur'], 1) for sc in scenes])

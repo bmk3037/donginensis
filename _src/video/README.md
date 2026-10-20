@@ -15,6 +15,13 @@
 - 장면별 연출은 `page_groups()`에 쪽 좌표(1440×810)로 적혀 있습니다. 회사소개서 쪽 배치가 바뀌면 이 좌표도 고쳐야 합니다. 카드 안의 글 줄은 자동으로 나눕니다(`Items.bands`).
 - 렌더링은 4개 프로세스로 6분쯤 걸립니다.
 
+## 나레이션 음성(`narration.py`)
+- 기본은 Microsoft Edge 음성(edge-tts, 무료)이고, `TTS_ENGINE=typecast`로 타입캐스트 음성을 쓸 수 있습니다. 두 생성기(`build_motion.py`, `build_intro.py`) 모두 이 설정을 따릅니다.
+- 타입캐스트에 필요한 환경변수: `TYPECAST_API_KEY`(저장소에 적지 않음), `TYPECAST_VOICE_KR`·`TYPECAST_VOICE_EN`(목소리 voice_id), 선택 `TYPECAST_MODEL`(기본 ssfm-v30).
+- 목소리 고르기: `python3 _src/video/narration.py voices kr` → 후보 voice_id로 `python3 _src/video/narration.py sample kr tc_… tc_…` (대본 첫 장면을 읽힌 샘플이 `out/voice_samples/`에 생김).
+- 타입캐스트는 단어 시각을 함께 받아(with-timestamps) 자막과 화면 움직임을 맞춥니다. 장면별 결과는 `out/…/tts/`에 엔진·목소리·속도와 함께 저장돼, 같은 설정으로 다시 만들 때는 크레딧을 쓰지 않습니다.
+- 예: `TTS_ENGINE=typecast python3 _src/video/build_motion.py` (국문) · `TTS_ENGINE=typecast python3 _src/video/build_intro.py en` (영문)
+
 ## 쪽 확대 방식(`build_intro.py`, 현재 영문)
 
 - 장면은 회사소개서 PDF(`files/DONG-IN-ENSIS_Company-Profile_KR.pdf` · `_EN.pdf`)의 쪽을 그대로 씁니다. 소개서를 고쳐 다시 만들면 영상도 다시 만듭니다.
