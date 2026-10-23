@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>/* Layout: 홈페이지와 같은 남색 상단 바(로고) 아래, 왼쪽은 입력 순서(1~5), 오른쪽은 만들어질 프로젝트 폴더.
    도면 느낌: 모눈종이 배경, 직각 테두리, 단계마다 표제란 같은 머리. 밝은 화면 하나로 고정한다.
-   Color: 기록양식집(DI-IMS-F-01) 엑셀 서식과 같은 색 — 제목·표 머리 #1857A5, 항목칸 #E8EEF6, 미리 적힌 칸 #F4F6F9,
+   Color: 기록양식집(DI-IMS-F-01) 엑셀 서식과 같은 색 — 제목·표 머리 남색 #0A2A55(동인엔시스 메인 컬러), 항목칸 #E8EEF6, 미리 적힌 칸 #F4F6F9,
    테두리 #8A9BB0, 글자 #263445. 로고 i 점의 빨강 #E83E30은 상단 바 아래 선과 필수 표시에만 쓴다. */
 :root {
   color-scheme: light;
@@ -28,11 +28,11 @@
   --ink: #263445;
   --muted: #55657a;
   --line: #8a9bb0;
-  --accent: #1857a5;
+  --accent: #0a2a55;
   --accent-ink: #ffffff;
   --accent-soft: #e8eef6;
   --navy: #0a2a55;
-  --navy-2: #0f3f7e;
+  --navy-2: #1a3f73;
   --brand-red: #e83e30;
   --ok: #1d6b45;
   --ok-soft: #e2f2e9;
@@ -50,9 +50,9 @@
   --fs-xl: 18px;
   --fs-2xl: 28px;
   --label: #e8eef6;
-  --grid: rgba(24,87,165,0.06);
-  --head: #1857a5;
-  --th: #1857a5;
+  --grid: rgba(10,42,85,0.06);
+  --head: #0a2a55;
+  --th: #0a2a55;
   --th-ink: #ffffff;
 }
 * { box-sizing: border-box; }
@@ -454,6 +454,40 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-tools { align-items: center; }
 #view-quote .q-inline input.num-in { width: 72px; flex: none; padding: 6px 8px; text-align: right; }
 .q-tpl .file-name { font-family: var(--font-ui); font-size: var(--fs-sm); }
+/* 타사 → 슈나이더 대체 */
+.q-xref { border: 1px solid var(--line); background: var(--surface); }
+.q-xref > summary { cursor: pointer; padding: 10px 12px; font-weight: 600; font-size: var(--fs-md); color: var(--accent); }
+.q-xref > summary .sub { font-weight: 400; }
+.q-xref[open] > summary { border-bottom: 1px solid var(--line); background: var(--accent-soft); }
+.q-xref-in { display: grid; gap: 10px; padding: 12px; }
+.q-xref-in > label { font-size: var(--fs-xs); font-weight: 600; color: var(--accent); }
+.q-xref-in .help, .q-xref-in .row-actions { margin: 0; }
+.x-rates { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+.x-rates:empty { display: none; }
+.x-rates-h { flex-basis: 100%; font-size: var(--fs-xs); font-weight: 600; color: var(--accent); }
+#view-quote .x-rates input.num-in { width: 64px; flex: none; padding: 5px 7px; text-align: right; }
+.x-result { display: grid; gap: 8px; }
+.x-table { max-height: 50vh; }
+.x-table .tbl { min-width: 1000px; table-layout: fixed; }
+.x-table th, .x-table td { padding: 4px 4px; vertical-align: top; }
+.x-table td input[type="text"] { width: 100%; min-width: 0; padding: 5px 5px; }
+.x-table .c-no { width: 32px; text-align: center; color: var(--muted); }
+.x-table .c-act { width: 40px; text-align: center; }
+.x-table .c-act .btn-icon { min-width: 28px; padding: 2px 6px; }
+.x-c-from { width: 17%; } .x-c-qty { width: 6%; } .x-c-how { width: 9%; } .x-c-to { width: 13%; } .x-c-grp { width: 7%; }
+.x-c-money { width: 8.5%; } .x-c-rate { width: 5%; } .x-c-note { width: 16%; }
+.x-from b { display: block; font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-xs); overflow-wrap: anywhere; }
+.x-from .sub { display: block; font-size: var(--fs-xs); }
+.x-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.x-table input.x-n { text-align: right; font-variant-numeric: tabular-nums; }
+.x-table input.x-to { font-family: var(--font-mono); }
+.x-how .chip { margin: 0 4px 3px 0; white-space: nowrap; }
+.x-note { font-size: var(--fs-xs); white-space: pre-line; overflow-wrap: anywhere; }
+.x-note .btn { margin-top: 4px; }
+.x-table tr.x-miss td { background: var(--bad-soft); }
+.x-table tr.x-norate td.x-unit::after { content: 'LP·할인율'; color: var(--warn); font-size: var(--fs-xs); }
+.x-sum { margin: 0; font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+.x-sum .x-warn { color: var(--bad); }
 .q-forms { display: grid; gap: 6px; }
 .q-forms .check { align-items: flex-start; font-size: var(--fs-sm); }
 .q-seal { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
@@ -461,6 +495,8 @@ input[type="number"] { font: inherit; padding: 7px 9px; border: 1px solid var(--
 .q-co summary { font-size: var(--fs-sm); }
 .q-co .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 #view-quote.q-locked > .top, #view-quote.q-locked > .layout { display: none; }
+/* display를 정한 칸(.q-lock·.q-margin·.btn 등)도 hidden이면 숨긴다 */
+#view-quote [hidden] { display: none !important; }
 .q-lock { display: grid; place-items: center; padding: 48px 0 64px; }
 .q-lock-card { width: min(100%, 440px); display: grid; gap: 14px; padding: 24px; background: var(--surface); border: 1.5px solid var(--accent); box-shadow: 4px 4px 0 var(--accent-soft); }
 .q-lock-card h1 { font-size: var(--fs-xl); }
@@ -728,7 +764,7 @@ input[type="text"].num { text-align: right; font-variant-numeric: tabular-nums; 
   'use strict';
 
   var W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
-  var INK = '263445', HEAD = '1857A5', ZEBRA = 'F0F5FB', LINE = 'D3DDE8', MUTED = '5A6577';
+  var INK = '263445', HEAD = '1857A5', ZEBRA = 'FFFFFF', LINE = 'D3DDE8', MUTED = '5A6577';
   var CONTENT_TW = 9638;            // 본문 폭(twip) = A4 210mm - 좌우 20mm
   var EMU_PER_MM = 36000;
 
@@ -2419,7 +2455,6 @@ window.GrantPlan = (function () {
         var c = row.getCell(j + 1);
         c.value = v || ''; c.font = font; c.border = box;
         c.alignment = { vertical: 'top', wrapText: true, horizontal: j === 0 || j === 8 ? 'center' : undefined };
-        if (i % 2 === 1) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F5FB' } };
       });
       row.getCell(9).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fs.length ? 'FFE3F4EA' : 'FFFCE6E3' } };
     });
