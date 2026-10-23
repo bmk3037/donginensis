@@ -603,7 +603,6 @@
         var c = row.getCell(j + 1);
         c.value = v || ''; c.font = font; c.border = box;
         c.alignment = { vertical: 'top', wrapText: true, horizontal: j === 0 || j === 8 ? 'center' : undefined };
-        if (i % 2 === 1) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F5FB' } };
       });
       row.getCell(9).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fs.length ? 'FFE3F4EA' : 'FFFCE6E3' } };
     });

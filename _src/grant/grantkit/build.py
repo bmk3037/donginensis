@@ -50,7 +50,7 @@ FONT = 'Malgun Gothic'
 INK = RGBColor(0x26, 0x34, 0x45)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 MUTED = RGBColor(0x5A, 0x65, 0x77)
-HEAD_FILL, ZEBRA_FILL, LINE = '1857A5', 'F0F5FB', 'D3DDE8'
+HEAD_FILL, ZEBRA_FILL, LINE = '1857A5', 'FFFFFF', 'D3DDE8'   # 동인엔시스 서식: 연한 파란 칸 없음(머리행만 파랑, 대표 지시 2026.10.23)
 BULLET_NUM_ID = '2'          # 매뉴얼의 글머리표 목록 번호
 
 

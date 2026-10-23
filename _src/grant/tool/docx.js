@@ -6,7 +6,7 @@
   'use strict';
 
   var W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
-  var INK = '263445', HEAD = '1857A5', ZEBRA = 'F0F5FB', LINE = 'D3DDE8', MUTED = '5A6577';
+  var INK = '263445', HEAD = '1857A5', ZEBRA = 'FFFFFF', LINE = 'D3DDE8', MUTED = '5A6577';
   var CONTENT_TW = 9638;            // 본문 폭(twip) = A4 210mm - 좌우 20mm
   var EMU_PER_MM = 36000;
 

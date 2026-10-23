@@ -13,7 +13,7 @@ from .project import Project
 THIN = Side(style='thin', color='D3DDE8')
 BOX = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
 HEAD = PatternFill('solid', fgColor='1857A5')
-ZEBRA = PatternFill('solid', fgColor='F0F5FB')
+ZEBRA = PatternFill(fill_type=None)   # 연한 파란 칸 없음(대표 지시 2026.10.23)
 DONE = PatternFill('solid', fgColor='E3F4EA')
 TODO = PatternFill('solid', fgColor='FCE6E3')
 INK = '263445'
