@@ -119,6 +119,20 @@ def _cell_style(cell, fill):
     cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
 
 
+NUM_HEADS = {'번호', '순번', '연번', 'No', 'No.', 'NO', '구분', '순서'}
+
+
+def _num_col(head, j):
+    """머리글이 번호·순번·연번·No·구분인 칸"""
+    return bool(head) and j < len(head) and str(head[j]).strip() in NUM_HEADS
+
+
+def _is_marker(v):
+    """①② 같은 원 숫자, (1)·1) 같은 짧은 번호 표시"""
+    import re
+    return bool(re.fullmatch(r'[①-⑳]|\(?\d{1,2}\)', str('' if v is None else v).strip()))
+
+
 def _cell_text(cell, text, head=False, align=None, bold=None):
     cell.text = ''
     for i, line in enumerate(str('' if text is None else text).split('\n')):
@@ -276,7 +290,8 @@ class Writer:
                     v = f'{v:,}'
                 c = t.cell(r0 + i, j)
                 _cell_style(c, ZEBRA_FILL if shaded else 'FFFFFF')
-                align = WD_ALIGN_PARAGRAPH.CENTER if spec.get('가운데') else (WD_ALIGN_PARAGRAPH.RIGHT if num else None)
+                mid = spec.get('가운데') or _num_col(head, j) or _is_marker(v)   # 번호 칸·①② 표시는 가운데(대표 지시 2026.10.23)
+                align = WD_ALIGN_PARAGRAPH.CENTER if mid else (WD_ALIGN_PARAGRAPH.RIGHT if num else None)
                 _cell_text(c, v, align=align, bold=True if total else None)
             _row_flags(t.rows[r0 + i])
         for row in t.rows:
