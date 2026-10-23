@@ -856,7 +856,8 @@ input[type="text"].num { text-align: right; font-variant-numeric: tabular-nums; 
         var v = row[j] == null ? '' : row[j];
         var num = typeof v === 'number' || /^-?[\d,]+(\.\d+)?\s*(%|원)?$/.test(String(v).trim());
         if (typeof v === 'number') v = v.toLocaleString('ko-KR');
-        return cellXml(v, { w: w, fill: fill, bold: total, align: spec.center ? 'center' : (num ? 'right' : null) });
+        var mid = spec.center || /^(번호|순번|연번|No\.?|NO|구분|순서)$/.test(String(head[j] || '').trim()) || /^[①-⑳]$|^\(?\d{1,2}\)$/.test(String(v).trim());   // 번호 칸은 가운데
+        return cellXml(v, { w: w, fill: fill, bold: total, align: mid ? 'center' : (num ? 'right' : null) });
       }).join('') + '</w:tr>';
     });
     x += '</w:tbl>';
