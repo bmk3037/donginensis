@@ -1,0 +1,146 @@
+{
+ "_설명": "페이지별 목표 검색어. 1순위(main)는 제목(title)·큰 제목(H1)·설명(description)·본문에, 2순위(sub)는 설명·본문에 들어가야 한다. 바꿀 때는 영문 en_* 도 같이.",
+ "index.html": {
+  "main": [
+   "지능형 제어반",
+   "제어반 제작"
+  ],
+  "sub": [
+   "자동제어반",
+   "PLC 제어반",
+   "제어반 설계",
+   "부산 제어반",
+   "예지보전"
+  ],
+  "en_main": [
+   "control panel"
+  ],
+  "en_sub": [
+   "PLC control panel",
+   "Korea",
+   "predictive maintenance"
+  ]
+ },
+ "company.html": {
+  "main": [
+   "동인엔시스"
+  ],
+  "sub": [
+   "제어반 제작",
+   "부산",
+   "수소전문기업",
+   "자동제어"
+  ],
+  "en_main": [
+   "DONG-IN ENSIS"
+  ],
+  "en_sub": [
+   "control panel",
+   "Busan",
+   "hydrogen"
+  ]
+ },
+ "manufacturing.html": {
+  "main": [
+   "예지보전",
+   "설비 모니터링"
+  ],
+  "sub": [
+   "지능형 제어반",
+   "노후 제어반 교체",
+   "펌프 제어반",
+   "모터",
+   "스마트공장"
+  ],
+  "en_main": [
+   "predictive maintenance",
+   "equipment monitoring"
+  ],
+  "en_sub": [
+   "control panel",
+   "pump",
+   "motor",
+   "smart factory"
+  ]
+ },
+ "partner.html": {
+  "main": [
+   "OT",
+   "설비 데이터"
+  ],
+  "sub": [
+   "PLC 연동",
+   "MES 연동",
+   "REST API",
+   "MQTT",
+   "스마트공장"
+  ],
+  "en_main": [
+   "OT",
+   "equipment data"
+  ],
+  "en_sub": [
+   "PLC integration",
+   "MES",
+   "REST API",
+   "MQTT"
+  ]
+ },
+ "applications.html": {
+  "main": [
+   "선박 제어반",
+   "수소"
+  ],
+  "sub": [
+   "데이터센터 냉각",
+   "액화수소충전소",
+   "스마트팩토리",
+   "송풍기 제어반"
+  ],
+  "en_main": [
+   "marine control panel",
+   "hydrogen"
+  ],
+  "en_sub": [
+   "data center cooling",
+   "liquid hydrogen",
+   "smart factory"
+  ]
+ },
+ "resources.html": {
+  "main": [
+   "회사소개서"
+  ],
+  "sub": [
+   "ISO",
+   "인증서",
+   "지능형 제어반"
+  ],
+  "en_main": [
+   "company profile"
+  ],
+  "en_sub": [
+   "ISO",
+   "certificate",
+   "control panel"
+  ]
+ },
+ "news.html": {
+  "main": [
+   "동인엔시스 보도자료"
+  ],
+  "sub": [
+   "지능형 제어반",
+   "수소",
+   "스마트팩토리"
+  ],
+  "en_main": [
+   "DONG-IN ENSIS"
+  ],
+  "en_sub": [
+   "press",
+   "control panel",
+   "hydrogen"
+  ]
+ }
+}
