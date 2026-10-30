@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>/* 인쇄물(전시회 배너) QR이 임시 주소로 연결되어 있어, 접속 시 정식 주소로 이동 */if(/\.workers\.dev$/.test(location.hostname)){location.replace('https://donginensis.com'+location.pathname+(location.search||'?utm_source=banner&utm_medium=qr&utm_campaign=flyasia2026')+location.hash);}</script>
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="../favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="../favicon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<title>PLC Programming & Control Panel Building | DONG-IN ENSIS</title>
+<meta name="description" content="PLC programming by a control panel maker: control logic, interlocks, drive integration, MQTT data links, factory testing and commissioning. Busan, Korea.">
+<meta name="keywords" content="PLC programming, PLC program development, PLC control panel, control panel manufacturer Korea, drive control, commissioning, Schneider SI partner, DONG-IN ENSIS">
+<link rel="canonical" href="https://donginensis.com/en/plc-programming.html">
+<link rel="alternate" hreflang="ko" href="https://donginensis.com/plc-programming.html">
+<link rel="alternate" hreflang="en" href="https://donginensis.com/en/plc-programming.html">
+<link rel="alternate" hreflang="x-default" href="https://donginensis.com/plc-programming.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DONG-IN ENSIS">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="PLC Programming & Control Panel Building | DONG-IN ENSIS">
+<meta property="og:description" content="PLC programming by a control panel maker: control logic, interlocks, drive integration, MQTT data links, factory testing and commissioning. Busan, Korea.">
+<meta property="og:url" content="https://donginensis.com/en/plc-programming.html">
+<meta property="og:image" content="https://donginensis.com/img/og_image_v4.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../css/style.css?v=20261024b">
+<style>body{word-break:normal;overflow-wrap:break-word}.hero h1{font-size:clamp(34px,4.8vw,62px)}</style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V7LTK4943Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V7LTK4943Q');
+</script>
+</head>
+<body>
+<header class="hd" id="hd">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="DONG-IN ENSIS home">
+      <img class="w" src="../img/logo_white.png" alt="DONG-IN ENSIS">
+      <img class="c" src="../img/logo_color.png" alt="DONG-IN ENSIS">
+    </a>
+    <nav class="gnb" aria-label="Main menu" style="gap:28px">
+      <a href="company.html">Company</a>
+      <a href="index.html#product">Control Panel</a>
+      <a href="manufacturing.html">For Manufacturers</a>
+      <a href="partner.html">For IT Partners</a>
+      <a href="applications.html">Applications</a>
+      <a href="index.html#media">Media</a>
+      <a href="resources.html">Resources</a>
+    </nav>
+    <div class="hd-r">
+      <div class="hsns"><a href="https://www.youtube.com/@%EC%88%A8%EC%9D%80%EC%84%A4%EB%B9%84%EB%8F%84%EA%B0%90" target="_blank" rel="noopener" aria-label="YouTube: Hidden Equipment Guide (opens in a new tab)" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23 12s0-3.6-.46-5.3a2.75 2.75 0 0 0-1.94-1.95C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.6.45A2.75 2.75 0 0 0 1.46 6.7C1 8.4 1 12 1 12s0 3.6.46 5.3a2.75 2.75 0 0 0 1.94 1.95c1.7.45 8.6.45 8.6.45s6.9 0 8.6-.45a2.75 2.75 0 0 0 1.94-1.95C23 15.6 23 12 23 12zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></a><a href="https://www.instagram.com/donginensis/" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></a><a href="https://www.threads.com/@donginensis" target="_blank" rel="noopener" aria-label="Threads (opens in a new tab)" title="Threads"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18.3 7.2C17 4.6 14.8 3.3 12 3.3c-4.6 0-7.6 3.1-7.6 8.7s3 8.7 7.6 8.7c3.9 0 6.6-2.1 6.6-5 0-3.4-3.4-4.6-6.6-4.3-2.2.2-3.6 1.3-3.5 2.8.1 1.4 1.4 2.3 3.2 2.2 2.6-.2 3.7-2.3 3.6-5.6"/></svg></a><a href="https://blog.naver.com/donginensis" target="_blank" rel="noopener" aria-label="Naver Blog (opens in a new tab)" title="Blog"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm4.2 4.5v9h4.1c2 0 3.3-1 3.3-2.6 0-1.1-.7-1.9-1.7-2.1.8-.3 1.3-1 1.3-1.9 0-1.5-1.2-2.4-3.1-2.4H8.2zm2 1.6h1.8c.8 0 1.3.4 1.3 1s-.5 1.1-1.3 1.1h-1.8V9.1zm0 3.6h2c.9 0 1.4.4 1.4 1.1s-.5 1.1-1.4 1.1h-2v-2.2z"/></svg></a></div>
+      <a href="../plc-programming.html" class="lang" hreflang="ko">KOR</a>
+      <a href="index.html#contact" class="btn btn-blue">Contact</a>
+      <button class="mbtn" id="mbtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav" aria-label="Mobile menu">
+    <a href="company.html">Company</a>
+    <a href="index.html#product">Control Panel</a>
+    <a href="manufacturing.html">For Manufacturers</a>
+    <a href="partner.html">For IT Partners</a>
+    <a href="applications.html">Applications</a>
+    <a href="index.html#media">Media</a>
+    <a href="resources.html">Resources</a>
+    <a href="index.html#contact">Contact</a>
+    <div class="mnav-sns"><a href="https://www.youtube.com/@%EC%88%A8%EC%9D%80%EC%84%A4%EB%B9%84%EB%8F%84%EA%B0%90" target="_blank" rel="noopener" aria-label="YouTube: Hidden Equipment Guide (opens in a new tab)" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23 12s0-3.6-.46-5.3a2.75 2.75 0 0 0-1.94-1.95C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.6.45A2.75 2.75 0 0 0 1.46 6.7C1 8.4 1 12 1 12s0 3.6.46 5.3a2.75 2.75 0 0 0 1.94 1.95c1.7.45 8.6.45 8.6.45s6.9 0 8.6-.45a2.75 2.75 0 0 0 1.94-1.95C23 15.6 23 12 23 12zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></a><a href="https://www.instagram.com/donginensis/" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></a><a href="https://www.threads.com/@donginensis" target="_blank" rel="noopener" aria-label="Threads (opens in a new tab)" title="Threads"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18.3 7.2C17 4.6 14.8 3.3 12 3.3c-4.6 0-7.6 3.1-7.6 8.7s3 8.7 7.6 8.7c3.9 0 6.6-2.1 6.6-5 0-3.4-3.4-4.6-6.6-4.3-2.2.2-3.6 1.3-3.5 2.8.1 1.4 1.4 2.3 3.2 2.2 2.6-.2 3.7-2.3 3.6-5.6"/></svg></a><a href="https://blog.naver.com/donginensis" target="_blank" rel="noopener" aria-label="Naver Blog (opens in a new tab)" title="Blog"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm4.2 4.5v9h4.1c2 0 3.3-1 3.3-2.6 0-1.1-.7-1.9-1.7-2.1.8-.3 1.3-1 1.3-1.9 0-1.5-1.2-2.4-3.1-2.4H8.2zm2 1.6h1.8c.8 0 1.3.4 1.3 1s-.5 1.1-1.3 1.1h-1.8V9.1zm0 3.6h2c.9 0 1.4.4 1.4 1.1s-.5 1.1-1.4 1.1h-2v-2.2z"/></svg></a></div>
+  </nav>
+</header>
+
+<section class="sub-hero">
+  <div class="wrap">
+    <div class="kicker">PLC Programming</div>
+    <h1>PLC programming,<br><span class="rl">by the company that builds the panel.</span></h1>
+    <p>Since 1991 DONG-IN ENSIS has designed and built control panels and done its own PLC and drive programming, factory testing and site commissioning. From PLC programming for new equipment to program work for panel replacement, one company handles it all.</p>
+    <div class="hero-cta" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:34px">
+      <a href="#inquiry" class="btn btn-white">Ask about PLC programming →</a>
+      <a href="tel:+82518623668" class="btn btn-ghost">Call +82-51-862-3668</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec prob">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Check</div>
+      <h2 class="h2">When to<br><span class="b">call us</span></h2>
+    </div>
+    <div class="check-grid rv">
+      <div class="check-item">You need one partner for both the control panel and the PLC program</div><div class="check-item">You are replacing an aging panel and need the PLC program reorganized</div><div class="check-item">Drive and motor sequences and interlocks must be set up precisely</div><div class="check-item">You want the PLC to send equipment data to MES or the cloud</div><div class="check-item">You need a supplier responsible through factory testing and commissioning</div><div class="check-item">You need control experience from demanding marine or hydrogen sites</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap prod-grid">
+    <figure class="prod-img rv">
+      <img src="../img/control-panel.jpg" alt="DONG-IN ENSIS PLC control panel and motor test rig" loading="lazy">
+      <figcaption>Intelligent Control Panel TestBench with panels and motors</figcaption>
+    </figure>
+    <div class="rv">
+      <div class="kicker">Scope</div>
+      <h2 class="h2">What our PLC<br><span class="b">programming covers</span></h2>
+      <ul class="feat"><li><span class="ic">01</span><div><b>Control logic design &amp; programming</b><span>We design operating sequences, interlocks, alarms and emergency stop logic and implement them in the PLC program.</span></div></li><li><span class="ic">02</span><div><b>Drive &amp; motor control</b><span>We link the PLC with drives to start, stop and control the speed of motors, pumps and blowers.</span></div></li><li><span class="ic">03</span><div><b>Equipment data links</b><span>The PLC publishes operating data over MQTT with TLS protection, and MES or monitoring systems connect through a REST API.</span></div></li><li><span class="ic">04</span><div><b>Factory testing &amp; commissioning</b><span>Panels and programs are tested in our factory before shipment, then commissioned on site with operator training.</span></div></li></ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec prob">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Brands</div>
+      <h2 class="h2">Main brands<br><span class="b">in our panels</span></h2>
+    </div>
+    <div class="data rv" style="margin-top:28px"><span>Schneider Electric (official SI partner)</span><span>SIEMENS</span><span>ABB</span><span>Fuji Electric</span><span>Phoenix Contact</span><span>Danfoss</span><span>Eaton</span></div>
+    <p class="fine2 rv" style="margin-top:14px">Tell us the PLC model and the state of the current program, and we will confirm whether we can take it on.</p>
+  </div>
+</section>
+
+<section class="sec proc">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Process</div>
+      <h2 class="h2">How we work</h2>
+    </div>
+    <div class="proc-grid rv" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))"><div class="proc-item"><div class="w">STEP 1</div><h4>Site review</h4><p>Equipment, existing panel and operating method</p></div><div class="proc-item"><div class="w">STEP 2</div><h4>Control design</h4><p>I/O list, sequences and interlocks</p></div><div class="proc-item"><div class="w">STEP 3</div><h4>Programming &amp; build</h4><p>PLC and drive programs, panel building and wiring</p></div><div class="proc-item"><div class="w">STEP 4</div><h4>Factory test</h4><p>Operation, interlock and alarm tests before shipment</p></div><div class="proc-item"><div class="w">STEP 5</div><h4>Commissioning</h4><p>Site commissioning, operator training and support</p></div></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Why DONG-IN ENSIS</div>
+      <h2 class="h2">35 years of panels,<br><span class="b">control proven on site</span></h2>
+    </div>
+    <div class="why-grid rv" style="grid-template-columns:repeat(3,1fr)"><div class="why-num"><b>35<sup>+</sup></b><span>Years · since 1991</span></div><div class="why-num"><b>750<sup>+</sup></b><span>Control system projects</span></div><div class="why-num"><b>SI</b><span>Schneider Electric official SI partner</span></div></div>
+    <div class="why-txt"><div class="rv"><h4>One company from design to commissioning</h4><p>Panel design, building and wiring, PLC programming, factory testing and site commissioning are handled by one company.</p></div><div class="rv"><h4>References in demanding sites</h4><p>Liquid hydrogen charging stations for a major Korean energy company, FGSS test facilities for a leading shipbuilder, and hybrid electric propulsion control for eco-friendly vessels.</p></div><div class="rv"><h4>Control that leads to data</h4><p>With the Intelligent Control Panel, equipment control and data collection happen in one panel and connect to the cloud without an extra gateway.</p></div></div>
+    <div class="corp rv"><a href="manufacturing.html">Intelligent Control Panel for manufacturers →</a><a href="partner.html">OT partnership for IT companies →</a><a href="applications.html">Applications →</a></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">FAQ</div>
+      <h2 class="h2">Frequently asked questions</h2>
+    </div>
+    <div class="faq rv"><details><summary>Which PLCs do you work with?</summary><p>We are an official Schneider Electric SI partner and have used SIEMENS, ABB, Fuji Electric and other brands in our panels. Tell us the PLC model and the state of the current program, and we will confirm whether we can take it on.</p></details><details><summary>Do we need a new program when replacing an existing panel?</summary><p>During the site review we check the existing panel and operating method, then propose which parts to keep and which to reorganize.</p></details><details><summary>Can you also collect equipment data after programming?</summary><p>Yes. With the Intelligent Control Panel, the PLC controls the equipment and sends operating data over MQTT to the cloud or your server, with no extra gateway.</p></details><details><summary>How do factory testing and commissioning work?</summary><p>Panels and programs are tested in our factory for operation, interlocks and alarms before shipment, followed by site commissioning and operator training.</p></details><details><summary>How long does it take and what does it cost?</summary><p>It depends on the number of machines, I/O size, control complexity and whether a panel is built. We quote with a proposed configuration after the site review. A standard Intelligent Control Panel project takes 9–15 weeks.</p></details></div>
+  </div>
+</section>
+
+<section class="sec form-sec" id="inquiry">
+  <div class="wrap form-wrap">
+    <div class="form-side rv">
+      <div class="kicker">Inquiry</div>
+      <h2 class="h2">Ask about<br><span class="b">PLC programming</span></h2>
+      <p class="lead">Tell us about your equipment and the work needed, and an engineer will review it and get back to you.</p>
+      <ul><li><b>Reply</b>Within 1–2 business days.</li><li><b>We review</b>Feasibility, recommended setup, expected schedule</li><li><b>Phone</b><a href="tel:+82518623668">+82-51-862-3668</a></li></ul>
+    </div>
+    <div class="rv">
+      <form class="iq" novalidate>
+        <input type="hidden" name="form_type" value="PLC 프로그램 개발"><input type="hidden" name="lang" value="EN">
+        <input type="hidden" name="utm_source"><input type="hidden" name="utm_medium"><input type="hidden" name="utm_campaign"><input type="hidden" name="referrer">
+        <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="row">
+          <div class="fld"><label class="t" for="company">Company<i>*</i></label><input type="text" id="company" name="company" required autocomplete="organization"></div>
+          <div class="fld"><label class="t" for="name">Name<i>*</i></label><input type="text" id="name" name="name" required autocomplete="name"></div>
+        </div>
+        <div class="row">
+          <div class="fld"><label class="t" for="position">Department / Position</label><input type="text" id="position" name="position"></div>
+          <div class="fld"><label class="t" for="phone">Phone<i>*</i></label><input type="tel" id="phone" name="phone" required autocomplete="tel"></div>
+        </div>
+        <div class="fld"><label class="t" for="email">E-mail<i>*</i></label><input type="email" id="email" name="email" required autocomplete="email"></div>
+        <div class="row">
+          <div class="fld"><label class="t" for="region">Site location</label><input type="text" id="region" name="region" placeholder="e.g. Busan, Korea"></div>
+          <div class="fld"><label class="t" for="control_type">PLC model · current control</label><input type="text" id="control_type" name="control_type" placeholder="e.g. Schneider M241, relay control"></div>
+        </div>
+        <div class="fld"><label class="t">Type of work (select all that apply)</label><div class="opts"><label><input type="checkbox" name="interest" value="New PLC program"> New PLC program</label><label><input type="checkbox" name="interest" value="Panel building + program"> Panel building + program</label><label><input type="checkbox" name="interest" value="Aging panel replacement"> Aging panel replacement</label><label><input type="checkbox" name="interest" value="Drive &amp; motor control"> Drive &amp; motor control</label><label><input type="checkbox" name="interest" value="Data link (MES, cloud)"> Data link (MES, cloud)</label><label><input type="checkbox" name="interest" value="Quotation"> Quotation</label></div></div>
+        <div class="fld"><label class="t" for="message">Message</label><textarea id="message" name="message" placeholder="Equipment, scope of work, preferred schedule, etc."></textarea></div>
+        <div class="agree">
+          <b>Consent to collection and use of personal information</b><br>
+          Items: company, name, position, phone, e-mail, message · Purpose: to review and respond to your inquiry · Retention: 1 year after the inquiry is resolved (or as required by law)<br>
+          You may decline, but we will not be able to receive your inquiry. See our <a href="privacy.html" target="_blank">Privacy Policy</a> for details.
+          <label><input type="checkbox" name="agree" value="동의" required> I agree to the collection and use of my personal information. (Required)</label>
+        </div>
+        <button type="submit" class="btn btn-blue" data-label="Send inquiry">Send inquiry</button>
+      </form>
+      <div class="iq-msg ok" style="display:none"><b>Thank you. We have received your inquiry.</b>We will contact you within 1–2 business days.</div>
+    </div>
+  </div>
+</section>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-top">
+      <div>
+        <img src="../img/logo_white.png" alt="DONG-IN ENSIS">
+        <p class="tag-line">Controlling equipment, connecting data.</p>
+        <ul>
+          <li>Head Office: 47, Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea</li>
+          <li>R&amp;D Center: 8F NS Tower, 39, Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea</li>
+          <li>Yangsan Factory 1: 107, Gongwon-ro, Sangbuk-myeon, Yangsan-si, Gyeongsangnam-do, Korea</li>
+          <li>Yangsan Factory 2: 103-5, Gongwon-ro, Sangbuk-myeon, Yangsan-si, Gyeongsangnam-do, Korea</li>
+          <li>Gijang Factory: 20, Dareumsan-gil, Jeonggwan-eup, Gijang-gun, Busan, Korea</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li>TEL: <a href="tel:+82518623668">+82-51-862-3668</a></li>
+          <li>FAX: +82-51-862-3325</li>
+          <li>E-mail: dongin@donginmne.com</li>
+        </ul>
+        <div class="sns"><a href="https://www.youtube.com/@%EC%88%A8%EC%9D%80%EC%84%A4%EB%B9%84%EB%8F%84%EA%B0%90" target="_blank" rel="noopener" aria-label="YouTube: Hidden Equipment Guide (opens in a new tab)" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23 12s0-3.6-.46-5.3a2.75 2.75 0 0 0-1.94-1.95C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.6.45A2.75 2.75 0 0 0 1.46 6.7C1 8.4 1 12 1 12s0 3.6.46 5.3a2.75 2.75 0 0 0 1.94 1.95c1.7.45 8.6.45 8.6.45s6.9 0 8.6-.45a2.75 2.75 0 0 0 1.94-1.95C23 15.6 23 12 23 12zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg><span>YouTube</span></a><a href="https://www.instagram.com/donginensis/" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg><span>Instagram</span></a><a href="https://www.threads.com/@donginensis" target="_blank" rel="noopener" aria-label="Threads (opens in a new tab)" title="Threads"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18.3 7.2C17 4.6 14.8 3.3 12 3.3c-4.6 0-7.6 3.1-7.6 8.7s3 8.7 7.6 8.7c3.9 0 6.6-2.1 6.6-5 0-3.4-3.4-4.6-6.6-4.3-2.2.2-3.6 1.3-3.5 2.8.1 1.4 1.4 2.3 3.2 2.2 2.6-.2 3.7-2.3 3.6-5.6"/></svg><span>Threads</span></a><a href="https://blog.naver.com/donginensis" target="_blank" rel="noopener" aria-label="Naver Blog (opens in a new tab)" title="Blog"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm4.2 4.5v9h4.1c2 0 3.3-1 3.3-2.6 0-1.1-.7-1.9-1.7-2.1.8-.3 1.3-1 1.3-1.9 0-1.5-1.2-2.4-3.1-2.4H8.2zm2 1.6h1.8c.8 0 1.3.4 1.3 1s-.5 1.1-1.3 1.1h-1.8V9.1zm0 3.6h2c.9 0 1.4.4 1.4 1.1s-.5 1.1-1.4 1.1h-2v-2.2z"/></svg><span>Blog</span></a></div>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div><a href="company.html">Company</a><a href="resources.html">Documents</a><a href="plc-programming.html">PLC Programming</a><a href="https://blog.naver.com/donginensis" target="_blank" rel="noopener">Blog (Korean)</a><a href="privacy.html"><b>Privacy Policy</b></a></div>
+      <div>Copyright © DONG-IN ENSIS CO., LTD. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+<script src="../js/site.js?v=20261024a"></script>
+</body>
+</html>

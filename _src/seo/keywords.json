@@ -142,5 +142,26 @@
    "control panel",
    "hydrogen"
   ]
+ },
+ "plc-programming.html": {
+  "main": [
+   "PLC 프로그램 개발"
+  ],
+  "sub": [
+   "PLC 프로그래밍",
+   "PLC 제어반",
+   "제어반 제작",
+   "시운전",
+   "인버터"
+  ],
+  "en_main": [
+   "PLC programming"
+  ],
+  "en_sub": [
+   "control panel",
+   "commissioning",
+   "drive",
+   "Korea"
+  ]
  }
 }
