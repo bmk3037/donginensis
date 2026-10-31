@@ -788,6 +788,17 @@ body:has(.subnav) section[id]{scroll-margin-top:136px}
 .ch .tx span{display:block;font-size:14px;color:var(--sub);margin-top:2px}
 .ch .go{font-size:14px;font-weight:700;color:var(--blue);white-space:nowrap}
 @media (max-width:720px){.ch-grid{grid-template-columns:1fr}.ch{grid-template-columns:48px 1fr;padding:16px}.ch .ic{width:48px;height:48px}.ch .go{grid-column:2;margin-top:-6px}}
-/* 영문 메뉴는 글자가 길어 머리 아이콘까지 넣으면 두 줄로 꺾임 → 넓은 화면에서만 아이콘 표시 */
+/* 영문 메뉴는 글자가 길어 머리 아이콘까지 넣으면 로고·메뉴가 붙음 → 영문은 머리 아이콘을 빼고 꼬리말·휴대폰 메뉴에서 연결 */
 html[lang="en"] .gnb a{white-space:nowrap}
-@media (max-width:1599px){html[lang="en"] .hsns{display:none}}
+html[lang="en"] .hsns{display:none}
+/* 머리 메뉴: 지능형 제어반 아래 펼침(지능형 제어반 소개 · PLC 프로그램 개발) */
+.gnb-dd{position:relative;display:flex;align-items:center}
+.gnb-dd>a::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;border:solid currentColor;border-width:0 1.6px 1.6px 0;transform:translateY(-3px) rotate(45deg);opacity:.75}
+.gnb-dd .dd{display:none;position:absolute;top:100%;left:-18px;padding-top:16px;z-index:60}
+.gnb-dd:hover .dd,.gnb-dd:focus-within .dd{display:block}
+.gnb-dd .dd::before{content:"";position:absolute;inset:16px 0 0;background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:0 0 10px 10px;box-shadow:0 14px 30px -14px rgba(10,42,85,.35)}
+.gnb-dd .dd a{position:relative;display:block;white-space:nowrap;padding:12px 22px;font-size:15px;color:var(--ink)!important}
+.gnb-dd .dd a+a{border-top:1px solid var(--line)}
+.gnb-dd .dd a:hover{color:var(--blue)!important;background:var(--bg2)}
+.mnav .msub{padding-left:34px!important;font-size:15px!important;color:var(--sub)!important}
+.mnav .msub::before{content:"└ ";color:var(--line)}
