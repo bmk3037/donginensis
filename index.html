@@ -36,7 +36,7 @@
   · 색상: Dongin Blue #1857A5 / Dongin Red #E83E30. 폰트: Pretendard (jsDelivr CDN).
 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261024b">
+<link rel="stylesheet" href="css/style.css?v=20261031a">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "(주)동인엔시스", "alternateName": ["동인엔시스", "DONG-IN ENSIS"], "url": "https://donginensis.com/", "inLanguage": "ko"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "지능형 제어반", "serviceType": "Industrial control panel", "brand": {"@type": "Brand", "name": "DONG-IN ENSIS"}, "provider": {"@type": "Organization", "name": "(주)동인엔시스", "url": "https://donginensis.com/"}, "description": "모터·펌프·송풍기를 제어하면서 온도·전류·진동 데이터를 함께 수집하고, 별도 수집장비 없이 MQTT/TLS로 클라우드나 고객사 서버에 연결하는 PLC 제어반. 조선·해양, 수소·에너지, 제조·스마트팩토리, 데이터센터에 적용.", "image": "https://donginensis.com/img/apps/marine-deck.jpg", "areaServed": "KR"}</script>
 <!-- Google tag (gtag.js) -->
@@ -60,7 +60,7 @@
     </a>
     <nav class="gnb" aria-label="주메뉴">
       <a href="company.html">회사소개</a>
-      <a href="#product">지능형 제어반</a>
+      <div class="gnb-dd"><a href="#product" aria-haspopup="true">지능형 제어반</a><div class="dd"><a href="#product">지능형 제어반 소개</a><a href="plc-programming.html">PLC 프로그램 개발</a></div></div>
       <a href="manufacturing.html">제조기업 도입</a>
       <a href="partner.html">IT기업 협업</a>
       <a href="applications.html">적용 분야</a>
@@ -77,6 +77,7 @@
   <nav class="mnav" id="mnav" aria-label="모바일 메뉴">
     <a href="company.html">회사소개</a>
     <a href="#product">지능형 제어반</a>
+    <a href="plc-programming.html" class="msub">PLC 프로그램 개발</a>
     <a href="manufacturing.html">제조기업 도입</a>
     <a href="partner.html">IT기업 협업</a>
     <a href="applications.html">적용 분야</a>
@@ -180,6 +181,7 @@
       <div class="data" aria-label="수집 데이터 예시">
         <span>모터 권선온도 U·V·W</span><span>베어링 온도</span><span>회전속도</span><span>전압·전류·전력량</span><span>진동</span><span>대기 온습도</span><span>운전 상태신호</span>
       </div>
+      <p style="margin-top:22px"><a href="plc-programming.html" class="btn btn-line">PLC 프로그램 개발 안내 →</a></p>
     </div>
   </div>
 </section>

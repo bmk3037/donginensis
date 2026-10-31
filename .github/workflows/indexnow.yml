@@ -1,0 +1,31 @@
+# 홈페이지가 바뀌면 바뀐 페이지 주소를 검색엔진(IndexNow: 네이버·빙 등)에 알린다.
+# 키 파일(루트의 32자리 .txt)은 검색엔진이 우리 사이트임을 확인하는 공개 파일이다.
+name: IndexNow
+
+on:
+  push:
+    branches: [main]
+    paths: ['**.html', 'sitemap.xml']
+  workflow_dispatch:
+    inputs:
+      all:
+        description: '사이트맵의 모든 주소를 보낼까요? (true/false)'
+        default: 'false'
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 바뀐 페이지 주소 모으기
+        id: urls
+        env:
+          BEFORE: ${{ github.event.before }}
+          ALL: ${{ github.event.inputs.all }}
+        run: python3 _src/seo/indexnow.py urls > urls.txt && cat urls.txt
+      - name: 배포 기다리기
+        run: sleep 150
+      - name: IndexNow 보내기
+        run: python3 _src/seo/indexnow.py send urls.txt
