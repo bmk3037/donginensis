@@ -775,7 +775,7 @@ body:has(.subnav) section[id]{scroll-margin-top:136px}
 .rpanel.open .rrow:nth-child(-n+2){border-top:0}
 @media (max-width:860px){.rpanel.open .rp-b{grid-template-columns:1fr}.rpanel.open .rrow:nth-child(odd){border-right:0}.rpanel.open .rrow:nth-child(2){border-top:1px solid #EEF2F6}}
 
-/* 미디어: 유튜브·인스타그램 채널 바로가기 */
+/* 미디어: 유튜브·인스타그램·블로그·스레드 채널 바로가기 */
 .ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
 .ch{display:grid;grid-template-columns:56px 1fr auto;gap:16px;align-items:center;padding:18px 20px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--ink);text-decoration:none;transition:border-color .2s,box-shadow .2s,transform .2s}
 .ch:hover{border-color:var(--blue);box-shadow:0 12px 28px -18px rgba(10,42,85,.45);transform:translateY(-2px)}
@@ -784,6 +784,8 @@ body:has(.subnav) section[id]{scroll-margin-top:136px}
 .ch .ic svg{width:30px;height:30px}
 .ch.yt .ic{background:#FF0000}
 .ch.ig .ic{background:radial-gradient(circle at 30% 107%,#FDD15E 0%,#F9A43B 10%,#F23D5C 45%,#C93AA8 65%,#5A5BD6 95%)}
+.ch.bl .ic{background:#03C75A}
+.ch.th .ic{background:#101010}
 .ch .tx b{display:block;font-size:17px;font-weight:800;letter-spacing:-.01em}
 .ch .tx span{display:block;font-size:14px;color:var(--sub);margin-top:2px}
 .ch .go{font-size:14px;font-weight:700;color:var(--blue);white-space:nowrap}
