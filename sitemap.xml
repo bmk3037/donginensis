@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://donginensis.com/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/"/>
     <priority>1.0</priority>
@@ -23,14 +23,14 @@
   </url>
   <url>
     <loc>https://donginensis.com/manufacturing.html</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/manufacturing.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/manufacturing.html"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://donginensis.com/plc-programming.html</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/plc-programming.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/plc-programming.html"/>
     <priority>0.8</priority>
@@ -44,7 +44,7 @@
   </url>
   <url>
     <loc>https://donginensis.com/applications.html</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/applications.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/applications.html"/>
     <priority>0.8</priority>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://donginensis.com/en/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/"/>
     <priority>0.8</priority>
@@ -79,14 +79,14 @@
   </url>
   <url>
     <loc>https://donginensis.com/en/manufacturing.html</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/manufacturing.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/manufacturing.html"/>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://donginensis.com/en/plc-programming.html</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/plc-programming.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/plc-programming.html"/>
     <priority>0.7</priority>
@@ -100,7 +100,7 @@
   </url>
   <url>
     <loc>https://donginensis.com/en/applications.html</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/applications.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/applications.html"/>
     <priority>0.8</priority>
