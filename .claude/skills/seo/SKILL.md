@@ -28,6 +28,11 @@ python3 _src/seo/check_seo.py en   # 영문
 - 바꾼 페이지는 `sitemap.xml`의 lastmod를 오늘 날짜로.
 - 국문·영문은 같은 작업에서 함께 고치고 `python3 _src/check_ko_en.py` 통과(CLAUDE.md).
 
-## 4. 마무리
+## 4. 검색엔진 알림 (자동)
+- `main`에 HTML이 바뀌어 올라가면 `.github/workflows/indexnow.yml`이 바뀐 페이지 주소를 IndexNow(네이버·빙 등)로 보낸다. 키 파일은 루트의 32자리 `.txt`(지우지 않는다).
+- 전체 다시 보내기: GitHub Actions에서 IndexNow를 수동 실행(all=true)하거나 `python3 _src/seo/indexnow.py send-all`.
+- 구글은 IndexNow를 받지 않는다. 사이트맵 lastmod로 다시 읽어 가며, 급하면 서치콘솔 「URL 검사 → 색인 생성 요청」.
+
+## 5. 마무리
 - 두 점검이 모두 「모든 목표 검색어가 들어 있습니다」, 점검 「이상 없음」이 되면 커밋·PR·머지 후 실서버에서 제목·설명이 바뀌었는지 확인한다.
 - 사용자에게: 네이버 서치어드바이저·구글 서치콘솔에서 사이트맵 다시 제출, 바뀐 주요 페이지 「수집 요청」을 안내한다.
