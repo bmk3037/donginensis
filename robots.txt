@@ -4,5 +4,6 @@ Disallow: /press/
 Disallow: /files/private/
 Disallow: /files/internal/
 Disallow: /internal.html
+Disallow: /files/partner/sample_
 
 Sitemap: https://donginensis.com/sitemap.xml
