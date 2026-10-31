@@ -23,7 +23,9 @@ KO = dict(
             '인버터·모터 운전 로직과 인터록을 정확하게 구성해야 한다', '설비 운전 데이터를 MES·클라우드로 보내도록 PLC를 구성하고 싶다',
             '공장검사와 현장 시운전까지 책임질 업체가 필요하다', '선박·수소처럼 까다로운 현장의 제어 경험이 필요하다'],
     scope_k='Scope', scope_h='PLC 프로그램 개발<br><span class="b">작업 범위</span>',
-    img_alt='동인엔시스 PLC 제어반과 모터 시험 설비', img_cap='제어반과 모터를 함께 시험하는 지능형 제어반 TestBench',
+    img_alt='PLC 프로그램 개발 – 엔지니어가 노트북으로 제어반 PLC 래더 프로그램을 작성하는 모습', img_cap='PLC 프로그래밍 – 제어반에 노트북을 연결해 펌프 운전 로직을 작성·점검합니다',
+    rack_alt='PLC 제어반 내부 – PLC 모듈·인버터와 정리된 제어 배선', rack_cap='PLC·인버터를 함께 구성하는 PLC 제어반 내부',
+    comm_alt='PLC 제어반 현장 시운전 – 태블릿으로 펌프 운전 상태를 확인하는 엔지니어', comm_cap='현장 시운전 – 제어반과 펌프를 연결해 운전 로직과 인터록을 확인합니다',
     scope=[('01', '제어 로직 설계·프로그램', '운전 순서, 인터록, 알람, 비상정지 로직을 설계하고 PLC 프로그래밍으로 구현합니다.'),
            ('02', '인버터·모터 운전 제어', 'PLC와 인버터를 연동해 모터·펌프·송풍기의 기동·정지와 속도 제어를 구성합니다.'),
            ('03', '설비 데이터 연동', 'PLC에서 MQTT로 운전 데이터를 보내고 TLS로 통신 구간을 보호합니다. MES·관제 시스템은 REST API로 연결합니다.'),
@@ -72,7 +74,9 @@ EN = dict(
             'Drive and motor sequences and interlocks must be set up precisely', 'You want the PLC to send equipment data to MES or the cloud',
             'You need a supplier responsible through factory testing and commissioning', 'You need control experience from demanding marine or hydrogen sites'],
     scope_k='Scope', scope_h='What our PLC<br><span class="b">programming covers</span>',
-    img_alt='DONG-IN ENSIS PLC control panel and motor test rig', img_cap='Intelligent Control Panel TestBench with panels and motors',
+    img_alt='PLC programming – an engineer writing a ladder program on a laptop connected to a control panel', img_cap='PLC programming – writing and checking pump logic on a laptop connected to the panel',
+    rack_alt='Inside a PLC control panel – PLC modules, a drive and tidy control wiring', rack_cap='Inside a PLC control panel built with PLC and drives',
+    comm_alt='PLC control panel commissioning on site – an engineer checking pump operation on a tablet', comm_cap='On-site commissioning – checking run logic and interlocks with the panel and pump connected',
     scope=[('01', 'Control logic design & programming', 'We design operating sequences, interlocks, alarms and emergency stop logic and implement them in the PLC program.'),
            ('02', 'Drive & motor control', 'We link the PLC with drives to start, stop and control the speed of motors, pumps and blowers.'),
            ('03', 'Equipment data links', 'The PLC publishes operating data over MQTT with TLS protection, and MES or monitoring systems connect through a REST API.'),
@@ -150,7 +154,7 @@ def body(L):
 <section class="sec">
   <div class="wrap prod-grid">
     <figure class="prod-img rv">
-      <img src="{L['root']}img/control-panel.jpg" alt="{e(L['img_alt'])}" loading="lazy">
+      <img src="{L['root']}img/plc/plc-programming-engineer.jpg" width="1600" height="900" style="height:auto" alt="{e(L['img_alt'])}" loading="lazy">
       <figcaption>{e(L['img_cap'])}</figcaption>
     </figure>
     <div class="rv">
@@ -162,13 +166,17 @@ def body(L):
 </section>
 
 <section class="sec prob">
-  <div class="wrap">
+  <div class="wrap prod-grid">
     <div class="rv">
       <div class="kicker">{L['brand_k']}</div>
       <h2 class="h2">{L['brand_h']}</h2>
+      <div class="data" style="margin-top:28px">{brands}</div>
+      <p class="fine2" style="margin-top:14px">{e(L['brand_note'])}</p>
     </div>
-    <div class="data rv" style="margin-top:28px">{brands}</div>
-    <p class="fine2 rv" style="margin-top:14px">{e(L['brand_note'])}</p>
+    <figure class="prod-img rv">
+      <img src="{L['root']}img/plc/plc-rack-inverter.jpg" width="1200" height="900" style="height:auto" alt="{e(L['rack_alt'])}" loading="lazy">
+      <figcaption>{e(L['rack_cap'])}</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -179,6 +187,10 @@ def body(L):
       <h2 class="h2">{L['proc_h']}</h2>
     </div>
     <div class="proc-grid rv" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">{proc}</div>
+    <figure class="prod-img rv" style="margin-top:28px">
+      <img src="{L['root']}img/plc/plc-commissioning.jpg" width="1600" height="900" alt="{e(L['comm_alt'])}" loading="lazy" style="height:auto;aspect-ratio:21/9;object-fit:cover;object-position:center 60%">
+      <figcaption>{e(L['comm_cap'])}</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -259,6 +271,7 @@ def build(L):
     head = re.sub(r'<meta name="keywords" content="[^"]*">', f'<meta name="keywords" content="{L["keywords"]}">', head)
     head = re.sub(r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{L["title"]}">', head)
     head = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{L["desc"]}">', head)
+    head = re.sub(r'(<meta (?:property="og:image"|name="twitter:image") content=")[^"]*(">)', r'\1https://donginensis.com/img/plc/og_plc.jpg\2', head)
     hd = head.index('</head>')  # 주소 바꾸기는 <head> 안에서만(머리 메뉴의 제조기업 도입 링크는 그대로)
     head = head[:hd].replace(old, NAME) + head[hd:]
     # 언어 바꾸기 링크(ENG/KOR)는 이 페이지의 짝으로
