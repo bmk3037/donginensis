@@ -16,6 +16,10 @@
 - 커밋 전 확인: `python3 _src/check_ko_en.py` — 페이지 짝, 자료실 파일·건수, 보도자료 순서, 연혁, 회사소개서 장수가 모두 맞아야 한다.
 - 회사소개 영상: 국문 `video/company-intro_kr.mp4`는 모션판 `_src/video/build_motion.py`, 영문 `_en.mp4`는 쪽 확대 방식 `_src/video/build_intro.py en`으로 만든다. 영문 모션판은 대표 요청으로 보류 중이다(2026.10, 국문만 먼저). 회사소개서 내용이나 대본(국문 SCENES)을 바꾸면 영문 대본도 같이 고치고 두 언어를 다시 만든다. 회사소개서 쪽 배치가 바뀌면 `build_motion.py`의 쪽별 좌표(page_groups)도 고친다.
 
+## 보도자료 (대표 지시, 2026.11.02)
+- **동인엔시스 보도자료에는 항상 홈페이지 주소를 넣는다.** 본문 끝에 `▶ 홈페이지: https://donginensis.com`(영문은 `https://donginensis.com/en/`)과, 기사 내용과 관련된 홈페이지 페이지 주소(예: 디지털트윈 시연 `https://donginensis.com/digital-twin.html`)를 함께 적는다. 회사 개요 표의 홈페이지 칸과는 별도로 둔다.
+- 보도사진은 가능하면 홈페이지에 실제로 올린 화면·사진(시연 화면 캡처 등)을 쓴다. 연출 이미지를 쓸 때는 캡션에 "이해를 돕기 위한 연출 이미지"라고 적는다.
+
 ## 검색 최적화(SEO)
 - 페이지 제목·설명·본문을 바꿀 때는 `python3 _src/seo/check_seo.py`(국문)·`… en`(영문)으로 목표 검색어(`_src/seo/keywords.json`)가 빠지지 않았는지 확인한다. 절차는 `.claude/skills/seo/SKILL.md`.
 
