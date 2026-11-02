@@ -1,0 +1,56 @@
+# (주)동인엔시스 (DONG-IN ENSIS)
+
+> 부산의 산업용 제어시스템 전문기업입니다. PLC로 설비를 제어하면서 운전 데이터를 함께 수집해 클라우드나 고객사 서버로 연결하는 '지능형 제어반'을 설계·제작합니다. 1991년 산업용 제어기기 공급으로 시작해 선박·에너지·플랜트 분야에서 750건 이상의 제어시스템 프로젝트를 수행했습니다.
+
+## 회사 기본 정보
+- 회사명: (주)동인엔시스 / DONG-IN ENSIS
+- 본사: 부산광역시 부산진구 진연로9번길 47
+- 전화: 051-862-3668
+- 이메일: dongin@donginmne.com
+- 홈페이지: https://donginensis.com/
+- 업종: 제어반(자동제어반·PLC 제어반·인버터 제어반·선박 제어반) 설계·제작, PLC 프로그램 개발, 설비 데이터 연동
+
+## 하는 일
+- 지능형 제어반: PLC·인버터로 모터·펌프·송풍기 등 설비를 제어하면서 온도·전류·진동 같은 운전 데이터를 수집하고, 별도 수집장비 없이 MQTT/TLS로 클라우드나 고객사 서버에 연결합니다.
+- 클라우드 서버·디지털트윈·PWA: 클라우드 서버 기반 디지털트윈과 PWA 대시보드·알람을 구축해 운영하고 있습니다.
+- PLC 프로그램 개발: 운전 로직·인터록 설계, 인버터 연동, 공장검사, 현장 시운전까지 직접 합니다. 인터록과 최종 제어는 현장 PLC가 맡습니다.
+- 제조업체용: 신규·노후 제어반 교체를 설비 1~2대부터 단계적으로 진행하고, 기록·알람·대시보드·MES 연동 API(클라우드/온프레미스), 유지관리, 스마트공장 지원사업 준비를 돕습니다.
+- IT업체용: MES·AI·디지털트윈 기업의 현장(OT) 구간(제어반·PLC·인버터·센서 연동, 시운전·유지보수)을 맡고, 표준 데이터 구조와 REST API·WebSocket으로 연동합니다.
+
+## AI 예지보전 현황 (정확한 표현)
+- 기준값 기반 알람은 도입 직후부터 사용할 수 있습니다.
+- AI 엔진을 활용한 예지보전 솔루션은 현재 실증(PoC) 중입니다. 상용화가 끝난 기능으로 소개하지 않습니다.
+- '750건 이상'은 회사가 수행한 제어시스템 프로젝트 수이며, AI 학습 데이터의 건수가 아닙니다.
+
+## 적용 분야
+조선·해양(선박 제어반, 하이브리드 추진), 수소·에너지(액화수소충전소 제어시스템), 제조·스마트팩토리(펌프·송풍기·압축기), 데이터센터 냉각 제어
+
+## 주요 페이지
+- [회사소개](https://donginensis.com/company.html)
+- [제조업체 도입 안내](https://donginensis.com/manufacturing.html)
+- [IT기업 협업(OT 파트너)](https://donginensis.com/partner.html)
+- [PLC 프로그램 개발](https://donginensis.com/plc-programming.html)
+- [적용 분야](https://donginensis.com/applications.html)
+- [디지털트윈 시연](https://donginensis.com/digital-twin.html)
+- [보도자료](https://donginensis.com/news.html)
+- [자료실(인증서·회사소개서)](https://donginensis.com/resources.html)
+- [English site](https://donginensis.com/en/)
+
+## 공식 채널
+- 네이버 블로그: https://blog.naver.com/donginensis
+- 네이버 블로그(2): https://blog.naver.com/donginensis3047
+- 유튜브(숨은 설비도감): https://www.youtube.com/@%EC%88%A8%EC%9D%80%EC%84%A4%EB%B9%84%EB%8F%84%EA%B0%90
+- 인스타그램: https://www.instagram.com/donginensis/
+- 스레드: https://www.threads.com/@donginensis
+- 구글 비즈니스 프로필: https://maps.google.com/?cid=16933911035054525871
+
+---
+
+# DONG-IN ENSIS (English summary)
+
+> Industrial control systems company in Busan, Korea. Designs and builds Intelligent Control Panels that control equipment with PLCs while collecting operating data and connecting it to the cloud or customer servers. Started in 1991 as a supplier of industrial control equipment and has delivered more than 750 control system projects for ships, energy facilities and plants.
+
+- Cloud-based digital twin and PWA dashboards/alarms are built and in operation.
+- The AI-based predictive maintenance solution is currently in pilot (PoC) validation. "750+" refers to control system projects delivered, not AI training data.
+- Contact: +82-51-862-3668, dongin@donginmne.com, 47 Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea
+- English site: https://donginensis.com/en/
