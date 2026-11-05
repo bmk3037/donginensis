@@ -14,6 +14,7 @@ LINKS = {  # 짧은 주소: (utm_source, utm_medium, 설명)
     'nb': ('naver_blog', 'social', '네이버 블로그 프로필'),
     'np': ('naver_place', 'local', '네이버 플레이스 홈페이지 칸'),
     'gb': ('google_business', 'local', '구글 비즈니스 프로필 웹사이트 칸'),
+    'li': ('linkedin', 'social', '링크드인 프로필 웹사이트 칸'),
 }
 
 for key, (src, med, _) in LINKS.items():

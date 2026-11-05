@@ -35,6 +35,7 @@ def channel(s):
     if s.endswith('/ qr'): return '인쇄물 QR'
     if 'place.naver' in s0 or s0 in ('naver_place', 'google_business'): return '네이버 플레이스' if 'naver' in s0 else '구글 비즈니스'
     if 'youtube' in s0: return '유튜브'
+    if 'linkedin' in s0 or s0 == 'lnkd.in': return '링크드인'
     if s0 in SPAM: return '스팸'
     return '기타'
 
