@@ -99,6 +99,7 @@ var TXT = IS_EN ? {
   }
 
   // 문의 폼
+  function track(name,params){ try{ if(window.gtag) gtag('event',name,params||{}); }catch(e){} }
   document.querySelectorAll('form.iq').forEach(function(f){
     var params=new URLSearchParams(location.search);
     ['utm_source','utm_medium','utm_campaign'].forEach(function(k){
@@ -127,6 +128,7 @@ var TXT = IS_EN ? {
       var btn=f.querySelector('button[type=submit]'); btn.disabled=true; btn.textContent=TXT.sending;
 
       function done(){
+        track('generate_lead',{form_type:multi.form_type||'',page_path:location.pathname});
         f.style.display='none';
         var ok=f.parentNode.querySelector('.iq-msg.ok'); if(ok) ok.style.display='block';
         ok&&ok.scrollIntoView({behavior:'smooth',block:'center'});
@@ -358,4 +360,20 @@ function popStack(){
     function mv(){cx+=(tx-cx)*.08;cy+=(ty-cy)*.08;wrap.style.transform='translate3d('+(-cx*10).toFixed(2)+'px,'+(-cy*6).toFixed(2)+'px,0)';fx.style.transform='translate3d('+(cx*18).toFixed(2)+'px,'+(cy*12).toFixed(2)+'px,0)';
       if(Math.abs(tx-cx)+Math.abs(ty-cy)>.001)requestAnimationFrame(mv);else on=false;}
   }
+})();
+
+// 마케팅 분석: 전화·메일·SNS 클릭과 자료 내려받기를 구글 애널리틱스(GA4) 이벤트로 기록
+(function(){
+  var SNS=[['youtube.com','youtube'],['instagram.com','instagram'],['threads.com','threads'],['threads.net','threads'],['blog.naver.com','naver_blog'],['map.naver.com','naver_place'],['naver.me','naver_place']];
+  function area(a){ var e=a.closest('header,footer,.mnav,.ch-grid,form'); return e?(e.className.split(' ')[0]||e.tagName.toLowerCase()):'body'; }
+  document.addEventListener('click',function(ev){
+    var a=ev.target.closest&&ev.target.closest('a[href]'); if(!a||!window.gtag) return;
+    var h=a.getAttribute('href')||'', p={page_path:location.pathname,link_area:area(a)};
+    try{
+      if(h.indexOf('tel:')===0){ p.phone=h.slice(4); gtag('event','phone_click',p); return; }
+      if(h.indexOf('mailto:')===0){ gtag('event','email_click',p); return; }
+      for(var i=0;i<SNS.length;i++){ if(h.indexOf(SNS[i][0])>=0){ p.channel=SNS[i][1]; gtag('event','sns_click',p); return; } }
+      if(/\.pdf(\?|#|$)/i.test(h)){ p.file_name=h.split('/').pop().split(/[?#]/)[0]; gtag('event','doc_download',p); }
+    }catch(e){}
+  });
 })();
