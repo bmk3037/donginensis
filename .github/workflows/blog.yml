@@ -1,0 +1,32 @@
+# 네이버 블로그 3곳의 최신 글을 메인(국문·영문) '블로그 최신 글' 칸에 반영한다. 방법은 _src/blog/update_blog.py 맨 위.
+# 새 글이 없으면 아무것도 커밋하지 않는다.
+name: Blog
+
+on:
+  schedule:
+    - cron: '23 */3 * * *'   # 3시간마다
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blog
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 블로그 최신 글 반영
+        run: python3 _src/blog/update_blog.py
+      - name: 바뀌었으면 커밋
+        run: |
+          if git diff --quiet -- index.html en/index.html; then echo "새 글 없음"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html en/index.html
+          git commit -m "블로그 최신 글 반영 (자동)"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0; sleep 10; done
+          exit 1
