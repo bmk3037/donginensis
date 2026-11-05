@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>동인엔시스 마케팅 대시보드</title>
+<link rel="manifest" href="mkt.webmanifest">
+<meta name="theme-color" content="#0a2a55">
+<link rel="icon" href="../../favicon-32.png">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<!--
+  마케팅 대시보드 (직원용, 검색·메뉴 노출 없음). ISO 기록 도구와 같은 서식과 설치 방식.
+  숫자는 열 때마다 「동인엔시스 마케팅 데이터」 구글 시트(GA4 Reports Builder가 매일 아침 채움)에서 직접 읽는다.
+  방문 경로·메뉴 묶음 규칙은 _src/marketing/dashboard_data.py와 같게 유지한다.
+-->
+<style>
+  :root { color-scheme: light; --navy: #0a2a55; --blue: #1857a5; --red: #e83e30; --ink: #263445; --muted: #55657a; --line: #8a9bb0; --hair: #d5dce6;
+    --paper: #fff; --bg: #fbfcfe; --ok: #1d6b45; --warn: #8a5a00; --bad: #c0321f; --grid: #e3e8ef;
+    --font: Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.55; word-break: keep-all;
+    background-image: linear-gradient(rgba(10,42,85,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(10,42,85,.05) 1px, transparent 1px); background-size: 24px 24px; }
+  p { margin: 0; }
+  h2 { margin: 0; font-size: 16px; font-weight: 700; color: var(--navy); }
+  .appbar { background: var(--navy); border-bottom: 3px solid var(--red); color: #fff; }
+  .appbar-in { max-width: 1280px; margin: 0 auto; padding: 14px max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+  .appbar img { height: 26px; width: auto; display: block; }
+  .appbar .sep { width: 1px; height: 20px; background: rgba(255,255,255,.28); }
+  .appbar .name { font-weight: 600; }
+  .appbar .sp { margin-left: auto; }
+  .abtn { font: inherit; font-size: 13px; font-weight: 600; color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.7); border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+  .abtn:hover, .abtn:focus-visible { background: rgba(255,255,255,.14); outline: none; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 20px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 18px; }
+  .status { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .status .err { color: var(--bad); font-weight: 600; }
+  .box { background: var(--paper); border: 1px solid var(--line); min-width: 0; }
+  .box > .hd { border-bottom: 1px solid var(--line); padding: 10px 14px; display: grid; gap: 2px; }
+  .box > .bd { padding: 14px; display: grid; gap: 10px; }
+  .note { color: var(--muted); font-size: 12px; }
+  .sum { border-left: 4px solid var(--red); }
+  .sum .bd p { font-size: 16px; line-height: 1.6; }
+  .sum b { color: var(--red); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); border: 1px solid var(--line); background: var(--paper); }
+  .tile { padding: 12px 14px; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); display: grid; gap: 4px; align-content: start; }
+  .tile .lb { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .tile .num { font-size: 30px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .tile.key .num { color: var(--red); }
+  .delta { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .delta.up { color: var(--ok); } .delta.down { color: var(--bad); }
+  .two { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); }
+  .chart { position: relative; min-height: 200px; }
+  .chart.funnel { min-height: 150px; } .chart.tall { min-height: 290px; }
+  .tip { position: absolute; pointer-events: none; background: #fff; border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(10,42,85,.18); padding: 4px 8px; font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; z-index: 2; }
+  .tip .t { color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); }
+  .legend i { display: inline-block; width: 10px; height: 10px; margin-right: 5px; vertical-align: -1px; }
+  .tw { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; background: var(--paper); }
+  th { background: var(--navy); color: #fff; font-weight: 600; padding: 7px 10px; border: 1px solid var(--navy); white-space: nowrap; text-align: center; }
+  td { padding: 6px 10px; border: 1px solid var(--hair); text-align: right; white-space: nowrap; }
+  td.l, th.l { text-align: left; } td.c { text-align: center; }
+  td.hot { color: var(--red); font-weight: 700; }
+  .plan td { white-space: normal; text-align: left; vertical-align: top; }
+  .plan td.c { text-align: center; white-space: nowrap; }
+  .pill { display: inline-block; padding: 0 8px; border: 1px solid currentColor; font-size: 12px; font-weight: 700; }
+  .pill.go { color: var(--ok); } .pill.fix { color: var(--warn); }
+  ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 13px; }
+  .inst-overlay { position: fixed; inset: 0; background: rgba(15,42,74,.45); display: grid; place-items: center; z-index: 50; padding: 16px; }
+  .inst-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 22px; max-width: 460px; width: 100%; display: grid; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  .inst-card h2 { font-size: 18px; }
+  .btn { font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--navy); }
+  .btn-primary { background: var(--navy); color: #fff; } .btn-ghost { background: #fff; color: var(--navy); justify-self: end; }
+  @media (max-width: 720px) { .appbar .sep, .appbar .name { display: none; } }
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="appbar-in">
+    <img src="../../img/logo_white.png" alt="(주)동인엔시스">
+    <span class="sep" aria-hidden="true"></span>
+    <span class="name">마케팅 대시보드</span>
+    <span class="sp"></span>
+    <button type="button" class="abtn" id="btnReload">새로고침</button>
+    <button type="button" class="abtn" id="btnInstall">설치</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="status" id="status"><span>숫자를 불러오는 중…</span></div>
+
+  <section class="box sum">
+    <div class="hd"><h2>한 줄 요약</h2></div>
+    <div class="bd"><p>문의·자료 요청을 가장 많이 만든 경로는 <b id="topLead">—</b>입니다. 방문이 많은 곳보다 이 행동이 많은 곳에 힘을 싣습니다.</p></div>
+  </section>
+
+  <section class="tiles" aria-label="핵심 숫자">
+    <div class="tile key"><span class="lb">문의 작성 시작</span><span class="num" data-kpi="formStart">—</span><span class="delta" data-delta="formStart">—</span></div>
+    <div class="tile key"><span class="lb">자료 내려받기</span><span class="num" data-kpi="download">—</span><span class="delta" data-delta="download">—</span></div>
+    <div class="tile key"><span class="lb">문의 전송</span><span class="num" data-kpi="lead">—</span><span class="delta" data-delta="lead">—</span></div>
+    <div class="tile"><span class="lb">방문 수</span><span class="num" data-kpi="sessions">—</span><span class="delta" data-delta="sessions">—</span></div>
+    <div class="tile"><span class="lb">처음 온 사람</span><span class="num" data-kpi="newUsers">—</span><span class="delta" data-delta="newUsers">—</span></div>
+  </section>
+  <p class="note">빨간 숫자가 영업에 가까운 숫자입니다. 작은 글씨는 최근 7일과 그 전 7일의 비교입니다. 문의 전송은 2026년 11월 5일부터 기록합니다.</p>
+
+  <div class="two">
+    <section class="box">
+      <div class="hd"><h2>방문에서 문의까지</h2><p class="note">방문 가운데 몇 %가 다음 단계로 갔는지 봅니다.</p></div>
+      <div class="bd"><div class="chart funnel" id="funnelChart"></div></div>
+    </section>
+    <section class="box">
+      <div class="hd"><h2>날짜별 방문 수</h2><p class="note">막대에 마우스를 올리면 그날 숫자가 보입니다.</p></div>
+      <div class="bd"><div class="chart" id="dailyChart"></div></div>
+    </section>
+  </div>
+
+  <section class="box">
+    <div class="hd"><h2>경로별 성과</h2><p class="note">빨간 칸은 그 행동이 가장 많은 경로입니다(직접 방문 제외). 참여율은 10초 넘게 머물거나 두 쪽 이상 본 방문의 비율입니다.</p></div>
+    <div class="bd"><div class="tw">
+      <table>
+        <thead><tr><th class="l">경로</th><th>방문자</th><th>방문 수</th><th>참여율</th><th>자료 받기</th><th>문의 작성 시작</th><th>문의 전송</th><th>외부 링크 클릭</th></tr></thead>
+        <tbody id="chTable"></tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <div class="two">
+    <section class="box">
+      <div class="hd"><h2>경로별 방문자와 영업 행동</h2>
+        <div class="legend"><span><i style="background:#1857a5"></i>방문자</span><span><i style="background:#e83e30"></i>자료 받기 + 문의 작성 시작</span></div></div>
+      <div class="bd"><div class="chart tall" id="chBars"></div></div>
+    </section>
+    <section class="box">
+      <div class="hd"><h2>무엇을 보러 오나</h2><p class="note">메뉴별 방문자와 한 사람이 머문 평균 시간입니다. 직원용 잠금 자료실은 뺐습니다.</p></div>
+      <div class="bd"><div class="chart tall" id="pageBars"></div></div>
+    </section>
+  </div>
+
+  <section class="box">
+    <div class="hd"><h2>이번 달 실행 계획</h2><p class="note">숫자를 보고 정한 할 일입니다. 매주 월요일 다시 보고 고칩니다.</p></div>
+    <div class="bd tw">
+      <table class="plan">
+        <thead><tr><th>No</th><th>구분</th><th class="l">경로</th><th class="l">할 일</th></tr></thead>
+        <tbody>
+          <tr><td class="c">1</td><td class="c"><span class="pill go">늘리기</span></td><td>구글·네이버 검색</td><td>자료 받기와 문의 작성의 대부분이 검색에서 나옵니다. PLC 프로그램 개발·노후 제어반 교체·예지보전 주제로 홈페이지 사례·질문 답변 글을 매달 1~2개 더합니다.</td></tr>
+          <tr><td class="c">2</td><td class="c"><span class="pill go">늘리기</span></td><td>네이버 플레이스·구글 비즈니스</td><td>지도에서 찾는 고객용입니다. 사진과 소식을 주 1회 올리고, 홈페이지 링크는 /np · /gb 짧은 주소를 씁니다.</td></tr>
+          <tr><td class="c">3</td><td class="c"><span class="pill fix">고치기</span></td><td>네이버 블로그</td><td>방문은 오는데 참여율이 낮고 문의 작성이 없습니다. 글 끝에 관련 페이지 링크를 하나씩 넣습니다(제어반 글 → 제조기업 도입, PLC 글 → PLC 프로그램 개발).</td></tr>
+          <tr><td class="c">4</td><td class="c"><span class="pill go">늘리기</span></td><td>스레드·인스타그램</td><td>스레드는 방문과 자료 받기가 꾸준하고, 인스타는 적은 방문에도 문의 작성이 나왔습니다. 주 2~3회 짧은 현장 소식을 이어 갑니다.</td></tr>
+          <tr><td class="c">5</td><td class="c"><span class="pill go">유지</span></td><td>AI 검색(ChatGPT 등)</td><td>AI 답변을 보고 들어오는 방문이 생겼습니다. 홈페이지의 회사·제품 설명을 정확하게 유지하는 것이 곧 AI 노출입니다.</td></tr>
+          <tr><td class="c">6</td><td class="c"><span class="pill fix">고치기</span></td><td>제조기업 도입 페이지</td><td>방문자는 많은데 머무는 시간이 짧습니다. 첫 화면에 「설비 고장을 데이터로 미리 알림」 사례 하나와 문의 버튼을 크게 둡니다.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="box">
+    <div class="hd"><h2>숫자를 볼 때 알아 둘 점</h2></div>
+    <div class="bd"><ul>
+      <li>숫자는 구글 애널리틱스 기록을 매일 아침 구글 시트로 모은 것입니다. 열 때마다, 그리고 열어 둔 동안 10분마다 새로 읽습니다.</li>
+      <li>지금 이 순간 접속자는 휴대폰 Google Analytics 앱의 「실시간」에서 봅니다.</li>
+      <li>직접 방문에는 직원 방문도 섞여 있습니다. 구글 애널리틱스에서 회사 인터넷 주소를 빼면 더 정확해집니다.</li>
+      <li>경로 묶음(예: 네이버 블로그 여러 개를 「네이버 블로그」로)은 대시보드를 만들며 정한 분류입니다.</li>
+    </ul></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var SHEET = '10vnNcRsMsbzTJmJCvDp5PkwnhdukxMgq1yabIIuy0TE';
+  var APP_URL = 'https://donginensis.com/files/mkt/dashboard.html';
+  var BLUE = '#1857a5', RED = '#e83e30', INK = '#263445', MUTED = '#55657a', GRID = '#e3e8ef';
+  var fmt = d3.format(','), pct = d3.format('.0%'), pct1 = d3.format('.1%');
+  var D = null;
+
+  // ---- 시트 읽기 (_src/marketing/dashboard_data.py와 같은 규칙) ----
+  function tab(name) {
+    var u = 'https://docs.google.com/spreadsheets/d/' + SHEET + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(name) + '&t=' + Date.now();
+    return fetch(u, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(name + ' ' + r.status); return r.text(); }).then(d3.csvParseRows);
+  }
+  function channel(s) {
+    var s0 = s.split(' / ')[0];
+    if (s === '(direct) / (none)') return '직접 방문';
+    if (s0 === 'google') return '구글 검색';
+    if (s0 === 'naver' || s0 === 'm.search.naver.com') return '네이버 검색';
+    if (s0.indexOf('naver_blog') === 0 || s0.indexOf('blog.naver') >= 0 || s0.indexOf('naverblogwidget') >= 0) return '네이버 블로그';
+    if (s0.indexOf('threads') >= 0) return '스레드';
+    if (s0 === 'ig' || s0.indexOf('instagram') >= 0) return '인스타그램';
+    if (s0.indexOf('facebook') >= 0) return '페이스북';
+    if (['chatgpt.com', 'doubao.com', 'perplexity.ai', 'gemini.google.com', 'claude.ai'].indexOf(s0) >= 0 || s.indexOf('ai-assistant') >= 0) return 'AI 검색';
+    if (/\/ qr$/.test(s)) return '인쇄물 QR';
+    if (s0.indexOf('place.naver') >= 0 || s0 === 'naver_place') return '네이버 플레이스';
+    if (s0 === 'google_business') return '구글 비즈니스';
+    if (s0.indexOf('youtube') >= 0) return '유튜브';
+    return '기타';
+  }
+  var SECTIONS = { '/company.html': '회사소개', '/resources.html': '자료실', '/manufacturing.html': '제조기업 도입', '/manufacturing': '제조기업 도입',
+    '/applications.html': '적용 분야', '/applications': '적용 분야', '/partner.html': 'IT기업 협업', '/partner': 'IT기업 협업',
+    '/digital-twin.html': '디지털트윈', '/plc-programming.html': 'PLC 프로그램 개발', '/members.html': '잠금', '/internal.html': '잠금' };
+  function section(p) {
+    if (p === '/' || p === '/index.html' || p.indexOf('/?') === 0) return '메인';
+    if (p.indexOf('/en') === 0) return '영문 페이지';
+    if (p.indexOf('/news') === 0) return '보도자료';
+    return SECTIONS[p] || '기타';
+  }
+  function after(rows, head) { for (var i = 0; i < rows.length; i++) if (rows[i][0] === head) return rows.slice(i + 1); return []; }
+  function ymd(d) { return d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8); }
+  var isDay = function (v) { return /^\d{8}$/.test(v); };
+
+  function load() {
+    setStatus([['숫자를 불러오는 중…']]);
+    return Promise.all(['일별', '채널', '페이지', '행동'].map(tab)).then(function (t) {
+      var daily = t[0].filter(function (r) { return isDay(r[0]); }).map(function (r) { return { day: ymd(r[0]), users: +r[1], newUsers: +r[2], sessions: +r[3] }; })
+        .sort(function (a, b) { return a.day < b.day ? -1 : 1; });
+      var ch = after(t[1], 'sessionSourceMedium').filter(function (r) { return r[0] && r[1]; })
+        .map(function (r) { return { source: r[0], channel: channel(r[0]), users: +r[1], sessions: +r[2], engaged: +r[3] }; });
+      var pg = after(t[2], 'pagePath').filter(function (r) { return r[0] && r[0][0] === '/'; })
+        .map(function (r) { return { path: r[0], section: section(r[0]), views: +r[1], users: +r[2], sec: +r[3] }; });
+      var ev = t[3].filter(function (r) { return isDay(r[0]) && r.length > 3; })
+        .map(function (r) { return { day: ymd(r[0]), event: r[1], source: r[2], channel: channel(r[2]), count: +r[3] || 0 }; });
+      var ran = (t[0][1] || [])[1] || '';
+      D = { daily: daily, ch: ch, pg: pg, ev: ev, ran: ran };
+      draw();
+      var last = daily.length ? daily[daily.length - 1].day : '';
+      setStatus([['자료 기간 ' + (daily.length ? fd(daily[0].day) + ' ~ ' + fd(last) : '-')], ['시트 갱신 ' + ran], ['화면 새로 읽음 ' + d3.timeFormat('%H:%M')(new Date())]]);
+    }).catch(function (e) {
+      setStatus([['숫자를 불러오지 못했습니다. 인터넷 연결을 확인하고 「새로고침」을 눌러 주세요. 계속 안 되면 구글 시트 공유 설정(링크가 있는 모든 사용자·뷰어)을 확인합니다.', 'err']]);
+      if (window.console) console.warn(e);
+    });
+  }
+  function fd(s) { return s.slice(0, 4) + '.' + +s.slice(5, 7) + '.' + +s.slice(8, 10); }
+  function setStatus(items) {
+    var el = document.getElementById('status'); el.replaceChildren();
+    items.forEach(function (it) { var s = document.createElement('span'); s.textContent = it[0]; if (it[1]) s.className = it[1]; el.appendChild(s); });
+  }
+
+  // ---- 계산 ----
+  function sumEv(ev, set) { return D.ev.filter(function (e) { return e.event === ev && (!set || set.indexOf(e.day) >= 0); }).reduce(function (s, e) { return s + e.count; }, 0); }
+  function byChannel() {
+    var by = {};
+    function g(c) { return by[c] || (by[c] = { channel: c, users: 0, sessions: 0, engaged: 0, downloads: 0, formStarts: 0, leads: 0, clicks: 0 }); }
+    D.ch.forEach(function (r) { var x = g(r.channel); x.users += r.users; x.sessions += r.sessions; x.engaged += r.engaged; });
+    D.ev.forEach(function (e) { var x = g(e.channel);
+      if (e.event === 'file_download') x.downloads += e.count; else if (e.event === 'form_start') x.formStarts += e.count;
+      else if (e.event === 'generate_lead') x.leads += e.count; else if (e.event === 'click') x.clicks += e.count; });
+    return Object.keys(by).map(function (k) { var x = by[k]; x.engageRate = x.sessions ? x.engaged / x.sessions : 0; x.actions = x.downloads + x.formStarts + x.leads; return x; })
+      .sort(function (a, b) { return b.users - a.users; });
+  }
+  function bySection() {
+    var by = {};
+    D.pg.filter(function (p) { return p.section !== '잠금'; }).forEach(function (p) {
+      var x = by[p.section] || (by[p.section] = { section: p.section, users: 0, views: 0, sec: 0 }); x.users += p.users; x.views += p.views; x.sec += p.sec; });
+    return Object.keys(by).map(function (k) { var x = by[k]; x.secPerUser = x.users ? Math.round(x.sec / x.users) : 0; return x; }).sort(function (a, b) { return b.users - a.users; });
+  }
+
+  // ---- 그리기 ----
+  function draw() {
+    if (!D) return;
+    var days = D.daily.map(function (d) { return d.day; });
+    var last = days.slice(-7), prev = days.slice(-14, -7);
+    var sumD = function (k, set) { return D.daily.filter(function (d) { return !set || set.indexOf(d.day) >= 0; }).reduce(function (s, d) { return s + d[k]; }, 0); };
+    var K = {
+      sessions: [sumD('sessions'), sumD('sessions', last), sumD('sessions', prev)],
+      newUsers: [sumD('newUsers'), sumD('newUsers', last), sumD('newUsers', prev)],
+      download: [sumEv('file_download'), sumEv('file_download', last), sumEv('file_download', prev)],
+      formStart: [sumEv('form_start'), sumEv('form_start', last), sumEv('form_start', prev)],
+      lead: [sumEv('generate_lead'), sumEv('generate_lead', last), sumEv('generate_lead', prev)] };
+    document.querySelectorAll('[data-kpi]').forEach(function (el) { var k = K[el.dataset.kpi]; el.textContent = k ? fmt(k[0]) : '—'; });
+    document.querySelectorAll('[data-delta]').forEach(function (el) {
+      var k = K[el.dataset.delta]; el.classList.remove('up', 'down'); if (!k) return;
+      var diff = k[1] - k[2]; el.textContent = '최근 7일 ' + fmt(k[1]) + ' (' + (diff > 0 ? '+' : '') + fmt(diff) + ')';
+      if (diff > 0) el.classList.add('up'); else if (diff < 0) el.classList.add('down'); });
+    var bc = byChannel();
+    var nd = bc.filter(function (x) { return x.channel !== '직접 방문'; });
+    document.getElementById('topLead').textContent = nd.length ? nd.slice().sort(function (a, b) { return b.actions - a.actions; })[0].channel : '—';
+    table(bc, nd);
+    funnel([{ step: '방문', count: K.sessions[0] }, { step: '자료 내려받기', count: K.download[0] }, { step: '문의 작성 시작', count: K.formStart[0] }, { step: '문의 전송', count: K.lead[0] }]);
+    dailyChart();
+    hbars(document.getElementById('chBars'), bc, 'channel', function (d) { return '행동 ' + fmt(d.actions); },
+      function (d) { return [d.channel, '방문자 ' + fmt(d.users), '자료 받기 ' + fmt(d.downloads), '문의 작성 시작 ' + fmt(d.formStarts), '문의 전송 ' + fmt(d.leads)]; }, true);
+    hbars(document.getElementById('pageBars'), bySection(), 'section', function (d) { return '평균 ' + d.secPerUser + '초'; },
+      function (d) { return [d.section, '방문자 ' + fmt(d.users), '조회 ' + fmt(d.views), '1인 평균 ' + d.secPerUser + '초']; }, false);
+  }
+  function table(rows, nd) {
+    var tb = document.getElementById('chTable'); tb.replaceChildren();
+    var cols = ['users', 'sessions', 'engageRate', 'downloads', 'formStarts', 'leads', 'clicks'];
+    var max = {}; cols.forEach(function (c) { max[c] = d3.max(nd, function (x) { return x[c]; }); });
+    rows.forEach(function (x) {
+      var tr = document.createElement('tr'), td0 = document.createElement('td'); td0.className = 'l'; td0.textContent = x.channel; tr.appendChild(td0);
+      cols.forEach(function (c) { var td = document.createElement('td'); td.textContent = c === 'engageRate' ? pct(x[c]) : fmt(x[c]);
+        if (['downloads', 'formStarts', 'leads'].indexOf(c) >= 0 && x[c] > 0 && x[c] === max[c] && x.channel !== '직접 방문') td.className = 'hot'; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+  function tipFor(box) { var t = document.createElement('div'); t.className = 'tip'; t.hidden = true; box.appendChild(t); return t; }
+  function showTip(box, tip, ev, lines) {
+    tip.replaceChildren.apply(tip, lines.map(function (l, i) { var d = document.createElement('div'); if (!i) d.className = 't'; d.textContent = l; return d; }));
+    tip.hidden = false;
+    var b = box.getBoundingClientRect(), x = ev.clientX - b.left, y = ev.clientY - b.top, w = tip.offsetWidth;
+    tip.style.left = Math.max(0, Math.min(b.width - w, x - w / 2)) + 'px'; tip.style.top = Math.max(0, y - tip.offsetHeight - 12) + 'px';
+  }
+  function textW(svg, s, size) { var t = svg.append('text').attr('font-size', size).text(s); var w = t.node().getComputedTextLength(); t.remove(); return w; }
+  function svgIn(el, W, H) { el.replaceChildren(); return d3.select(el).append('svg').attr('width', '100%').attr('viewBox', '0 0 ' + W + ' ' + H).attr('font-family', 'inherit'); }
+
+  function funnel(data) {
+    var el = document.getElementById('funnelChart'), W = el.clientWidth || 500, row = 34, H = data.length * row + 4;
+    var svg = svgIn(el, W, H), base = data[0].count || 1;
+    var share = function (d, i) { return i ? '  (' + pct1(d.count / base) + ')' : ''; };
+    var lw = d3.max(data, function (d) { return textW(svg, d.step, 13); }) + 12;
+    var vw = d3.max(data, function (d, i) { return textW(svg, fmt(d.count) + share(d, i), 12); }) + 10;
+    var x = d3.scaleLinear([0, base], [0, Math.max(20, W - lw - vw)]), tip = tipFor(el);
+    data.forEach(function (d, i) {
+      var y = i * row + 2;
+      svg.append('text').attr('x', lw - 10).attr('y', y + row / 2).attr('dy', '0.32em').attr('text-anchor', 'end').attr('font-size', 13).attr('fill', INK).text(d.step);
+      svg.append('rect').attr('x', lw).attr('y', y + 6).attr('height', row - 12).attr('width', Math.max(2, x(d.count))).attr('fill', i ? RED : BLUE);
+      svg.append('text').attr('x', lw + Math.max(2, x(d.count)) + 6).attr('y', y + row / 2).attr('dy', '0.32em').attr('font-size', 12).attr('fill', MUTED).text(fmt(d.count) + share(d, i));
+      svg.append('rect').attr('width', W).attr('y', y).attr('height', row).attr('fill', 'transparent')
+        .on('pointermove', function (ev) { showTip(el, tip, ev, [d.step, fmt(d.count) + '회' + (i ? ' · 방문 대비 ' + pct1(d.count / base) : '')]); })
+        .on('pointerleave', function () { tip.hidden = true; });
+    });
+  }
+  function dailyChart() {
+    var el = document.getElementById('dailyChart'), W = el.clientWidth || 600, H = 200, m = { t: 10, r: 14, b: 24, l: 8 };
+    var data = D.daily.map(function (d) { return { day: d.day, v: d.sessions, u: d.users }; });
+    var svg = svgIn(el, W, H); if (!data.length) return;
+    var y = d3.scaleLinear([0, d3.max(data, function (d) { return d.v; })], [H - m.b, m.t]).nice(), ticks = y.ticks(4);
+    m.l = textW(svg, fmt(d3.max(ticks)), 11) + 10;
+    var x = d3.scaleBand(data.map(function (d) { return d.day; }), [m.l, W - m.r]).padding(0.25);
+    ticks.forEach(function (t) {
+      svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID);
+      svg.append('text').attr('x', m.l - 6).attr('y', y(t)).attr('dy', '0.32em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', MUTED).text(fmt(t));
+    });
+    var step = Math.max(1, Math.ceil(data.length / Math.max(2, Math.floor((W - m.l) / 64))));
+    data.forEach(function (d, i) { if (i % step === 0) svg.append('text').attr('x', x(d.day) + x.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', MUTED).text(+d.day.slice(5, 7) + '/' + +d.day.slice(8, 10)); });
+    var tip = tipFor(el);
+    svg.selectAll('rect.b').data(data).join('rect').attr('class', 'b').attr('x', function (d) { return x(d.day); }).attr('width', x.bandwidth())
+      .attr('y', function (d) { return y(d.v); }).attr('height', function (d) { return y(0) - y(d.v); }).attr('fill', BLUE)
+      .on('pointermove', function (ev, d) { d3.select(this).attr('opacity', 0.75); showTip(el, tip, ev, [fd(d.day), '방문 수 ' + fmt(d.v), '방문자 ' + fmt(d.u)]); })
+      .on('pointerleave', function () { d3.select(this).attr('opacity', 1); tip.hidden = true; });
+  }
+  function hbars(el, data, label, extra, lines, withActions) {
+    var W = el.clientWidth || 400, row = 26, H = data.length * row + 4, svg = svgIn(el, W, H); if (!data.length) return;
+    var lw = d3.max(data, function (d) { return textW(svg, d[label], 12); }) + 12;
+    var vw = d3.max(data, function (d) { return textW(svg, fmt(d.users) + '  ' + extra(d), 12); }) + 12;
+    var x = d3.scaleLinear([0, d3.max(data, function (d) { return d.users; }) || 1], [0, Math.max(20, W - lw - vw)]), tip = tipFor(el);
+    data.forEach(function (d, i) {
+      var y = i * row + 2;
+      svg.append('text').attr('x', lw - 8).attr('y', y + row / 2).attr('dy', '0.32em').attr('text-anchor', 'end').attr('font-size', 12).attr('fill', INK).text(d[label]);
+      svg.append('rect').attr('x', lw).attr('y', y + 5).attr('height', row - 10).attr('width', Math.max(1, x(d.users))).attr('fill', BLUE);
+      if (withActions && d.actions > 0) svg.append('rect').attr('x', lw).attr('y', y + 5).attr('height', row - 10).attr('width', Math.max(1, x(Math.min(d.actions, d.users)))).attr('fill', RED);
+      svg.append('text').attr('x', lw + Math.max(1, x(d.users)) + 6).attr('y', y + row / 2).attr('dy', '0.32em').attr('font-size', 12).attr('fill', MUTED).text(fmt(d.users) + '  ' + extra(d));
+      svg.append('rect').attr('width', W).attr('y', y).attr('height', row).attr('fill', 'transparent')
+        .on('pointermove', function (ev) { showTip(el, tip, ev, lines(d)); })
+        .on('pointerleave', function () { tip.hidden = true; });
+    });
+  }
+
+  // ---- 새로고침: 열 때, 버튼, 열어 둔 동안 10분마다, 창으로 돌아올 때 ----
+  document.getElementById('btnReload').addEventListener('click', load);
+  setInterval(function () { if (!document.hidden) load(); }, 10 * 60 * 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && D && Date.now() - (window.__mkLoaded || 0) > 5 * 60 * 1000) load(); });
+  var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(draw, 150); });
+  var _load = load; load = function () { window.__mkLoaded = Date.now(); return _load(); };
+  load();
+
+  // ---- 설치 (ISO 기록 도구와 같은 방식) ----
+  var installEvt = null;
+  function standalone() { return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+  function hideInstall() { document.getElementById('btnInstall').hidden = true; }
+  if (standalone()) hideInstall();
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
+  window.addEventListener('appinstalled', function () { hideInstall(); installEvt = null; });
+  document.getElementById('btnInstall').addEventListener('click', function () {
+    if (installEvt) { installEvt.prompt(); installEvt.userChoice.then(function (c) { installEvt = null; if (c && c.outcome === 'accepted') hideInstall(); }); return; }
+    showInstallHelp();
+  });
+  function shortcutFile() {
+    var txt = '[InternetShortcut]\r\nURL=' + APP_URL + '\r\nIconFile=https://donginensis.com/favicon.ico\r\nIconIndex=0\r\n';
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'application/octet-stream' })); a.download = '마케팅 대시보드.url';
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function showInstallHelp() {
+    var old = document.getElementById('installHelp'); if (old) old.remove();
+    var box = document.createElement('div'); box.id = 'installHelp'; box.className = 'inst-overlay'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true');
+    var card = document.createElement('div'); card.className = 'inst-card';
+    var h = document.createElement('h2'); h.textContent = '바탕화면에서 바로 열기';
+    var p1 = document.createElement('p'); p1.textContent = '① 아래 버튼을 누릅니다.';
+    var b1 = document.createElement('button'); b1.type = 'button'; b1.className = 'btn btn-primary'; b1.textContent = '바탕화면 바로가기 파일 받기'; b1.onclick = shortcutFile;
+    var p2 = document.createElement('p'); p2.textContent = '② 받은 「마케팅 대시보드」 파일(다운로드 폴더)을 바탕화면으로 끌어다 놓습니다.';
+    var p3 = document.createElement('p'); p3.textContent = '③ 바탕화면 아이콘을 더블클릭하면 대시보드가 열립니다.';
+    var b2 = document.createElement('button'); b2.type = 'button'; b2.className = 'btn btn-ghost'; b2.textContent = '닫기';
+    var close = function () { box.remove(); };
+    b2.onclick = close; box.onclick = function (e) { if (e.target === box) close(); };
+    card.append(h, p1, b1, p2, p3, b2); box.appendChild(card); document.body.appendChild(box); b1.focus();
+  }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('mkt-sw.js').catch(function () {});
+})();
+</script>
+</body>
+</html>
