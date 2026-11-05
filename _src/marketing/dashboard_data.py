@@ -7,6 +7,7 @@
 """
 import collections, csv, io, json, os, sys, urllib.parse, urllib.request
 
+SPAM = {'devilfinder.com', 'snappyfingers.com', 'finday.com', 'egerin.com'}  # 광고·봇이 남기는 가짜 유입
 KEY = {'file_download': '자료 내려받기', 'form_start': '문의 양식 작성 시작', 'click': '외부 링크 클릭', 'generate_lead': '문의 전송',
        'phone_click': '전화 클릭', 'email_click': '메일 클릭', 'sns_click': 'SNS 버튼 클릭', 'doc_download': '회사소개서 등 PDF 받기'}
 SECTIONS = {'/company.html': '회사소개', '/resources.html': '자료실', '/manufacturing.html': '제조기업 도입', '/manufacturing': '제조기업 도입',
@@ -34,6 +35,7 @@ def channel(s):
     if s.endswith('/ qr'): return '인쇄물 QR'
     if 'place.naver' in s0 or s0 in ('naver_place', 'google_business'): return '네이버 플레이스' if 'naver' in s0 else '구글 비즈니스'
     if 'youtube' in s0: return '유튜브'
+    if s0 in SPAM: return '스팸'
     return '기타'
 
 
@@ -58,12 +60,12 @@ def main(sheet, out):
     daily = sorted(({'day': ymd(r[0]), 'users': int(r[1]), 'newUsers': int(r[2]), 'sessions': int(r[3])}
                     for r in tab(sheet, '일별') if r and r[0].isdigit() and len(r[0]) == 8), key=lambda x: x['day'])
     ch = [{'source': r[0], 'channel': channel(r[0]), 'users': int(r[1]), 'sessions': int(r[2]), 'engagedSessions': int(r[3])}
-          for r in after(tab(sheet, '채널'), 'sessionSourceMedium') if r and r[0] and r[1]]
+          for r in after(tab(sheet, '채널'), 'sessionSourceMedium') if r and r[0] and r[1] and channel(r[0]) != '스팸']
     pg = [{'path': r[0], 'section': section(r[0]), 'views': int(r[1]), 'users': int(r[2]), 'engagementSec': int(float(r[3]))}
           for r in after(tab(sheet, '페이지'), 'pagePath') if r and r[0].startswith('/')]
     ev = collections.Counter()
     for r in tab(sheet, '행동'):
-        if r and r[0].isdigit() and len(r) > 3 and r[1] in KEY:
+        if r and r[0].isdigit() and len(r) > 3 and r[1] in KEY and channel(r[2]) != '스팸':
             ev[(ymd(r[0]), r[1], r[2])] += int(float(r[3] or 0))
     evr = [{'day': d, 'event': e, 'action': KEY[e], 'source': s, 'channel': channel(s), 'count': n} for (d, e, s), n in sorted(ev.items())]
     for name, data in (('daily', daily), ('channels', ch), ('pages', pg), ('events', evr)):

@@ -51,7 +51,7 @@
   .sum { border-left: 4px solid var(--red); }
   .sum .bd p { font-size: 16px; line-height: 1.6; }
   .sum b { color: var(--red); }
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); border: 1px solid var(--line); background: var(--paper); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(46%, 12rem), 1fr)); border: 1px solid var(--line); background: var(--paper); }
   .tile { padding: 12px 14px; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); display: grid; gap: 4px; align-content: start; }
   .tile .lb { font-size: 12px; color: var(--muted); font-weight: 600; }
   .tile .num { font-size: 30px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; line-height: 1.15; }
@@ -81,7 +81,7 @@
   .inst-card h2 { font-size: 18px; }
   .btn { font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--navy); }
   .btn-primary { background: var(--navy); color: #fff; } .btn-ghost { background: #fff; color: var(--navy); justify-self: end; }
-  @media (max-width: 720px) { .appbar .sep, .appbar .name { display: none; } }
+  @media (max-width: 720px) { .appbar .sep, .appbar .name { display: none; } .tile .num { font-size: 24px; } }
 </style>
 </head>
 <body>
@@ -169,7 +169,7 @@
       <li>숫자는 구글 애널리틱스 기록을 매일 아침 구글 시트로 모은 것입니다. 열 때마다, 그리고 열어 둔 동안 10분마다 새로 읽습니다.</li>
       <li>지금 이 순간 접속자는 휴대폰 Google Analytics 앱의 「실시간」에서 봅니다.</li>
       <li>직접 방문에는 직원 방문도 섞여 있습니다. 구글 애널리틱스에서 회사 인터넷 주소를 빼면 더 정확해집니다.</li>
-      <li>경로 묶음(예: 네이버 블로그 여러 개를 「네이버 블로그」로)은 대시보드를 만들며 정한 분류입니다.</li>
+      <li>경로 묶음(예: 네이버 블로그 여러 개를 「네이버 블로그」로)은 대시보드를 만들며 정한 분류입니다. 광고·봇이 남기는 가짜 유입(스팸 사이트)은 숫자에서 뺐습니다.</li>
     </ul></div>
   </section>
 </main>
@@ -187,6 +187,8 @@
     var u = 'https://docs.google.com/spreadsheets/d/' + SHEET + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(name) + '&t=' + Date.now();
     return fetch(u, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(name + ' ' + r.status); return r.text(); }).then(d3.csvParseRows);
   }
+  // 광고·봇이 남기는 가짜 유입. 숫자에서 뺀다.
+  var SPAM = ['devilfinder.com', 'snappyfingers.com', 'finday.com', 'egerin.com'];
   function channel(s) {
     var s0 = s.split(' / ')[0];
     if (s === '(direct) / (none)') return '직접 방문';
@@ -200,6 +202,7 @@
     if (/\/ qr$/.test(s)) return '인쇄물 QR';
     if (s0.indexOf('place.naver') >= 0 || s0 === 'naver_place') return '네이버 플레이스';
     if (s0 === 'google_business') return '구글 비즈니스';
+    if (SPAM.indexOf(s0) >= 0) return '스팸';
     if (s0.indexOf('youtube') >= 0) return '유튜브';
     return '기타';
   }
@@ -221,11 +224,11 @@
     return Promise.all(['일별', '채널', '페이지', '행동'].map(tab)).then(function (t) {
       var daily = t[0].filter(function (r) { return isDay(r[0]); }).map(function (r) { return { day: ymd(r[0]), users: +r[1], newUsers: +r[2], sessions: +r[3] }; })
         .sort(function (a, b) { return a.day < b.day ? -1 : 1; });
-      var ch = after(t[1], 'sessionSourceMedium').filter(function (r) { return r[0] && r[1]; })
+      var ch = after(t[1], 'sessionSourceMedium').filter(function (r) { return r[0] && r[1] && channel(r[0]) !== '스팸'; })
         .map(function (r) { return { source: r[0], channel: channel(r[0]), users: +r[1], sessions: +r[2], engaged: +r[3] }; });
       var pg = after(t[2], 'pagePath').filter(function (r) { return r[0] && r[0][0] === '/'; })
         .map(function (r) { return { path: r[0], section: section(r[0]), views: +r[1], users: +r[2], sec: +r[3] }; });
-      var ev = t[3].filter(function (r) { return isDay(r[0]) && r.length > 3; })
+      var ev = t[3].filter(function (r) { return isDay(r[0]) && r.length > 3 && channel(r[2]) !== '스팸'; })
         .map(function (r) { return { day: ymd(r[0]), event: r[1], source: r[2], channel: channel(r[2]), count: +r[3] || 0 }; });
       var ran = (t[0][1] || [])[1] || '';
       D = { daily: daily, ch: ch, pg: pg, ev: ev, ran: ran };
