@@ -20,8 +20,6 @@ POSTS = 3
 KST = timezone(timedelta(hours=9))
 BLOGS = [  # (네이버 아이디, 국문 이름, 영문 이름) — 메인 블로그 카드와 같은 순서
     ('donginensis', '설비 데이터', 'Equipment Data'),
-    ('donginensis3047', '제어반 관리', 'Control Panel Care'),
-    ('bmk3037', '현장 이야기', 'Field Stories'),
 ]
 PAGES = {'index.html': 'ko', 'en/index.html': 'en'}
 START, END = '<!-- BLOG:START -->', '<!-- BLOG:END -->'

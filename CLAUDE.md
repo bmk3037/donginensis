@@ -21,7 +21,7 @@
 - 보도사진은 가능하면 홈페이지에 실제로 올린 화면·사진(시연 화면 캡처 등)을 쓴다. 연출 이미지를 쓸 때는 캡션에 "이해를 돕기 위한 연출 이미지"라고 적는다.
 
 ## 블로그 최신 글 (자동)
-- 메인(`index.html`·`en/index.html`) 미디어 칸의 `<!-- BLOG:START -->`~`<!-- BLOG:END -->` 사이는 `_src/blog/update_blog.py`가 네이버 블로그 3곳(donginensis·donginensis3047·bmk3037) RSS로 채운다. 깃허브 자동 작업 `.github/workflows/blog.yml`이 3시간마다 돌려 새 글이 있을 때만 main에 커밋한다. 이 구간은 손으로 고치지 않는다.
+- 메인(`index.html`·`en/index.html`) 미디어 칸의 `<!-- BLOG:START -->`~`<!-- BLOG:END -->` 사이는 `_src/blog/update_blog.py`가 네이버 블로그 donginensis RSS로 채운다(홈페이지에는 블로그 하나만 둔다, 대표 결정 2026.11.05). 깃허브 자동 작업 `.github/workflows/blog.yml`이 3시간마다 돌려 새 글이 있을 때만 main에 커밋한다. 이 구간은 손으로 고치지 않는다.
 - 블로그를 늘리거나 이름을 바꿀 때는 `update_blog.py`의 BLOGS와 메인 블로그 카드(국문·영문)를 함께 고친다.
 
 ## 검색 최적화(SEO)
