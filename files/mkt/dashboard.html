@@ -76,6 +76,16 @@
   .pill { display: inline-block; padding: 0 8px; border: 1px solid currentColor; font-size: 12px; font-weight: 700; }
   .pill.go { color: var(--ok); } .pill.fix { color: var(--warn); }
   ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 13px; }
+  .goals { display: grid; gap: 10px; }
+  .goal { display: grid; grid-template-columns: 8.5rem 1fr 9.5rem; gap: 10px; align-items: center; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .goal .track { position: relative; height: 14px; border: 1px solid var(--line); background: #fff; }
+  .goal .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--blue); }
+  .goal .fill.done { background: var(--ok); }
+  .goal .pace { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--red); }
+  .goal .v { text-align: right; color: var(--muted); }
+  .empty { color: var(--muted); font-size: 13px; }
+  td.wrap { white-space: normal; text-align: left; min-width: 14rem; }
+  @media (max-width: 560px) { .goal { grid-template-columns: 1fr; gap: 4px; } .goal .v { text-align: left; } }
   .inst-overlay { position: fixed; inset: 0; background: rgba(15,42,74,.45); display: grid; place-items: center; z-index: 50; padding: 16px; }
   .inst-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 22px; max-width: 460px; width: 100%; display: grid; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
   .inst-card h2 { font-size: 18px; }
@@ -113,6 +123,11 @@
   </section>
   <p class="note">빨간 숫자가 영업에 가까운 숫자입니다. 작은 글씨는 최근 7일과 그 전 7일의 비교입니다. 문의 전송은 2026년 11월 5일부터 기록합니다.</p>
 
+  <section class="box" id="goals">
+    <div class="hd"><h2>이번 달 목표</h2><p class="note">빨간 세로선은 오늘까지 가야 할 위치입니다. 막대가 선을 넘으면 목표 속도보다 빠른 것입니다. 목표는 지난 실적을 보고 정한 제안값입니다(대표 확정 전).</p></div>
+    <div class="bd"><div class="goals" id="goalBars"><p class="empty">—</p></div></div>
+  </section>
+
   <div class="two">
     <section class="box">
       <div class="hd"><h2>방문에서 문의까지</h2><p class="note">방문 가운데 몇 %가 다음 단계로 갔는지 봅니다.</p></div>
@@ -134,6 +149,14 @@
     </div></div>
   </section>
 
+  <section class="box" id="posts">
+    <div class="hd"><h2>블로그 글별 성과</h2><p class="note">블로그 글 안의 홈페이지 링크로 들어온 방문을 글마다 셉니다. 많이 들어온 글의 주제를 더 씁니다.</p></div>
+    <div class="bd"><div class="tw">
+      <table><thead><tr><th>No</th><th class="l">글</th><th>블로그</th><th>방문 수</th><th>방문자</th><th>참여율</th></tr></thead>
+      <tbody id="postTable"><tr><td colspan="6" class="l empty">—</td></tr></tbody></table>
+    </div></div>
+  </section>
+
   <div class="two">
     <section class="box">
       <div class="hd"><h2>경로별 방문자와 영업 행동</h2>
@@ -145,6 +168,14 @@
       <div class="bd"><div class="chart tall" id="pageBars"></div></div>
     </section>
   </div>
+
+  <section class="box" id="queries">
+    <div class="hd"><h2>구글 검색어</h2><p class="note">구글에서 어떤 검색어로 우리 홈페이지가 보였고(노출) 눌렸는지(클릭)입니다. 빨간 줄은 많이 보였지만 거의 안 눌린 검색어로, 페이지 제목·설명을 고칠 대상입니다.</p></div>
+    <div class="bd"><div class="tw">
+      <table><thead><tr><th>No</th><th class="l">검색어</th><th>노출</th><th>클릭</th><th>클릭률</th><th>평균 순위</th></tr></thead>
+      <tbody id="qTable"><tr><td colspan="6" class="l empty">—</td></tr></tbody></table>
+    </div></div>
+  </section>
 
   <section class="box">
     <div class="hd"><h2>이번 달 실행 계획</h2><p class="note">숫자를 보고 정한 할 일입니다. 매주 월요일 다시 보고 고칩니다.</p></div>
@@ -180,6 +211,8 @@
   var APP_URL = 'https://donginensis.com/files/mkt/dashboard.html';
   var BLUE = '#1857a5', RED = '#e83e30', INK = '#263445', MUTED = '#55657a', GRID = '#e3e8ef';
   var fmt = d3.format(','), pct = d3.format('.0%'), pct1 = d3.format('.1%');
+  // 월 목표(제안값, 2026.10 실적 기준. 대표가 정하면 여기만 고친다)
+  var GOALS = [['방문 수', 'sessions', 600], ['자료 내려받기', 'file_download', 160], ['문의 작성 시작', 'form_start', 30], ['문의 전송', 'generate_lead', 5]];
   var D = null;
 
   // ---- 시트 읽기 (_src/marketing/dashboard_data.py와 같은 규칙) ----
@@ -204,6 +237,7 @@
     if (s0 === 'google_business') return '구글 비즈니스';
     if (SPAM.indexOf(s0) >= 0) return '스팸';
     if (s0.indexOf('youtube') >= 0) return '유튜브';
+    if (s0.indexOf('linkedin') >= 0 || s0 === 'lnkd.in') return '링크드인';
     return '기타';
   }
   var SECTIONS = { '/company.html': '회사소개', '/resources.html': '자료실', '/manufacturing.html': '제조기업 도입', '/manufacturing': '제조기업 도입',
@@ -215,13 +249,22 @@
     if (p.indexOf('/news') === 0) return '보도자료';
     return SECTIONS[p] || '기타';
   }
+  function optTab(name) { // 없으면 null (gviz는 없는 탭 대신 첫 탭을 돌려준다)
+    return tab(name).then(function (rows) { var a = (rows[0] || []).join(' '); return /Configuration Options/.test(a) ? null : rows; }).catch(function () { return null; });
+  }
+  function topics() {
+    return fetch('https://raw.githubusercontent.com/bmk3037/donginensis-blog/main/topics.csv', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = {}; d3.csvParse(t || 'id\n').forEach(function (x) { m[+x.id] = x; }); return m; })
+      .catch(function () { return {}; });
+  }
+  function headerAt(rows, test) { for (var i = 0; i < rows.length; i++) if (test(rows[i].map(function (c) { return String(c).toLowerCase(); }))) return i; return -1; }
   function after(rows, head) { for (var i = 0; i < rows.length; i++) if (rows[i][0] === head) return rows.slice(i + 1); return []; }
   function ymd(d) { return d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8); }
   var isDay = function (v) { return /^\d{8}$/.test(v); };
 
   function load() {
     setStatus([['숫자를 불러오는 중…']]);
-    return Promise.all(['일별', '채널', '페이지', '행동'].map(tab)).then(function (t) {
+    return Promise.all(['일별', '채널', '페이지', '행동'].map(tab).concat([optTab('블로그글'), optTab('검색어'), topics()])).then(function (t) {
       var daily = t[0].filter(function (r) { return isDay(r[0]); }).map(function (r) { return { day: ymd(r[0]), users: +r[1], newUsers: +r[2], sessions: +r[3] }; })
         .sort(function (a, b) { return a.day < b.day ? -1 : 1; });
       var ch = after(t[1], 'sessionSourceMedium').filter(function (r) { return r[0] && r[1] && channel(r[0]) !== '스팸'; })
@@ -231,7 +274,28 @@
       var ev = t[3].filter(function (r) { return isDay(r[0]) && r.length > 3 && channel(r[2]) !== '스팸'; })
         .map(function (r) { return { day: ymd(r[0]), event: r[1], source: r[2], channel: channel(r[2]), count: +r[3] || 0 }; });
       var ran = (t[0][1] || [])[1] || '';
-      D = { daily: daily, ch: ch, pg: pg, ev: ev, ran: ran };
+      var posts = null, qs = null;
+      if (t[4]) {
+        var hi = headerAt(t[4], function (r) { return r.indexOf('sessioncampaignname') >= 0; });
+        var rows = hi >= 0 ? t[4].slice(hi + 1) : [];
+        var by = {};
+        rows.forEach(function (r) { var c = r[0] || ''; var m = /^post0*(\d+)$/.exec(c); if (!m) return;
+          var x = by[c] || (by[c] = { id: +m[1], blog: r[1] || '', sessions: 0, users: 0, engaged: 0 }); x.sessions += +r[2] || 0; x.users += +r[3] || 0; x.engaged += +r[4] || 0; if (!x.blog && r[1]) x.blog = r[1]; });
+        posts = Object.keys(by).map(function (k) { var x = by[k], tp = t[6][x.id] || {}; x.title = tp.title || ('글 ' + x.id + '번'); if (!x.blog || x.blog === '(not set)') x.blog = tp.blog || ''; return x; })
+          .sort(function (a, b) { return b.sessions - a.sessions; });
+      }
+      if (t[5]) {
+        var qi = headerAt(t[5], function (r) { return r.some(function (c) { return c === 'impressions' || c === '노출수'; }); });
+        if (qi >= 0) {
+          var h = t[5][qi].map(function (c) { return String(c).toLowerCase(); });
+          var col = function (names) { for (var i = 0; i < names.length; i++) { var j = h.indexOf(names[i]); if (j >= 0) return j; } return -1; };
+          var cq = col(['query', '검색어', '쿼리']), cc = col(['clicks', '클릭수']), ci = col(['impressions', '노출수']), cp = col(['position', '게재순위', '평균 게재순위']);
+          qs = t[5].slice(qi + 1).filter(function (r) { return r[cq]; }).map(function (r) {
+            var imp = +r[ci] || 0, clk = +r[cc] || 0; return { q: r[cq], imp: imp, clk: clk, ctr: imp ? clk / imp : 0, pos: +r[cp] || 0 }; })
+            .sort(function (a, b) { return b.imp - a.imp; }).slice(0, 25);
+        }
+      }
+      D = { daily: daily, ch: ch, pg: pg, ev: ev, ran: ran, posts: posts, qs: qs };
       draw();
       var last = daily.length ? daily[daily.length - 1].day : '';
       setStatus([['자료 기간 ' + (daily.length ? fd(daily[0].day) + ' ~ ' + fd(last) : '-')], ['시트 갱신 ' + ran], ['화면 새로 읽음 ' + d3.timeFormat('%H:%M')(new Date())]]);
@@ -288,6 +352,9 @@
     table(bc, nd);
     funnel([{ step: '방문', count: K.sessions[0] }, { step: '자료 내려받기', count: K.download[0] }, { step: '문의 작성 시작', count: K.formStart[0] }, { step: '문의 전송', count: K.lead[0] }]);
     dailyChart();
+    goals();
+    postTable();
+    qTable();
     hbars(document.getElementById('chBars'), bc, 'channel', function (d) { return '행동 ' + fmt(d.actions); },
       function (d) { return [d.channel, '방문자 ' + fmt(d.users), '자료 받기 ' + fmt(d.downloads), '문의 작성 시작 ' + fmt(d.formStarts), '문의 전송 ' + fmt(d.leads)]; }, true);
     hbars(document.getElementById('pageBars'), bySection(), 'section', function (d) { return '평균 ' + d.secPerUser + '초'; },
@@ -301,6 +368,51 @@
       var tr = document.createElement('tr'), td0 = document.createElement('td'); td0.className = 'l'; td0.textContent = x.channel; tr.appendChild(td0);
       cols.forEach(function (c) { var td = document.createElement('td'); td.textContent = c === 'engageRate' ? pct(x[c]) : fmt(x[c]);
         if (['downloads', 'formStarts', 'leads'].indexOf(c) >= 0 && x[c] > 0 && x[c] === max[c] && x.channel !== '직접 방문') td.className = 'hot'; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+  function goals() {
+    var box = document.getElementById('goalBars'); box.replaceChildren();
+    if (!D.daily.length) return;
+    var lastDay = D.daily[D.daily.length - 1].day, month = lastDay.slice(0, 7);
+    var y = +month.slice(0, 4), mo = +month.slice(5, 7), dim = new Date(y, mo, 0).getDate(), pace = +lastDay.slice(8, 10) / dim;
+    GOALS.forEach(function (g) {
+      var v = g[1] === 'sessions' ? D.daily.filter(function (d) { return d.day.slice(0, 7) === month; }).reduce(function (s, d) { return s + d.sessions; }, 0)
+        : D.ev.filter(function (e) { return e.event === g[1] && e.day.slice(0, 7) === month; }).reduce(function (s, e) { return s + e.count; }, 0);
+      var row = document.createElement('div'); row.className = 'goal';
+      var lb = document.createElement('span'); lb.textContent = g[0];
+      var tr = document.createElement('div'); tr.className = 'track';
+      var fill = document.createElement('div'); fill.className = 'fill' + (v >= g[2] ? ' done' : ''); fill.style.width = Math.min(100, v / g[2] * 100) + '%';
+      var mk = document.createElement('div'); mk.className = 'pace'; mk.style.left = 'calc(' + (pace * 100) + '% - 1px)'; mk.title = '오늘까지 목표 위치';
+      tr.append(fill, mk);
+      var val = document.createElement('span'); val.className = 'v'; val.textContent = fmt(v) + ' / ' + fmt(g[2]) + ' (' + pct(v / g[2]) + ')';
+      row.append(lb, tr, val); box.appendChild(row);
+    });
+    var n = document.createElement('p'); n.className = 'note'; n.textContent = mo + '월 1일 ~ ' + mo + '월 ' + +lastDay.slice(8, 10) + '일 기준';
+    box.appendChild(n);
+  }
+  function emptyRow(tb, cols, text) { var tr = document.createElement('tr'), td = document.createElement('td'); td.colSpan = cols; td.className = 'l empty'; td.textContent = text; tr.appendChild(td); tb.appendChild(tr); }
+  var BLOGS = { donginensis: '데이터 인프라', donginensis3047: '지능형 제어반', bmk3037: '현장 이야기' };
+  function postTable() {
+    var tb = document.getElementById('postTable'); tb.replaceChildren();
+    if (!D.posts) { emptyRow(tb, 6, '구글 시트에 「블로그글」 탭이 생기면 여기에 나옵니다.'); return; }
+    if (!D.posts.length) { emptyRow(tb, 6, '아직 블로그 글 링크로 들어온 방문이 없습니다.'); return; }
+    D.posts.slice(0, 15).forEach(function (x, i) {
+      var tr = document.createElement('tr');
+      [[String(i + 1), 'c'], [x.title, 'wrap'], [BLOGS[x.blog] || x.blog, 'c'], [fmt(x.sessions)], [fmt(x.users)], [pct(x.sessions ? x.engaged / x.sessions : 0)]].forEach(function (c) {
+        var td = document.createElement('td'); td.textContent = c[0]; if (c[1]) td.className = c[1]; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+  function qTable() {
+    var tb = document.getElementById('qTable'); tb.replaceChildren();
+    if (!D.qs) { emptyRow(tb, 6, '구글 시트에 「검색어」 탭이 생기면 여기에 나옵니다.'); return; }
+    if (!D.qs.length) { emptyRow(tb, 6, '아직 검색 기록이 없습니다.'); return; }
+    D.qs.forEach(function (x, i) {
+      var tr = document.createElement('tr');
+      [[String(i + 1), 'c'], [x.q, 'wrap'], [fmt(x.imp)], [fmt(x.clk)], [pct1(x.ctr)], [x.pos ? x.pos.toFixed(1) : '-']].forEach(function (c) {
+        var td = document.createElement('td'); td.textContent = c[0]; if (c[1]) td.className = c[1]; tr.appendChild(td); });
+      if (x.imp >= 30 && x.ctr < 0.02) tr.children[1].classList.add('hot');
       tb.appendChild(tr);
     });
   }
