@@ -823,3 +823,17 @@ html[lang="en"] .hsns{display:none}
 .bn-col time{display:block;font-size:12.5px;color:var(--sub);margin-top:3px}
 .bn-more{margin-top:8px;font-size:14px;font-weight:700;color:var(--blue);text-decoration:none}
 @media (max-width:860px){.bn-grid{grid-template-columns:1fr}.bn-col li:nth-child(n+3){display:none}}
+
+/* 메인: 주요 고객사 로고 띠 (회사소개서 고객 쪽과 같은 로고, 현대중공업터보기계는 제외 — 대표 결정 2026.11.12) */
+.clients{background:#fff;border-bottom:1px solid var(--line);padding:22px 0;overflow:hidden}
+.cl-in{display:flex;align-items:center;gap:32px}
+.cl-lab{flex:none;font-size:14px;font-weight:700;color:var(--ink);line-height:1.45;padding-right:28px;border-right:1px solid var(--line)}
+.cl-strip{flex:1;min-width:0;display:flex;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.cl-track{display:flex;align-items:center;gap:56px;list-style:none;margin:0;padding:0 28px;flex:none;animation:clScroll 48s linear infinite}
+.cl-strip:hover .cl-track{animation-play-state:paused}
+.cl-track li{flex:none}
+.cl-track img{display:block;height:34px;width:auto;max-width:150px;object-fit:contain;filter:grayscale(1);opacity:.62;transition:filter .25s,opacity .25s}
+.cl-track img:hover{filter:none;opacity:1}
+@keyframes clScroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){.cl-track{animation:none;flex-wrap:wrap;row-gap:18px}.cl-track[aria-hidden]{display:none}.cl-strip{-webkit-mask-image:none;mask-image:none}}
+@media (max-width:720px){.cl-in{flex-direction:column;align-items:stretch;gap:12px}.cl-strip{width:100%}.cl-lab{border-right:0;padding-right:0}.cl-lab br{display:none}.cl-track{gap:36px}.cl-track img{height:26px;max-width:110px}}
