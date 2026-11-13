@@ -896,3 +896,6 @@ html[lang="en"] .hsns{display:none}
   .quick-sec .form-side ul{display:none}
   .quick-sec .form-side .more-links{margin-top:16px}
 }
+/* 상세페이지 첫 화면 핵심 한 줄 */
+.sub-hero .hero-key{display:inline-block;margin:-4px 0 18px;padding:9px 16px;border-left:3px solid var(--red);background:rgba(255,255,255,.08);font-size:clamp(17px,1.9vw,21px);font-weight:800;letter-spacing:-.01em;color:#fff;line-height:1.45}
+@media (max-width:600px){.sub-hero .hero-key span{display:block}}
