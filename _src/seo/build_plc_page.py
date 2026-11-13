@@ -136,6 +136,11 @@ def body(L):
     im = L.get('imgs', IMGS)
     # 선택: 주요 실적 표 (분야, 고객·현장, 공급 범위)
     # 선택: 첫 화면 버튼 하나 더(cta2 = (글, 주소, 미니 팝업 그림)) · 본문 첫 그림 링크와 버튼(main_link = (주소, 버튼 글))
+    # 선택: 제목 아래 핵심 한 줄(hero_key)
+    key = ''
+    if L.get('hero_key'):  # 문장마다 span: 휴대폰에서는 문장 단위로 줄을 바꿈
+        parts = [p for p in L['hero_key'].replace('. ', '.\n').split('\n') if p]
+        key = '\n    <p class="hero-key">' + ' '.join(f'<span>{e(p)}</span>' for p in parts) + '</p>'
     cta2 = ''
     if L.get('cta2'):
         t, h, th = L['cta2']
@@ -156,7 +161,7 @@ def body(L):
 <section class="sub-hero">
   <div class="wrap">
     <div class="kicker">{L['kicker']}</div>
-    <h1>{L['h1']}</h1>
+    <h1>{L['h1']}</h1>{key}
     <p>{e(L['lead'])}</p>
     <div class="hero-cta" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:34px">
       <a href="#inquiry" class="btn btn-white">{e(L['cta'][0])}</a>
