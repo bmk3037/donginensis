@@ -20,6 +20,7 @@
 ## AI 예지보전 현황 (정확한 표현)
 - 기준값 기반 알람은 도입 직후부터 사용할 수 있습니다.
 - AI 엔진을 활용한 예지보전 솔루션은 현재 실증(PoC) 중입니다. 상용화가 끝난 기능으로 소개하지 않습니다.
+- PLC 프로그램을 직접 개발하므로 데이터 수집부터 PLC 제어 연동까지 한 회사가 맡습니다. AI가 찾은 운전값을 현장 PLC로 되돌려 설비 운전에 반영하는 제어는 실증 중이며, 인터록과 최종 제어는 현장 PLC가 맡습니다.
 - '750건 이상'은 회사가 수행한 제어시스템 프로젝트 수이며, AI 학습 데이터의 건수가 아닙니다.
 
 ## 적용 분야
@@ -57,6 +58,7 @@
 
 - Cloud-based digital twin and PWA dashboards/alarms are built and in operation.
 - The AI-based predictive maintenance solution is currently in pilot (PoC) validation. "750+" refers to control system projects delivered, not AI training data.
+- The company writes its own PLC programs, so one company covers data collection through to the PLC control link. Sending AI-optimized setpoints back to the site PLC is in pilot; interlocks and final control stay with the site PLC.
 - AI predictive maintenance overview (what works today vs. what is in pilot): https://donginensis.com/en/ai-predictive-maintenance.html
 - Digital twin demo (simulated data): https://donginensis.com/en/digital-twin.html
 - Hydrogen control systems (liquid hydrogen station, hydrogen-powered vessels): https://donginensis.com/en/hydrogen-control-system.html
