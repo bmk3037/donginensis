@@ -29,6 +29,7 @@
 - [회사소개](https://donginensis.com/company.html)
 - [제조업체 도입 안내](https://donginensis.com/manufacturing.html)
 - [IT기업 협업(OT 파트너)](https://donginensis.com/partner.html)
+- [제어반 제작(자동제어반·PLC 제어반·인버터 제어반, 출하 전 13개 항목 공장검사)](https://donginensis.com/control-panel-manufacturing.html)
 - [PLC 프로그램 개발](https://donginensis.com/plc-programming.html)
 - [적용 분야](https://donginensis.com/applications.html)
 - [디지털트윈 시연](https://donginensis.com/digital-twin.html)

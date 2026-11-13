@@ -8,6 +8,9 @@ import html, json, os, re
 
 SITE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 NAME = 'plc-programming.html'
+# 본문 그림 3장(경로, 가로, 세로) — 다른 페이지 생성기(build_panel_page.py)는 L['imgs']로 바꿔 쓴다
+IMGS = {'main': ('img/plc/plc-programming-engineer.jpg', 1600, 900), 'side': ('img/plc/plc-rack-inverter.jpg', 1200, 900),
+        'wide': ('img/plc/plc-commissioning.jpg', 1600, 900)}
 
 KO = dict(
     lang='ko', src='manufacturing.html', out=NAME, form_lang='KO', root='',
@@ -126,6 +129,15 @@ def body(L):
     side = ''.join(f'<li><b>{e(t)}</b>{d}</li>' for t, d in L['iq_side'])
     works = ''.join(f'<label><input type="checkbox" name="interest" value="{e(w)}"> {e(w)}</label>' for w in f['works'])
     agree = AGREE[L['lang']]
+    im = L.get('imgs', IMGS)
+    # 선택: 주요 실적 표 (분야, 고객·현장, 공급 범위)
+    refs = ''
+    if L.get('refs'):
+        rows = ''.join(f'<tr><td>{e(a)}</td><td>{e(b)}</td><td>{e(c)}</td></tr>' for a, b, c in L['refs'])
+        refs = (f'\n    <h3 class="rv" style="font-size:21px;margin-top:48px">{e(L["refs_h"])}</h3>'
+                f'\n    <div class="rv" style="overflow-x:auto;margin-top:14px"><table class="ref-tbl"><thead><tr>'
+                + ''.join(f'<th>{e(h)}</th>' for h in L['refs_cols']) + f'</tr></thead><tbody>{rows}</tbody></table></div>'
+                f'\n    <p class="fine2 rv" style="margin-top:10px">{e(L["refs_note"])}</p>')
     return f'''
 <section class="sub-hero">
   <div class="wrap">
@@ -154,7 +166,7 @@ def body(L):
 <section class="sec">
   <div class="wrap prod-grid">
     <figure class="prod-img rv">
-      <img src="{L['root']}img/plc/plc-programming-engineer.jpg" width="1600" height="900" style="height:auto" alt="{e(L['img_alt'])}" loading="lazy">
+      <img src="{L['root']}{im['main'][0]}" width="{im['main'][1]}" height="{im['main'][2]}" style="height:auto" alt="{e(L['img_alt'])}" loading="lazy">
       <figcaption>{e(L['img_cap'])}</figcaption>
     </figure>
     <div class="rv">
@@ -174,7 +186,7 @@ def body(L):
       <p class="fine2" style="margin-top:14px">{e(L['brand_note'])}</p>
     </div>
     <figure class="prod-img rv">
-      <img src="{L['root']}img/plc/plc-rack-inverter.jpg" width="1200" height="900" style="height:auto" alt="{e(L['rack_alt'])}" loading="lazy">
+      <img src="{L['root']}{im['side'][0]}" width="{im['side'][1]}" height="{im['side'][2]}" style="height:auto" alt="{e(L['rack_alt'])}" loading="lazy">
       <figcaption>{e(L['rack_cap'])}</figcaption>
     </figure>
   </div>
@@ -188,7 +200,7 @@ def body(L):
     </div>
     <div class="proc-grid rv" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">{proc}</div>
     <figure class="prod-img rv" style="margin-top:28px">
-      <img src="{L['root']}img/plc/plc-commissioning.jpg" width="1600" height="900" alt="{e(L['comm_alt'])}" loading="lazy" style="height:auto;aspect-ratio:21/9;object-fit:cover;object-position:center 60%">
+      <img src="{L['root']}{im['wide'][0]}" width="{im['wide'][1]}" height="{im['wide'][2]}" alt="{e(L['comm_alt'])}" loading="lazy" style="height:auto;aspect-ratio:21/9;object-fit:cover;object-position:center 60%">
       <figcaption>{e(L['comm_cap'])}</figcaption>
     </figure>
   </div>
@@ -200,7 +212,7 @@ def body(L):
       <div class="kicker">{L['why_k']}</div>
       <h2 class="h2">{L['why_h']}</h2>
     </div>
-    <div class="why-grid rv" style="grid-template-columns:repeat(3,1fr)">{why}</div>
+    <div class="why-grid rv" style="grid-template-columns:repeat(3,1fr)">{why}</div>{refs}
     <div class="why-txt">{why_txt}</div>
     <div class="corp rv">{links}</div>
   </div>
@@ -226,7 +238,7 @@ def body(L):
     </div>
     <div class="rv">
       <form class="iq" novalidate>
-        <input type="hidden" name="form_type" value="PLC 프로그램 개발"><input type="hidden" name="lang" value="{L['form_lang']}">
+        <input type="hidden" name="form_type" value="{e(L.get('form_type', 'PLC 프로그램 개발'))}"><input type="hidden" name="lang" value="{L['form_lang']}">
         <input type="hidden" name="utm_source"><input type="hidden" name="utm_medium"><input type="hidden" name="utm_campaign"><input type="hidden" name="referrer">
         <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <div class="row">
@@ -271,11 +283,13 @@ def build(L):
     head = re.sub(r'<meta name="keywords" content="[^"]*">', f'<meta name="keywords" content="{L["keywords"]}">', head)
     head = re.sub(r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{L["title"]}">', head)
     head = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{L["desc"]}">', head)
-    head = re.sub(r'(<meta (?:property="og:image"|name="twitter:image") content=")[^"]*(">)', r'\1https://donginensis.com/img/plc/og_plc.jpg\2', head)
+    og = L.get('og', 'https://donginensis.com/img/plc/og_plc.jpg')
+    head = re.sub(r'(<meta (?:property="og:image"|name="twitter:image") content=")[^"]*(">)', lambda m: m.group(1) + og + m.group(2), head)
     hd = head.index('</head>')  # 주소 바꾸기는 <head> 안에서만(머리 메뉴의 제조기업 도입 링크는 그대로)
-    head = head[:hd].replace(old, NAME) + head[hd:]
+    name = L.get('name', NAME)
+    head = head[:hd].replace(old, name) + head[hd:]
     # 언어 바꾸기 링크(ENG/KOR)는 이 페이지의 짝으로
-    head = head.replace('href="en/' + old + '"', 'href="en/' + NAME + '"').replace('href="../' + old + '"', 'href="../' + NAME + '"')
+    head = head.replace('href="en/' + old + '"', 'href="en/' + name + '"').replace('href="../' + old + '"', 'href="../' + name + '"')
     faq = {'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [
         {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in L['faq']]}
     head = re.sub(r'<script type="application/ld\+json" data-faq>.*?</script>',

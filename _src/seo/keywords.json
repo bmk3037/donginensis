@@ -163,5 +163,25 @@
    "drive",
    "Korea"
   ]
+ },
+ "control-panel-manufacturing.html": {
+  "main": [
+   "제어반 제작"
+  ],
+  "sub": [
+   "자동제어반",
+   "PLC 제어반",
+   "인버터 제어반",
+   "공장검사",
+   "부산 제어반"
+  ],
+  "en_main": [
+   "control panel manufacturer"
+  ],
+  "en_sub": [
+   "PLC control panel",
+   "factory acceptance test",
+   "Korea"
+  ]
  }
 }
