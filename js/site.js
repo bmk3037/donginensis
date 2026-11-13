@@ -313,26 +313,9 @@ function popStack(){
   p.querySelector('.pp-th').addEventListener('click',function(){ close(); });
   // 휴대폰에서는 첫 화면(제목·버튼)을 가리지 않도록, 조금 내려 읽은 뒤에 띄움
   if(window.matchMedia&&matchMedia('(max-width:600px)').matches){
-    var shown=false, onS=function(){ if(shown||window.scrollY<700) return; shown=true; p.classList.add('on'); window.removeEventListener('scroll',onS); setTimeout(close,9000); }; // 9초 뒤 저절로 닫힘
+    var shown=false, onS=function(){ if(shown||window.scrollY<700) return; shown=true; p.classList.add('on'); window.removeEventListener('scroll',onS); setTimeout(close,3000); }; // 3초 뒤 저절로 닫힘
     window.addEventListener('scroll',onS,{passive:true});
-  } else setTimeout(function(){ p.classList.add('on'); },1800);
-})();
-
-// 디지털트윈 시연 미니 팝업: 회사소개서 팝업 위에 같은 모양으로 (메인의 「디지털트윈 시연 보기」 버튼에서 주소·그림을 읽음)
-(function(){
-  var a=document.querySelector('a[data-pop-thumb]'); if(!a) return;
-  if(window.matchMedia&&matchMedia('(max-width:600px)').matches) return; // 휴대폰은 팝업 하나만(회사소개서)
-  var en=document.documentElement.lang==='en';
-  var p=document.createElement('aside');
-  p.className='prof-pop'; p.setAttribute('aria-label',en?'Digital twin demo':'디지털트윈 시연');
-  p.innerHTML='<button type="button" class="pp-x" aria-label="'+(en?'Close':'닫기')+'">×</button>'+
-    '<a class="pp-th" href="'+a.getAttribute('href')+'"><img src="'+a.getAttribute('data-pop-thumb')+'" alt=""></a>'+
-    '<div class="pp-tx"><small>DIGITAL TWIN DEMO</small><b>'+(en?'Digital twin demo':'디지털트윈 시연')+'</b><span>'+(en?'3D control panel · simulated data':'3D 지능형제어반 · 모의 데이터')+'</span>'+
-    '<div class="pp-btns"><a href="'+a.getAttribute('href')+'">'+(en?'Open 3D view':'3D로 보기')+'</a></div></div>';
-  popStack().insertBefore(p,popStack().firstChild);
-  function close(){ p.classList.remove('on'); setTimeout(function(){ p.remove(); },400); }
-  p.querySelector('.pp-x').addEventListener('click',close);
-  setTimeout(function(){ p.classList.add('on'); },2400);
+  } else setTimeout(function(){ p.classList.add('on'); setTimeout(close,3000); },1800); // 뜬 뒤 3초 후 저절로 닫힘
 })();
 
 // 메인 첫 화면: 데이터가 흐르는 빛줄기(캔버스) · 마우스 시차 · 지표 숫자 세기
