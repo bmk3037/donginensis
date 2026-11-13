@@ -152,7 +152,8 @@
    "PLC 제어반",
    "제어반 제작",
    "시운전",
-   "인버터"
+   "인버터",
+   "AI 제어"
   ],
   "en_main": [
    "PLC programming"
@@ -161,7 +162,8 @@
    "control panel",
    "commissioning",
    "drive",
-   "Korea"
+   "Korea",
+   "AI control"
   ]
  },
  "control-panel-manufacturing.html": {
