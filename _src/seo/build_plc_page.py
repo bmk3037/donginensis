@@ -131,6 +131,16 @@ def body(L):
     agree = AGREE[L['lang']]
     im = L.get('imgs', IMGS)
     # 선택: 주요 실적 표 (분야, 고객·현장, 공급 범위)
+    # 선택: 첫 화면 버튼 하나 더(cta2 = (글, 주소, 미니 팝업 그림)) · 본문 첫 그림 링크와 버튼(main_link = (주소, 버튼 글))
+    cta2 = ''
+    if L.get('cta2'):
+        t, h, th = L['cta2']
+        cta2 = f'\n      <a href="{h}" class="btn btn-ghost"' + (f' data-pop-thumb="{L["root"]}{th}"' if th else '') + f'>{e(t)}</a>'
+    ml = L.get('main_link')
+    img_main = f'<img src="{L["root"]}{im["main"][0]}" width="{im["main"][1]}" height="{im["main"][2]}" style="height:auto" alt="{e(L["img_alt"])}" loading="lazy">'
+    if ml:
+        img_main = f'<a href="{ml[0]}" style="display:block;line-height:0">{img_main}</a>'
+    ml_btn = f'\n      <p style="margin-top:22px"><a href="{ml[0]}" class="btn btn-blue">{e(ml[1])}</a></p>' if ml else ''
     refs = ''
     if L.get('refs'):
         rows = ''.join(f'<tr><td>{e(a)}</td><td>{e(b)}</td><td>{e(c)}</td></tr>' for a, b, c in L['refs'])
@@ -146,7 +156,7 @@ def body(L):
     <p>{e(L['lead'])}</p>
     <div class="hero-cta" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:34px">
       <a href="#inquiry" class="btn btn-white">{e(L['cta'][0])}</a>
-      <a href="{L['cta'][1]}" class="btn btn-ghost">{e(L['cta'][2])}</a>
+      <a href="{L['cta'][1]}" class="btn btn-ghost">{e(L['cta'][2])}</a>{cta2}
     </div>
   </div>
 </section>
@@ -166,13 +176,13 @@ def body(L):
 <section class="sec">
   <div class="wrap prod-grid">
     <figure class="prod-img rv">
-      <img src="{L['root']}{im['main'][0]}" width="{im['main'][1]}" height="{im['main'][2]}" style="height:auto" alt="{e(L['img_alt'])}" loading="lazy">
+      {img_main}
       <figcaption>{e(L['img_cap'])}</figcaption>
     </figure>
     <div class="rv">
       <div class="kicker">{L['scope_k']}</div>
       <h2 class="h2">{L['scope_h']}</h2>
-      <ul class="feat">{scope}</ul>
+      <ul class="feat">{scope}</ul>{ml_btn}
     </div>
   </div>
 </section>
