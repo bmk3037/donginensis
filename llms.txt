@@ -33,6 +33,7 @@
 - [PLC 프로그램 개발](https://donginensis.com/plc-programming.html)
 - [AI 예지보전(데이터 수집·기준값 알람은 사용 중, 비지도 학습 AI 이상 탐지·엣지 AI·에너지 절감은 실증 중)](https://donginensis.com/ai-predictive-maintenance.html)
 - [적용 분야](https://donginensis.com/applications.html)
+- [수소 제어시스템(액화수소충전소 VFD·PLC·UPS 제어시스템 공급, 특허 5건, 수소추진선박 통합제어)](https://donginensis.com/hydrogen-control-system.html)
 - [디지털트윈 시연](https://donginensis.com/digital-twin.html)
 - [보도자료: 산업용 AI 에너지 5% 절감 솔루션 실증 착수(2026.04.17)](https://donginensis.com/news-industrial-ai-energy-saving.html)
 - [보도자료: 비지도 학습 엣지 AI 자율 제어(2026.04.13)](https://donginensis.com/news-edge-ai-autonomous-control.html)
@@ -58,5 +59,6 @@
 - The AI-based predictive maintenance solution is currently in pilot (PoC) validation. "750+" refers to control system projects delivered, not AI training data.
 - AI predictive maintenance overview (what works today vs. what is in pilot): https://donginensis.com/en/ai-predictive-maintenance.html
 - Digital twin demo (simulated data): https://donginensis.com/en/digital-twin.html
+- Hydrogen control systems (liquid hydrogen station, hydrogen-powered vessels): https://donginensis.com/en/hydrogen-control-system.html
 - Contact: +82-51-862-3668, dongin@donginmne.com, 47 Jinyeon-ro 9beon-gil, Busanjin-gu, Busan, Korea
 - English site: https://donginensis.com/en/

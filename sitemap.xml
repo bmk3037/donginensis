@@ -43,6 +43,13 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://donginensis.com/hydrogen-control-system.html</loc>
+    <lastmod>2026-11-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/hydrogen-control-system.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/hydrogen-control-system.html"/>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://donginensis.com/plc-programming.html</loc>
     <lastmod>2026-10-31</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/plc-programming.html"/>
@@ -110,6 +117,13 @@
     <lastmod>2026-11-13</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/ai-predictive-maintenance.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/ai-predictive-maintenance.html"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/hydrogen-control-system.html</loc>
+    <lastmod>2026-11-13</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/hydrogen-control-system.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/hydrogen-control-system.html"/>
     <priority>0.7</priority>
   </url>
   <url>
