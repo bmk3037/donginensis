@@ -1,0 +1,148 @@
+"""「제어반 제작」 페이지(국문 control-panel-manufacturing.html · 영문 en/control-panel-manufacturing.html) 생성.
+
+틀(머리·메뉴·꼬리말·문의 폼)은 PLC 프로그램 개발 페이지 생성기(build_plc_page.py)를 그대로 쓰고, 내용만 여기서 정한다.
+문구를 고칠 때는 이 파일을 고치고 다시 실행한다: python3 _src/seo/build_panel_page.py
+사실 확인된 내용만 쓴다: 공장·인증·브랜드는 회사소개, 실적은 적용 분야 「주요 실적」 표, 출하 전 시험 13개 항목은 ISO 기록 도구 FAT 성적서(QF-06) 표준 항목,
+제작 기간은 제조기업 도입 FAQ(지능형 제어반 표준 일정)에서 가져온다. 사진은 홈페이지에 이미 쓰는 실제 제어반 사진을 우선한다.
+"""
+import os, sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_plc_page import build  # noqa: E402
+
+NAME = 'control-panel-manufacturing.html'
+IMGS = {'main': ('img/field-panel.jpg', 1800, 1013), 'side': ('img/plc/plc-rack-inverter.jpg', 1200, 900),
+        'wide': ('img/control-panel.jpg', 1800, 849)}
+OG = 'https://donginensis.com/img/panel/og_panel.jpg'
+FAT_KO = '외관·명판, 외함·보호등급, 공간·연면거리, 기계적 동작, 보호기기 설정값, 절연저항, 내전압, 보호접지, 전원·상순, I/O·통신, 인터록·비상정지, 인버터·PLC, 알람·보호'
+FAT_EN = ('appearance and nameplate, enclosure and IP rating, clearance and creepage, mechanical operation, protective device settings, '
+          'insulation resistance, dielectric withstand, protective earth, power and phase sequence, I/O and communication, '
+          'interlocks and emergency stop, drives and PLC, alarms and protection')
+
+KO = dict(
+    lang='ko', src='manufacturing.html', out=NAME, name=NAME, form_lang='KO', root='', imgs=IMGS, og=OG, form_type='제어반 제작',
+    title='제어반 제작 · 설계부터 공장검사·시운전까지 | (주)동인엔시스',
+    desc='부산·양산 공장에서 자동제어반·PLC 제어반·인버터 제어반을 직접 설계·제작합니다. 출하 전 13개 항목 공장검사(FAT)와 현장 시운전까지 한 회사가 맡는 35년 제어반 제작 기업.',
+    keywords='제어반 제작, 제어반 제작 업체, 자동제어반, PLC 제어반, 인버터 제어반, 모터 제어반, 선박 제어반, 공장검사, FAT, 부산 제어반, 양산 제어반, 동인엔시스',
+    kicker='Control Panel Manufacturing',
+    h1='제어반 제작,<br><span class="rl">설계부터 시운전까지</span> 한 회사가 합니다.',
+    lead='부산의 제어반 제작 기업 (주)동인엔시스는 1991년부터 산업·선박 현장의 제어반을 설계하고 직접 제작해 왔습니다. 양산 1·2공장과 기장공장에서 자동제어반·PLC 제어반·인버터 제어반을 만들고, 출하 전 공장검사와 현장 시운전까지 자체 수행합니다.',
+    cta=('제어반 제작 문의 →', 'tel:0518623668', '전화 상담 051-862-3668'),
+    check_k='Check', check_h='이런 제어반이<br><span class="b">필요하시면</span>',
+    checks=['신규 설비에 들어갈 자동제어반·PLC 제어반을 제작할 곳을 찾고 있다', '노후한 펌프·송풍기·압축기 제어반을 교체해야 한다',
+            '인버터·소프트 스타터로 모터를 제어하는 제어반이 필요하다', '선박·해양 설비처럼 조건이 까다로운 제어반이 필요하다',
+            '출하 전 공장검사(FAT)까지 책임질 제작 업체가 필요하다', '제어반을 바꾸면서 설비 데이터 수집도 함께 시작하고 싶다'],
+    scope_k='Products', scope_h='제작하는<br><span class="b">제어반</span>',
+    img_alt='제어반 제작 – 펌프 설비 옆에 설치된 동인엔시스 제어반', img_cap='펌프 설비 옆에 설치된 동인엔시스 제어반',
+    rack_alt='제어반 내부 – PLC 모듈·인버터와 정리된 제어 배선', rack_cap='PLC·인버터와 제어 배선을 정리한 제어반 내부(이해를 돕기 위한 연출 이미지)',
+    comm_alt='공장검사 – 제어반과 모터를 함께 시험하는 지능형 제어반 TestBench', comm_cap='출하 전 공장검사 – 제어반과 모터를 함께 시험하는 지능형 제어반 TestBench',
+    scope=[('01', '자동제어반 · PLC 제어반', 'PLC로 설비의 운전 순서·인터록·알람을 제어하는 제어반입니다. PLC 프로그램 개발까지 함께 맡을 수 있습니다.'),
+           ('02', '인버터 · 모터 제어반', '펌프·송풍기·압축기 등의 모터를 인버터·소프트 스타터로 기동·정지하고 속도를 제어합니다.'),
+           ('03', '선박 · 플랜트 제어시스템', '하이브리드 추진, 연료가스공급(FGSS), 액화수소충전소, 생산 플랜트의 제어 콘솔·시스템 판넬을 설계·제작합니다.'),
+           ('04', '지능형 제어반', '설비 제어와 운전 데이터 수집을 한 면에서 하고, 별도 수집장비 없이 클라우드·고객사 서버로 연결합니다.')],
+    brand_k='Brands', brand_h='제어반에 쓰는<br><span class="b">주요 브랜드</span>',
+    brands=['Schneider Electric (공식 SI 파트너)', 'SIEMENS', 'ABB', 'Fuji Electric', 'Phoenix Contact', 'Danfoss', 'Eaton'],
+    brand_note='고객 사양서나 지정 브랜드가 있으면 그에 맞춰 부품을 구성합니다. CE·UL 기준 설계·제작 체계를 갖추고 있습니다.',
+    proc_k='Process', proc_h='제작 절차',
+    proc=[('STEP 1', '사양 확인', '대상 설비·용량·설치 환경, 고객 사양서 확인'), ('STEP 2', '설계', '전기 도면, 부품 목록(BOM), 입출력(I/O) 목록'),
+          ('STEP 3', '제작 · 배선', '양산 공장에서 외함 조립·부품 실장·배선'), ('STEP 4', '공장검사(FAT)', f'출하 전 13개 항목 시험과 I/O 점별 점검'),
+          ('STEP 5', '설치 · 시운전', '현장 설치, 시운전, 운영 교육, 사후관리')],
+    why_k='Why DONG-IN ENSIS', why_h='35년 동안<br><span class="b">직접 만든 제어반</span>',
+    why=[('35<sup>+</sup>', 'Years · 1991년 설립'), ('750<sup>+</sup>', '제어시스템 프로젝트'), ('3', '양산 1·2공장 · 기장공장')],
+    why_txt=[('설계부터 시운전까지 한 회사', '제어반 설계·제작·배선, PLC 프로그램, 공장검사, 현장 시운전을 나누지 않고 한 회사가 책임집니다.'),
+             ('출하 전 13개 항목 공장검사', f'{FAT_KO}을 시험하고, 입출력(I/O)은 점마다 따로 점검한 성적서와 함께 출하합니다.'),
+             ('까다로운 현장의 실적', '친환경 선박 하이브리드 추진, LNG 연료가스공급(FGSS), 액화수소충전소, 국내외 생산 플랜트 제어시스템을 설계·제작했습니다.')],
+    refs_h='제어반 · 제어시스템 주요 실적', refs_cols=('분야', '발주처 · 현장', '공급 범위'),
+    refs=[('친환경 선박', '충남병원선 · 경남청정호 (2023년 취항)', '하이브리드 추진시스템 · 통합제어·감시시스템'),
+          ('LNG 연료가스공급(FGSS)', '삼성중공업 FGSS 시험설비', 'G/W(글리콜워터) 히터 제어시스템'),
+          ('LNG 운반선', 'SB선보 · LNG 운반선용 BOG 압축기', 'BOG 압축기 제어시스템 설계 · 공급 · 시운전'),
+          ('수소 · 에너지', 'SK E&S 액화수소충전소', 'VFD · PLC · UPS 제어시스템 공급'),
+          ('산업 플랜트', '동화기업 포르말린 수지 플랜트', '플랜트 전체 제어시스템 설계 · 제작'),
+          ('산업 플랜트', 'KOS · 고려제강(Kiswire) 신선기 · 연선기 · 도금 · 열처리 라인', '제어시스템 (한국 · 베트남 · 미국 등 7개국)'),
+          ('특수 기계', '대한화섬 자동 도퍼', 'PLC · 서보 8축 · 인버터 2대 · HMI 제어'),
+          ('선박 제어반', 'KSB 선박용 설비', '제어 콘솔 · 시스템 판넬')],
+    refs_note='750건 이상의 프로젝트 중 일부입니다. 전체 실적은 적용 분야 페이지와 회사소개서에서 볼 수 있습니다.',
+    links=[('PLC 프로그램 개발 →', 'plc-programming.html'), ('지능형 제어반 도입 안내 →', 'manufacturing.html'), ('적용 분야 · 실적 →', 'applications.html')],
+    faq_k='FAQ', faq_h='자주 묻는 질문',
+    faq=[('어떤 제어반을 제작하나요?', '자동제어반, PLC 제어반, 인버터·모터 제어반, 선박·플랜트용 제어 콘솔과 시스템 판넬, 설비 데이터까지 수집하는 지능형 제어반을 설계·제작합니다.'),
+         ('제어반은 어디서 만드나요?', '경상남도 양산시의 양산 1·2공장(2023년 준공)과 부산 기장공장에서 직접 제작합니다. 본사와 기업부설연구소는 부산 부산진구에 있습니다.'),
+         ('출하 전에 어떤 검사를 하나요?', f'공장검사(FAT)에서 {FAT_KO} 등 13개 항목을 시험하고, 입출력(I/O)은 점마다 따로 점검합니다. 결과는 성적서로 남기며, 고객이 입회 검사를 할 수 있습니다.'),
+         ('노후 제어반 교체도 할 수 있나요?', '네. 현장 확인에서 기존 제어반 구성과 운전 방식을 살펴 교체용 제어반을 설계·제작하고, 교체 작업 일정은 생산 계획에 맞춰 협의합니다. 교체하면서 지능형 제어반으로 설비 데이터 수집을 함께 시작할 수도 있습니다.'),
+         ('PLC 프로그램도 함께 맡길 수 있나요?', '네. 제어반 제작과 PLC·인버터 프로그램, 공장검사, 현장 시운전을 한 회사에서 수행합니다. 제어반과 프로그램을 출하 전에 함께 시험하므로 현장 시운전 기간을 줄일 수 있습니다.'),
+         ('어떤 브랜드 부품을 쓰나요?', 'Schneider Electric 공식 SI 파트너이며 SIEMENS·ABB·Fuji Electric·Phoenix Contact·Danfoss·Eaton 등을 써 왔습니다. 고객 사양서나 지정 브랜드가 있으면 그에 맞춥니다.'),
+         ('제작 기간과 비용은 어느 정도인가요?', '제어반 수·용량·사양에 따라 달라집니다. 지능형 제어반 표준 일정에서는 제어반 제작에 5주 안팎이 걸리며, 현장 확인 후 구성안과 함께 견적을 드립니다.')],
+    iq_k='Inquiry', iq_h='제어반 제작<br><span class="b">문의</span>',
+    iq_lead='설비와 필요한 제어반을 남겨 주시면 담당 엔지니어가 검토 후 연락드립니다. 도면이나 사양서가 있으면 함께 알려 주십시오.',
+    iq_side=[('회신', '영업일 기준 1~2일 이내 연락드립니다.'), ('검토 내용', '제작 가능 여부, 권장 구성, 예상 일정'), ('전화 상담', '<a href="tel:0518623668">051-862-3668</a>')],
+    f=dict(company='회사명', name='담당자명', position='부서 / 직책', phone='연락처', email='이메일', region='설비 소재지 (시·도)', region_ph='예: 경남 김해',
+           ctl='대상 설비 · 용량', ctl_ph='예: 펌프 75kW 3대, 송풍기 등', work='제작 종류 (복수 선택)',
+           works=['자동제어반 · PLC 제어반', '인버터 · 모터 제어반', '노후 제어반 교체', '선박 · 플랜트 제어반', '지능형 제어반(데이터 수집)', '견적 요청'],
+           msg='문의 내용', msg_ph='설비 구성, 수량, 사양서 유무, 희망 납기 등을 자유롭게 적어 주십시오.', submit='문의하기',
+           ok='<b>문의가 접수되었습니다.</b>검토 후 영업일 기준 1~2일 이내에 연락드리겠습니다.'),
+)
+
+EN = dict(
+    lang='en', src='en/manufacturing.html', out='en/' + NAME, name=NAME, form_lang='EN', root='../', imgs=IMGS, og=OG, form_type='제어반 제작',
+    title='Control Panel Manufacturer in Korea | DONG-IN ENSIS',
+    desc='Control panel manufacturer in Busan, Korea since 1991: PLC control panels and drive panels built in-house, 13-item factory acceptance test and commissioning.',
+    keywords='control panel manufacturer, control panel manufacturing Korea, PLC control panel, automation panel, VFD panel, motor control panel, marine control panel, FAT, DONG-IN ENSIS',
+    kicker='Control Panel Manufacturing',
+    h1='Control panels,<br><span class="rl">from design to commissioning</span> by one company.',
+    lead='Since 1991 DONG-IN ENSIS has designed and built control panels for industrial and marine sites. We build automation panels, PLC control panels and drive panels in our Yangsan Plants 1 and 2 and Gijang Plant, and carry out factory testing and site commissioning ourselves.',
+    cta=('Ask about control panel building →', 'tel:+82518623668', 'Call +82-51-862-3668'),
+    check_k='Check', check_h='When you need<br><span class="b">these panels</span>',
+    checks=['You need automation or PLC panels built for new equipment', 'Aging pump, blower or compressor panels need replacing',
+            'You need panels that drive motors with VFDs or soft starters', 'You need panels for demanding marine and offshore conditions',
+            'You need a builder responsible through the factory acceptance test (FAT)', 'You want to start collecting equipment data while replacing the panel'],
+    scope_k='Products', scope_h='Panels<br><span class="b">we build</span>',
+    img_alt='Control panel manufacturing – DONG-IN ENSIS control panel installed beside pump equipment', img_cap='DONG-IN ENSIS control panel installed beside pump equipment',
+    rack_alt='Inside a control panel – PLC modules, a drive and tidy control wiring', rack_cap='Inside a control panel with PLC, drives and organized wiring (illustrative image)',
+    comm_alt='Factory test – the Intelligent Control Panel TestBench testing panels with motors', comm_cap='Factory test before shipment – the Intelligent Control Panel TestBench with panels and motors',
+    scope=[('01', 'Automation & PLC control panels', 'Panels that control operating sequences, interlocks and alarms with a PLC. We can also write the PLC program.'),
+           ('02', 'Drive & motor control panels', 'Start, stop and speed control of pump, blower and compressor motors with VFDs and soft starters.'),
+           ('03', 'Marine & plant control systems', 'Control consoles and system panels for hybrid propulsion, fuel gas supply (FGSS), liquid hydrogen refueling stations and production plants.'),
+           ('04', 'Intelligent Control Panel', 'Equipment control and operating data collection in one panel, connected to the cloud or your server without an extra gateway.')],
+    brand_k='Brands', brand_h='Main brands<br><span class="b">in our panels</span>',
+    brands=['Schneider Electric (official SI partner)', 'SIEMENS', 'ABB', 'Fuji Electric', 'Phoenix Contact', 'Danfoss', 'Eaton'],
+    brand_note='We follow your specification or designated brands. We have a design and build system for CE and UL standards.',
+    proc_k='Process', proc_h='How we build',
+    proc=[('STEP 1', 'Specification', 'Equipment, ratings, site conditions and your specification'), ('STEP 2', 'Design', 'Electrical drawings, bill of materials (BOM), I/O list'),
+          ('STEP 3', 'Build & wiring', 'Enclosure assembly, component mounting and wiring in our plants'), ('STEP 4', 'Factory test (FAT)', '13 test items and point-by-point I/O checks before shipment'),
+          ('STEP 5', 'Install & commission', 'Installation, commissioning, operator training and support')],
+    why_k='Why DONG-IN ENSIS', why_h='35 years of panels<br><span class="b">built in-house</span>',
+    why=[('35<sup>+</sup>', 'Years · since 1991'), ('750<sup>+</sup>', 'Control system projects'), ('3', 'Yangsan Plants 1·2 · Gijang Plant')],
+    why_txt=[('One company from design to commissioning', 'Panel design, building and wiring, PLC programming, factory testing and site commissioning are handled by one company.'),
+             ('13-item factory acceptance test', f'We test {FAT_EN}, check every I/O point separately and ship with a test report.'),
+             ('References in demanding sites', 'Hybrid propulsion for green ships, LNG fuel gas supply (FGSS), liquid hydrogen refueling stations and production plant control systems in Korea and abroad.')],
+    refs_h='Selected control panel and control system references', refs_cols=('Field', 'Customer · site', 'Scope of supply'),
+    refs=[('Green ships', 'Chungcheongnam-do hospital ship · Gyeongsangnam-do environmental cleanup ship (commissioned 2023)', 'Hybrid propulsion system · integrated control & monitoring'),
+          ('LNG fuel gas supply (FGSS)', 'Samsung Heavy Industries FGSS test facility', 'G/W (glycol water) heater control system'),
+          ('LNG carriers', 'SB Sunbo · BOG compressors for LNG carriers', 'Design, supply and commissioning of BOG compressor control'),
+          ('Hydrogen & energy', 'SK E&S liquid hydrogen refueling station', 'VFD, PLC and UPS control systems'),
+          ('Industrial plants', 'Dongwha Enterprise formalin resin plant', 'Design and build of the entire plant control system'),
+          ('Industrial plants', 'KOS · Kiswire drawing, stranding, plating and heat treatment lines', 'Control systems (7 countries incl. Korea, Vietnam, USA)'),
+          ('Special machinery', 'Daehan Synthetic Fiber auto doffer', 'PLC, 8-axis servo, 2 VFDs, HMI control'),
+          ('Marine panels', 'KSB marine equipment', 'Control consoles and system panels')],
+    refs_note='A selection from 750+ projects. See the Applications page and the company profile for more.',
+    links=[('PLC programming →', 'plc-programming.html'), ('Intelligent Control Panel for manufacturers →', 'manufacturing.html'), ('Applications & references →', 'applications.html')],
+    faq_k='FAQ', faq_h='Frequently asked questions',
+    faq=[('What kinds of control panels do you build?', 'Automation and PLC panels, drive and motor control panels, control consoles and system panels for marine and plant use, and the Intelligent Control Panel that also collects equipment data.'),
+         ('Where are the panels built?', 'In our own Yangsan Plants 1 and 2 (completed 2023) in Gyeongsangnam-do and our Gijang Plant in Busan. The head office and R&D center are in Busanjin-gu, Busan.'),
+         ('What do you test before shipment?', f'The factory acceptance test (FAT) covers 13 items including {FAT_EN}, and every I/O point is checked separately. Results are recorded in a test report, and customers can witness the test.'),
+         ('Can you replace aging control panels?', 'Yes. We review the existing panel and operating method on site, design and build the replacement, and schedule the changeover around your production plan. You can also start collecting equipment data with the Intelligent Control Panel at the same time.'),
+         ('Can you also write the PLC program?', 'Yes. Panel building, PLC and drive programming, factory testing and site commissioning are done by one company. Panel and program are tested together before shipment, which shortens commissioning on site.'),
+         ('Which component brands do you use?', 'We are an official Schneider Electric SI partner and have used SIEMENS, ABB, Fuji Electric, Phoenix Contact, Danfoss, Eaton and others. We follow your specification or designated brands.'),
+         ('How long does it take and what does it cost?', 'It depends on the number of panels, ratings and specification. In our standard Intelligent Control Panel schedule, panel building takes about 5 weeks. We quote with a proposed configuration after a site review.')],
+    iq_k='Inquiry', iq_h='Ask about<br><span class="b">control panel building</span>',
+    iq_lead='Tell us about your equipment and the panels you need, and an engineer will review it and get back to you. Please mention any drawings or specifications.',
+    iq_side=[('Reply', 'Within 1–2 business days.'), ('We review', 'Feasibility, recommended setup, expected schedule'), ('Phone', '<a href="tel:+82518623668">+82-51-862-3668</a>')],
+    f=dict(company='Company', name='Name', position='Department / Position', phone='Phone', email='E-mail', region='Site location', region_ph='e.g. Busan, Korea',
+           ctl='Equipment · ratings', ctl_ph='e.g. three 75 kW pumps, blowers', work='Panel type (select all that apply)',
+           works=['Automation / PLC panel', 'Drive / motor control panel', 'Aging panel replacement', 'Marine / plant panel', 'Intelligent Control Panel (data)', 'Quotation'],
+           msg='Message', msg_ph='Equipment, quantity, specifications, preferred delivery date, etc.', submit='Send inquiry',
+           ok='<b>Thank you. We have received your inquiry.</b>We will contact you within 1–2 business days.'),
+)
+
+if __name__ == '__main__':
+    build(KO)
+    build(EN)
