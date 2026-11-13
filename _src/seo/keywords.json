@@ -221,5 +221,25 @@
    "Intelligent Control Panel",
    "equipment monitoring"
   ]
+ },
+ "hydrogen-control-system.html": {
+  "main": [
+   "액화수소"
+  ],
+  "sub": [
+   "액화수소충전소",
+   "수소충전소 제어",
+   "수소추진선박",
+   "수소전문기업",
+   "제어시스템"
+  ],
+  "en_main": [
+   "liquid hydrogen"
+  ],
+  "en_sub": [
+   "hydrogen refueling station",
+   "hydrogen-powered vessel",
+   "control system"
+  ]
  }
 }
