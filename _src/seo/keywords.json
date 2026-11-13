@@ -183,5 +183,43 @@
    "factory acceptance test",
    "Korea"
   ]
+ },
+ "ai-predictive-maintenance.html": {
+  "main": [
+   "AI 예지보전"
+  ],
+  "sub": [
+   "산업용 AI",
+   "설비 이상 탐지",
+   "엣지 AI",
+   "비지도 학습",
+   "디지털트윈",
+   "에너지 절감"
+  ],
+  "en_main": [
+   "AI predictive maintenance"
+  ],
+  "en_sub": [
+   "industrial AI",
+   "anomaly detection",
+   "edge AI",
+   "digital twin"
+  ]
+ },
+ "digital-twin.html": {
+  "main": [
+   "디지털트윈"
+  ],
+  "sub": [
+   "지능형 제어반",
+   "설비 모니터링"
+  ],
+  "en_main": [
+   "digital twin"
+  ],
+  "en_sub": [
+   "Intelligent Control Panel",
+   "equipment monitoring"
+  ]
  }
 }
