@@ -836,3 +836,63 @@ html[lang="en"] .hsns{display:none}
 @keyframes clScroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @media (prefers-reduced-motion:reduce){.cl-track{animation:none;flex-wrap:wrap;row-gap:18px}.cl-track[aria-hidden]{display:none}.cl-strip{-webkit-mask-image:none;mask-image:none}}
 @media (max-width:720px){.cl-in{flex-direction:column;align-items:stretch;gap:12px}.cl-strip{width:100%}.cl-lab{border-right:0;padding-right:0}.cl-lab br{display:none}.cl-track{gap:36px}.cl-track img{height:26px;max-width:110px}}
+
+/* ── 2026.11.14 연락 전환 보강 ── */
+/* 휴대폰 아래 고정 띠: 전화 상담 · 문의하기 (js/site.js가 넣음) */
+.mbar{display:none}
+@media (max-width:768px){
+  .mbar{position:fixed;left:0;right:0;bottom:0;z-index:55;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(6,20,44,.08);transition:transform .25s}
+  .mbar.off{transform:translateY(110%)}
+  .mbar a{display:flex;align-items:center;justify-content:center;gap:7px;height:46px;border-radius:8px;font-size:15.5px;font-weight:800;text-decoration:none}
+  .mbar svg{width:18px;height:18px;flex:none}
+  .mbar .tel{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+  .mbar .iqb{background:var(--blue);color:#fff}
+  body.has-mbar .ft{border-bottom:calc(62px + env(safe-area-inset-bottom)) solid #0C1628}
+  body.has-mbar .pop-stack{bottom:calc(74px + env(safe-area-inset-bottom))}
+}
+/* 메인 간단 문의 */
+.quick-sec .form-side .more-links{display:flex;flex-direction:column;gap:8px;margin-top:22px}
+.quick-sec .form-side .more-links a{font-size:15px;font-weight:700;color:var(--blue)}
+.quick-sec .iq textarea{min-height:96px}
+.quick-sec .iq .opt{font-weight:500;color:var(--sub);font-size:12.5px;margin-left:4px}
+/* 메인 주요 실적 */
+.home-refs{margin-top:44px}
+.home-refs h3{font-size:21px;font-weight:800;letter-spacing:-.02em}
+.home-refs .tblw{overflow-x:auto;margin-top:14px}
+.home-refs .ref-tbl{min-width:640px}
+.home-refs .fine2{margin-top:10px}
+/* 중간 상담 띠(메인 실적 아래) */
+.cta-sec.mid{padding:0 0 96px}
+/* 휴대폰: 메인 길이 줄이기 */
+@media (max-width:600px){
+  .ch-grid{grid-template-columns:repeat(5,1fr);gap:8px;margin-top:22px}
+  .ch-grid .ch:last-child:nth-child(odd){grid-column:auto}
+  .ch{grid-template-columns:1fr;justify-items:center;padding:10px 0;gap:0;border-radius:10px}
+  .ch .tx,.ch .go{display:none}
+  .ch .ic{width:42px;height:42px;border-radius:11px}
+  a.cat{flex-direction:row}
+  a.cat .ci{flex:none;width:36%;aspect-ratio:auto}
+  a.cat .cb{padding:14px 16px}
+  a.cat h3{font-size:18px;margin:3px 0}
+  a.cat p{font-size:14px}
+  a.cat ul{display:none}
+  a.cat .more{margin-top:8px;font-size:13.5px}
+  .prof-hub .doc{padding:14px 16px;gap:14px}
+  .prof-hub .doc span{display:none}
+  .prof-hub .doc .ic{width:38px;height:46px}
+  .home-refs .ref-tbl th,.home-refs .ref-tbl td{padding:10px 12px;font-size:13.5px}
+}
+.pop-stack{transition:opacity .25s}
+.pop-stack.hide{opacity:0;visibility:hidden}
+@media (max-width:600px){
+  .home-refs .ref-tbl{min-width:0}
+  .home-refs .ref-tbl thead{display:none}
+  .home-refs .ref-tbl tbody tr{display:block;padding:12px 0;border-bottom:1px solid var(--line)}
+  .home-refs .ref-tbl tbody tr:last-child{border-bottom:0}
+  .home-refs .ref-tbl td{display:block;padding:0;border:0;font-size:14px}
+  .home-refs .ref-tbl td:first-child{color:var(--blue);font-size:12.5px}
+  .home-refs .ref-tbl td:nth-child(2){font-weight:700;color:var(--ink);margin:2px 0}
+  .home-refs .ref-tbl td:nth-child(3){color:var(--sub)}
+  .quick-sec .form-side ul{display:none}
+  .quick-sec .form-side .more-links{margin-top:16px}
+}
