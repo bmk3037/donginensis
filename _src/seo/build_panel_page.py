@@ -3,7 +3,7 @@
 틀(머리·메뉴·꼬리말·문의 폼)은 PLC 프로그램 개발 페이지 생성기(build_plc_page.py)를 그대로 쓰고, 내용만 여기서 정한다.
 문구를 고칠 때는 이 파일을 고치고 다시 실행한다: python3 _src/seo/build_panel_page.py
 사실 확인된 내용만 쓴다: 공장·인증·브랜드는 회사소개, 실적은 적용 분야 「주요 실적」 표, 출하 전 시험 13개 항목은 ISO 기록 도구 FAT 성적서(QF-06) 표준 항목,
-제작 기간은 제조기업 도입 FAQ(지능형 제어반 표준 일정)에서 가져온다. 사진은 홈페이지에 이미 쓰는 실제 제어반 사진을 우선한다.
+제작 기간은 제조기업 도입 FAQ(지능형 제어반 표준 일정)에서 가져온다. 사진은 연출 이미지이므로 캡션에 그렇게 적는다(제어반 모양은 img/control-panel.jpg를 기준으로 통일).
 """
 import os, sys
 
@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_plc_page import build  # noqa: E402
 
 NAME = 'control-panel-manufacturing.html'
-IMGS = {'main': ('img/field-panel.jpg', 1800, 1013), 'side': ('img/plc/plc-rack-inverter.jpg', 1200, 900),
+IMGS = {'main': ('img/panel/panel-workshop-wiring.jpg', 1280, 720), 'side': ('img/plc/plc-rack-inverter.jpg', 1200, 900),
         'wide': ('img/control-panel.jpg', 1800, 849)}
 OG = 'https://donginensis.com/img/panel/og_panel.jpg'
 FAT_KO = '외관·명판, 외함·보호등급, 공간·연면거리, 기계적 동작, 보호기기 설정값, 절연저항, 내전압, 보호접지, 전원·상순, I/O·통신, 인터록·비상정지, 인버터·PLC, 알람·보호'
@@ -33,7 +33,7 @@ KO = dict(
             '인버터·소프트 스타터로 모터를 제어하는 제어반이 필요하다', '선박·해양 설비처럼 조건이 까다로운 제어반이 필요하다',
             '출하 전 공장검사(FAT)까지 책임질 제작 업체가 필요하다', '제어반을 바꾸면서 설비 데이터 수집도 함께 시작하고 싶다'],
     scope_k='Products', scope_h='제작하는<br><span class="b">제어반</span>',
-    img_alt='제어반 제작 – 펌프 설비 옆에 설치된 동인엔시스 제어반', img_cap='펌프 설비 옆에 설치된 동인엔시스 제어반(이해를 돕기 위한 연출 이미지)',
+    img_alt='제어반 제작 – 작업장에서 제어반 내부 단자 배선을 조이는 기술자', img_cap='제어반 제작 – 작업장에서 내부 배선을 마무리하는 모습(이해를 돕기 위한 연출 이미지)',
     rack_alt='제어반 내부 – PLC 모듈·인버터와 정리된 제어 배선', rack_cap='PLC·인버터와 제어 배선을 정리한 제어반 내부(이해를 돕기 위한 연출 이미지)',
     comm_alt='공장검사 – 제어반과 모터를 함께 시험하는 지능형 제어반 TestBench', comm_cap='출하 전 공장검사 – 제어반과 모터를 함께 시험하는 지능형 제어반 TestBench(이해를 돕기 위한 연출 이미지)',
     scope=[('01', '자동제어반 · PLC 제어반', 'PLC로 설비의 운전 순서·인터록·알람을 제어하는 제어반입니다. PLC 프로그램 개발까지 함께 맡을 수 있습니다.'),
@@ -95,7 +95,7 @@ EN = dict(
             'You need panels that drive motors with VFDs or soft starters', 'You need panels for demanding marine and offshore conditions',
             'You need a builder responsible through the factory acceptance test (FAT)', 'You want to start collecting equipment data while replacing the panel'],
     scope_k='Products', scope_h='Panels<br><span class="b">we build</span>',
-    img_alt='Control panel manufacturing – DONG-IN ENSIS control panel installed beside pump equipment', img_cap='DONG-IN ENSIS control panel installed beside pump equipment (illustrative image)',
+    img_alt='Control panel manufacturing – a technician tightening terminal wiring inside a control panel in the workshop', img_cap='Control panel manufacturing – finishing the internal wiring in the workshop (illustrative image)',
     rack_alt='Inside a control panel – PLC modules, a drive and tidy control wiring', rack_cap='Inside a control panel with PLC, drives and organized wiring (illustrative image)',
     comm_alt='Factory test – the Intelligent Control Panel TestBench testing panels with motors', comm_cap='Factory test before shipment – the Intelligent Control Panel TestBench with panels and motors (illustrative image)',
     scope=[('01', 'Automation & PLC control panels', 'Panels that control operating sequences, interlocks and alarms with a PLC. We can also write the PLC program.'),
