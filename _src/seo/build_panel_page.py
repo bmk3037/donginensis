@@ -11,8 +11,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_plc_page import build  # noqa: E402
 
 NAME = 'control-panel-manufacturing.html'
-IMGS = {'main': ('img/panel/panel-workshop-wiring.jpg', 1280, 720), 'side': ('img/plc/plc-rack-inverter.jpg', 1200, 900),
-        'wide': ('img/control-panel.jpg', 1800, 849)}
+IMGS = {'main': ('img/panel/panel-workshop-wiring.jpg', 1280, 720), 'side': ('img/panel/panel-wire-marking.jpg', 1280, 720),
+        'wide': ('img/panel/panel-factory-test.jpg', 1280, 720)}
 OG = 'https://donginensis.com/img/panel/og_panel.jpg'
 FAT_KO = '외관·명판, 외함·보호등급, 공간·연면거리, 기계적 동작, 보호기기 설정값, 절연저항, 내전압, 보호접지, 전원·상순, I/O·통신, 인터록·비상정지, 인버터·PLC, 알람·보호'
 FAT_EN = ('appearance and nameplate, enclosure and IP rating, clearance and creepage, mechanical operation, protective device settings, '
@@ -34,8 +34,8 @@ KO = dict(
             '출하 전 공장검사(FAT)까지 책임질 제작 업체가 필요하다', '제어반을 바꾸면서 설비 데이터 수집도 함께 시작하고 싶다'],
     scope_k='Products', scope_h='제작하는<br><span class="b">제어반</span>',
     img_alt='제어반 제작 – 작업장에서 제어반 내부 단자 배선을 조이는 기술자', img_cap='제어반 제작 – 작업장에서 내부 배선을 마무리하는 모습(이해를 돕기 위한 연출 이미지)',
-    rack_alt='제어반 내부 – PLC 모듈·인버터와 정리된 제어 배선', rack_cap='PLC·인버터와 제어 배선을 정리한 제어반 내부(이해를 돕기 위한 연출 이미지)',
-    comm_alt='공장검사 – 제어반과 모터를 함께 시험하는 지능형 제어반 TestBench', comm_cap='출하 전 공장검사 – 제어반과 모터를 함께 시험하는 지능형 제어반 TestBench(이해를 돕기 위한 연출 이미지)',
+    rack_alt='제어반 내부 배선 – 단자대 전선에 번호 표식을 다는 모습', rack_cap='제어반 내부 – 단자대 전선마다 번호 표식을 답니다(이해를 돕기 위한 연출 이미지)',
+    comm_alt='공장검사 – 제어반 단자를 측정기로 재고 점검표에 기록하는 엔지니어', comm_cap='출하 전 공장검사 – 측정기로 단자를 재고 점검표에 기록합니다(이해를 돕기 위한 연출 이미지)',
     scope=[('01', '자동제어반 · PLC 제어반', 'PLC로 설비의 운전 순서·인터록·알람을 제어하는 제어반입니다. PLC 프로그램 개발까지 함께 맡을 수 있습니다.'),
            ('02', '인버터 · 모터 제어반', '펌프·송풍기·압축기 등의 모터를 인버터·소프트 스타터로 기동·정지하고 속도를 제어합니다.'),
            ('03', '선박 · 플랜트 제어시스템', '하이브리드 추진, 연료가스공급(FGSS), 액화수소충전소, 생산 플랜트의 제어 콘솔·시스템 판넬을 설계·제작합니다.'),
@@ -96,8 +96,8 @@ EN = dict(
             'You need a builder responsible through the factory acceptance test (FAT)', 'You want to start collecting equipment data while replacing the panel'],
     scope_k='Products', scope_h='Panels<br><span class="b">we build</span>',
     img_alt='Control panel manufacturing – a technician tightening terminal wiring inside a control panel in the workshop', img_cap='Control panel manufacturing – finishing the internal wiring in the workshop (illustrative image)',
-    rack_alt='Inside a control panel – PLC modules, a drive and tidy control wiring', rack_cap='Inside a control panel with PLC, drives and organized wiring (illustrative image)',
-    comm_alt='Factory test – the Intelligent Control Panel TestBench testing panels with motors', comm_cap='Factory test before shipment – the Intelligent Control Panel TestBench with panels and motors (illustrative image)',
+    rack_alt='Control panel wiring – attaching numbered markers to wires at the terminal blocks', rack_cap='Inside the panel – every wire at the terminal blocks gets a numbered marker (illustrative image)',
+    comm_alt='Factory test – engineers measuring panel terminals with a tester and recording on a checklist', comm_cap='Factory test before shipment – measuring at the terminals and recording on the checklist (illustrative image)',
     scope=[('01', 'Automation & PLC control panels', 'Panels that control operating sequences, interlocks and alarms with a PLC. We can also write the PLC program.'),
            ('02', 'Drive & motor control panels', 'Start, stop and speed control of pump, blower and compressor motors with VFDs and soft starters.'),
            ('03', 'Marine & plant control systems', 'Control consoles and system panels for hybrid propulsion, fuel gas supply (FGSS), liquid hydrogen refueling stations and production plants.'),
