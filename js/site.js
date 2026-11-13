@@ -176,9 +176,18 @@ var TXT = IS_EN ? {
   var tabs=[].slice.call(document.querySelectorAll('.vtabs button'));
   if(!tabs.length) return;
   var cards=[].slice.call(document.querySelectorAll('.media-grid .vcard[data-cat]'));
+  var small=window.matchMedia&&matchMedia('(max-width:600px)').matches, en=document.documentElement.lang==='en';
+  var grid=document.querySelector('.media-grid'), more=null, openAll=false;
+  if(small&&grid){ more=document.createElement('button'); more.type='button'; more.className='press-more';
+    more.addEventListener('click',function(){ openAll=true; pick(cur); }); grid.parentNode.insertBefore(more,grid.nextSibling); }
+  var cur='';
   function pick(cat){
+    if(cat!==cur) openAll=false; cur=cat;
     tabs.forEach(function(t){ var on=t.dataset.cat===cat; t.classList.toggle('on',on); t.setAttribute('aria-selected',on); });
-    cards.forEach(function(c){ var show=c.dataset.cat===cat; if(!show){ var v=c.querySelector('video'); if(v&&!v.paused) v.pause(); } c.hidden=!show; if(show) c.classList.add('in'); });
+    var n=0, rest=0;
+    cards.forEach(function(c){ var show=c.dataset.cat===cat; if(show){ n++; if(small&&!openAll&&n>1){ show=false; rest++; } }
+      if(!show){ var v=c.querySelector('video'); if(v&&!v.paused) v.pause(); } c.hidden=!show; if(show) c.classList.add('in'); });
+    if(more){ more.hidden=!rest; more.textContent=(en?'More videos':'영상 더 보기')+' ('+rest+')'; }
   }
   tabs.forEach(function(t){ t.addEventListener('click',function(){ pick(t.dataset.cat); }); });
   pick(tabs[0].dataset.cat);
@@ -188,7 +197,7 @@ var TXT = IS_EN ? {
 (function(){
   var list=document.querySelector('.press-list:not([data-all])');
   if(!list) return;
-  var items=[].slice.call(list.children), LIMIT=5;
+  var items=[].slice.call(list.children), LIMIT=(window.matchMedia&&matchMedia('(max-width:600px)').matches)?3:5;
   if(items.length<=LIMIT) return;
   var en=document.documentElement.lang==='en';
   items.slice(LIMIT).forEach(function(li){ li.hidden=true; });
@@ -302,12 +311,17 @@ function popStack(){
   function close(){ p.classList.remove('on'); setTimeout(function(){ p.remove(); },400); }
   p.querySelector('.pp-x').addEventListener('click',close);
   p.querySelector('.pp-th').addEventListener('click',function(){ close(); });
-  setTimeout(function(){ p.classList.add('on'); },1800);
+  // 휴대폰에서는 첫 화면(제목·버튼)을 가리지 않도록, 조금 내려 읽은 뒤에 띄움
+  if(window.matchMedia&&matchMedia('(max-width:600px)').matches){
+    var shown=false, onS=function(){ if(shown||window.scrollY<700) return; shown=true; p.classList.add('on'); window.removeEventListener('scroll',onS); setTimeout(close,9000); }; // 9초 뒤 저절로 닫힘
+    window.addEventListener('scroll',onS,{passive:true});
+  } else setTimeout(function(){ p.classList.add('on'); },1800);
 })();
 
 // 디지털트윈 시연 미니 팝업: 회사소개서 팝업 위에 같은 모양으로 (메인의 「디지털트윈 시연 보기」 버튼에서 주소·그림을 읽음)
 (function(){
   var a=document.querySelector('a[data-pop-thumb]'); if(!a) return;
+  if(window.matchMedia&&matchMedia('(max-width:600px)').matches) return; // 휴대폰은 팝업 하나만(회사소개서)
   var en=document.documentElement.lang==='en';
   var p=document.createElement('aside');
   p.className='prof-pop'; p.setAttribute('aria-label',en?'Digital twin demo':'디지털트윈 시연');
@@ -365,7 +379,7 @@ function popStack(){
 // 마케팅 분석: 전화·메일·SNS 클릭과 자료 내려받기를 구글 애널리틱스(GA4) 이벤트로 기록
 (function(){
   var SNS=[['youtube.com','youtube'],['instagram.com','instagram'],['threads.com','threads'],['threads.net','threads'],['blog.naver.com','naver_blog'],['map.naver.com','naver_place'],['naver.me','naver_place']];
-  function area(a){ var e=a.closest('header,footer,.mnav,.ch-grid,form'); return e?(e.className.split(' ')[0]||e.tagName.toLowerCase()):'body'; }
+  function area(a){ var e=a.closest('header,footer,.mnav,.mbar,.ch-grid,form'); return e?(e.className.split(' ')[0]||e.tagName.toLowerCase()):'body'; }
   document.addEventListener('click',function(ev){
     var a=ev.target.closest&&ev.target.closest('a[href]'); if(!a||!window.gtag) return;
     var h=a.getAttribute('href')||'', p={page_path:location.pathname,link_area:area(a)};
@@ -376,4 +390,33 @@ function popStack(){
       if(/\.pdf(\?|#|$)/i.test(h)){ p.file_name=h.split('/').pop().split(/[?#]/)[0]; gtag('event','doc_download',p); }
     }catch(e){}
   });
+})();
+
+// 휴대폰 아래 고정 띠: 전화 상담 · 문의하기 (모든 페이지 공통, 비공개 자료실 제외)
+(function(){
+  if(!document.querySelector('footer.ft')||/(members|internal)\.html$/.test(location.pathname)) return;
+  var en=document.documentElement.lang==='en';
+  var own=document.getElementById('inquiry')||document.getElementById('contact');
+  var hd=document.querySelector('#hd .hd-r a.btn');
+  var href=own?('#'+own.id):(hd?hd.getAttribute('href'):'index.html#contact');
+  var bar=document.createElement('div'); bar.className='mbar'; bar.setAttribute('role','navigation'); bar.setAttribute('aria-label',en?'Quick contact':'빠른 연락');
+  bar.innerHTML='<a class="tel" href="tel:'+(en?'+82518623668':'0518623668')+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1z"/></svg>'+(en?'Call us':'전화 상담')+'</a>'+
+    '<a class="iqb" href="'+href+'">'+(en?'Send inquiry':'문의하기')+'</a>';
+  document.body.appendChild(bar); document.body.classList.add('has-mbar');
+  // 문의 양식이 화면에 보이는 동안과 휴대폰 메뉴가 열린 동안에는 숨김(입력·보내기 버튼을 가리지 않게)
+  var form=own&&own.querySelector('form'), mn=document.getElementById('mnav'), inView=false;
+  function sync(){ bar.classList.toggle('off',inView||!!(mn&&mn.classList.contains('open'))); }
+  if(form&&'IntersectionObserver' in window){ new IntersectionObserver(function(es){ inView=es[0].isIntersecting; sync(); },{threshold:.15}).observe(form); }
+  var mb=document.getElementById('mbtn'); if(mb) mb.addEventListener('click',function(){ setTimeout(sync,0); });
+})();
+
+// 문의 양식이 화면에 보이는 동안에는 미니 팝업을 숨김(입력 칸·보내기 버튼을 가리지 않게)
+(function(){
+  var forms=document.querySelectorAll('form.iq'); if(!forms.length||!('IntersectionObserver' in window)) return;
+  var seen=0;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ seen+=e.isIntersecting?1:-1; }); if(seen<0) seen=0;
+    var st=document.querySelector('.pop-stack'); if(st) st.classList.toggle('hide',seen>0);
+  },{threshold:.1});
+  [].forEach.call(forms,function(f){ io.observe(f); });
 })();
