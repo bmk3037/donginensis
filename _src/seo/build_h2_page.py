@@ -16,8 +16,8 @@ from build_plc_page import build  # noqa: E402
 
 NAME = 'hydrogen-control-system.html'
 OG = 'https://donginensis.com/img/apps/og_h2.jpg'
-IMGS = {'main': ('img/apps/h2-lh2-station.jpg', 1200, 900), 'side': ('img/apps/h2-vessel-panel-a.jpg', 1200, 900),
-        'wide': ('img/apps/h2-lh2-control.jpg', 1344, 752)}
+IMGS = {'main': ('img/h2/h2-electrical-room.jpg', 1672, 941), 'side': ('img/h2/h2-vessel-fuelcell.jpg', 1672, 941),
+        'wide': ('img/h2/h2-station-forecourt.jpg', 1672, 941)}
 
 KO = dict(
     lang='ko', src='manufacturing.html', out=NAME, name=NAME, form_lang='KO', root='', imgs=IMGS, og=OG, form_type='수소 제어시스템',
@@ -33,9 +33,9 @@ KO = dict(
             '수소추진선박의 연료전지·추진모터·수소탱크를 통합 제어해야 한다', '수소 설비의 운전·전력 데이터를 수집하고 관리하고 싶다',
             '외산 제어장비 의존도를 줄이고 국산 제어시스템을 쓰고 싶다', '연료전지 발전소 등 에너지 플랜트의 BOP 제어가 필요하다'],
     scope_k='Scope', scope_h='수소 제어시스템<br><span class="b">공급 범위</span>',
-    img_alt='액화수소충전소 제어시스템 – 액화수소 저장설비 옆 제어반을 점검하는 엔지니어', img_cap='액화수소충전소의 제어반(이해를 돕기 위한 연출 이미지)',
-    rack_alt='수소추진선박 제어반 – 수소탱크 옆에 설치된 선박용 제어반', rack_cap='수소추진선박의 제어반(이해를 돕기 위한 연출 이미지)',
-    comm_alt='액화수소충전소 제어설비 – 저장탱크 옆에 설치된 제어반', comm_cap='액화수소충전소 제어설비(이해를 돕기 위한 연출 이미지)',
+    img_alt='액화수소충전소 제어시스템 – 저장탱크가 내다보이는 충전소 전기실의 제어반', img_cap='액화수소충전소 전기실의 제어반(이해를 돕기 위한 연출 이미지)',
+    rack_alt='수소추진선박 제어반 – 연료전지 모듈과 수소 배관 옆에 설치된 선박용 제어반', rack_cap='수소추진선박 장비실의 연료전지 모듈과 제어반(이해를 돕기 위한 연출 이미지)',
+    comm_alt='수소충전소 – 장비함 안의 제어반과 충전 중인 수소버스', comm_cap='수소충전소 장비함 안의 제어반(이해를 돕기 위한 연출 이미지)',
     scope=[('01', '액화수소충전소 제어시스템', 'VFD·PLC·UPS 제어시스템으로 충전소 설비를 제어·감시합니다. 실시간 모니터링, 에너지 효율, 안전 관리 기능을 하나의 제어 시스템으로 묶습니다.'),
            ('02', '액화수소 전력제어', '펌프·열매체유 순환 장비의 실시간 정밀 제어와 에너지 절감, 설비 보호 기술을 액화수소충전소용 지능형 전력제어 시스템으로 상용화하고 있습니다.'),
            ('03', '수소추진선박 시스템통합제어', '연료전지·추진모터·수소탱크를 통합 제어·감시합니다. 해양수산부 「안전기반 소형 수소추진선박 기술개발 및 실증」 과제에 참여하고 있습니다.'),
@@ -90,9 +90,9 @@ EN = dict(
             'Fuel cells, propulsion motors and hydrogen tanks on a vessel must be controlled as one system', 'You want to collect operating and power data from hydrogen equipment',
             'You want to rely less on imported control equipment', 'You need BOP control for energy plants such as fuel cell power plants'],
     scope_k='Scope', scope_h='What our hydrogen<br><span class="b">control covers</span>',
-    img_alt='Liquid hydrogen station control system – engineer checking a control panel beside liquid hydrogen storage', img_cap='Control panel at a liquid hydrogen station (illustrative image)',
-    rack_alt='Hydrogen vessel control panel – a marine panel installed beside hydrogen tanks', rack_cap='Control panel on a hydrogen-powered vessel (illustrative image)',
-    comm_alt='Liquid hydrogen station control equipment – a control panel beside the storage tank', comm_cap='Liquid hydrogen station control equipment (illustrative image)',
+    img_alt='Liquid hydrogen station control system – control panels in the station electrical room overlooking the storage tank', img_cap='Control panels in a liquid hydrogen station electrical room (illustrative image)',
+    rack_alt='Hydrogen vessel control panel – a marine panel beside fuel-cell modules and hydrogen piping', rack_cap='Fuel-cell modules and the control panel in a hydrogen vessel equipment room (illustrative image)',
+    comm_alt='Hydrogen refueling station – control panel inside the equipment enclosure and a hydrogen bus refueling', comm_cap='Control panel inside the equipment enclosure of a hydrogen refueling station (illustrative image)',
     scope=[('01', 'Liquid hydrogen station control', 'A VFD, PLC and UPS control system that controls and monitors station equipment, combining real-time monitoring, energy efficiency and safety management in one system.'),
            ('02', 'Liquid hydrogen power control', 'We are commercializing an intelligent power control system for liquid hydrogen stations: precise real-time control of pumps and thermal oil circulation, energy saving and equipment protection.'),
            ('03', 'Hydrogen vessel integrated control', 'Integrated control and monitoring of fuel cells, propulsion motors and hydrogen tanks. We take part in the Ministry of Oceans and Fisheries project on safe small hydrogen-powered vessels.'),
