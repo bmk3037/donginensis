@@ -188,6 +188,7 @@ var TXT = IS_EN ? {
     cards.forEach(function(c){ var show=c.dataset.cat===cat; if(show){ n++; if(small&&!openAll&&n>1){ show=false; rest++; } }
       if(!show){ var v=c.querySelector('video'); if(v&&!v.paused) v.pause(); } c.hidden=!show; if(show) c.classList.add('in'); });
     if(more){ more.hidden=!rest; more.textContent=(en?'More videos':'영상 더 보기')+' ('+rest+')'; }
+    if(grid) grid.setAttribute('data-n',n-rest);
   }
   tabs.forEach(function(t){ t.addEventListener('click',function(){ pick(t.dataset.cat); }); });
   pick(tabs[0].dataset.cat);
