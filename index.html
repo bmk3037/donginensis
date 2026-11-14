@@ -36,7 +36,7 @@
   · 색상: Dongin Blue #1857A5 / Dongin Red #E83E30. 폰트: Pretendard (jsDelivr CDN).
 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261114c">
+<link rel="stylesheet" href="css/style.css?v=20261114d">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "(주)동인엔시스", "alternateName": ["동인엔시스", "DONG-IN ENSIS"], "url": "https://donginensis.com/", "inLanguage": "ko"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "지능형 제어반", "serviceType": "Industrial control panel", "brand": {"@type": "Brand", "name": "DONG-IN ENSIS"}, "provider": {"@type": "Organization", "name": "(주)동인엔시스", "url": "https://donginensis.com/"}, "description": "모터·펌프·송풍기를 제어하면서 온도·전류·진동 데이터를 함께 수집하고, 별도 수집장비 없이 MQTT/TLS로 클라우드나 고객사 서버에 연결하는 PLC 제어반. 조선·해양, 수소·에너지, 제조·스마트팩토리, 데이터센터에 적용.", "image": "https://donginensis.com/img/apps/marine-deck.jpg", "areaServed": "KR"}</script>
 <!-- Google tag (gtag.js) -->
@@ -198,13 +198,13 @@
   </div>
 </section>
 
-
-<!-- NO GATEWAY -->
-<section class="sec nogw" id="nogw">
+<!-- HOW IT WORKS: 수집장비 비교 + 연결 구조 (한 구간) -->
+<section class="sec arch" id="nogw">
   <div class="wrap">
     <div class="rv">
-      <div class="kicker">Why No Extra Device</div>
-      <h2 class="h2">데이터를 얻기 위해<br><span class="b">수집장비를 하나 더 설치할 필요가 없습니다</span></h2>
+      <div class="kicker">How It Works</div>
+      <h2 class="h2">수집장비를 더 달지 않고,<br><span class="b">현장 설비에서 AI까지 연결</span>됩니다</h2>
+      <p class="lead">기존의 PLC – 수집 게이트웨이 – 서버 구조를 지능형 제어반 하나로 줄였습니다.</p>
     </div>
     <div class="cmp rv">
       <div class="row old">
@@ -230,24 +230,6 @@
       <p class="cap">제어 기능은 현장에 유지하고, 운전 데이터는 제어반에서 클라우드나 고객사 서버로 연결합니다.</p>
       <p class="fine2">※ 네트워크 및 보안 구성은 현장 환경에 따라 달라질 수 있습니다.</p>
     </div>
-  </div>
-</section>
-
-<!-- ARCHITECTURE -->
-<section class="sec arch">
-  <div class="wrap">
-    <div class="rv">
-      <div class="kicker">How It Works</div>
-      <h2 class="h2">현장 설비에서 AI까지,<br><span class="b">끊김 없이 연결</span>됩니다</h2>
-      <p class="lead">기존의 PLC – 수집 게이트웨이 – 서버 구조를 지능형 제어반 하나로 줄였습니다.</p>
-    </div>
-    <div class="flow rv">
-      <div class="step"><div class="node">설비</div><div><h4>현장 설비·센서</h4><p>모터 · 펌프 · 인버터<br>온도 · 진동 · 전력</p></div></div>
-      <div class="step key"><div class="node">제어반</div><div><h4>지능형 제어반</h4><p>PLC 실시간 제어<br>데이터 수집</p><span class="badge-red"><i class="dot"></i>수집장비 없이</span></div></div>
-      <div class="step sec"><div class="node">TLS</div><div><h4>MQTT / TLS</h4><p>암호화 전송<br>클라우드·사내 서버 직접 연결</p></div></div>
-      <div class="step key"><div class="node">Hub</div><div><h4>DataHub</h4><p>표준 데이터 구조<br>시계열 저장</p></div></div>
-      <div class="step"><div class="node">API</div><div><h4>활용 계층</h4><p>PWA 대시보드 · 알람<br>AI · 디지털트윈 · MES</p></div></div>
-    </div>
     <div class="arch-bot">
       <img src="img/arch-panel.jpg" alt="항만 현장의 펌프와 지능형 제어반이 데이터로 연결되는 모습" loading="lazy">
       <ul class="rv">
@@ -258,6 +240,58 @@
     </div>
     <div style="margin-top:32px" class="rv"><a href="digital-twin.html" class="btn btn-white" data-pop-thumb="img/twin-thumb.jpg">디지털트윈 시연 보기 →</a> <a href="ai-predictive-maintenance.html" class="btn btn-ghost">AI 예지보전 안내 →</a>
       <p class="fine" style="color:rgba(255,255,255,.78)">지능형제어반 TestBench #1을 HVAC·ESS 실증 기계실 안에 3D로 재현했습니다. 시연용 모의 데이터로 동작합니다.</p></div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="sec">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Why DONG-IN ENSIS</div>
+      <h2 class="h2">35년간 제어반을 만들어 온<br><span class="b">OT 엔지니어링 기업</span>입니다</h2>
+    </div>
+    <div class="why-grid rv">
+      <div class="why-num"><b>35<sup>+</sup></b><span>년 업력 · 1991년 설립</span></div>
+      <div class="why-num"><b>750<sup>+</sup></b><span>제어시스템 프로젝트 수행</span></div>
+      <div class="why-num"><b>15<sup>+</sup></b><span>적용 산업 분야</span></div>
+      <div class="why-num"><b>40<sup>+</sup></b><span>CE·UL 인증 솔루션</span></div>
+    </div>
+    <div class="why-txt">
+      <div class="rv"><h4>직접 설계 · 직접 제조</h4><p>양산 공장에서 자동제어반·PLC 제어반·인버터 제어반을 직접 제작하고, PLC·인버터 프로그램과 시운전까지 자체 수행합니다.</p></div>
+      <div class="rv"><h4>까다로운 현장의 레퍼런스</h4><p>국내 에너지 기업의 액화수소충전소, 대형 조선소의 FGSS 시험설비, 친환경 선박 전기추진 제어 등을 수행했습니다.</p></div>
+      <div class="rv"><h4>글로벌 브랜드 파트너</h4><p>Schneider Electric 공식 SI 파트너이자 ABB · Fuji Electric · Eaton · Danfoss 공급 파트너입니다.</p></div>
+    </div>
+    <div class="home-refs rv">
+      <h3>주요 실적</h3>
+      <div class="tblw"><table class="ref-tbl"><thead><tr><th>분야</th><th>발주처 · 현장</th><th>공급 범위</th></tr></thead><tbody><tr><td><b>친환경 선박</b></td><td>충남병원선 · 경남청정호 (2023년 취항)</td><td>하이브리드 추진시스템 · 통합제어·감시시스템</td></tr><tr><td><b>LNG 연료가스공급(FGSS)</b></td><td>삼성중공업 FGSS 시험설비</td><td>G/W(글리콜워터) 히터 제어시스템</td></tr><tr><td><b>LNG 운반선</b></td><td>SB선보 · LNG 운반선용 BOG 압축기</td><td>BOG 압축기 제어시스템 설계 · 공급 · 시운전</td></tr><tr><td><b>수소 · 에너지</b></td><td>SK E&S 액화수소충전소</td><td>VFD · PLC · UPS 제어시스템 공급</td></tr><tr><td><b>산업 플랜트</b></td><td>동화기업 포르말린 수지 플랜트</td><td>플랜트 전체 제어시스템 설계 · 제작</td></tr><tr><td><b>산업 플랜트</b></td><td>KOS · 고려제강(Kiswire) 신선기 · 연선기 · 도금 · 열처리 라인</td><td>제어시스템 (한국 · 베트남 · 미국 등 7개국)</td></tr></tbody></table></div>
+      <p class="fine2">750건 이상의 프로젝트 중 일부입니다. <a href="applications.html#reference" style="color:var(--blue);font-weight:700">전체 실적 보기 →</a></p>
+    </div>
+    <div class="corp rv">
+      <a href="company.html">회사소개 →</a>
+      <a href="company.html#history">연혁 →</a>
+      <a href="company.html#cert">인증 →</a>
+      <a href="company.html#location">오시는 길 →</a>
+      <a href="control-panel-manufacturing.html">제어반 제작 →</a>
+      <a href="plc-programming.html">PLC 프로그램 개발 →</a>
+      <a href="ai-predictive-maintenance.html">AI 예지보전 →</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sec mid">
+  <div class="wrap">
+    <div class="cta-grid">
+      <div class="cta-box mf rv">
+        <small>제조·해양 설비 운영 기업</small>
+        <h3>우리 설비에 적용할 수 있을까?<br>현장 진단부터 상담해 드립니다.</h3>
+        <a href="manufacturing.html#inquiry" class="btn btn-white">적용 가능성 진단 신청 →</a>
+      </div>
+      <div class="cta-box it rv">
+        <small>스마트팩토리 · AI · MES 솔루션 기업</small>
+        <h3>현장 데이터가 필요한 프로젝트,<br>OT 파트너로 함께하겠습니다.</h3>
+        <a href="partner.html#inquiry" class="btn btn-white">협업 제안 요청 →</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -336,58 +370,6 @@
   </div>
 </section>
 
-<!-- WHY -->
-<section class="sec">
-  <div class="wrap">
-    <div class="rv">
-      <div class="kicker">Why DONG-IN ENSIS</div>
-      <h2 class="h2">35년간 제어반을 만들어 온<br><span class="b">OT 엔지니어링 기업</span>입니다</h2>
-    </div>
-    <div class="why-grid rv">
-      <div class="why-num"><b>35<sup>+</sup></b><span>Years · 1991년 설립</span></div>
-      <div class="why-num"><b>750<sup>+</sup></b><span>제어시스템 프로젝트 수행</span></div>
-      <div class="why-num"><b>15<sup>+</sup></b><span>Industries 적용</span></div>
-      <div class="why-num"><b>40<sup>+</sup></b><span>CE·UL Certified Solutions</span></div>
-    </div>
-    <div class="why-txt">
-      <div class="rv"><h4>직접 설계 · 직접 제조</h4><p>양산 공장에서 자동제어반·PLC 제어반·인버터 제어반을 직접 제작하고, PLC·인버터 프로그램과 시운전까지 자체 수행합니다.</p></div>
-      <div class="rv"><h4>까다로운 현장의 레퍼런스</h4><p>국내 에너지 기업의 액화수소충전소, 대형 조선소의 FGSS 시험설비, 친환경 선박 전기추진 제어 등을 수행했습니다.</p></div>
-      <div class="rv"><h4>글로벌 브랜드 파트너</h4><p>Schneider Electric 공식 SI 파트너이자 ABB · Fuji Electric · Eaton · Danfoss 공급 파트너입니다.</p></div>
-    </div>
-    <div class="home-refs rv">
-      <h3>주요 실적</h3>
-      <div class="tblw"><table class="ref-tbl"><thead><tr><th>분야</th><th>발주처 · 현장</th><th>공급 범위</th></tr></thead><tbody><tr><td><b>친환경 선박</b></td><td>충남병원선 · 경남청정호 (2023년 취항)</td><td>하이브리드 추진시스템 · 통합제어·감시시스템</td></tr><tr><td><b>LNG 연료가스공급(FGSS)</b></td><td>삼성중공업 FGSS 시험설비</td><td>G/W(글리콜워터) 히터 제어시스템</td></tr><tr><td><b>LNG 운반선</b></td><td>SB선보 · LNG 운반선용 BOG 압축기</td><td>BOG 압축기 제어시스템 설계 · 공급 · 시운전</td></tr><tr><td><b>수소 · 에너지</b></td><td>SK E&S 액화수소충전소</td><td>VFD · PLC · UPS 제어시스템 공급</td></tr><tr><td><b>산업 플랜트</b></td><td>동화기업 포르말린 수지 플랜트</td><td>플랜트 전체 제어시스템 설계 · 제작</td></tr><tr><td><b>산업 플랜트</b></td><td>KOS · 고려제강(Kiswire) 신선기 · 연선기 · 도금 · 열처리 라인</td><td>제어시스템 (한국 · 베트남 · 미국 등 7개국)</td></tr></tbody></table></div>
-      <p class="fine2">750건 이상의 프로젝트 중 일부입니다. <a href="applications.html#reference" style="color:var(--blue);font-weight:700">전체 실적 보기 →</a></p>
-    </div>
-    <div class="corp rv">
-      <a href="company.html">회사소개 →</a>
-      <a href="company.html#history">연혁 →</a>
-      <a href="company.html#cert">인증 →</a>
-      <a href="company.html#location">오시는 길 →</a>
-      <a href="control-panel-manufacturing.html">제어반 제작 →</a>
-      <a href="plc-programming.html">PLC 프로그램 개발 →</a>
-      <a href="ai-predictive-maintenance.html">AI 예지보전 →</a>
-    </div>
-  </div>
-</section>
-
-<section class="cta-sec mid">
-  <div class="wrap">
-    <div class="cta-grid">
-      <div class="cta-box mf rv">
-        <small>제조·해양 설비 운영 기업</small>
-        <h3>우리 설비에 적용할 수 있을까?<br>현장 진단부터 상담해 드립니다.</h3>
-        <a href="manufacturing.html#inquiry" class="btn btn-white">적용 가능성 진단 신청 →</a>
-      </div>
-      <div class="cta-box it rv">
-        <small>스마트팩토리 · AI · MES 솔루션 기업</small>
-        <h3>현장 데이터가 필요한 프로젝트,<br>OT 파트너로 함께하겠습니다.</h3>
-        <a href="partner.html#inquiry" class="btn btn-white">협업 제안 요청 →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- 회사소개서 -->
 <section class="prof" id="profile">
   <div class="wrap">
@@ -431,11 +413,11 @@
       <p class="lead">홍보영상과 보도자료로 동인엔시스와 지능형 제어반을 만나보십시오.</p>
     </div>
     <div class="ch-grid rv" aria-label="동인엔시스 공식 채널">
-      <a class="ch yt" href="https://www.youtube.com/@%EC%88%A8%EC%9D%80%EC%84%A4%EB%B9%84%EB%8F%84%EA%B0%90" target="_blank" rel="noopener" aria-label="유튜브 숨은 설비도감 채널 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23 12s0-3.6-.46-5.3a2.75 2.75 0 0 0-1.94-1.95C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.6.45A2.75 2.75 0 0 0 1.46 6.7C1 8.4 1 12 1 12s0 3.6.46 5.3a2.75 2.75 0 0 0 1.94 1.95c1.7.45 8.6.45 8.6.45s6.9 0 8.6-.45a2.75 2.75 0 0 0 1.94-1.95C23 15.6 23 12 23 12zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></span><span class="tx"><b>유튜브 · 숨은 설비도감</b><span>현장 설비 이야기와 지능형 제어반 영상을 올립니다.</span></span><span class="go">채널 바로가기 →</span></a>
-      <a class="ch ig" href="https://www.instagram.com/donginensis/" target="_blank" rel="noopener" aria-label="인스타그램 donginensis 계정 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></span><span class="tx"><b>인스타그램 · @donginensis</b><span>현장 사진과 소식을 가장 먼저 전합니다.</span></span><span class="go">계정 바로가기 →</span></a>
-      <a class="ch bl" href="https://blog.naver.com/donginensis" target="_blank" rel="noopener" aria-label="네이버 블로그 설비 데이터 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm4.2 4.5v9h4.1c2 0 3.3-1 3.3-2.6 0-1.1-.7-1.9-1.7-2.1.8-.3 1.3-1 1.3-1.9 0-1.5-1.2-2.4-3.1-2.4H8.2zm2 1.6h1.8c.8 0 1.3.4 1.3 1s-.5 1.1-1.3 1.1h-1.8V9.1zm0 3.6h2c.9 0 1.4.4 1.4 1.1s-.5 1.1-1.4 1.1h-2v-2.2z"/></svg></span><span class="tx"><b>네이버 블로그 · 설비 데이터</b><span>설비 데이터 수집·모니터링과 예지보전 AI 이야기를 전합니다.</span></span><span class="go">블로그 바로가기 →</span></a>
-      <a class="ch th" href="https://www.threads.com/@donginensis" target="_blank" rel="noopener" aria-label="스레드 donginensis 계정 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18.3 7.2C17 4.6 14.8 3.3 12 3.3c-4.6 0-7.6 3.1-7.6 8.7s3 8.7 7.6 8.7c3.9 0 6.6-2.1 6.6-5 0-3.4-3.4-4.6-6.6-4.3-2.2.2-3.6 1.3-3.5 2.8.1 1.4 1.4 2.3 3.2 2.2 2.6-.2 3.7-2.3 3.6-5.6"/></svg></span><span class="tx"><b>스레드 · @donginensis</b><span>짧은 소식과 현장 이야기를 나눕니다.</span></span><span class="go">계정 바로가기 →</span></a>
-      <a class="ch li" href="https://www.linkedin.com/in/minki-baek-donginensis/" target="_blank" rel="noopener" aria-label="링크드인 백민기 대표 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3V9.5zm6.5 0h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.2c0-1.24-.02-2.84-1.73-2.84-1.74 0-2 1.35-2 2.75V21h-4V9.5z"/></svg></span><span class="tx"><b>링크드인 · 대표 백민기</b><span>해외 고객·파트너에게 회사 소식을 전합니다.</span></span><span class="go">프로필 바로가기 →</span></a>
+      <a class="ch yt" href="https://www.youtube.com/@%EC%88%A8%EC%9D%80%EC%84%A4%EB%B9%84%EB%8F%84%EA%B0%90" target="_blank" rel="noopener" aria-label="유튜브 숨은 설비도감 채널 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23 12s0-3.6-.46-5.3a2.75 2.75 0 0 0-1.94-1.95C18.9 4.3 12 4.3 12 4.3s-6.9 0-8.6.45A2.75 2.75 0 0 0 1.46 6.7C1 8.4 1 12 1 12s0 3.6.46 5.3a2.75 2.75 0 0 0 1.94 1.95c1.7.45 8.6.45 8.6.45s6.9 0 8.6-.45a2.75 2.75 0 0 0 1.94-1.95C23 15.6 23 12 23 12zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></span><span class="tx"><b>유튜브</b><span>숨은 설비도감</span></span></a>
+      <a class="ch ig" href="https://www.instagram.com/donginensis/" target="_blank" rel="noopener" aria-label="인스타그램 donginensis 계정 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></span><span class="tx"><b>인스타그램</b><span>@donginensis</span></span></a>
+      <a class="ch bl" href="https://blog.naver.com/donginensis" target="_blank" rel="noopener" aria-label="네이버 블로그 설비 데이터 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm4.2 4.5v9h4.1c2 0 3.3-1 3.3-2.6 0-1.1-.7-1.9-1.7-2.1.8-.3 1.3-1 1.3-1.9 0-1.5-1.2-2.4-3.1-2.4H8.2zm2 1.6h1.8c.8 0 1.3.4 1.3 1s-.5 1.1-1.3 1.1h-1.8V9.1zm0 3.6h2c.9 0 1.4.4 1.4 1.1s-.5 1.1-1.4 1.1h-2v-2.2z"/></svg></span><span class="tx"><b>네이버 블로그</b><span>설비 데이터</span></span></a>
+      <a class="ch th" href="https://www.threads.com/@donginensis" target="_blank" rel="noopener" aria-label="스레드 donginensis 계정 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18.3 7.2C17 4.6 14.8 3.3 12 3.3c-4.6 0-7.6 3.1-7.6 8.7s3 8.7 7.6 8.7c3.9 0 6.6-2.1 6.6-5 0-3.4-3.4-4.6-6.6-4.3-2.2.2-3.6 1.3-3.5 2.8.1 1.4 1.4 2.3 3.2 2.2 2.6-.2 3.7-2.3 3.6-5.6"/></svg></span><span class="tx"><b>스레드</b><span>@donginensis</span></span></a>
+      <a class="ch li" href="https://www.linkedin.com/in/minki-baek-donginensis/" target="_blank" rel="noopener" aria-label="링크드인 백민기 대표 (새 창)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3V9.5zm6.5 0h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.2c0-1.24-.02-2.84-1.73-2.84-1.74 0-2 1.35-2 2.75V21h-4V9.5z"/></svg></span><span class="tx"><b>링크드인</b><span>대표 백민기</span></span></a>
     </div>
     <!-- BLOG:START -->
     <div class="blog-new rv"><h3 class="press-h">블로그 최신 글</h3><div class="bn-grid"><div class="bn-col" data-blog="donginensis"><h4><a href="https://blog.naver.com/donginensis" target="_blank" rel="noopener">네이버 블로그 · 설비 데이터</a></h4><ul><li><a href="https://blog.naver.com/donginensis/224459195898" target="_blank" rel="noopener"><span class="t">AI 이상탐지 | 임계값 방식과 머신러닝, 차이와 함께 쓰는 법</span><time datetime="2026-11-14">2026.11.14</time></a></li><li><a href="https://blog.naver.com/donginensis/224459194973" target="_blank" rel="noopener"><span class="t">디지털 트윈 시작하기 | 3D 화면보다 먼저 준비할 데이터 이야기</span><time datetime="2026-11-13">2026.11.13</time></a></li><li><a href="https://blog.naver.com/donginensis/224459194158" target="_blank" rel="noopener"><span class="t">설비 데이터 보관 기간 | 몇 년치를 두고 용량은 얼마나 잡을까</span><time datetime="2026-11-12">2026.11.12</time></a></li></ul><a class="bn-more" href="https://blog.naver.com/donginensis" target="_blank" rel="noopener">글 더보기 →</a></div></div></div>
@@ -577,6 +559,6 @@
   </div>
 </footer>
 
-<script src="js/site.js?v=20261114b"></script>
+<script src="js/site.js?v=20261114c"></script>
 </body>
 </html>
