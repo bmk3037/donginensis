@@ -157,6 +157,15 @@ var TXT = IS_EN ? {
   pick(tabs[0].dataset.cat);
 })();
 
+// 적용 사례 사진: 칸 비율과 다른 사진은 자르지 않고 통째로 보여 줌 (남는 자리는 같은 사진을 흐리게)
+(function(){
+  [].forEach.call(document.querySelectorAll('.gal button img'),function(img){
+    var go=function(){ var b=img.parentNode, r=img.naturalWidth/img.naturalHeight, box=b.clientWidth/b.clientHeight;
+      if(r&&box&&Math.abs(r/box-1)>0.06){ b.classList.add('fill'); b.style.backgroundImage='url("'+img.currentSrc.replace(/"/g,'%22')+'")'; } };
+    if(img.complete&&img.naturalWidth) go(); else img.addEventListener('load',go,{once:true});
+  });
+})();
+
 // 메인 주요 실적: 휴대폰에서는 3건만 보이고 나머지는 '더 보기'로 펼침
 (function(){
   var box=document.querySelector('.home-refs'), small=window.matchMedia&&matchMedia('(max-width:600px)').matches;
