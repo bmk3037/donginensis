@@ -980,3 +980,16 @@ html[lang="en"] .hsns{display:none}
 /* 메인 주요 실적: 휴대폰에서 접어 둔 줄은 숨김 */
 .home-refs .ref-tbl tbody tr[hidden]{display:none}
 @media (max-width:600px){.home-refs .press-more{margin-top:6px}.home-refs .ref-tbl tbody tr:nth-child(3):not(:last-child){border-bottom:1px solid var(--line)}}
+/* 연결 구조 구간: 채도 높은 파랑 대신 첫 화면과 같은 계열의 남색 (파랑은 버튼·강조에만) */
+.arch{background:linear-gradient(180deg,#0C2F60 0%,#0A2650 100%)}
+.arch .h2 .b{color:#A9CCF7}
+/* 비교 그림: 핵심 문구를 더 크게, 빨간 작은 글자는 더 진하게, 제어 신호선은 점선으로 구분 */
+.cmp .old .bx.gw{border-color:#D9A7A1}
+.cmp .old .bx.gw small{color:#C4281B;font-weight:700}
+.cmp .nogw-tag{font-size:13.5px;color:#fff;background:var(--blue);border:0;border-radius:999px;padding:5px 12px}
+.cmp .nogw-tag::before{content:"✓ "}
+.cmp .new .lab{font-size:15px}
+.cmp .io .ctl::after,.cmp .legend .lc::before{background:repeating-linear-gradient(90deg,#324055 0 6px,transparent 6px 10px)}
+@media (min-width:861px){.cmp .io{flex-basis:150px}}
+/* 남색 바탕에서 보안 구성도의 강조 상자가 묻히지 않게 (제조기업 도입 페이지) */
+.arch .secnet .nd.key{background:var(--blue);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
