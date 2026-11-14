@@ -124,7 +124,7 @@ var TXT = IS_EN ? {
   document.body.appendChild(lb);
   var img=lb.querySelector('img'), cap=lb.querySelector('figcaption'), cur=0;
   function show(i){ cur=(i+items.length)%items.length; var b=items[cur], f=b.closest('figure');
-    img.src=b.querySelector('img').src; img.alt=b.querySelector('img').alt; var fc=f&&f.querySelector('figcaption'); cap.textContent=fc?[].map.call(fc.children,function(x){return x.textContent.trim();}).filter(Boolean).join(' · '):''; }
+    var ti=b.querySelector('img'); img.src=ti.dataset.full?new URL(ti.dataset.full,location.href).href:ti.src; img.alt=b.querySelector('img').alt; var fc=f&&f.querySelector('figcaption'); cap.textContent=fc?[].map.call(fc.children,function(x){return x.textContent.trim();}).filter(Boolean).join(' · '):''; }
   function close(){ lb.classList.remove('open'); document.body.style.overflow=''; }
   items.forEach(function(b,i){ b.addEventListener('click',function(){ show(i); lb.classList.add('open'); document.body.style.overflow='hidden'; }); });
   lb.querySelector('.x').addEventListener('click',close);
