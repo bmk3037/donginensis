@@ -183,6 +183,20 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://donginensis.com/news-busan-strategic-leader-2027.html</loc>
+    <lastmod>2026-11-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-busan-strategic-leader-2027.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-busan-strategic-leader-2027.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://donginensis.com/en/news-busan-strategic-leader-2027.html</loc>
+    <lastmod>2026-11-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-busan-strategic-leader-2027.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://donginensis.com/en/news-busan-strategic-leader-2027.html"/>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://donginensis.com/news-smart-factory-supplier.html</loc>
     <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ko" href="https://donginensis.com/news-smart-factory-supplier.html"/>

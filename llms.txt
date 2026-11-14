@@ -38,6 +38,7 @@
 - [디지털트윈 시연](https://donginensis.com/digital-twin.html)
 - [보도자료: 산업용 AI 에너지 5% 절감 솔루션 실증 착수(2026.04.17)](https://donginensis.com/news-industrial-ai-energy-saving.html)
 - [보도자료: 비지도 학습 엣지 AI 자율 제어(2026.04.13)](https://donginensis.com/news-edge-ai-autonomous-control.html)
+- [보도자료: 2027년 부산광역시 전략산업 선도기업 선정 — 융합부품소재 분야, 인증 2027~2029년(2026.11.14)](https://donginensis.com/news-busan-strategic-leader-2027.html)
 - [보도자료](https://donginensis.com/news.html)
 - [자료실(인증서·회사소개서)](https://donginensis.com/resources.html)
 - [English site](https://donginensis.com/en/)
