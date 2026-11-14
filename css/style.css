@@ -47,7 +47,7 @@ img,video{display:block;max-width:100%}
 .mnav{display:none}
 
 /* Hero */
-.hero{position:relative;height:100svh;min-height:660px;max-height:1000px;color:#fff;overflow:hidden;display:flex;align-items:center;background:var(--blue-dd) url(../video/hero_d_poster.jpg) center/cover}
+.hero{position:relative;height:100svh;min-height:660px;max-height:1000px;color:#fff;overflow:hidden;display:flex;align-items:center;background:var(--blue-dd) url(../video/hero_f_poster.jpg) center/cover}
 .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,20,44,.88) 0%,rgba(6,20,44,.6) 45%,rgba(6,20,44,.1) 100%)}
 .hero .wrap{position:relative;z-index:2;width:100%}
@@ -955,8 +955,9 @@ html[lang="en"] .hsns{display:none}
 /* 나란히 놓인 버튼이 줄바꿈될 때 서로 붙지 않게 */
 .prod-grid p.rv>.btn,.arch .rv>.btn{margin:0 6px 8px 0}
 @media (max-width:360px){.hero .cta .btn{font-size:13.5px;padding:14px 3px;gap:4px}}
-/* 첫 화면 영상(실사풍 연출) 표시 — 새 영상이 들어간 휴대폰 화면부터 */
-.hero-cap{display:none;position:absolute;z-index:2;left:16px;bottom:24px;font-size:13px;color:rgba(255,255,255,.7)}
+/* 첫 화면 영상(실사풍 연출) 표시 */
+.hero-cap{position:absolute;z-index:2;right:150px;bottom:36px;font-size:13px;color:rgba(255,255,255,.7)}
+@media (max-width:767px){.hero-cap{right:auto;left:16px;bottom:24px}}
 @media (max-width:767px){
   /* 글은 위, 제품 사진은 아래: 사진 속 제어반이 글에 가리지 않게 아래쪽에 사진 자리를 둔다 */
   .hero{background:linear-gradient(180deg,#02071a 0,#02071a calc(100% - 205vw),rgba(2,7,26,0) calc(100% - 176vw)),url(../video/hero_f_m_poster.jpg) center bottom/100% auto no-repeat,#02071a;padding:88px 0 100vw}
@@ -969,5 +970,9 @@ html[lang="en"] .hsns{display:none}
   .hero .note .wrap>span{padding-top:10px}
   .hero .note .wrap>span:nth-child(n+3){display:none}
   .hero .note b{display:inline;font-size:14.5px;margin:0 5px 0 0}
-  .hero-cap{display:block}
+}
+/* PC 첫 화면: 밝은 제어반 위에 제목이 겹칠 때도 읽히게 가운데까지 어둡게 */
+@media (min-width:768px){
+  .hero::after{background:linear-gradient(90deg,rgba(3,10,28,.9) 0%,rgba(3,10,28,.74) 46%,rgba(3,10,28,.22) 70%,rgba(3,10,28,.04) 100%)}
+  .hero h1,.hero p{text-shadow:0 2px 22px rgba(3,10,28,.6)}
 }
