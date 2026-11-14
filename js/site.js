@@ -37,7 +37,7 @@ var TXT = IS_EN ? {
 
   // 히어로 영상 (메인)
   var v=document.getElementById('heroVideo');
-  if(v&&v.dataset.srcPc){v.src=window.innerWidth<768?v.dataset.srcM:v.dataset.srcPc;var p=v.play();if(p&&p.catch)p.catch(function(){});}
+  if(v&&v.dataset.srcPc){var vm=window.innerWidth<768;if(vm&&v.dataset.posterM)v.poster=v.dataset.posterM;v.src=vm?v.dataset.srcM:v.dataset.srcPc;var p=v.play();if(p&&p.catch)p.catch(function(){});}
 
   // 히어로 배경음 (소리 켜기 버튼, 기본 무음)
   // Web Audio로 미리 받아 둔 음원을 끊김 없이 반복 재생, 영상 반복 시점에만 부드럽게 위치 보정
