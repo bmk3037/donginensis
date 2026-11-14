@@ -219,7 +219,7 @@ def body(L):
     </div>
     <div class="proc-grid rv" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">{proc}</div>
     <figure class="prod-img rv" style="margin-top:28px">
-      <img src="{L['root']}{im['wide'][0]}" width="{im['wide'][1]}" height="{im['wide'][2]}" alt="{e(L['comm_alt'])}" loading="lazy" style="height:auto;aspect-ratio:21/9;object-fit:cover;object-position:center 60%">
+      <img src="{L['root']}{im['wide'][0]}" width="{im['wide'][1]}" height="{im['wide'][2]}" alt="{e(L['comm_alt'])}" loading="lazy" style="height:auto">
       <figcaption>{e(L['comm_cap'])}</figcaption>
     </figure>
   </div>
