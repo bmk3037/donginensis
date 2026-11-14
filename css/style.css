@@ -976,3 +976,6 @@ html[lang="en"] .hsns{display:none}
   .hero::after{background:linear-gradient(90deg,rgba(3,10,28,.9) 0%,rgba(3,10,28,.74) 46%,rgba(3,10,28,.22) 70%,rgba(3,10,28,.04) 100%)}
   .hero h1,.hero p{text-shadow:0 2px 22px rgba(3,10,28,.6)}
 }
+/* 메인 주요 실적: 휴대폰에서 접어 둔 줄은 숨김 */
+.home-refs .ref-tbl tbody tr[hidden]{display:none}
+@media (max-width:600px){.home-refs .press-more{margin-top:6px}.home-refs .ref-tbl tbody tr:nth-child(3):not(:last-child){border-bottom:1px solid var(--line)}}
