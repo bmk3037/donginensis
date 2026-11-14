@@ -954,3 +954,4 @@ html[lang="en"] .hsns{display:none}
 }
 /* 나란히 놓인 버튼이 줄바꿈될 때 서로 붙지 않게 */
 .prod-grid p.rv>.btn,.arch .rv>.btn{margin:0 6px 8px 0}
+@media (max-width:360px){.hero .cta .btn{font-size:13.5px;padding:14px 3px;gap:4px}}
