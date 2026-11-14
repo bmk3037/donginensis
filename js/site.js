@@ -194,6 +194,22 @@ var TXT = IS_EN ? {
   pick(tabs[0].dataset.cat);
 })();
 
+// 메인 주요 실적: 휴대폰에서는 3건만 보이고 나머지는 '더 보기'로 펼침
+(function(){
+  var box=document.querySelector('.home-refs'), small=window.matchMedia&&matchMedia('(max-width:600px)').matches;
+  if(!box||!small) return;
+  var rows=[].slice.call(box.querySelectorAll('.ref-tbl tbody tr')), LIMIT=3;
+  if(rows.length<=LIMIT) return;
+  var en=document.documentElement.lang==='en', wrap=box.querySelector('.tblw');
+  rows.slice(LIMIT).forEach(function(r){ r.hidden=true; });
+  var btn=document.createElement('button');
+  btn.type='button'; btn.className='press-more';
+  btn.textContent=(en?'More references':'실적 더 보기')+' ('+(rows.length-LIMIT)+')';
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click',function(){ rows.forEach(function(r){ r.hidden=false; }); btn.remove(); });
+  wrap.parentNode.insertBefore(btn,wrap.nextSibling);
+})();
+
 // 보도자료 목록: 최신 5건만 보이고 나머지는 '더 보기'로 펼침 (보도자료 전체 페이지처럼 data-all이 있으면 모두 표시)
 (function(){
   var list=document.querySelector('.press-list:not([data-all])');
