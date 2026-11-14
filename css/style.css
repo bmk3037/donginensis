@@ -956,8 +956,9 @@ html[lang="en"] .hsns{display:none}
 .prod-grid p.rv>.btn,.arch .rv>.btn{margin:0 6px 8px 0}
 @media (max-width:360px){.hero .cta .btn{font-size:13.5px;padding:14px 3px;gap:4px}}
 /* 첫 화면 영상(실사풍 연출) 표시 */
-.hero-cap{position:absolute;z-index:2;right:150px;bottom:36px;font-size:13px;color:rgba(255,255,255,.7)}
-@media (max-width:767px){.hero-cap{right:auto;left:16px;bottom:24px}}
+.hero-cap{position:absolute;z-index:2;right:24px;bottom:36px;font-size:13px;color:rgba(255,255,255,.7)}
+.hero-cap.with-btn{right:182px}   /* 나레이션 버튼이 있는 국문: 버튼 왼쪽에 둔다 */
+@media (max-width:767px){.hero-cap,.hero-cap.with-btn{right:auto;left:16px;bottom:24px}}
 @media (max-width:767px){
   /* 글은 위, 제품 사진은 아래: 사진 속 제어반이 글에 가리지 않게 아래쪽에 사진 자리를 둔다 */
   .hero{background:linear-gradient(180deg,#02071a 0,#02071a calc(100% - 205vw),rgba(2,7,26,0) calc(100% - 176vw)),url(../video/hero_f_m_poster.jpg) center bottom/100% auto no-repeat,#02071a;padding:88px 0 100vw}

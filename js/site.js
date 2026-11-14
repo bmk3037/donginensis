@@ -39,63 +39,26 @@ var TXT = IS_EN ? {
   var v=document.getElementById('heroVideo');
   if(v&&v.dataset.srcPc){var vm=window.innerWidth<768;if(vm&&v.dataset.posterM)v.poster=v.dataset.posterM;v.src=vm?v.dataset.srcM:v.dataset.srcPc;var p=v.play();if(p&&p.catch)p.catch(function(){});}
 
-  // 히어로 배경음 (소리 켜기 버튼, 기본 무음)
-  // Web Audio로 미리 받아 둔 음원을 끊김 없이 반복 재생, 영상 반복 시점에만 부드럽게 위치 보정
-  // data-narr가 있으면 켤 때 영상을 처음으로 돌리고 나레이션을 한 번 읽음(그동안 배경음은 낮춤)
-  // data-sync="0"이면 영상 길이와 배경음 반복 길이가 달라 위치 보정을 하지 않음
-  var sb=document.getElementById('sndBtn'), bgm=document.getElementById('heroBgm');
-  if(sb&&bgm){
-    var VOL=0.45, DUCK=0.16, LOOP=10, SYNC=bgm.dataset.sync!=='0', NARR=bgm.dataset.narr, AC=window.AudioContext||window.webkitAudioContext;
-    var ctx=null, gain=null, buf=null, src=null, t0=0, off0=0, on=false, bufP=null, lastVT=0;
-    var nbuf=null, nsrc=null, nP=null;
+  // 첫 화면 나레이션 (기본 무음): 버튼을 누르면 영상을 처음으로 돌리고 나레이션을 한 번 읽음. 다시 누르면 멈춤
+  // 배경음악은 2026.11에 뺐다(반복이 귀에 걸려서). 나레이션이 없는 영문에는 버튼을 두지 않는다
+  var sb=document.getElementById('sndBtn'), narr=document.getElementById('heroNarr');
+  if(sb&&narr){
     var setUI=function(state){var tx=sb.querySelector('.snd-tx');sb.setAttribute('aria-pressed',state?'true':'false');sb.setAttribute('aria-label',state?sb.dataset.labelOff:sb.dataset.labelOn);tx.textContent=state?sb.dataset.off:sb.dataset.on;};
-    var loadBuf=function(){if(!bufP&&AC&&window.fetch){bufP=fetch(bgm.getAttribute('src')).then(function(r){return r.arrayBuffer();});}return bufP;};
-    var loadNarr=function(){if(!nP&&NARR&&AC&&window.fetch){nP=fetch(NARR).then(function(r){return r.arrayBuffer();});}return nP;};
-    // 페이지가 다 뜬 뒤 작은 음원(배경음 약 160KB, 나레이션 약 170KB)을 미리 받아 둠
-    window.addEventListener('load',function(){setTimeout(function(){loadBuf();loadNarr();},1500);});
-    var vpos=function(){return v&&v.currentTime?v.currentTime%LOOP:0;};
-    var startSrc=function(pos){
-      if(src){try{src.stop();}catch(e){}}
-      src=ctx.createBufferSource();src.buffer=buf;src.loop=true;src.loopStart=0;src.loopEnd=Math.min(LOOP,buf.duration);
-      src.connect(gain);t0=ctx.currentTime;off0=pos;src.start(0,pos);
+    var wanted=false;
+    var start=function(){
+      if(!wanted) return;
+      if(v){try{v.currentTime=0;}catch(e){} var p=v.play();if(p&&p.catch)p.catch(function(){});}
+      try{narr.currentTime=0;}catch(e){}
+      var q=narr.play();if(q&&q.catch)q.catch(function(){wanted=false;setUI(false);});
     };
-    var apos=function(){return (off0+ctx.currentTime-t0)%LOOP;};
-    var fadeTo=function(to,sec){var n=ctx.currentTime;gain.gain.cancelScheduledValues(n);gain.gain.setValueAtTime(gain.gain.value,n);gain.gain.linearRampToValueAtTime(to,n+sec);};
-    var decode=function(ab){return new Promise(function(res,rej){ctx.decodeAudioData(ab,res,rej);});};
-    var stopNarr=function(){if(nsrc){try{nsrc.stop();}catch(e){}nsrc=null;}};
-    var playNarr=function(){
-      // 영상을 처음으로 돌리고 나레이션을 한 번 읽음, 읽는 동안 배경음을 낮췄다가 끝나면 되돌림
-      stopNarr();
-      if(v){v.currentTime=0;lastVT=0;var p=v.play();if(p&&p.catch)p.catch(function(){});}
-      startSrc(0);
-      nsrc=ctx.createBufferSource();nsrc.buffer=nbuf;nsrc.connect(ctx.destination);
-      var n=ctx.currentTime;gain.gain.cancelScheduledValues(n);gain.gain.setValueAtTime(0,n);
-      gain.gain.linearRampToValueAtTime(DUCK,n+0.6);
-      gain.gain.setValueAtTime(DUCK,n+nbuf.duration);gain.gain.linearRampToValueAtTime(VOL,n+nbuf.duration+1.2);
-      nsrc.start(n);
-    };
-    var turnOn=function(){
-      if(!AC){bgm.volume=VOL;var p=bgm.play();if(p&&p.catch)p.catch(function(){});return;}
-      if(!ctx){ctx=new AC();gain=ctx.createGain();gain.gain.value=0;gain.connect(ctx.destination);}
-      if(ctx.state==='suspended')ctx.resume();
-      var go=function(){if(!on)return;if(nbuf){playNarr();return;}startSrc(vpos());fadeTo(VOL,1.2);};
-      var fail=function(){var p=bgm.play();if(p&&p.catch)p.catch(function(){});};
-      var getBuf=buf?Promise.resolve(buf):loadBuf().then(decode).then(function(b){buf=b;return b;});
-      var getNarr=(!NARR||nbuf)?Promise.resolve(nbuf):loadNarr().then(decode).then(function(b){nbuf=b;return b;}).catch(function(){return null;});
-      getBuf.then(function(){return getNarr;}).then(go).catch(fail);
-    };
-    var turnOff=function(){
-      if(!ctx){bgm.pause();return;}
-      stopNarr();fadeTo(0,0.6);setTimeout(function(){if(!on&&ctx.state==='running')ctx.suspend();},700);
-    };
-    sb.addEventListener('click',function(){on=!on;setUI(on);if(on)turnOn();else turnOff();});
-    // 영상이 처음으로 돌아갈 때만 박자 확인, 0.2초 이상 어긋났으면 살짝 줄였다가 다시 맞춤
-    if(v)v.addEventListener('timeupdate',function(){
-      var t=v.currentTime, wrapped=t<lastVT-1; lastVT=t;
-      if(!SYNC||!wrapped||!on||!src||!ctx||ctx.state!=='running')return;
-      var d=Math.abs(apos()-vpos()); d=Math.min(d,LOOP-d);
-      if(d>0.2){fadeTo(0,0.15);setTimeout(function(){if(on){startSrc(vpos());fadeTo(VOL,0.4);}},160);}
+    // 페이지가 다 뜬 뒤 작은 음원(약 200KB)을 미리 받아 두어, 눌렀을 때 영상과 같이 시작되게 함
+    window.addEventListener('load',function(){setTimeout(function(){narr.preload='auto';narr.load();},1500);});
+    sb.addEventListener('click',function(){
+      if(wanted){wanted=false;narr.pause();setUI(false);return;}
+      wanted=true;setUI(true);
+      if(narr.readyState>=3) start(); else {narr.addEventListener('canplay',start,{once:true});narr.load();}
     });
+    narr.addEventListener('ended',function(){wanted=false;setUI(false);});
   }
 
   // 문의 폼
