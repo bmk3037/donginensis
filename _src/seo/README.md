@@ -13,3 +13,6 @@
 ## GA4·서치콘솔 → 구글 시트 자동 수집
 - `.github/workflows/analytics.yml`이 매일 오전 6:17(한국 시간) `_src/seo/analytics_pull.py`를 돌려 지난 90일 데이터를 구글 시트 탭(일별·채널·페이지·행동·지역·검색어 등)에 덮어쓴다. 데이터는 저장소에 남기지 않는다.
 - 설정: 저장소 Secrets `GA_SA_KEY`(서비스 계정 JSON), Variables `GA_PROPERTY_ID`·`GA_SHEET_ID`·`GSC_SITE`. 서비스 계정 이메일을 GA4(뷰어)·서치콘솔(제한된 사용자)·시트(편집자)에 추가한다. 설정 전에는 건너뛴다.
+
+## 기술 점검
+- `python3 _src/seo/audit_site.py` — 사이트 전체 기술 SEO 점검(깨진 링크, 제목·설명 중복, canonical·hreflang, JSON-LD, 사이트맵, 그림). 문제 0건이어야 한다. `--all`은 참고 항목까지.
