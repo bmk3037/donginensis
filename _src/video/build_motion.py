@@ -646,6 +646,7 @@ def render_scene(job):
 
 
 def prepare(lang, n=0):
+    B.ensure_cover()
     scenes = [dict(s) for s in (B.SCENES[lang][:n] if n else B.SCENES[lang])]
     work = f'{B.OUT}/motion_{lang}'; os.makedirs(f'{work}/tts', exist_ok=True); os.makedirs(f'{work}/seg', exist_ok=True)
     async def tts_all():
