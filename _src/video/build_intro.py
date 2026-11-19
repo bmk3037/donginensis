@@ -9,7 +9,7 @@
   1. files/DONG-IN-ENSIS_Company-Profile_{KR,EN}.pdf 의 쪽을 장면으로 쓴다 (4에서 매 프레임 직접 그림)
   2. 장면마다 문장을 한 번에 TTS(edge-tts, 단어 시각 포함) → 앞뒤 무음 제거 → 문장별 자막 구간
   3. 장면 시간표: 말이 전환(크로스페이드) 중간부터 시작, 장면 사이 쉼 약 0.55초(LEAD+TAIL+PAUSE)
-  4. 쪽을 매 프레임 PDF에서 직접 그려 느리게 확대/이동(소수점 위치라 끊김 없음) → xfade로 이어 붙임 (첫 장면은 video/hero_e.mp4 위에 로고·제목)
+  4. 쪽을 매 프레임 PDF에서 직접 그려 느리게 확대/이동(소수점 위치라 끊김 없음) → xfade로 이어 붙임 (첫 장면은 홈페이지 첫 화면 영상 video/hero_f.mp4의 펌프실 제어반 장면 위에 로고·제목)
      나레이션은 문장 사이 긴 쉼(TTS가 1초 넘게 쉼)을 MAXP초로 줄인다
   5. 나레이션 음량 정규화(-16 LUFS) + 배경음(Mixkit 'Your Breath', 나레이션 중 자동 감쇠)
   6. ASS 자막(흰 쪽: 남색 글자+흰 테두리, 어두운 장면: 흰 글자) 새김, H.264 1080p, 25MB 이하
@@ -37,7 +37,17 @@ MAXP = 0.5        # 한 장면 안에서 문장·구 사이 쉼의 최대 길이
 VOICE = {'kr': 'ko-KR-InJoonNeural', 'en': 'en-US-AndrewNeural'}
 RATE = {'kr': '+4%', 'en': '+2%'}     # 3분 안팎에 맞추기 위한 읽기 속도
 PDF = {'kr': f'{SITE}/files/DONG-IN-ENSIS_Company-Profile_KR.pdf', 'en': f'{SITE}/files/DONG-IN-ENSIS_Company-Profile_EN.pdf'}
-HERO = f'{SITE}/video/hero_e.mp4'
+LANDING = f'{SITE}/video/hero_f.mp4'
+HERO = f'{OUT}/cover_panel.mp4'     # 첫 장면 배경 = 홈페이지 첫 화면의 「펌프실 제어반」 장면만 (2026.11.19, 예전 hero_e.mp4 밤 항구)
+
+
+def ensure_cover():
+    """홈페이지 첫 화면 영상(hero_f.mp4)의 첫 장면(펌프실 제어반, 0~2.25초)만 떼어 약 3.9배 느리게(움직임 보간) 8.5초 배경으로 만든다."""
+    if os.path.exists(HERO) and os.path.getmtime(HERO) > os.path.getmtime(LANDING): return HERO
+    os.makedirs(OUT, exist_ok=True)
+    run([FF, '-v', 'error', '-y', '-i', LANDING, '-vf', 'trim=0:2.25,setpts=(PTS-STARTPTS)*3.9,minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:vsbmc=1,'
+         f'scale={W}:{H}:flags=lanczos', '-an', '-c:v', 'libx264', '-crf', '16', '-preset', 'fast', HERO])
+    return HERO
 
 # 장면: page(1~23) 또는 video(b-roll), lines = 자막 한 줄씩 (한 장면의 문장은 한 번에 읽어 자연스럽게 이어짐)
 SCENES = {'kr': [
@@ -334,7 +344,7 @@ def main():
         raise SystemExit('국문 영상은 build_motion.py(모션판)로 만듭니다. 쪽 확대 방식 국문판이 꼭 필요하면 --out 파일을 지정하세요.')
     scenes = [dict(s) for s in (SCENES[lang][:a.sample] if a.sample else SCENES[lang])]
     work = f'{OUT}/work_{lang}'; os.makedirs(work, exist_ok=True)
-    bgm = ensure_bgm()
+    ensure_cover(); bgm = ensure_bgm()
     asyncio.run(tts_all(scenes, VOICE[lang], RATE[lang], f'{work}/tts', lang))
     total = timeline(scenes)
     json.dump(scenes, open(f'{work}/timeline.json', 'w'), ensure_ascii=False, indent=1, default=list)
