@@ -14,7 +14,7 @@
 - 회사소개서: 국문 `_src/profile/build_profile_refs.py` ↔ 영문 `build_profile_refs_en.py`(실적 7장), 본문은 `base/profile_base_KR.pdf` · `base/profile_base_EN.pdf`를 함께 고친다. 장수가 바뀌면 메인(`index.html`, `en/index.html`) 숫자 칸과 자료실 표기도 고친다.
 - 보도자료: 국문 `news-*.html`을 올리면 같은 이름의 `en/` 영문판, 국문·영문 보도자료 목록과 메인 미디어 목록(같은 순서), `sitemap.xml`의 hreflang 짝까지 함께 올린다.
 - 커밋 전 확인: `python3 _src/check_ko_en.py` — 페이지 짝, 자료실 파일·건수, 보도자료 순서, 연혁, 회사소개서 장수가 모두 맞아야 한다.
-- 회사소개 영상: 국문 `video/company-intro_kr.mp4`는 모션판 `_src/video/build_motion.py`, 영문 `_en.mp4`는 쪽 확대 방식 `_src/video/build_intro.py en`으로 만든다. 영문 모션판은 대표 요청으로 보류 중이다(2026.10, 국문만 먼저). 회사소개서 내용이나 대본(국문 SCENES)을 바꾸면 영문 대본도 같이 고치고 두 언어를 다시 만든다. 회사소개서 쪽 배치가 바뀌면 `build_motion.py`의 쪽별 좌표(page_groups)도 고친다.
+- 회사소개 영상: 국문 `video/company-intro_kr.mp4`만 올린다(모션판 `_src/video/build_motion.py`). 영문 영상은 대표 요청으로 내렸다(2026.11.19, 국문만) — 국문·영문 자료실 모두 국문 영상 한 줄만 둔다. 회사소개서 쪽 배치가 바뀌면 `build_motion.py`의 쪽별 좌표(page_groups)도 고친다.
 
 ## 보도자료 (대표 지시, 2026.11.02)
 - **동인엔시스 보도자료에는 항상 홈페이지 주소를 넣는다.** 본문 끝에 `▶ 홈페이지: https://donginensis.com`(영문은 `https://donginensis.com/en/`)과, 기사 내용과 관련된 홈페이지 페이지 주소(예: 디지털트윈 시연 `https://donginensis.com/digital-twin.html`)를 함께 적는다. 회사 개요 표의 홈페이지 칸과는 별도로 둔다.
