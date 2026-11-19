@@ -26,9 +26,52 @@ def tc_voice(lang):
     return v
 
 
+FILES_DIR = os.environ.get('TTS_FILES_DIR', '').strip()    # ENGINE=files: 장면별 녹음 파일 폴더(01.mp3 …)
+
+
 def engine_sig(lang, voice, rate):
     """캐시 구분용: 엔진·목소리·속도가 바뀌면 다시 만든다"""
+    if ENGINE == 'files':
+        return f'files:{os.path.abspath(FILES_DIR)}'
     return f'typecast:{TC_MODEL}:{tc_voice(lang)}:{tempo(rate)}' if ENGINE == 'typecast' else f'edge:{voice}:{rate}'
+
+
+def file_synth(text, lang, scene_no, out_path):
+    """ENGINE=files: 미리 녹음한 장면 파일(타입캐스트 화면에서 만든 것 등)을 쓰고, 단어 시각은 받아쓰기로 구한다.
+    받아쓴 글자는 대본과 조금 다를 수 있어(동인앤시스 등) 글자 단위로 대본에 맞춰 대본 단어에 시각을 붙인다."""
+    import difflib, re, shutil
+    src = os.path.join(FILES_DIR, f'{scene_no:02d}.mp3')
+    if not os.path.exists(src): src = os.path.join(FILES_DIR, f'{scene_no:02d}.wav')
+    if not os.path.exists(src): raise SystemExit(f'녹음 파일이 없습니다: {FILES_DIR}/{scene_no:02d}.mp3')
+    shutil.copyfile(src, out_path)
+    from faster_whisper import WhisperModel
+    global _WM
+    if '_WM' not in globals(): _WM = WhisperModel('small', device='cpu', compute_type='int8')
+    segs, _ = _WM.transcribe(src, language={'kr': 'ko', 'en': 'en'}[lang], word_timestamps=True, initial_prompt=text)
+    hw = [w for s in segs for w in s.words]
+    norm = lambda s: re.sub(r'[\s.,·!?\'"()\-]', '', s)
+    hc, ht = [], []                                  # 받아쓴 글자와 그 글자의 시각
+    for w in hw:
+        cs = norm(w.word)
+        for k, ch in enumerate(cs):
+            hc.append(ch); ht.append(w.start + (w.end - w.start) * (k + 0.5) / max(1, len(cs)))
+    tokens = text.split(); sc_chars, owner = [], []
+    for ti, tok in enumerate(tokens):
+        for ch in norm(tok): sc_chars.append(ch); owner.append(ti)
+    tmap = [None] * len(sc_chars)
+    for blk in difflib.SequenceMatcher(None, sc_chars, hc, autojunk=False).get_matching_blocks():
+        for k in range(blk.size): tmap[blk.a + k] = ht[blk.b + k]
+    known = [i for i, v in enumerate(tmap) if v is not None]
+    if not known: return []
+    for i in range(len(tmap)):                      # 맞지 않은 글자는 앞뒤 시각 사이로 메운다
+        if tmap[i] is None:
+            p = max([k for k in known if k < i], default=None); n = min([k for k in known if k > i], default=None)
+            tmap[i] = tmap[p] if n is None else tmap[n] if p is None else tmap[p] + (tmap[n] - tmap[p]) * (i - p) / (n - p)
+    words = []
+    for ti, tok in enumerate(tokens):
+        ts = [tmap[i] for i, o in enumerate(owner) if o == ti]
+        if ts: words.append((max(0.0, min(ts) - 0.06), max(ts) + 0.06, tok))
+    return words
 
 
 def tempo(rate):   # edge 속도 표기 '+4%' → 타입캐스트 audio_tempo 1.04
@@ -86,6 +129,7 @@ async def tts_words(sc, voice, rate, base, lang='kr'):
     m = json.load(open(meta)) if os.path.exists(meta) else {}
     if not (m.get('text') == text and m.get('engine') == sig):
         if ENGINE == 'typecast': src = f'{base}.tc.wav'; words = tc_synth(text, lang, rate, src)
+        elif ENGINE == 'files': src = f'{base}.rec.mp3'; words = file_synth(text, lang, int(os.path.basename(base)[1:]) + 1, src)
         else: src = f'{base}.mp3'; words = await edge_synth(text, voice, rate, src)
         B.run([B.FF, '-v', 'error', '-y', '-i', src, '-ac', '1', '-ar', '48000', wav + '.raw.wav'])
         sr, x = B.read_wav(wav + '.raw.wav')
