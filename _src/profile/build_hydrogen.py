@@ -43,7 +43,7 @@ td{{padding:9px 14px;border-bottom:1px solid #E2E7EE;line-height:1.45;vertical-a
 .blk h3.s{{font-size:16.5px}}
 .ph{{object-fit:cover;border-radius:12px;display:block}}
 .cap{{display:flex;align-items:center;gap:10px;font-size:12px;color:#8A94A6;margin-top:8px}} .cap img{{height:22px}}
-.strip{{position:absolute;left:82px;right:82px;top:668px;display:flex;align-items:center;justify-content:space-between;border:1px solid #E2E7EE;border-radius:10px;padding:10px 24px;background:#F5F7FA}} .strip img{{height:26px}} .strip img.w{{height:20px}}
+.strip{{position:absolute;left:82px;right:82px;top:668px;display:flex;align-items:center;justify-content:space-between;border:1px solid #E2E7EE;border-radius:10px;padding:10px 24px;background:#fff}} .strip img{{height:26px}} .strip img.w{{height:20px}}
 .tl{{display:flex;flex-direction:column}} .tl .r{{display:flex;gap:20px;padding:9px 0;border-bottom:1px solid #E2E7EE;align-items:flex-start}}
 .tl .y{{width:84px;font-size:22px;font-weight:800;color:#1857A5;line-height:1.2}} .tl .t{{flex:1;font-size:13.9px;line-height:1.5}}
 .flow{{display:flex;gap:14px;align-items:center;margin-top:30px}} .step{{flex:1;border:1px solid #E2E7EE;border-radius:12px;padding:18px 20px;background:#fff}} .step.dark{{background:#0F3F7E;border-color:#0F3F7E;color:#fff}}
