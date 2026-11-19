@@ -69,6 +69,7 @@ a{color:inherit}
 .js .cvr.play .a-t2{animation:mask .8s cubic-bezier(.33,1,.68,1) calc(var(--d2,1.55s) - var(--t0,0s)) both}
 .js .cvr.play .a-go{animation:rise16 .7s cubic-bezier(.33,1,.68,1) calc(2.4s - var(--t0,0s)) both}
 .paused .an{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){.js .cvr .an{opacity:1}}
 @keyframes rise16{from{opacity:0;transform:translateY(.83cqw)}to{opacity:1;transform:none}}
 @keyframes kk{0%{opacity:0;letter-spacing:1.146cqw}60%{opacity:1}100%{opacity:1;letter-spacing:.3125cqw}}
 @keyframes mask{0%{opacity:0;transform:translateY(95%)}40%{opacity:1}100%{opacity:1;transform:none}}
@@ -269,8 +270,8 @@ function start(sec){var p=+sec.getAttribute('data-p'),st=S[p];if(!st)return;if(s
 function loop(){if(!rafOn){rafOn=true;requestAnimationFrame(frame)}}
 function frame(now){rafOn=false;running.slice().forEach(function(st){var t=(now-st.t0)/1000;st.c.update(t);if(t>st.c.swap)finish(st)});if(running.length)loop()}
 function finish(st){running.splice(running.indexOf(st),1);var f=st.sec.querySelector('.full'),c=st.c;st.state='done';
-  f.style.transition='opacity .35s';f.style.opacity=1;st.sec.querySelector('.stage').classList.add('rp');
-  setTimeout(function(){c.el.remove();f.style.transition=''},450)}
+  f.style.opacity=1;c.el.style.transition='opacity .35s';c.el.style.opacity=0;st.sec.querySelector('.stage').classList.add('rp');
+  setTimeout(function(){c.el.remove()},450)}
 var secs=[].slice.call(deck.querySelectorAll('.sl:not(.cover)'));
 if('IntersectionObserver' in window&&!RM){
   var near=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)arm(e.target)})},{rootMargin:'120% 0px'});
