@@ -6,6 +6,7 @@
 |---|---|---|
 | `video/company-intro_kr.mp4` + `.jpg` | `python3 _src/video/build_motion.py` | 모션판 — 제목·사진·카드·숫자·연혁이 나레이션에 맞춰 차례로 등장 |
 | (영문, 내림) | `python3 _src/video/build_intro.py en` | 쪽 전체가 천천히 확대·이동 — 2026.11.19 홈페이지에서 내림 |
+| `profile.html` + `img/profile-motion/` · `video/profile-narr_kr.mp3` · `video/profile-cover.mp4` | `TTS_ENGINE=files TTS_FILES_DIR=<녹음 폴더> python3 _src/video/build_profile_motion.py --site` (빼면 `out/profile_motion/` 시안) | 모션 회사소개서(웹) — 영상과 같은 page_groups 연출을 브라우저에서 재생 |
 | 앞 N장면 시안 | `python3 _src/video/build_motion.py --scenes 5` → `_src/video/out/motion_sample_kr.mp4` | |
 | 정지 화면 점검 | `python3 _src/video/build_motion.py --test 5:0.7,2.0` → `_src/video/out/motion_test/` | |
 
@@ -47,3 +48,10 @@
 - 장면 경계는 국문 나레이션(`video/hero_narr_kr.mp3`, 타입캐스트) 줄 시작 시각에 맞췄다. 「소리 켜기」를 누르면 영상을 처음으로 돌리고 나레이션을 한 번 읽으며, 그동안 배경음(`hero_bgm_v2.mp3`)을 낮춘다(`js/site.js`, `data-narr`). 영문은 배경음만.
 - 영상 길이(19초)와 배경음 반복(10초)이 달라 위치 보정은 끈다(`data-sync="0"`). 첫 장면만 AI 클립으로 바꿀 때는 같은 길이·위치로 맞춰 넣는다.
 - 이전 영상 `hero_e.mp4`는 회사소개 영상 첫 장면이 제어반 장면으로 바뀌고 영문 영상도 내리면서 쓰는 곳이 없어 저장소에서 뺐다(2026.11.19).
+
+## 모션 회사소개서(`build_profile_motion.py`, 2026.11.19)
+- `profile.html`은 국문 회사소개서를 웹에서 움직이게 보여 준다(국문 PDF 링크를 대체). 연출은 `build_motion.py`의 `page_groups()`를 그대로 쓰고, 화면은 `profile_motion_template.html`의 스크립트가 그린다.
+- 쪽마다 완성 화면(`pNN.webp`)을 평소에 보여 주고, 화면에 들어오면 바탕(`pNN_b.webp`) 위에 요소 묶음(`pNN_a.webp`)·사진(`pNN_phK.webp`)을 차례로 띄운 뒤 완성 화면으로 돌아간다. 글자 요소는 곱하기(multiply)로 겹쳐 원본과 같아진다.
+- 「나레이션과 함께 보기」는 영상과 같은 녹음(배경음 없음)·자막·시각으로 장면을 넘긴다. 녹음 폴더가 영상 만들 때와 다르면 멈춘다(시각이 어긋나지 않게).
+- 회사소개서 PDF·page_groups·나레이션이 바뀌면 영상(`build_motion.py`)과 이 페이지를 함께 다시 만든다. 그림 파일은 `?v=` 버전(스크립트의 `VER`)을 올려 캐시를 바꾼다.
+- 클래스 이름 주의: 나레이션 화면은 `.pv`, 사진 안쪽 상자는 `.phv`(겹치면 사진이 맨 위로 올라와 배지를 가린다).
