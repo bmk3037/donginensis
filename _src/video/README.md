@@ -1,11 +1,11 @@
 # 회사소개 영상 원본 (소스)
 
-`video/company-intro_kr.mp4` · `video/company-intro_en.mp4`(각 3분 안팎, 1080p)와 미리보기 `.jpg`를 만드는 생성기입니다.
+`video/company-intro_kr.mp4`(2분 30초, 1080p)와 미리보기 `.jpg`를 만드는 생성기입니다. 영문 영상은 대표 요청으로 내렸다(2026.11.19, 국문만 올림). `build_intro.py en`은 다시 필요할 때를 위해 남겨 둔다.
 
 | 결과물 | 생성 명령 | 방식 |
 |---|---|---|
 | `video/company-intro_kr.mp4` + `.jpg` | `python3 _src/video/build_motion.py` | 모션판 — 제목·사진·카드·숫자·연혁이 나레이션에 맞춰 차례로 등장 |
-| `video/company-intro_en.mp4` + `.jpg` | `python3 _src/video/build_intro.py en` | 쪽 전체가 천천히 확대·이동 (영문 모션판은 대표 요청으로 보류, 2026.10) |
+| (영문, 내림) | `python3 _src/video/build_intro.py en` | 쪽 전체가 천천히 확대·이동 — 2026.11.19 홈페이지에서 내림 |
 | 앞 N장면 시안 | `python3 _src/video/build_motion.py --scenes 5` → `_src/video/out/motion_sample_kr.mp4` | |
 | 정지 화면 점검 | `python3 _src/video/build_motion.py --test 5:0.7,2.0` → `_src/video/out/motion_test/` | |
 
@@ -46,4 +46,4 @@
 - 남색 미니어처 디오라마 사진 6장(멈춘 현장 → 제어반 → 바로 연결 → 이상 감지 → 산업단지 → 마무리)을 천천히 확대하며 이어 붙인 19초 반복 영상. PC는 주제를 가로 70%, 모바일(720×1280)은 세로 70% 자리에 둬서 제목 자리를 비운다. 원본 사진은 구글 드라이브에 둔다.
 - 장면 경계는 국문 나레이션(`video/hero_narr_kr.mp3`, 타입캐스트) 줄 시작 시각에 맞췄다. 「소리 켜기」를 누르면 영상을 처음으로 돌리고 나레이션을 한 번 읽으며, 그동안 배경음(`hero_bgm_v2.mp3`)을 낮춘다(`js/site.js`, `data-narr`). 영문은 배경음만.
 - 영상 길이(19초)와 배경음 반복(10초)이 달라 위치 보정은 끈다(`data-sync="0"`). 첫 장면만 AI 클립으로 바꿀 때는 같은 길이·위치로 맞춰 넣는다.
-- 이전 영상 `hero_e*.mp4`는 영문 회사소개 영상 첫 장면(`build_intro.py`)에서 계속 쓴다.
+- 이전 영상 `hero_e.mp4`는 회사소개 영상 첫 장면이 제어반 장면으로 바뀌고 영문 영상도 내리면서 쓰는 곳이 없어 저장소에서 뺐다(2026.11.19).
