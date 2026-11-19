@@ -16,6 +16,8 @@
 - 렌더링은 4개 프로세스로 6분쯤 걸립니다.
 
 ## 나레이션 음성(`narration.py`)
+- 2026.11.19 국문 회사소개 영상은 대표가 타입캐스트 화면에서 녹음한 장면별 파일(01~21.mp3)로 다시 만들었다(151초). 쓰는 법: `TTS_ENGINE=files TTS_FILES_DIR=<녹음 폴더> python3 _src/video/build_motion.py`. 단어 시각은 받아쓰기(faster-whisper)로 구해 대본 단어에 맞춘다. 녹음 원본은 저장소에 올리지 않는다.
+- 문장 사이 쉼을 줄이며 잘라 붙인 곳은 30ms 겹쳐 잇는다(예전 영상의 말끝 잘림·틱 소리 원인).
 - 기본은 Microsoft Edge 음성(edge-tts, 무료)이고, `TTS_ENGINE=typecast`로 타입캐스트 음성을 쓸 수 있습니다. 두 생성기(`build_motion.py`, `build_intro.py`) 모두 이 설정을 따릅니다.
 - 타입캐스트에 필요한 환경변수: `TYPECAST_API_KEY`(저장소에 적지 않음), `TYPECAST_VOICE_KR`·`TYPECAST_VOICE_EN`(목소리 voice_id), 선택 `TYPECAST_MODEL`(기본 ssfm-v30).
 - 목소리 고르기: `python3 _src/video/narration.py voices kr` → 후보 voice_id로 `python3 _src/video/narration.py sample kr tc_… tc_…` (대본 첫 장면을 읽힌 샘플이 `out/voice_samples/`에 생김).

@@ -143,7 +143,17 @@ def compress_pauses(sr, x, cues, maxp=MAXP, thr=0.012):
     if not cuts: return x, cues, 0.0
     pieces = []; removed = []; pos = 0
     for a, b in cuts: pieces.append(x[pos:a]); removed.append((a / sr, (b - a) / sr)); pos = b
-    pieces.append(x[pos:]); y = np.concatenate(pieces)
+    pieces.append(x[pos:])
+    xf = int(sr * 0.03)                              # 이음매마다 30ms 겹쳐 잇기(끊김·틱 소리 방지)
+    y = pieces[0]
+    for p in pieces[1:]:
+        n = min(xf, len(y), len(p))
+        if n > 0:
+            r = np.linspace(0.0, 1.0, n, dtype=y.dtype)
+            y = np.concatenate([y[:-n], y[-n:] * (1 - r) + p[:n] * r, p[n:]])
+        else:
+            y = np.concatenate([y, p])
+    removed = [(ts, d + xf / sr) for ts, d in removed]
     def remap(t): return t - sum(min(d, max(0.0, t - ts)) for ts, d in removed)
     return y, [(remap(a), remap(b)) for a, b in cues], sum(d for _, d in removed)
 
